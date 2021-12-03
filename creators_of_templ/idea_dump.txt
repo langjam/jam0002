@@ -1,0 +1,8 @@
+1. You have a bunch of databases and you can write functions to pattern match and perform operations on them
+2. Graphical language where you draw patterns
+3. What if the language supported glob patterns in identifiers
+4. Matching part of data and editing it
+5. A language where you can draw different visual patterns recursively
+6. Matching things in comments 
+
+--> CSS LIKE LANGUAGE FOR DRAWING PRETTY STUFFS <-- 
