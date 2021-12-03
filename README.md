@@ -6,7 +6,9 @@ This jam begins at 7pm UK time on the 3rd of December and runs until 7pm UK time
 
 ## Theme
 
-The theme will be announced at the start of the jam
+The theme of jam is: patterns.
+
+Patterns are used in many ways in programming languages, for example pattern matching, glob patterns, and many more. This jam is to explore the ways patterns could show up in a programming language.
 
 ## Getting started
 
@@ -18,6 +20,8 @@ To participate:
 * send a PR to submit your project. In this PR, only touch files in the directory you're creating for your language and no other directories.
 
 Language names are "first come, first served" so if someone else takes your language name you'll need to come up with a new one.
+
+See below for more information on submitting your project.
 
 ## Language names
 
