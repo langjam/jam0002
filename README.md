@@ -41,6 +41,8 @@ In the PR, submit:
 * sample files written in your language
 * links to any presentation you might have (websites, videos, etc)
 
+**Please note:** only submit source files and documentation. Please don't submit compiled binaries for your project.
+
 ## Team captains
 
 The team captains will be the ones responsible for updating the submission. You may update your project up until the cut-off time.
