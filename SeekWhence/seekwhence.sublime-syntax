@@ -1,0 +1,36 @@
+%YAML 1.2
+---
+name: SeekWhence
+file_extensions: [seq]
+scope: source.seekwhence
+
+contexts:
+  main:
+    - match: ;.*
+      scope: comment.line.seekwhence
+    - match: \b(sequence|from|for|of|as|if|then|else)\b
+      scope: keyword.control.seekwhence
+
+    - match: "'"
+      push: stringSingle
+    - match: '"'
+      push: stringDouble
+      
+    - match: \b(true|false)\b
+      scope: constant.language.boolean.seekwhence
+    - match: \b\d+?\b
+      scope: constant.numeric.seekwhence
+
+  stringSingle:
+    - meta_scope: string.quoted.single.seekwhence
+    - match: \\[\\0bfnrtv]
+      scope: constant.character.escape.seekwhence
+    - match: "'"
+      pop: true
+
+  stringDouble:
+    - meta_scope: string.quoted.double.seekwhence
+    - match: \\[\\0bfnrtv]
+      scope: constant.character.escape.seekwhence
+    - match: '"'
+      pop: true

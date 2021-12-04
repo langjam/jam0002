@@ -1,0 +1,2 @@
+status: 0
+stdout: "This is a \"quotes\" test\nThis is a 'quotes' test\n"

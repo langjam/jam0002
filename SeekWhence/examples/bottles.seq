@@ -1,0 +1,23 @@
+; 99 Bottles
+
+sequence bottles from 99 = x-1
+
+for :inf of bottles as b {
+	if b == 0 then {
+		print "No more bottles of beer on the wall,"
+		print "No more bottles of beer,"
+		print "Go to the store, buy some more,"
+		print "99 bottles of beer on the wall!"
+		break
+	}
+
+	if b != 1 then set plural = 's' else set plural = ''
+
+	print b, "bottle"+plural, "of beer on the wall,"
+	print b, "bottle"+plural, "of beer,"
+	print "Take one down, pass it around,"
+
+	if b == 2 then print "1 bottle of beer on the wall!\n" else
+	if b == 1 then print "No more bottles of beer on the wall!\n" else
+	print b-1, "bottles of beer on the wall!\n"
+}

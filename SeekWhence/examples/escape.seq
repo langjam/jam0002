@@ -1,0 +1,2 @@
+print "This is a \"quotes\" test"
+print 'This is a \'quotes\' test'

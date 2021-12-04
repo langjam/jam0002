@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 
 import os
+import sys
 
 from parsy import *
 from dataclasses import dataclass
 from typing import Any
+from codecs import escape_decode
 
 # Datatypes
 
@@ -27,7 +29,7 @@ class Sequence:
     if self.baseCase is not None and n < len(self.baseCase): return self.baseCase[n]
     if n in self.__cache: return self.__cache[n]
     
-    if prev == None: prev = self.value_at(n-1, ctx)
+    if prev == None and find_in_expr(self.exprs[n % len(self.exprs)], 'x', 'S'): prev = self.value_at(n-1, ctx)
     self.__cache[n] = exec_expr(self.exprs[n % len(self.exprs)], { **ctx, 'x': prev, 'n': n, 'S': self })
     return self.__cache[n]
 
@@ -74,6 +76,11 @@ class FuncCall:
     return f"[function {self.name}: {args}]"
 
 @dataclass
+class VarDef:
+  ident: str
+  expr: str
+
+@dataclass
 class SequenceAccess:
   ident: str
   index: Any
@@ -108,15 +115,15 @@ def decomment(file):
 def create_parser():
   # Basic elements
   padding    = whitespace.optional()
-  newline    = regex(r'\s*(\n\s*)+')
-  validident = regex(r'[a-zA-Z_]\w*')
+  newline    = regex(r'\s*(\n\s*)+').desc('newline')
+  validident = regex(r'[a-zA-Z_]\w*').desc('valid identifier')
   identifier = validident.map(Identifier)
-  integer    = regex(r'\d+').map(int)
+  integer    = regex(r'\d+').map(int).desc('integer')
 
   # Strings
-  string_lit_double = regex(r'"(?:[^"\\]|\\.)*"')
-  string_lit_single = regex(r"'(?:[^'\\]|\\.)*'")
-  string_lit        = (string_lit_double | string_lit_single).map(lambda s: s[1:-1])
+  string_lit_double = regex(r'"(?:[^"\\]|\\.)*"').desc('string literal')
+  string_lit_single = regex(r"'(?:[^'\\]|\\.)*'").desc('string literal')
+  string_lit        = (string_lit_double | string_lit_single).map(lambda s: escape_decode(bytes(s[1:-1], 'utf-8'))[0].decode('utf-8'))
 
   # Expressions
   collapse_expr  = lambda l,o=None: l if o == None else (o[0], collapse_expr(l), collapse_expr(o[1]))
@@ -141,6 +148,15 @@ def create_parser():
   statement  = forward_declaration()
   statements = newline.optional() >> padding >> statement.sep_by(newline, min=1) << padding << newline.optional()
 
+  # Sequence definitions
+  sequenceDef = seq(
+    _1       = string('sequence') << whitespace,
+    ident    = validident << whitespace,
+    baseCase = (string('from') >> whitespace >> integer.sep_by(padding >> string(',') << padding, min=1) << whitespace).optional(),
+    _2       = string('=') << whitespace,
+    exprs    = expression.sep_by(padding >> string(',') << padding, min=1)
+  ).combine_dict(Sequence)
+
   # Function definitions and calls
   funcDef = seq(
     _        = string('function') << whitespace,
@@ -154,14 +170,13 @@ def create_parser():
     args = expression.sep_by(padding >> string(',') << padding, min=0)
   ).combine_dict(FuncCall))
 
-  # Sequence definitions
-  sequenceDef = seq(
-    _1       = string('sequence') << whitespace,
-    ident    = validident << whitespace,
-    baseCase = (string('from') >> whitespace >> integer.sep_by(padding >> string(',') << padding, min=1) << whitespace).optional(),
-    _2       = string('=') << whitespace,
-    exprs    = expression.sep_by(padding >> string(',') << padding, min=1)
-  ).combine_dict(Sequence)
+  # Variable definitions
+  varDef = seq(
+    _1    = string('set') << whitespace,
+    ident = validident << whitespace,
+    _2    = string('=') << whitespace,
+    expr  = expression
+  ).combine_dict(VarDef)
 
   # For loops
   forLoop = seq(
@@ -192,7 +207,7 @@ def create_parser():
   ).combine_dict(IfStmt)
 
   block.become((string('{') >> statements << string('}')) | statement.map(lambda s: [s]))
-  statement.become(sequenceDef | forLoop | breakStmt | ifStmt | funcDef | funcCall)
+  statement.become(sequenceDef | forLoop | breakStmt | ifStmt | varDef | funcDef | funcCall)
 
   return statements
 
@@ -224,8 +239,8 @@ operators = {
 def exec_expr(expr, ctx={}):
   '''Execute a parsed expression'''
 
-  if isinstance(expr, int) or isinstance(expr, str) or isinstance(expr, bool): return expr
-  if isinstance(expr, Identifier): return ctx[expr.name] if expr.name in ctx else None
+  if isinstance(expr, Identifier): 
+    return ctx[expr.name] if expr.name in ctx else None
 
   if isinstance(expr, SequenceAccess):
     if expr.ident not in ctx or not isinstance(ctx[expr.ident], Sequence):
@@ -241,10 +256,12 @@ def exec_expr(expr, ctx={}):
       raise Exception(f"Can't call undefined function {expr.name}")
     return ctx[expr.name](ctx, *[exec_expr(a, ctx) for a in expr.args])
 
-  if expr[0] in operators:
-    return operators[expr[0]](exec_expr(expr[1], ctx), exec_expr(expr[2], ctx))
+  if isinstance(expr, tuple):
+    if expr[0] in operators:
+      return operators[expr[0]](exec_expr(expr[1], ctx), exec_expr(expr[2], ctx))
+    raise Exception(f"Unknown operator {expr[0]}")
 
-  raise Exception(f"Unknown operator {expr[0]}")
+  return expr
 
 def display_expr(expr):
   '''Return a string representation of the given expression'''
@@ -260,6 +277,16 @@ def display_expr(expr):
 
   return str(expr)
 
+def find_in_expr(expr, *idns):
+  '''Return true if any of the given identifiers or constant numbers are found in the given expression'''
+
+  if isinstance(expr, int): return expr in idns
+  if isinstance(expr, Identifier): return expr.name in idns
+  if isinstance(expr, tuple):
+    return find_in_expr(expr[1], *idns) or find_in_expr(expr[2], *idns)
+
+  return false
+
 def execute(program, ctx=default_ctx, in_loop=False):
   '''Execute a list of parsed statements'''
 
@@ -273,10 +300,10 @@ def execute(program, ctx=default_ctx, in_loop=False):
     if isinstance(statement, IfStmt):
       cond = exec_expr(statement.cond, ctx)
       if cond:
-        value = execute(statement.body, dict(ctx), in_loop)
+        value = execute(statement.body, ctx, in_loop)
         if value is BreakStmt: return BreakStmt
       elif statement.elseBlock is not None:
-        value = execute(statement.elseBlock, dict(ctx), in_loop)
+        value = execute(statement.elseBlock, ctx, in_loop)
         if value is BreakStmt: return BreakStmt
 
     # For loops
@@ -315,6 +342,10 @@ def execute(program, ctx=default_ctx, in_loop=False):
       exec_expr(statement, ctx)
       continue
 
+    if isinstance(statement, VarDef):
+      ctx[statement.ident] = exec_expr(statement.expr, ctx)
+      continue
+
     # Break statements
     if statement is BreakStmt:
       if not in_loop: raise Exception("Can't break outside of loop")
@@ -323,10 +354,14 @@ def execute(program, ctx=default_ctx, in_loop=False):
 
 # CLI
 
+def usage():
+  print(f'Usage: {sys.argv[0]} [script_path]')
+  sys.exit()
+
 if __name__ == "__main__":
-  # for filename in os.listdir('../examples'):
-  #   with open(f'../examples/{filename}', 'r') as file:
-  with open(f'../examples/fibonacci.seq', 'r') as file:  
-      strin = decomment(file.read())
-      parser = create_parser()
-      execute(parser.parse(strin))
+  if len(sys.argv) < 2: usage()
+
+  with open(sys.argv[1], 'r') as file:  
+    strin = decomment(file.read())
+    parser = create_parser()
+    execute(parser.parse(strin))
