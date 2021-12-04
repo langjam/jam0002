@@ -2,18 +2,10 @@ circle
 {
   circle: 1;
 
-  square
+  square:
   {
     circle: 2;
 
-    triangle
-    {
-        hello: 3;
 
-        rectange
-        {
-            ok: 4;
-        }
-    }
-  }
+  };
 }
