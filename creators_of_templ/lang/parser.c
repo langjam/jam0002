@@ -75,7 +75,7 @@ static ErrCode next_tok(Parser *p, Token *dest) {
 static ErrCode give_tok(Parser *p, TokenType type, Token *dest) {
 	// Check if token is valid
 	if (isnt_tok(p, type)) {
-		p->err = err_f(err_unexpected, p->lexer.loc, "I didn't expect that. (%s)", type_lookup[p->current.type]);
+		p->err = err_f(err_unexpected, p->current.loc, "I didn't expect that. (%s)", type_lookup[p->current.type]);
 		return err_unexpected;
 	}
 

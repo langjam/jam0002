@@ -50,6 +50,6 @@ void err_explain(Err *err, char *source_file) {
 	printf("%4d | %.*s", line + 1, (int)(end-start), start);
 		
 	// Draw the cursor
-	printf("	   %*c\n", err->location.charno, '^');
+	printf("	%*c\n", err->location.charno, '^');
 }
 

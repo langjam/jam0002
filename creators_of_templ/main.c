@@ -28,7 +28,8 @@ int main() {
 	Parser p = parser_init(file);
 	if (parser_run(&p))
 		err_explain(&p.err, file);
-	ast_pretty_print(&p.ast);
+	else
+        ast_pretty_print(&p.ast);
 	parser_deinit(&p);
 	/*
 	Token tok;
