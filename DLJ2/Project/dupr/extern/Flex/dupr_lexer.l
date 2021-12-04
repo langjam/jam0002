@@ -27,10 +27,16 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/OR.h"
+#include "dupr/Ast/Node/AND.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
 #include "dupr/Ast/Node/SEMICOLON.h"
+#include "dupr/Ast/Node/SIGN.h"
+#include "dupr/Ast/Node/HEKJE.h"
+#include "dupr/Ast/Node/QUESTION.h"
+#include "dupr/Ast/Node/EXCLAM.h"
 #include "dupr/Ast/Node/PATTERN_INSERTION.h"
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
@@ -41,12 +47,13 @@
 #include "dupr/Ast/Node/deamerreserved_star__stmt__.h"
 #include "dupr/Ast/Node/stmt.h"
 #include "dupr/Ast/Node/pattern_execution.h"
-#include "dupr/Ast/Node/pattern_execution_content.h"
-#include "dupr/Ast/Node/deamerreserved_plus__pattern_execution_content_stmt__.h"
-#include "dupr/Ast/Node/pattern_execution_content_stmt.h"
+#include "dupr/Ast/Node/pattern_constructor_array.h"
+#include "dupr/Ast/Node/deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____.h"
 #include "dupr/Ast/Node/pattern_constructor.h"
 #include "dupr/Ast/Node/pattern_type.h"
 #include "dupr/Ast/Node/pattern_name.h"
+#include "dupr/Ast/Node/deamerreserved_arrow__VARNAME__.h"
+#include "dupr/Ast/Node/deamerreserved_star__GT__VARNAME__.h"
 #include "dupr/Ast/Node/pattern_constructor_content.h"
 #include "dupr/Ast/Node/deamerreserved_plus__pattern_constructor_content_stmt__.h"
 #include "dupr/Ast/Node/pattern_constructor_content_stmt.h"
@@ -83,11 +90,17 @@ LE	([<][=])
 GT	([>])
 GE	([>][=])
 EQ	([=])
+OR	([|])
+AND	([&])
 DOT	([.])
 COMMA	([,])
 COLON	([:])
 SEMICOLON	([;])
-PATTERN_INSERTION	([\[][\[][a-zA-Z_]+[a-zA-Z_0-9]*[\]][\]])
+SIGN	([$])
+HEKJE	([#])
+QUESTION	([?])
+EXCLAM	([!])
+PATTERN_INSERTION	(([\[][\[][a-zA-Z_]+[a-zA-Z_0-9]*[\]][\]])|([\[][\[][a-zA-Z_>]+[a-zA-Z_0-9>]*[:][a-zA-Z_]+[a-zA-Z_0-9]*[\]][\]]))
 VARNAME	([a-zA-Z_]+[a-zA-Z_0-9]*)
 NUMBER	([0-9]+)
 DECIMAL	([0-9]+[.][0-9]+)
@@ -110,10 +123,16 @@ ESCAPE_CHARS	([\n\r\t ]+)
 {GT}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (GT);;}
 {GE}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (GE);;}
 {EQ}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (EQ);;}
+{OR}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (OR);;}
+{AND}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (AND);;}
 {DOT}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (DOT);;}
 {COMMA}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (COMMA);;}
 {COLON}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (COLON);;}
 {SEMICOLON}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (SEMICOLON);;}
+{SIGN}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (SIGN);;}
+{HEKJE}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (HEKJE);;}
+{QUESTION}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (QUESTION);;}
+{EXCLAM}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (EXCLAM);;}
 {PATTERN_INSERTION}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (PATTERN_INSERTION);;}
 {VARNAME}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (VARNAME);;}
 {NUMBER}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column);;handleColumn(yyval);if (!local_store) return (NUMBER);;}

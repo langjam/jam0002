@@ -9,12 +9,13 @@ class program;
 class deamerreserved_star__stmt__;
 class stmt;
 class pattern_execution;
-class pattern_execution_content;
-class deamerreserved_plus__pattern_execution_content_stmt__;
-class pattern_execution_content_stmt;
+class pattern_constructor_array;
+class deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____;
 class pattern_constructor;
 class pattern_type;
 class pattern_name;
+class deamerreserved_arrow__VARNAME__;
+class deamerreserved_star__GT__VARNAME__;
 class pattern_constructor_content;
 class deamerreserved_plus__pattern_constructor_content_stmt__;
 class pattern_constructor_content_stmt;
@@ -37,10 +38,16 @@ class LE;
 class GT;
 class GE;
 class EQ;
+class OR;
+class AND;
 class DOT;
 class COMMA;
 class COLON;
 class SEMICOLON;
+class SIGN;
+class HEKJE;
+class QUESTION;
+class EXCLAM;
 class PATTERN_INSERTION;
 class VARNAME;
 class NUMBER;
@@ -88,24 +95,17 @@ namespace dupr { namespace ast { namespace relation {
 	};
 
 	template<>
-	struct NodeTypeToEnum<::dupr::ast::node::pattern_execution_content>
+	struct NodeTypeToEnum<::dupr::ast::node::pattern_constructor_array>
 	{
-		constexpr static auto value = ::dupr::ast::Type::pattern_execution_content;
-		using type = ::dupr::ast::node::pattern_execution_content;
+		constexpr static auto value = ::dupr::ast::Type::pattern_constructor_array;
+		using type = ::dupr::ast::node::pattern_constructor_array;
 	};
 
 	template<>
-	struct NodeTypeToEnum<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>
+	struct NodeTypeToEnum<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>
 	{
-		constexpr static auto value = ::dupr::ast::Type::deamerreserved_plus__pattern_execution_content_stmt__;
-		using type = ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__;
-	};
-
-	template<>
-	struct NodeTypeToEnum<::dupr::ast::node::pattern_execution_content_stmt>
-	{
-		constexpr static auto value = ::dupr::ast::Type::pattern_execution_content_stmt;
-		using type = ::dupr::ast::node::pattern_execution_content_stmt;
+		constexpr static auto value = ::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____;
+		using type = ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____;
 	};
 
 	template<>
@@ -127,6 +127,20 @@ namespace dupr { namespace ast { namespace relation {
 	{
 		constexpr static auto value = ::dupr::ast::Type::pattern_name;
 		using type = ::dupr::ast::node::pattern_name;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::deamerreserved_arrow__VARNAME__>
+	{
+		constexpr static auto value = ::dupr::ast::Type::deamerreserved_arrow__VARNAME__;
+		using type = ::dupr::ast::node::deamerreserved_arrow__VARNAME__;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>
+	{
+		constexpr static auto value = ::dupr::ast::Type::deamerreserved_star__GT__VARNAME__;
+		using type = ::dupr::ast::node::deamerreserved_star__GT__VARNAME__;
 	};
 
 	template<>
@@ -284,6 +298,20 @@ namespace dupr { namespace ast { namespace relation {
 	};
 
 	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::OR>
+	{
+		constexpr static auto value = ::dupr::ast::Type::OR;
+		using type = ::dupr::ast::node::OR;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::AND>
+	{
+		constexpr static auto value = ::dupr::ast::Type::AND;
+		using type = ::dupr::ast::node::AND;
+	};
+
+	template<>
 	struct NodeTypeToEnum<::dupr::ast::node::DOT>
 	{
 		constexpr static auto value = ::dupr::ast::Type::DOT;
@@ -309,6 +337,34 @@ namespace dupr { namespace ast { namespace relation {
 	{
 		constexpr static auto value = ::dupr::ast::Type::SEMICOLON;
 		using type = ::dupr::ast::node::SEMICOLON;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::SIGN>
+	{
+		constexpr static auto value = ::dupr::ast::Type::SIGN;
+		using type = ::dupr::ast::node::SIGN;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::HEKJE>
+	{
+		constexpr static auto value = ::dupr::ast::Type::HEKJE;
+		using type = ::dupr::ast::node::HEKJE;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::QUESTION>
+	{
+		constexpr static auto value = ::dupr::ast::Type::QUESTION;
+		using type = ::dupr::ast::node::QUESTION;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::EXCLAM>
+	{
+		constexpr static auto value = ::dupr::ast::Type::EXCLAM;
+		using type = ::dupr::ast::node::EXCLAM;
 	};
 
 	template<>

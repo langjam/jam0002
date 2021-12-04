@@ -69,14 +69,20 @@ extern int duprdebug;
     GT = 270,                      /* GT  */
     GE = 271,                      /* GE  */
     EQ = 272,                      /* EQ  */
-    DOT = 273,                     /* DOT  */
-    COMMA = 274,                   /* COMMA  */
-    COLON = 275,                   /* COLON  */
-    SEMICOLON = 276,               /* SEMICOLON  */
-    PATTERN_INSERTION = 277,       /* PATTERN_INSERTION  */
-    VARNAME = 278,                 /* VARNAME  */
-    NUMBER = 279,                  /* NUMBER  */
-    DECIMAL = 280                  /* DECIMAL  */
+    OR = 273,                      /* OR  */
+    AND = 274,                     /* AND  */
+    DOT = 275,                     /* DOT  */
+    COMMA = 276,                   /* COMMA  */
+    COLON = 277,                   /* COLON  */
+    SEMICOLON = 278,               /* SEMICOLON  */
+    SIGN = 279,                    /* SIGN  */
+    HEKJE = 280,                   /* HEKJE  */
+    QUESTION = 281,                /* QUESTION  */
+    EXCLAM = 282,                  /* EXCLAM  */
+    PATTERN_INSERTION = 283,       /* PATTERN_INSERTION  */
+    VARNAME = 284,                 /* VARNAME  */
+    NUMBER = 285,                  /* NUMBER  */
+    DECIMAL = 286                  /* DECIMAL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -85,7 +91,7 @@ extern int duprdebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 113 "./dupr_parser.y"
+#line 127 "./dupr_parser.y"
 
 	::deamer::external::cpp::lexer::TerminalObject* Terminal;
 	::dupr::ast::node::LEFT_BRACKET* dupr_LEFT_BRACKET;
@@ -103,10 +109,16 @@ union YYSTYPE
 	::dupr::ast::node::GT* dupr_GT;
 	::dupr::ast::node::GE* dupr_GE;
 	::dupr::ast::node::EQ* dupr_EQ;
+	::dupr::ast::node::OR* dupr_OR;
+	::dupr::ast::node::AND* dupr_AND;
 	::dupr::ast::node::DOT* dupr_DOT;
 	::dupr::ast::node::COMMA* dupr_COMMA;
 	::dupr::ast::node::COLON* dupr_COLON;
 	::dupr::ast::node::SEMICOLON* dupr_SEMICOLON;
+	::dupr::ast::node::SIGN* dupr_SIGN;
+	::dupr::ast::node::HEKJE* dupr_HEKJE;
+	::dupr::ast::node::QUESTION* dupr_QUESTION;
+	::dupr::ast::node::EXCLAM* dupr_EXCLAM;
 	::dupr::ast::node::PATTERN_INSERTION* dupr_PATTERN_INSERTION;
 	::dupr::ast::node::VARNAME* dupr_VARNAME;
 	::dupr::ast::node::NUMBER* dupr_NUMBER;
@@ -116,12 +128,13 @@ union YYSTYPE
 	::dupr::ast::node::deamerreserved_star__stmt__* dupr_deamerreserved_star__stmt__;
 	::dupr::ast::node::stmt* dupr_stmt;
 	::dupr::ast::node::pattern_execution* dupr_pattern_execution;
-	::dupr::ast::node::pattern_execution_content* dupr_pattern_execution_content;
-	::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__* dupr_deamerreserved_plus__pattern_execution_content_stmt__;
-	::dupr::ast::node::pattern_execution_content_stmt* dupr_pattern_execution_content_stmt;
+	::dupr::ast::node::pattern_constructor_array* dupr_pattern_constructor_array;
+	::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____* dupr_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____;
 	::dupr::ast::node::pattern_constructor* dupr_pattern_constructor;
 	::dupr::ast::node::pattern_type* dupr_pattern_type;
 	::dupr::ast::node::pattern_name* dupr_pattern_name;
+	::dupr::ast::node::deamerreserved_arrow__VARNAME__* dupr_deamerreserved_arrow__VARNAME__;
+	::dupr::ast::node::deamerreserved_star__GT__VARNAME__* dupr_deamerreserved_star__GT__VARNAME__;
 	::dupr::ast::node::pattern_constructor_content* dupr_pattern_constructor_content;
 	::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__* dupr_deamerreserved_plus__pattern_constructor_content_stmt__;
 	::dupr::ast::node::pattern_constructor_content_stmt* dupr_pattern_constructor_content_stmt;
@@ -130,7 +143,7 @@ union YYSTYPE
 	::dupr::ast::node::pattern_constructor_terminate* dupr_pattern_constructor_terminate;
 	::dupr::ast::node::pattern_constructor_encapsulation* dupr_pattern_constructor_encapsulation;
 
-#line 134 "dupr_parser.tab.h"
+#line 147 "dupr_parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -3,6 +3,7 @@
 
 #include "dupr/IR/Statement.h"
 #include <string>
+
 namespace dupr::ir
 {
 	class VariableDeclaration : public Statement

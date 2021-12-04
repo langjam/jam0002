@@ -28,17 +28,12 @@ namespace dupr { namespace ast { namespace relation {
 			return true;
 		}
 
-		if (t == ::dupr::ast::Type::pattern_execution_content)
+		if (t == ::dupr::ast::Type::pattern_constructor_array)
 		{
 			return true;
 		}
 
-		if (t == ::dupr::ast::Type::deamerreserved_plus__pattern_execution_content_stmt__)
-		{
-			return true;
-		}
-
-		if (t == ::dupr::ast::Type::pattern_execution_content_stmt)
+		if (t == ::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____)
 		{
 			return true;
 		}
@@ -54,6 +49,16 @@ namespace dupr { namespace ast { namespace relation {
 		}
 
 		if (t == ::dupr::ast::Type::pattern_name)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::deamerreserved_arrow__VARNAME__)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::deamerreserved_star__GT__VARNAME__)
 		{
 			return true;
 		}

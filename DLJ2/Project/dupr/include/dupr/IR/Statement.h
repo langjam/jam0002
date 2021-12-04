@@ -1,12 +1,12 @@
 #ifndef DUPR_IR_STATEMENT_H
 #define DUPR_IR_STATEMENT_H
 
-#include "dupr/IR/Expression.h"
+#include "dupr/IR/ProgramOrder.h"
 #include <string>
 
 namespace dupr::ir
 {
-	class Statement
+	class Statement : public ProgramOrder
 	{
 	public:
 		enum class Type
@@ -20,9 +20,10 @@ namespace dupr::ir
 		Statement::Type type;
 
 	public:
-		Statement(Statement::Type type_) : type(type_)
+		Statement(Statement::Type type_) : ProgramOrder(OrderType::Statement), type(type_)
 		{
 		}
+		virtual ~Statement() = default;
 
 	public:
 		Statement::Type GetType() const

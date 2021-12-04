@@ -66,34 +66,24 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"pattern_execution\"];\n";
 		}
 
-		void ListenEntry(const ::dupr::ast::node::pattern_execution_content* node) override
+		void ListenEntry(const ::dupr::ast::node::pattern_constructor_array* node) override
 		{
 			for (const auto* child : node->GetNodes())
 			{
 				AddConnection(node, child);
 			}
 
-			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"pattern_execution_content\"];\n";
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"pattern_constructor_array\"];\n";
 		}
 
-		void ListenEntry(const ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__* node) override
+		void ListenEntry(const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____* node) override
 		{
 			for (const auto* child : node->GetNodes())
 			{
 				AddConnection(node, child);
 			}
 
-			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"deamerreserved_plus__pattern_execution_content_stmt__\"];\n";
-		}
-
-		void ListenEntry(const ::dupr::ast::node::pattern_execution_content_stmt* node) override
-		{
-			for (const auto* child : node->GetNodes())
-			{
-				AddConnection(node, child);
-			}
-
-			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"pattern_execution_content_stmt\"];\n";
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____\"];\n";
 		}
 
 		void ListenEntry(const ::dupr::ast::node::pattern_constructor* node) override
@@ -124,6 +114,26 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 			}
 
 			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"pattern_name\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::deamerreserved_arrow__VARNAME__* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"deamerreserved_arrow__VARNAME__\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"deamerreserved_star__GT__VARNAME__\"];\n";
 		}
 
 		void ListenEntry(const ::dupr::ast::node::pattern_constructor_content* node) override
@@ -346,6 +356,26 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"EQ\"];\n";
 		}
 
+		void ListenEntry(const ::dupr::ast::node::OR* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"OR\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::AND* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"AND\"];\n";
+		}
+
 		void ListenEntry(const ::dupr::ast::node::DOT* node) override
 		{
 			for (const auto* child : node->GetNodes())
@@ -384,6 +414,46 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 			}
 
 			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"SEMICOLON\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::SIGN* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"SIGN\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::HEKJE* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"HEKJE\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::QUESTION* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"QUESTION\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::EXCLAM* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"EXCLAM\"];\n";
 		}
 
 		void ListenEntry(const ::dupr::ast::node::PATTERN_INSERTION* node) override
@@ -453,15 +523,11 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 		{
 		}
 
-		void ListenExit(const ::dupr::ast::node::pattern_execution_content* node) override
+		void ListenExit(const ::dupr::ast::node::pattern_constructor_array* node) override
 		{
 		}
 
-		void ListenExit(const ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__* node) override
-		{
-		}
-
-		void ListenExit(const ::dupr::ast::node::pattern_execution_content_stmt* node) override
+		void ListenExit(const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____* node) override
 		{
 		}
 
@@ -474,6 +540,14 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 		}
 
 		void ListenExit(const ::dupr::ast::node::pattern_name* node) override
+		{
+		}
+
+		void ListenExit(const ::dupr::ast::node::deamerreserved_arrow__VARNAME__* node) override
+		{
+		}
+
+		void ListenExit(const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__* node) override
 		{
 		}
 

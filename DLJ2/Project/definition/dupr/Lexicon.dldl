@@ -1,5 +1,6 @@
 / DUPR Lexicon 2021 Thimo Bohmer
 
+/ Encapsulators
 Terminal: LEFT_BRACKET         [{]
 Terminal: RIGHT_BRACKET        [}]
 Terminal: LEFT_PARANTHESIS     [(]
@@ -7,6 +8,7 @@ Terminal: RIGHT_PARANTHESIS    [)]
 Terminal: LEFT_SQUARE_BRACKET  [\[]
 Terminal: RIGHT_SQUARE_BRACKET [\]]
 
+/ Operators
 Terminal: ADD    [+]
 Terminal: MINUS  [-]
 Terminal: MULTI  [*]
@@ -16,13 +18,20 @@ Terminal: LE  [<][=]
 Terminal: GT  [>]
 Terminal: GE  [>][=]
 Terminal: EQ  [=]
+Terminal: OR  [|]
+Terminal: AND [&]
 
+/ Structure symbols
 Terminal: DOT       [.]
 Terminal: COMMA     [,]
 Terminal: COLON     [:]
 Terminal: SEMICOLON [;]
+Terminal: SIGN      [$]
+Terminal: HEKJE     [#]
+Terminal: QUESTION  [?]
+Terminal: EXCLAM    [!]
 
-Terminal: PATTERN_INSERTION [\[][\[][a-zA-Z_]+[a-zA-Z_0-9]*[\]][\]]
+Terminal: PATTERN_INSERTION ([\[][\[][a-zA-Z_]+[a-zA-Z_0-9]*[\]][\]])|([\[][\[][a-zA-Z_>]+[a-zA-Z_0-9>]*[:][a-zA-Z_]+[a-zA-Z_0-9]*[\]][\]])
 Terminal: VARNAME [a-zA-Z_]+[a-zA-Z_0-9]*
 Terminal: NUMBER  [0-9]+
 Terminal: DECIMAL [0-9]+[.][0-9]+

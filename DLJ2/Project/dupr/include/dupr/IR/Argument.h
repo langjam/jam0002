@@ -17,6 +17,15 @@ namespace dupr::ir
 		}
 
 	public:
+		std::string GetType() const
+		{
+			return type;
+		}
+
+		std::string GetName() const
+		{
+			return name;
+		}
 	};
 }
 

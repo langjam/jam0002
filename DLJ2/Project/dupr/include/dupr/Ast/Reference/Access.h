@@ -10,12 +10,13 @@
 #include "dupr/Ast/Node/deamerreserved_star__stmt__.h"
 #include "dupr/Ast/Node/stmt.h"
 #include "dupr/Ast/Node/pattern_execution.h"
-#include "dupr/Ast/Node/pattern_execution_content.h"
-#include "dupr/Ast/Node/deamerreserved_plus__pattern_execution_content_stmt__.h"
-#include "dupr/Ast/Node/pattern_execution_content_stmt.h"
+#include "dupr/Ast/Node/pattern_constructor_array.h"
+#include "dupr/Ast/Node/deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____.h"
 #include "dupr/Ast/Node/pattern_constructor.h"
 #include "dupr/Ast/Node/pattern_type.h"
 #include "dupr/Ast/Node/pattern_name.h"
+#include "dupr/Ast/Node/deamerreserved_arrow__VARNAME__.h"
+#include "dupr/Ast/Node/deamerreserved_star__GT__VARNAME__.h"
 #include "dupr/Ast/Node/pattern_constructor_content.h"
 #include "dupr/Ast/Node/deamerreserved_plus__pattern_constructor_content_stmt__.h"
 #include "dupr/Ast/Node/pattern_constructor_content_stmt.h"
@@ -38,10 +39,16 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/OR.h"
+#include "dupr/Ast/Node/AND.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
 #include "dupr/Ast/Node/SEMICOLON.h"
+#include "dupr/Ast/Node/SIGN.h"
+#include "dupr/Ast/Node/HEKJE.h"
+#include "dupr/Ast/Node/QUESTION.h"
+#include "dupr/Ast/Node/EXCLAM.h"
 #include "dupr/Ast/Node/PATTERN_INSERTION.h"
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
@@ -110,17 +117,19 @@ namespace dupr { namespace ast { namespace reference {
 	template<>
 	struct Access<::dupr::ast::node::pattern_execution>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_execution_content>;
+	struct Access<::dupr::ast::node::pattern_constructor_array>;
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>;
-	template<>
-	struct Access<::dupr::ast::node::pattern_execution_content_stmt>;
+	struct Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>;
 	template<>
 	struct Access<::dupr::ast::node::pattern_constructor>;
 	template<>
 	struct Access<::dupr::ast::node::pattern_type>;
 	template<>
 	struct Access<::dupr::ast::node::pattern_name>;
+	template<>
+	struct Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>;
+	template<>
+	struct Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>;
 	template<>
 	struct Access<::dupr::ast::node::pattern_constructor_content>;
 	template<>
@@ -166,6 +175,10 @@ namespace dupr { namespace ast { namespace reference {
 	template<>
 	struct Access<::dupr::ast::node::EQ>;
 	template<>
+	struct Access<::dupr::ast::node::OR>;
+	template<>
+	struct Access<::dupr::ast::node::AND>;
+	template<>
 	struct Access<::dupr::ast::node::DOT>;
 	template<>
 	struct Access<::dupr::ast::node::COMMA>;
@@ -173,6 +186,14 @@ namespace dupr { namespace ast { namespace reference {
 	struct Access<::dupr::ast::node::COLON>;
 	template<>
 	struct Access<::dupr::ast::node::SEMICOLON>;
+	template<>
+	struct Access<::dupr::ast::node::SIGN>;
+	template<>
+	struct Access<::dupr::ast::node::HEKJE>;
+	template<>
+	struct Access<::dupr::ast::node::QUESTION>;
+	template<>
+	struct Access<::dupr::ast::node::EXCLAM>;
 	template<>
 	struct Access<::dupr::ast::node::PATTERN_INSERTION>;
 	template<>
@@ -435,6 +456,7 @@ Access<::dupr::ast::node::stmt> stmt();
 
 	public:
 		Access<::dupr::ast::node::pattern_execution> pattern_execution();
+Access<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
 Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 
 
@@ -522,8 +544,8 @@ Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 		}
 
 	public:
-		Access<::dupr::ast::node::pattern_execution_content> pattern_execution_content();
-Access<::dupr::ast::node::pattern_name> pattern_name();
+		Access<::dupr::ast::node::pattern_name> pattern_name();
+Access<::dupr::ast::node::pattern_constructor_content> pattern_constructor_content();
 Access<::dupr::ast::node::LEFT_BRACKET> LEFT_BRACKET();
 Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 
@@ -541,28 +563,28 @@ Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_execution_content> : public AccessBase
+	struct Access<::dupr::ast::node::pattern_constructor_array> : public AccessBase
 	{
 	protected:
-		std::vector<const ::dupr::ast::node::pattern_execution_content*> ts;
+		std::vector<const ::dupr::ast::node::pattern_constructor_array*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_execution_content*> ts_) : ts(std::move(ts_))
+		Access(std::vector<const ::dupr::ast::node::pattern_constructor_array*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_execution_content& t) : ts({&t})
+		Access(const ::dupr::ast::node::pattern_constructor_array& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_execution_content* t) : ts({t})
+		Access(const ::dupr::ast::node::pattern_constructor_array* t) : ts({t})
 		{
 		}
 
 		Access() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_execution_content>& operator[](::std::size_t index)
+		Access<::dupr::ast::node::pattern_constructor_array>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -578,7 +600,7 @@ Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_execution_content>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		Access<::dupr::ast::node::pattern_constructor_array>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -594,7 +616,7 @@ Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 			}
 			else
 			{
-				std::vector<const ::dupr::ast::node::pattern_execution_content*> temporaries;
+				std::vector<const ::dupr::ast::node::pattern_constructor_array*> temporaries;
 				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
 				{
 					temporaries.push_back(ts[i]);
@@ -606,18 +628,24 @@ Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 			return *this;
 		}
 
-		std::vector<const ::dupr::ast::node::pattern_execution_content*> GetContent()
+		std::vector<const ::dupr::ast::node::pattern_constructor_array*> GetContent()
 		{
 			return ts;
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__> deamerreserved_plus__pattern_execution_content_stmt__();
-Access<::dupr::ast::node::pattern_execution_content_stmt> pattern_execution_content_stmt();
+		Access<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
+Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____();
+Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
+Access<::dupr::ast::node::pattern_type> pattern_type();
+Access<::dupr::ast::node::pattern_name> pattern_name();
+Access<::dupr::ast::node::LEFT_SQUARE_BRACKET> LEFT_SQUARE_BRACKET();
+Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
+Access<::dupr::ast::node::COLON> COLON();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_execution_content>& for_all(FunctionType function)
+		Access<::dupr::ast::node::pattern_constructor_array>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -629,28 +657,28 @@ Access<::dupr::ast::node::pattern_execution_content_stmt> pattern_execution_cont
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__> : public AccessBase
+	struct Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> : public AccessBase
 	{
 	protected:
-		std::vector<const ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__*> ts;
+		std::vector<const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__*> ts_) : ts(std::move(ts_))
+		Access(std::vector<const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__& t) : ts({&t})
+		Access(const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__* t) : ts({t})
+		Access(const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____* t) : ts({t})
 		{
 		}
 
 		Access() = default;
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>& operator[](::std::size_t index)
+		Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -666,7 +694,7 @@ Access<::dupr::ast::node::pattern_execution_content_stmt> pattern_execution_cont
 			return *this;
 		}
 
-		Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -682,7 +710,7 @@ Access<::dupr::ast::node::pattern_execution_content_stmt> pattern_execution_cont
 			}
 			else
 			{
-				std::vector<const ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__*> temporaries;
+				std::vector<const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____*> temporaries;
 				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
 				{
 					temporaries.push_back(ts[i]);
@@ -694,105 +722,19 @@ Access<::dupr::ast::node::pattern_execution_content_stmt> pattern_execution_cont
 			return *this;
 		}
 
-		std::vector<const ::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__*> GetContent()
+		std::vector<const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____*> GetContent()
 		{
 			return ts;
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__> deamerreserved_plus__pattern_execution_content_stmt__();
-Access<::dupr::ast::node::pattern_execution_content_stmt> pattern_execution_content_stmt();
+		Access<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
+Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____();
+Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>& for_all(FunctionType function)
-		{
-			for (const auto* const t : ts)
-			{
-				function(t);
-			}
-
-			return *this;
-		}
-	};
-
-	template<>
-	struct Access<::dupr::ast::node::pattern_execution_content_stmt> : public AccessBase
-	{
-	protected:
-		std::vector<const ::dupr::ast::node::pattern_execution_content_stmt*> ts;
-
-	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_execution_content_stmt*> ts_) : ts(std::move(ts_))
-		{
-		}
-
-		Access(const ::dupr::ast::node::pattern_execution_content_stmt& t) : ts({&t})
-		{
-		}
-
-		Access(const ::dupr::ast::node::pattern_execution_content_stmt* t) : ts({t})
-		{
-		}
-
-		Access() = default;
-
-	public:
-		Access<::dupr::ast::node::pattern_execution_content_stmt>& operator[](::std::size_t index)
-		{
-			if (index >= ts.size())
-			{
-				ts.clear();
-			}
-			else
-			{
-				const auto* const copy = ts[index];
-				ts.clear();
-				ts.push_back(copy);
-			}
-
-			return *this;
-		}
-
-		Access<::dupr::ast::node::pattern_execution_content_stmt>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
-		{
-			// swap if the other is larger
-			if (indexBegin > indexEnd)
-			{
-				const auto tmp = indexBegin;
-				indexBegin = indexEnd;
-				indexEnd = tmp;
-			}
-
-			if (indexBegin >= ts.size())
-			{
-				ts.clear();
-			}
-			else
-			{
-				std::vector<const ::dupr::ast::node::pattern_execution_content_stmt*> temporaries;
-				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
-				{
-					temporaries.push_back(ts[i]);
-				}
-				ts.clear();
-				ts = temporaries;
-			}
-
-			return *this;
-		}
-
-		std::vector<const ::dupr::ast::node::pattern_execution_content_stmt*> GetContent()
-		{
-			return ts;
-		}
-
-	public:
-		Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_content_stmt();
-
-
-		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_execution_content_stmt>& for_all(FunctionType function)
+		Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1054,11 +996,192 @@ Access<::dupr::ast::node::COLON> COLON();
 		}
 
 	public:
-		Access<::dupr::ast::node::VARNAME> VARNAME();
+		Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__> deamerreserved_arrow__VARNAME__();
+Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
+Access<::dupr::ast::node::GT> GT();
+Access<::dupr::ast::node::VARNAME> VARNAME();
 
 
 		template<typename FunctionType>
 		Access<::dupr::ast::node::pattern_name>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+	};
+
+	template<>
+	struct Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::deamerreserved_arrow__VARNAME__*> ts;
+
+	public:
+		Access(std::vector<const ::dupr::ast::node::deamerreserved_arrow__VARNAME__*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		Access(const ::dupr::ast::node::deamerreserved_arrow__VARNAME__& t) : ts({&t})
+		{
+		}
+
+		Access(const ::dupr::ast::node::deamerreserved_arrow__VARNAME__* t) : ts({t})
+		{
+		}
+
+		Access() = default;
+
+	public:
+		Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::deamerreserved_arrow__VARNAME__*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::deamerreserved_arrow__VARNAME__*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
+Access<::dupr::ast::node::GT> GT();
+Access<::dupr::ast::node::VARNAME> VARNAME();
+
+
+		template<typename FunctionType>
+		Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+	};
+
+	template<>
+	struct Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__*> ts;
+
+	public:
+		Access(std::vector<const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		Access(const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__& t) : ts({&t})
+		{
+		}
+
+		Access(const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__* t) : ts({t})
+		{
+		}
+
+		Access() = default;
+
+	public:
+		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
+Access<::dupr::ast::node::GT> GT();
+Access<::dupr::ast::node::VARNAME> VARNAME();
+
+
+		template<typename FunctionType>
+		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1416,6 +1539,8 @@ Access<::dupr::ast::node::LE> LE();
 Access<::dupr::ast::node::GT> GT();
 Access<::dupr::ast::node::GE> GE();
 Access<::dupr::ast::node::EQ> EQ();
+Access<::dupr::ast::node::OR> OR();
+Access<::dupr::ast::node::AND> AND();
 
 
 		template<typename FunctionType>
@@ -1506,6 +1631,10 @@ Access<::dupr::ast::node::EQ> EQ();
 Access<::dupr::ast::node::COMMA> COMMA();
 Access<::dupr::ast::node::COLON> COLON();
 Access<::dupr::ast::node::SEMICOLON> SEMICOLON();
+Access<::dupr::ast::node::SIGN> SIGN();
+Access<::dupr::ast::node::HEKJE> HEKJE();
+Access<::dupr::ast::node::QUESTION> QUESTION();
+Access<::dupr::ast::node::EXCLAM> EXCLAM();
 
 
 		template<typename FunctionType>
@@ -1682,8 +1811,7 @@ Access<::dupr::ast::node::DECIMAL> DECIMAL();
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__> deamerreserved_plus__pattern_constructor_content_stmt__();
-Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_content_stmt();
+		Access<::dupr::ast::node::pattern_constructor_content> pattern_constructor_content();
 Access<::dupr::ast::node::LEFT_BRACKET> LEFT_BRACKET();
 Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 Access<::dupr::ast::node::LEFT_PARANTHESIS> LEFT_PARANTHESIS();
@@ -2995,6 +3123,178 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 	};
 
 	template<>
+	struct Access<::dupr::ast::node::OR> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::OR*> ts;
+
+	public:
+		Access(std::vector<const ::dupr::ast::node::OR*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		Access(const ::dupr::ast::node::OR& t) : ts({&t})
+		{
+		}
+
+		Access(const ::dupr::ast::node::OR* t) : ts({t})
+		{
+		}
+
+		Access() = default;
+
+	public:
+		Access<::dupr::ast::node::OR>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		Access<::dupr::ast::node::OR>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::OR*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::OR*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		Access<::dupr::ast::node::OR>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+	};
+
+	template<>
+	struct Access<::dupr::ast::node::AND> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::AND*> ts;
+
+	public:
+		Access(std::vector<const ::dupr::ast::node::AND*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		Access(const ::dupr::ast::node::AND& t) : ts({&t})
+		{
+		}
+
+		Access(const ::dupr::ast::node::AND* t) : ts({t})
+		{
+		}
+
+		Access() = default;
+
+	public:
+		Access<::dupr::ast::node::AND>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		Access<::dupr::ast::node::AND>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::AND*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::AND*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		Access<::dupr::ast::node::AND>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+	};
+
+	template<>
 	struct Access<::dupr::ast::node::DOT> : public AccessBase
 	{
 	protected:
@@ -3328,6 +3628,350 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 		template<typename FunctionType>
 		Access<::dupr::ast::node::SEMICOLON>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+	};
+
+	template<>
+	struct Access<::dupr::ast::node::SIGN> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::SIGN*> ts;
+
+	public:
+		Access(std::vector<const ::dupr::ast::node::SIGN*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		Access(const ::dupr::ast::node::SIGN& t) : ts({&t})
+		{
+		}
+
+		Access(const ::dupr::ast::node::SIGN* t) : ts({t})
+		{
+		}
+
+		Access() = default;
+
+	public:
+		Access<::dupr::ast::node::SIGN>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		Access<::dupr::ast::node::SIGN>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::SIGN*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::SIGN*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		Access<::dupr::ast::node::SIGN>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+	};
+
+	template<>
+	struct Access<::dupr::ast::node::HEKJE> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::HEKJE*> ts;
+
+	public:
+		Access(std::vector<const ::dupr::ast::node::HEKJE*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		Access(const ::dupr::ast::node::HEKJE& t) : ts({&t})
+		{
+		}
+
+		Access(const ::dupr::ast::node::HEKJE* t) : ts({t})
+		{
+		}
+
+		Access() = default;
+
+	public:
+		Access<::dupr::ast::node::HEKJE>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		Access<::dupr::ast::node::HEKJE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::HEKJE*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::HEKJE*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		Access<::dupr::ast::node::HEKJE>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+	};
+
+	template<>
+	struct Access<::dupr::ast::node::QUESTION> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::QUESTION*> ts;
+
+	public:
+		Access(std::vector<const ::dupr::ast::node::QUESTION*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		Access(const ::dupr::ast::node::QUESTION& t) : ts({&t})
+		{
+		}
+
+		Access(const ::dupr::ast::node::QUESTION* t) : ts({t})
+		{
+		}
+
+		Access() = default;
+
+	public:
+		Access<::dupr::ast::node::QUESTION>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		Access<::dupr::ast::node::QUESTION>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::QUESTION*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::QUESTION*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		Access<::dupr::ast::node::QUESTION>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+	};
+
+	template<>
+	struct Access<::dupr::ast::node::EXCLAM> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::EXCLAM*> ts;
+
+	public:
+		Access(std::vector<const ::dupr::ast::node::EXCLAM*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		Access(const ::dupr::ast::node::EXCLAM& t) : ts({&t})
+		{
+		}
+
+		Access(const ::dupr::ast::node::EXCLAM* t) : ts({t})
+		{
+		}
+
+		Access() = default;
+
+	public:
+		Access<::dupr::ast::node::EXCLAM>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		Access<::dupr::ast::node::EXCLAM>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::EXCLAM*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::EXCLAM*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		Access<::dupr::ast::node::EXCLAM>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3810,6 +4454,14 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return Access<::dupr::ast::node::pattern_execution>(Get<::dupr::ast::Type::pattern_execution>(ts));
 		}
 
+		inline Access<::dupr::ast::node::pattern_constructor_array> Access<::dupr::ast::node::stmt>::pattern_constructor_array()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
+		}
+
 		inline Access<::dupr::ast::node::pattern_constructor> Access<::dupr::ast::node::stmt>::pattern_constructor()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
@@ -3818,20 +4470,20 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return Access<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_execution_content> Access<::dupr::ast::node::pattern_execution>::pattern_execution_content()
-		{
-			// Optimized search, if it fails continue using unoptimized search.
-
-			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_execution_content>(Get<::dupr::ast::Type::pattern_execution_content>(ts));
-		}
-
 		inline Access<::dupr::ast::node::pattern_name> Access<::dupr::ast::node::pattern_execution>::pattern_name()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
 			return Access<::dupr::ast::node::pattern_name>(Get<::dupr::ast::Type::pattern_name>(ts));
+		}
+
+		inline Access<::dupr::ast::node::pattern_constructor_content> Access<::dupr::ast::node::pattern_execution>::pattern_constructor_content()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::pattern_constructor_content>(Get<::dupr::ast::Type::pattern_constructor_content>(ts));
 		}
 
 		inline Access<::dupr::ast::node::LEFT_BRACKET> Access<::dupr::ast::node::pattern_execution>::LEFT_BRACKET()
@@ -3850,44 +4502,92 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return Access<::dupr::ast::node::RIGHT_BRACKET>(Get<::dupr::ast::Type::RIGHT_BRACKET>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__> Access<::dupr::ast::node::pattern_execution_content>::deamerreserved_plus__pattern_execution_content_stmt__()
+		inline Access<::dupr::ast::node::pattern_constructor_array> Access<::dupr::ast::node::pattern_constructor_array>::pattern_constructor_array()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>(Get<::dupr::ast::Type::deamerreserved_plus__pattern_execution_content_stmt__>(ts));
+			return Access<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_execution_content_stmt> Access<::dupr::ast::node::pattern_execution_content>::pattern_execution_content_stmt()
+		inline Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> Access<::dupr::ast::node::pattern_constructor_array>::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_execution_content_stmt>(Get<::dupr::ast::Type::pattern_execution_content_stmt>(ts));
+			return Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(Get<::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__> Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>::deamerreserved_plus__pattern_execution_content_stmt__()
+		inline Access<::dupr::ast::node::pattern_constructor> Access<::dupr::ast::node::pattern_constructor_array>::pattern_constructor()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>(Get<::dupr::ast::Type::deamerreserved_plus__pattern_execution_content_stmt__>(ts));
+			return Access<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_execution_content_stmt> Access<::dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__>::pattern_execution_content_stmt()
+		inline Access<::dupr::ast::node::pattern_type> Access<::dupr::ast::node::pattern_constructor_array>::pattern_type()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_execution_content_stmt>(Get<::dupr::ast::Type::pattern_execution_content_stmt>(ts));
+			return Access<::dupr::ast::node::pattern_type>(Get<::dupr::ast::Type::pattern_type>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_content_stmt> Access<::dupr::ast::node::pattern_execution_content_stmt>::pattern_constructor_content_stmt()
+		inline Access<::dupr::ast::node::pattern_name> Access<::dupr::ast::node::pattern_constructor_array>::pattern_name()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_content_stmt>(Get<::dupr::ast::Type::pattern_constructor_content_stmt>(ts));
+			return Access<::dupr::ast::node::pattern_name>(Get<::dupr::ast::Type::pattern_name>(ts));
+		}
+
+		inline Access<::dupr::ast::node::LEFT_SQUARE_BRACKET> Access<::dupr::ast::node::pattern_constructor_array>::LEFT_SQUARE_BRACKET()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::LEFT_SQUARE_BRACKET>(Get<::dupr::ast::Type::LEFT_SQUARE_BRACKET>(ts));
+		}
+
+		inline Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> Access<::dupr::ast::node::pattern_constructor_array>::RIGHT_SQUARE_BRACKET()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET>(Get<::dupr::ast::Type::RIGHT_SQUARE_BRACKET>(ts));
+		}
+
+		inline Access<::dupr::ast::node::COLON> Access<::dupr::ast::node::pattern_constructor_array>::COLON()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::COLON>(Get<::dupr::ast::Type::COLON>(ts));
+		}
+
+		inline Access<::dupr::ast::node::pattern_constructor_array> Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::pattern_constructor_array()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
+		}
+
+		inline Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(Get<::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(ts));
+		}
+
+		inline Access<::dupr::ast::node::pattern_constructor> Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::pattern_constructor()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
 		}
 
 		inline Access<::dupr::ast::node::pattern_type> Access<::dupr::ast::node::pattern_constructor>::pattern_type()
@@ -3946,7 +4646,79 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return Access<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
 		}
 
+		inline Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__> Access<::dupr::ast::node::pattern_name>::deamerreserved_arrow__VARNAME__()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_arrow__VARNAME__>(ts));
+		}
+
+		inline Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> Access<::dupr::ast::node::pattern_name>::deamerreserved_star__GT__VARNAME__()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
+		}
+
+		inline Access<::dupr::ast::node::GT> Access<::dupr::ast::node::pattern_name>::GT()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
+		}
+
 		inline Access<::dupr::ast::node::VARNAME> Access<::dupr::ast::node::pattern_name>::VARNAME()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
+		}
+
+		inline Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::deamerreserved_star__GT__VARNAME__()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
+		}
+
+		inline Access<::dupr::ast::node::GT> Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::GT()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
+		}
+
+		inline Access<::dupr::ast::node::VARNAME> Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::VARNAME()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
+		}
+
+		inline Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::deamerreserved_star__GT__VARNAME__()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
+		}
+
+		inline Access<::dupr::ast::node::GT> Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::GT()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
+		}
+
+		inline Access<::dupr::ast::node::VARNAME> Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::VARNAME()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
@@ -4090,6 +4862,22 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return Access<::dupr::ast::node::EQ>(Get<::dupr::ast::Type::EQ>(ts));
 		}
 
+		inline Access<::dupr::ast::node::OR> Access<::dupr::ast::node::pattern_constructor_operator>::OR()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::OR>(Get<::dupr::ast::Type::OR>(ts));
+		}
+
+		inline Access<::dupr::ast::node::AND> Access<::dupr::ast::node::pattern_constructor_operator>::AND()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::AND>(Get<::dupr::ast::Type::AND>(ts));
+		}
+
 		inline Access<::dupr::ast::node::DOT> Access<::dupr::ast::node::pattern_constructor_structure>::DOT()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
@@ -4120,6 +4908,38 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			// Unoptimized search
 			return Access<::dupr::ast::node::SEMICOLON>(Get<::dupr::ast::Type::SEMICOLON>(ts));
+		}
+
+		inline Access<::dupr::ast::node::SIGN> Access<::dupr::ast::node::pattern_constructor_structure>::SIGN()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::SIGN>(Get<::dupr::ast::Type::SIGN>(ts));
+		}
+
+		inline Access<::dupr::ast::node::HEKJE> Access<::dupr::ast::node::pattern_constructor_structure>::HEKJE()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::HEKJE>(Get<::dupr::ast::Type::HEKJE>(ts));
+		}
+
+		inline Access<::dupr::ast::node::QUESTION> Access<::dupr::ast::node::pattern_constructor_structure>::QUESTION()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::QUESTION>(Get<::dupr::ast::Type::QUESTION>(ts));
+		}
+
+		inline Access<::dupr::ast::node::EXCLAM> Access<::dupr::ast::node::pattern_constructor_structure>::EXCLAM()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return Access<::dupr::ast::node::EXCLAM>(Get<::dupr::ast::Type::EXCLAM>(ts));
 		}
 
 		inline Access<::dupr::ast::node::PATTERN_INSERTION> Access<::dupr::ast::node::pattern_constructor_terminate>::PATTERN_INSERTION()
@@ -4154,20 +4974,12 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return Access<::dupr::ast::node::DECIMAL>(Get<::dupr::ast::Type::DECIMAL>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__> Access<::dupr::ast::node::pattern_constructor_encapsulation>::deamerreserved_plus__pattern_constructor_content_stmt__()
+		inline Access<::dupr::ast::node::pattern_constructor_content> Access<::dupr::ast::node::pattern_constructor_encapsulation>::pattern_constructor_content()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__>(Get<::dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__>(ts));
-		}
-
-		inline Access<::dupr::ast::node::pattern_constructor_content_stmt> Access<::dupr::ast::node::pattern_constructor_encapsulation>::pattern_constructor_content_stmt()
-		{
-			// Optimized search, if it fails continue using unoptimized search.
-
-			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_content_stmt>(Get<::dupr::ast::Type::pattern_constructor_content_stmt>(ts));
+			return Access<::dupr::ast::node::pattern_constructor_content>(Get<::dupr::ast::Type::pattern_constructor_content>(ts));
 		}
 
 		inline Access<::dupr::ast::node::LEFT_BRACKET> Access<::dupr::ast::node::pattern_constructor_encapsulation>::LEFT_BRACKET()

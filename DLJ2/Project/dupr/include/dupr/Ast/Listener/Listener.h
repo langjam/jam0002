@@ -19,10 +19,16 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/OR.h"
+#include "dupr/Ast/Node/AND.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
 #include "dupr/Ast/Node/SEMICOLON.h"
+#include "dupr/Ast/Node/SIGN.h"
+#include "dupr/Ast/Node/HEKJE.h"
+#include "dupr/Ast/Node/QUESTION.h"
+#include "dupr/Ast/Node/EXCLAM.h"
 #include "dupr/Ast/Node/PATTERN_INSERTION.h"
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
@@ -33,12 +39,13 @@
 #include "dupr/Ast/Node/deamerreserved_star__stmt__.h"
 #include "dupr/Ast/Node/stmt.h"
 #include "dupr/Ast/Node/pattern_execution.h"
-#include "dupr/Ast/Node/pattern_execution_content.h"
-#include "dupr/Ast/Node/deamerreserved_plus__pattern_execution_content_stmt__.h"
-#include "dupr/Ast/Node/pattern_execution_content_stmt.h"
+#include "dupr/Ast/Node/pattern_constructor_array.h"
+#include "dupr/Ast/Node/deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____.h"
 #include "dupr/Ast/Node/pattern_constructor.h"
 #include "dupr/Ast/Node/pattern_type.h"
 #include "dupr/Ast/Node/pattern_name.h"
+#include "dupr/Ast/Node/deamerreserved_arrow__VARNAME__.h"
+#include "dupr/Ast/Node/deamerreserved_star__GT__VARNAME__.h"
 #include "dupr/Ast/Node/pattern_constructor_content.h"
 #include "dupr/Ast/Node/deamerreserved_plus__pattern_constructor_content_stmt__.h"
 #include "dupr/Ast/Node/pattern_constructor_content_stmt.h"
@@ -136,6 +143,16 @@ namespace dupr { namespace ast { namespace listener {
 				Listen(static_cast<const dupr::ast::node::EQ*>(node));
 				break;
 			}
+			case dupr::ast::Type::OR:
+			{
+				Listen(static_cast<const dupr::ast::node::OR*>(node));
+				break;
+			}
+			case dupr::ast::Type::AND:
+			{
+				Listen(static_cast<const dupr::ast::node::AND*>(node));
+				break;
+			}
 			case dupr::ast::Type::DOT:
 			{
 				Listen(static_cast<const dupr::ast::node::DOT*>(node));
@@ -154,6 +171,26 @@ namespace dupr { namespace ast { namespace listener {
 			case dupr::ast::Type::SEMICOLON:
 			{
 				Listen(static_cast<const dupr::ast::node::SEMICOLON*>(node));
+				break;
+			}
+			case dupr::ast::Type::SIGN:
+			{
+				Listen(static_cast<const dupr::ast::node::SIGN*>(node));
+				break;
+			}
+			case dupr::ast::Type::HEKJE:
+			{
+				Listen(static_cast<const dupr::ast::node::HEKJE*>(node));
+				break;
+			}
+			case dupr::ast::Type::QUESTION:
+			{
+				Listen(static_cast<const dupr::ast::node::QUESTION*>(node));
+				break;
+			}
+			case dupr::ast::Type::EXCLAM:
+			{
+				Listen(static_cast<const dupr::ast::node::EXCLAM*>(node));
 				break;
 			}
 			case dupr::ast::Type::PATTERN_INSERTION:
@@ -206,21 +243,15 @@ namespace dupr { namespace ast { namespace listener {
 				DefaultAction(node);
 				break;
 			}
-			case dupr::ast::Type::pattern_execution_content:
+			case dupr::ast::Type::pattern_constructor_array:
 			{
-				Listen(static_cast<const dupr::ast::node::pattern_execution_content*>(node));
+				Listen(static_cast<const dupr::ast::node::pattern_constructor_array*>(node));
 				DefaultAction(node);
 				break;
 			}
-			case dupr::ast::Type::deamerreserved_plus__pattern_execution_content_stmt__:
+			case dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____:
 			{
-				Listen(static_cast<const dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__*>(node));
-				DefaultAction(node);
-				break;
-			}
-			case dupr::ast::Type::pattern_execution_content_stmt:
-			{
-				Listen(static_cast<const dupr::ast::node::pattern_execution_content_stmt*>(node));
+				Listen(static_cast<const dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____*>(node));
 				DefaultAction(node);
 				break;
 			}
@@ -239,6 +270,18 @@ namespace dupr { namespace ast { namespace listener {
 			case dupr::ast::Type::pattern_name:
 			{
 				Listen(static_cast<const dupr::ast::node::pattern_name*>(node));
+				DefaultAction(node);
+				break;
+			}
+			case dupr::ast::Type::deamerreserved_arrow__VARNAME__:
+			{
+				Listen(static_cast<const dupr::ast::node::deamerreserved_arrow__VARNAME__*>(node));
+				DefaultAction(node);
+				break;
+			}
+			case dupr::ast::Type::deamerreserved_star__GT__VARNAME__:
+			{
+				Listen(static_cast<const dupr::ast::node::deamerreserved_star__GT__VARNAME__*>(node));
 				DefaultAction(node);
 				break;
 			}
@@ -331,6 +374,12 @@ namespace dupr { namespace ast { namespace listener {
 		virtual void Listen(const dupr::ast::node::EQ* node)
 		{
 		}
+		virtual void Listen(const dupr::ast::node::OR* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::AND* node)
+		{
+		}
 		virtual void Listen(const dupr::ast::node::DOT* node)
 		{
 		}
@@ -341,6 +390,18 @@ namespace dupr { namespace ast { namespace listener {
 		{
 		}
 		virtual void Listen(const dupr::ast::node::SEMICOLON* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::SIGN* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::HEKJE* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::QUESTION* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::EXCLAM* node)
 		{
 		}
 		virtual void Listen(const dupr::ast::node::PATTERN_INSERTION* node)
@@ -371,13 +432,10 @@ namespace dupr { namespace ast { namespace listener {
 		virtual void Listen(const dupr::ast::node::pattern_execution* node)
 		{
 		}
-		virtual void Listen(const dupr::ast::node::pattern_execution_content* node)
+		virtual void Listen(const dupr::ast::node::pattern_constructor_array* node)
 		{
 		}
-		virtual void Listen(const dupr::ast::node::deamerreserved_plus__pattern_execution_content_stmt__* node)
-		{
-		}
-		virtual void Listen(const dupr::ast::node::pattern_execution_content_stmt* node)
+		virtual void Listen(const dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____* node)
 		{
 		}
 		virtual void Listen(const dupr::ast::node::pattern_constructor* node)
@@ -387,6 +445,12 @@ namespace dupr { namespace ast { namespace listener {
 		{
 		}
 		virtual void Listen(const dupr::ast::node::pattern_name* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::deamerreserved_arrow__VARNAME__* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::deamerreserved_star__GT__VARNAME__* node)
 		{
 		}
 		virtual void Listen(const dupr::ast::node::pattern_constructor_content* node)

@@ -83,6 +83,16 @@ namespace dupr { namespace ast { namespace relation {
 			return true;
 		}
 
+		if (t == ::dupr::ast::Type::OR)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::AND)
+		{
+			return true;
+		}
+
 		if (t == ::dupr::ast::Type::DOT)
 		{
 			return true;
@@ -99,6 +109,26 @@ namespace dupr { namespace ast { namespace relation {
 		}
 
 		if (t == ::dupr::ast::Type::SEMICOLON)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::SIGN)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::HEKJE)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::QUESTION)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::EXCLAM)
 		{
 			return true;
 		}

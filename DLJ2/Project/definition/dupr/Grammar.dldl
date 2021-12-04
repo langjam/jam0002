@@ -7,16 +7,14 @@ program
 
 stmt
 	pattern_constructor
+	pattern_constructor_array
 	pattern_execution
 
 pattern_execution
-	pattern_name LEFT_BRACKET pattern_execution_content RIGHT_BRACKET
+	pattern_name LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET
 
-pattern_execution_content
-	pattern_execution_content_stmt+
-
-pattern_execution_content_stmt
-	pattern_constructor_content_stmt
+pattern_constructor_array
+	pattern_type COLON pattern_name LEFT_SQUARE_BRACKET (pattern_constructor|pattern_constructor_array)+ RIGHT_SQUARE_BRACKET
 
 pattern_constructor
 	pattern_type COLON pattern_name LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET
@@ -25,7 +23,7 @@ pattern_type
 	VARNAME
 
 pattern_name
-	VARNAME
+	VARNAME -> (GT VARNAME)
 
 pattern_constructor_content
 	pattern_constructor_content_stmt+
@@ -46,12 +44,18 @@ pattern_constructor_operator
 	GT
 	GE
 	EQ
+	AND
+	OR
 
 pattern_constructor_structure
 	DOT
 	COMMA
 	COLON
 	SEMICOLON
+	SIGN
+	HEKJE
+	QUESTION
+	EXCLAM
 
 pattern_constructor_terminate
 	PATTERN_INSERTION
@@ -60,8 +64,8 @@ pattern_constructor_terminate
 	DECIMAL
 
 pattern_constructor_encapsulation
-	LEFT_BRACKET pattern_constructor_content_stmt+ RIGHT_BRACKET
-	LEFT_PARANTHESIS pattern_constructor_content_stmt+ RIGHT_PARANTHESIS
-	LEFT_SQUARE_BRACKET pattern_constructor_content_stmt+ RIGHT_SQUARE_BRACKET
+	LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET
+	LEFT_PARANTHESIS pattern_constructor_content RIGHT_PARANTHESIS
+	LEFT_SQUARE_BRACKET pattern_constructor_content RIGHT_SQUARE_BRACKET
 
 /
