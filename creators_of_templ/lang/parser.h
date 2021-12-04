@@ -12,6 +12,7 @@ typedef struct Parser {
 	Token current;
 	Ast ast;
 	Err err;
+	Err note;
 } Parser;
 
 // Creates a new parser from source code

@@ -82,13 +82,16 @@ Token lex_next(Lexer *l) {
 	case '#':
 		tok.type = tok_hexlit;
 		nextc(l);
-		for (char c = nextc(l); isdigit(c) ||
-			(tolower(c) >= 'a' && tolower(c) <= 'f'); c = peekc(l)) {
-			c = nextc(l);
+		move = 0;
+		for (char c = peekc(l); isdigit(c) ||
+			(tolower(c) >= 'a' && tolower(c) <= 'f'); c = movec(l)) {
 			++tok.len;
 		}
+		
+		// Since we include the # symbol we dont need to account for it
+		int nums = tok.len-1;
 
-		if (tok.len != 6 && tok.len != 8) {
+		if (nums != 6 && nums != 8) {
 			tok.type = tok_inval;
 			l->err = err_f(err_bad_number_literal, tok.loc, "Hex literal can't be %d long.", tok.len);
 		}

@@ -3,6 +3,7 @@
 #define ERR_H
 
 enum ErrCode {
+	err_note			   = -1,
 	err_ok				 = 0,
 	err_eof				= 1,
 	err_invalid_char	   = 2,

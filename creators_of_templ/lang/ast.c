@@ -90,7 +90,16 @@ void node_pretty_print(Node *node, int indent) {
 		case node_call:			   printf("node_call");		  break;
 	}
 	printf(": \x1b[37m");
-	print_tok(node->token);
+	
+	// Invalid token usually means there's no need for a token
+	// So we are just not gonna print them
+	if (node->token.type != tok_inval) {
+		print_tok(node->token);
+	}
+	else {
+		printf("\n");
+	}
+	
 	printf("\x1b[0m");
 
 	if (node->first_child) {

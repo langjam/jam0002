@@ -44,19 +44,28 @@ void print_line(char *source, int line) {
 
 // Prints formatted error into standard output
 void err_explain(Err *err, char *source_file) {
+	// We can't print success
+	if (err->code == err_ok)
+		return;
 	// Store line for convenience
 	int line = err->location.lineno;
 	int col = err->location.charno;
 
 	// Print message
-	printf("\x1b[31m[E%04d](%d,%d)\x1b[0m: %s\n", err->code, line + 1, col + 1, err->buffer);
+	// TODO: We might want to print the note line as a parameter
+	if (err->code == err_note) {
+		printf("\x1b[34mNote:(%d,%d)\x1b[0m: %s\n", line + 1, col + 1, err->buffer);
+	}
+	else {
+		printf("\x1b[31m[E%04d](%d,%d)\x1b[0m: %s\n", err->code, line + 1, col + 1, err->buffer);
 	
-	// Print line, add 1 to line number 
-	// Because they are 1 indexed when printed
-	printf("%4d | ", line	); print_line(source_file, line-1);
-	printf("%4d | ", line + 1); print_line(source_file, line);
-		
-	// Draw the cursor
-	printf("	%*c\n", err->location.charno, '^');
+		// Print line, add 1 to line number 
+		// Because they are 1 indexed when printed
+		printf("%4d | ", line	); print_line(source_file, line-1);
+		printf("%4d | ", line + 1); print_line(source_file, line);
+			
+		// Draw the cursor
+		printf("	%*c\n", err->location.charno, '^');
+	}
 }
 

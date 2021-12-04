@@ -52,6 +52,7 @@ static bool isnt_tok(Parser *p, TokenType type) {
 // Returns current token and puts next one down the line
 static ErrCode next_tok(Parser *p, Token *dest) {
 
+	print_tok(p->current);
 	
 	// You can pass NULL and it will just skip
 	if (dest == NULL) {
@@ -107,8 +108,8 @@ static ErrCode selector_and_props(Parser *p, Node *dest) {
 
 static ErrCode atom(Parser *p, Node *dest);
 
-static ErrCode call(Parser *p, Node *dest) {
-	node_set(dest, node_of(node_call));
+static ErrCode call(Parser *p, Token name, Node *dest) {
+	node_set(dest, node_from(node_call, name));
 
 	checkout(give_tok(p, tok_lparen, NULL));
 	
@@ -130,16 +131,22 @@ static ErrCode atom(Parser *p, Node *dest) {
 	switch (current.type) {
 		case tok_numlit:
 		case tok_ident:
-		case tok_strlit:			
+		case tok_strlit:		
+		case tok_hexlit:			
 			// This is a call
 			if (current.type == tok_ident && is_tok(p, tok_lparen)) {
-				checkout(call(p, dest));
+				// Set the node function name
+				checkout(call(p, current, dest));
 			}
 			// This isn't a call
 			else {
 				node_set(dest, node_from(node_atom, current));
 			}
 		break;
+		case tok_lbrace: 
+			// TODO: Object literals
+			p->note = err_f(err_note, current.loc, "There's no object literals yet\n");  
+			__attribute__((fallthrough));
 		default:
 			p->err = err_f(err_unexpected, current.loc, "I don't know what does %s do here", type_lookup[current.type]);
 			return err_unexpected;
