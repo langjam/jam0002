@@ -88,7 +88,23 @@ Token next(Lexer *l) {
 				c = nextc(l);
 				tok.len++;
 			}
-			//if (numdot > 1) { } TODO handle error
+			
+			// uh-oh -- too many dots in your number !
+			if (numdot > 1) {
+				if (numdot > 1000000) {
+					l->err = err_f(tok.loc, "You put %d too many dots into your number! ARE YOU INSANE?!?!", numdot - 1);
+				}
+				if (numdot > 9000) {
+					l->err = err_f(tok.loc, "You put %d too many dots into your number! ITS OVER 9000!!", numdot - 1);
+				}
+				if (numdot > 5) {
+					l->err = err_f(tok.loc, "You put %d too many dots into your number! What the heck are you doing?", numdot - 1);
+				}
+				else {
+					l->err = err_f(tok.loc, "You put %d too many dots into your number!", numdot - 1);
+				}
+				tok.type = tok_inval;
+			}
 		} else {
 			tok.type = tok_ident;
 			tok.len = 0;
@@ -99,6 +115,7 @@ Token next(Lexer *l) {
 		
 		// no valid token found !
 		if (start_pos == l->cursor) {
+			l->err = err_f(tok.loc, "I don't know this character!");
 			tok.type = tok_inval;
 		}
 

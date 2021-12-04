@@ -15,3 +15,5 @@ tests:
 	clear
 	./bin/test
 	
+	
+.PHONY: all tests

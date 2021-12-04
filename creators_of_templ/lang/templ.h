@@ -1,6 +1,8 @@
 #ifndef TEMPLE_H
 #define TEMPLE_H
 
+#include "err.h"
+
 typedef enum {
 	tok_inval,
 	tok_lparen,
@@ -22,11 +24,6 @@ typedef enum {
 } TokenType;
 
 typedef struct {
-	int charno;
-	int lineno;
-} Location;
-
-typedef struct {
 	Location loc;
 	TokenType type;
 	char *val;
@@ -37,6 +34,7 @@ typedef struct {
 	char *buf; // null terminated
 	Location loc;
 	int cursor;
+	Err err;
 } Lexer;
 
 Token next(Lexer *l);
