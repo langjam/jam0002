@@ -6,26 +6,26 @@
 
 
 typedef enum NodeType {
-    node_inval,
-    node_simple_selector,
-    node_property_list,
-    node_atom,
-    node_selector_and_props,
-    node_property
+	node_inval,
+	node_simple_selector,
+	node_property_list,
+	node_atom,
+	node_selector_and_props,
+	node_property
 } NodeType;
 
 
 typedef struct Node {
-    NodeType type;
-    Token token;
-    struct Node *first_child;
-    struct Node *sibling;
+	NodeType type;
+	Token token;
+	struct Node *first_child;
+	struct Node *sibling;
 } Node;
 
 
 typedef struct Ast {
-    Node *nodes;
-    size_t node_count;
+	Node *nodes;
+	size_t node_count;
 } Ast;
 
 // Creates an ast

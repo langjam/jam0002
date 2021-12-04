@@ -8,10 +8,10 @@
 
 
 typedef struct Parser {
-    Lexer lexer;
-    Token current;
-    Ast ast;
-    Err err;
+	Lexer lexer;
+	Token current;
+	Ast ast;
+	Err err;
 } Parser;
 
 // Creates a new parser from source code

@@ -3,12 +3,12 @@
 #define ERR_H
 
 enum ErrCode {
-    err_ok                 = 0,
-    err_eof                = 1,
-    err_invalid_char       = 2,
-    err_bad_number_literal = 3,
-    // Parser errors
-    err_unexpected         = 4
+	err_ok				 = 0,
+	err_eof				= 1,
+	err_invalid_char	   = 2,
+	err_bad_number_literal = 3,
+	// Parser errors
+	err_unexpected		 = 4
 } /*__attribute__((warn_unused_result))*/;
 
 typedef enum ErrCode ErrCode;
@@ -19,9 +19,9 @@ typedef struct Location {
 } Location;
 
 typedef struct Err {
-    char buffer[4096];
-    ErrCode code;
-    Location location;
+	char buffer[4096];
+	ErrCode code;
+	Location location;
 } Err; 
 
 // Creates a formatted error
