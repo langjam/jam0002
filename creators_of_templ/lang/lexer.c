@@ -81,27 +81,28 @@ Token lex_next(Lexer *l) {
 		break;
 	case '#':
 		tok.type = tok_hexlit;
-		for (char c = nextc(l); isdigit(c) &&
+		nextc(l);
+		for (char c = nextc(l); isdigit(c) ||
 			(tolower(c) >= 'a' && tolower(c) <= 'f'); c = peekc(l)) {
 			c = nextc(l);
-			tok.len++;
+			++tok.len;
 		}
 
 		if (tok.len != 6 && tok.len != 8) {
 			tok.type = tok_inval;
-			l->err = err_f(err_bad_number_literal, tok.loc, "Improper lenght in hex literal.");
+			l->err = err_f(err_bad_number_literal, tok.loc, "Hex literal can't be %d long.", tok.len);
 		}
 		break;
 	default:;
 		char c = peekc(l);
 		int start_pos = l->cursor;
+		tok.len = 0;
 		
 		if (isdigit(c) || c == '-') {
 			tok.type = tok_numlit;
 			int numdot = 0;
-			for (c = nextc(l); isdigit(c) && c == '.'; c = peekc(l)) {
+			for (c = peekc(l); isdigit(c) || c == '.'; c = movec(l)) {
 				if (c == '.') numdot++;
-				c = nextc(l);
 				tok.len++;
 			}
 			
@@ -126,7 +127,6 @@ Token lex_next(Lexer *l) {
 			}
 		} else {
 			tok.type = tok_ident;
-			tok.len = 0;
 			for (c = peekc(l); isalnum(c) || c == '_'; c = movec(l)) {
 				tok.len++;
 			}
@@ -147,7 +147,7 @@ Token lex_next(Lexer *l) {
 }
 
 const char *type_lookup[] = {
-	"invalid", "lparen", "rparen", "lbrace", "rbrace", "dot", "colon", "semicolon",
+	"invalid", "lleft paren", "right paren", "left brace", "right brace", "dot", "colon", "semicolon",
 	"comma", "at", "variable", "keyword", "number", "string", "identifier",
 	"operator", "eof", "hex literal"
 };

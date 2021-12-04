@@ -32,6 +32,16 @@ char* linestart(char *source_file, int line) {
 	return source_file;
 }
 
+// Prints a line from source
+void print_line(char *source, int line) {
+	// Retrieve the bounds of the line
+	char *start = linestart(source, line);
+	char *end = linestart(source, line+1);
+	
+	// Print it
+	printf("%.*s", (int)(end-start), start);
+}
+
 // Prints formatted error into standard output
 void err_explain(Err *err, char *source_file) {
 	// Store line for convenience
@@ -41,13 +51,10 @@ void err_explain(Err *err, char *source_file) {
 	// Print message
 	printf("\x1b[31m[E%04d](%d,%d)\x1b[0m: %s\n", err->code, line + 1, col + 1, err->buffer);
 	
-	// Retrieve the bounds of the line
-	char *start = linestart(source_file, line);
-	char *end = linestart(source_file, line+1);
-	
 	// Print line, add 1 to line number 
 	// Because they are 1 indexed when printed
-	printf("%4d | %.*s", line + 1, (int)(end-start), start);
+	printf("%4d | ", line	); print_line(source_file, line-1);
+	printf("%4d | ", line + 1); print_line(source_file, line);
 		
 	// Draw the cursor
 	printf("	%*c\n", err->location.charno, '^');

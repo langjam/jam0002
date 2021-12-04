@@ -11,7 +11,8 @@ typedef enum NodeType {
 	node_property_list,
 	node_atom,
 	node_selector_and_props,
-	node_property
+	node_property,
+	node_call
 } NodeType;
 
 

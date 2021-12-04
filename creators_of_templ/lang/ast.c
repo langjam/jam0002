@@ -79,7 +79,7 @@ void ast_deinit(Ast* ast) {
 }	
 
 void node_pretty_print(Node *node, int indent) {
-		printf("%*c", indent, ' ');
+		printf("%*c\x1b[34m", indent, ' ');
 	switch (node->type) {
 		case node_inval:	   	   printf("invalid");			break;
 		case node_property:  		 printf("property");  		 break;
@@ -87,15 +87,16 @@ void node_pretty_print(Node *node, int indent) {
 		case node_property_list:	  printf("property_list");	  break;
 		case node_simple_selector:	printf("simple_selector");	break;
 		case node_selector_and_props: printf("selector_and_props"); break;
+		case node_call:			   printf("node_call");		  break;
 	}
-		printf(":\n");
-	printf("%*c", indent, ' ');
+	printf(": \x1b[37m");
 	print_tok(node->token);
+	printf("\x1b[0m");
 
 	if (node->first_child) {
-		printf("%*cz(\n", indent, ' ');
+		// printf("%*c(\n", indent, ' ');
 		node_pretty_print(node->first_child, indent + 2);
-		printf("%*c)\n", indent, ' ');
+		// printf("%*c)\n", indent, ' ');
 	}
 
 		if (node->sibling)
