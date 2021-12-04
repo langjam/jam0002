@@ -1,10 +1,19 @@
-circle {
-  x: 30.0;
-  y: 30.0;
-  radius: 50.0;
-  color: red;
-  circle {
-    red: blue;
+circle
+{
+  circle: 1;
+
+  square
+  {
+    circle: 2;
+
+    triangle
+    {
+        hello: 3;
+
+        rectange
+        {
+            ok: 4;
+        }
+    }
   }
 }
-

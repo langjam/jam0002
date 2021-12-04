@@ -121,6 +121,7 @@ static ErrCode atom(Parser *p, Node *dest) {
 	return err_ok;
 }
 
+
 static ErrCode property(Parser *p, Node *dest) {
 	// Record savestate, because it can either be a property or a child! 
 	Parser savestate = record(p);

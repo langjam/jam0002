@@ -86,9 +86,8 @@ Token lex_next(Lexer *l) {
 		if (isdigit(c) || c == '-') {
 			tok.type = tok_numlit;
 			int numdot = 0;
-			for (c = nextc(l); isdigit(c) || c == '.'; c = peekc(l)) {
+			for (c = peekc(l); isdigit(c) || c == '.'; c = movec(l)) {
 				if (c == '.') numdot++;
-				c = nextc(l);
 				tok.len++;
 			}
 			
@@ -134,7 +133,7 @@ Token lex_next(Lexer *l) {
 }
 
 const char *type_lookup[] = {
-	"invalid", "lparen", "rparen", "lbrace", "rbrace", "dot", "colon", "semicolon",
+	"invalid", "lleft paren", "right paren", "left brace", "right brace", "dot", "colon", "semicolon",
 	"comma", "at", "variable", "keyword", "number", "string", "identifier",
 	"operator", "eof"
 };
