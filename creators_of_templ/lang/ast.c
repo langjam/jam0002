@@ -21,12 +21,12 @@ Node* ast_make(Ast* ast, Node* parent) {
     // Make node if we have a parent
     if (parent != NULL)
     {
-        // Find previous item before last child
-        Node **n;
-        for (n = &parent->first_child; *n; n = &(*n)->sibling);
+	// Find previous item before last child
+	Node **n;
+	for (n = &parent->first_child; *n; n = &(*n)->sibling);
     
-        // Attach the node
-        *n = new_node;
+	// Attach the node
+	*n = new_node;
     }
     
     return new_node;
@@ -51,15 +51,15 @@ Node* node_set(Node *destination, Node source) {
 
 Node node_of(NodeType type) {
     return (Node) {
-        .type = type,
+	.type = type,
     };
 }
 
 
 Node node_from(NodeType type, Token token) {
     return (Node) {
-        .type = type,
-        .token = token
+	.type = type,
+	.token = token
     };
 }
 
@@ -67,7 +67,7 @@ Node node_from(NodeType type, Token token) {
 Node* node_child(Node *node, size_t n) {
     Node *child = node->first_child;
     while (n-- && child) {
-        child = child->sibling;
+	child = child->sibling;
     }
     return child;
 }
