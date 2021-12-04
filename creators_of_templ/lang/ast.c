@@ -79,9 +79,7 @@ void ast_deinit(Ast* ast) {
 }    
 
 void node_pretty_print(Node *node, int indent) {
-    printf("%*c{ ", indent, ' ');
-    print_tok(node->token);
-    printf("%*c  type ", indent, ' ');
+		printf("%*c", indent, ' ');
     switch (node->type) {
         case node_inval:       	   printf("invalid");		    break;
         case node_property:  	     printf("property");  	     break;
@@ -90,7 +88,9 @@ void node_pretty_print(Node *node, int indent) {
         case node_simple_selector:    printf("simple_selector");    break;
         case node_selector_and_props: printf("selector_and_props"); break;
     }
-		printf(" },\n");
+		printf(":\n");
+    printf("%*c", indent, ' ');
+    print_tok(node->token);
 
     if (node->first_child) {
         printf("%*c(\n", indent, ' ');
