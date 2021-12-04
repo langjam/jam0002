@@ -75,7 +75,8 @@ static ErrCode next_tok(Parser *p, Token *dest) {
 static ErrCode give_tok(Parser *p, TokenType type, Token *dest) {
 	// Check if token is valid
 	if (isnt_tok(p, type)) {
-		p->err = err_f(err_unexpected, p->current.loc, "I didn't expect that. (%s)", type_lookup[p->current.type]);
+		p->err = err_f(err_unexpected, p->current.loc, "I didn't expect that. (I wanted `%s' but this is `%s')",
+														type_lookup[type], type_lookup[p->current.type]);
 		return err_unexpected;
 	}
 
@@ -113,7 +114,7 @@ static ErrCode atom(Parser *p, Node *dest) {
 			node_set(dest, node_from(node_atom, current));
 		break;
 		default:
-			p->err = err_f(err_unexpected, current.loc, "I didn't expect that.");
+			p->err = err_f(err_unexpected, current.loc, "I don't know what does %s do here", type_lookup[current.type]);
 			return err_unexpected;
 	}
 	return err_ok;

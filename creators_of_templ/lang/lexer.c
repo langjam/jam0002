@@ -107,7 +107,7 @@ Token lex_next(Lexer *l) {
 					l->err = err_f(err_bad_number_literal, tok.loc, "You put %d too many dots into your number! There are no version literals.", numdot - 1);
 				}
 				else {
-					l->err = err_f(err_bad_number_literal, tok.loc, "You put %d too many dots into your number!.. Wait", numdot - 1);
+					l->err = err_f(err_bad_number_literal, tok.loc, "You put %d too many dots into your number!", numdot - 1);
 				}
 				tok.type = tok_inval;
 			}

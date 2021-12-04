@@ -93,7 +93,7 @@ void node_pretty_print(Node *node, int indent) {
 	print_tok(node->token);
 
 	if (node->first_child) {
-		printf("%*c(\n", indent, ' ');
+		printf("%*cz(\n", indent, ' ');
 		node_pretty_print(node->first_child, indent + 2);
 		printf("%*c)\n", indent, ' ');
 	}
