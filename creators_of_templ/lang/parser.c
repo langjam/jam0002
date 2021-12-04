@@ -167,10 +167,30 @@ static ErrCode atom(Parser *p, Node *dest) {
 				node_set(dest, node_from(node_atom, current));
 			}
 		break;
+		case tok_var:
+			checkout(next_tok(p, &current));
+			node_set(dest, node_from(node_var, current));
+			break;
+		case tok_operator: {			
+			// Unary operators
+			if (strncmp(current.val, "+", 1) == 0 ||
+			    strncmp(current.val, "-", 1) == 0) {
+				atom(p, ast_make(&p->ast, dest));
+				node_set(dest, node_from(node_unary, current));
+			}
+			else {
+				p->err = err_f(err_invalid_char, current.loc, "I can't use `%.*s' as a unary operator", current.len, current.val);
+				return err_invalid_char;
+			}
+		} break;
+		case tok_lparen:
+			value(p, dest, 11);
+			checkout(give_tok(p, tok_rparen, NULL));
+			break;
 		case tok_lbrace: 
 			// TODO: Object literals
 			p->note = err_f(err_note, current.loc, "There's no object literals yet\n");  
-			__attribute__((fallthrough));
+			__attribute__((fallthrough));			
 		default:
 			p->err = err_f(err_unexpected, current.loc, "I don't know what does %s do here", type_lookup[current.type]);
 			return err_unexpected;
@@ -237,12 +257,8 @@ static ErrCode property(Parser *p, Node *dest) {
 	if (is_tok(p, tok_colon)) {
 		// Skip colon
 		checkout(next_tok(p, NULL));
-		node_set(dest, node_of(node_property));
-		
-		// TODO: Parsing multiple properties
-		while (isnt_tok(p, tok_semicolon)) {
-			checkout(value(p, ast_make(&p->ast, dest), 11));
-		}
+		node_set(dest, node_from(node_property, name));
+		checkout(value(p, ast_make(&p->ast, dest), 11));
 		checkout(give_tok(p, tok_semicolon, NULL)); 
 	}
 	else {

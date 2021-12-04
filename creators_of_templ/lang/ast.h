@@ -16,7 +16,9 @@ typedef enum NodeType {
 	node_property,
 	node_call,
 	node_pragma,
-	node_binary
+	node_binary,
+	node_unary,
+	node_var,
 } NodeType;
 
 

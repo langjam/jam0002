@@ -79,7 +79,7 @@ void ast_deinit(Ast* ast) {
 }	
 
 void node_pretty_print(Node *node, int indent) {
-		printf("%*c\x1b[34m", indent, ' ');
+	printf("%*c\x1b[34m", indent, ' ');
 	switch (node->type) {
 		case node_inval:	   	   printf("invalid");			break;
 		case node_property:  		 printf("property");  		 break;
@@ -89,9 +89,11 @@ void node_pretty_print(Node *node, int indent) {
 		case node_class_selector:	 printf("class_selector");	 break;
 		case node_selector_and_props: printf("selector_and_props"); break;
 		case node_composite_selector: printf("composite_selector"); break;
-		case node_call:			   printf("node_call");		  break;
-		case node_pragma:			 printf("node_pragma");		break;
-		case node_binary:			 printf("node_binary");		break;
+		case node_call:			   printf("call");		  	 break;
+		case node_pragma:			 printf("pragma");			 break;
+		case node_unary:	 		 printf("unary");			 break;
+		case node_binary:			 printf("binary");		     break;
+		case node_var:		   	 printf("var");	   		 break;
 	}
 	printf(": \x1b[37m");
 	
