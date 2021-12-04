@@ -1,4 +1,5 @@
 #include "ast.h"
+#include "templ.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -61,4 +62,20 @@ Node* node_child(Node *node, size_t n) {
 void ast_deinit(Ast* ast) {
     free(ast->nodes);
 }    
+
+void node_pretty_print(Node *node, int indent) {
+    if (node->first_child) {
+        printf("%*c(\n", indent, ' ');
+        node_pretty_print(node->first_child, indent + 2);
+        printf("%*c(\n", indent, ' ');
+    } else {
+        printf("%*c", indent, ' ');
+        print_tok(node->token);
+    }
+}
+
+void ast_pretty_print(Ast *ast) {
+    for (Node *node = ast->nodes; node; node = node->sibling)
+        node_pretty_print(node, 0);
+}
 

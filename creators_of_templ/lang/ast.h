@@ -38,5 +38,8 @@ Node* node_set(Node *destination, Node source);
 // Frees ast data
 void ast_deinit(Ast* ast);
 
+// Pretty prints the ast
+void ast_pretty_print(Ast *ast);
+
 #endif // AST_H
 
