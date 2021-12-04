@@ -1,4 +1,4 @@
-#include "templ.h"
+#include "lexer.h"
 #include <ctype.h>
 #include <stdio.h>
 
@@ -26,7 +26,7 @@ static char movec(Lexer *l) {
 	return peekc(l);
 }
 
-Token next(Lexer *l) {
+Token lex_next(Lexer *l) {
 	for (char c=peekc(l); c && is_skip_char(c); c=peekc(l))
 		nextc(l);
 
@@ -51,6 +51,9 @@ Token next(Lexer *l) {
 		break;
 	case '.':
 		tok.type = tok_dot;
+		break;
+	case ',':
+		tok.type = tok_comma;
 		break;
 	case ':':
 		tok.type = tok_colon;
@@ -92,16 +95,19 @@ Token next(Lexer *l) {
 			// uh-oh -- too many dots in your number !
 			if (numdot > 1) {
 				if (numdot > 1000000) {
-					l->err = err_f(tok.loc, "You put %d too many dots into your number! ARE YOU INSANE?!?!", numdot - 1);
+					l->err = err_f(err_bad_number_literal, tok.loc, "You put %d too many dots into your number! ARE YOU INSANE?!?!", numdot - 1);
 				}
-				if (numdot > 9000) {
-					l->err = err_f(tok.loc, "You put %d too many dots into your number! ITS OVER 9000!!", numdot - 1);
+				else if (numdot > 9000) {
+					l->err = err_f(err_bad_number_literal, tok.loc, "You put %d too many dots into your number! ITS OVER 9000!!", numdot - 1);
 				}
-				if (numdot > 5) {
-					l->err = err_f(tok.loc, "You put %d too many dots into your number! What the heck are you doing?", numdot - 1);
+				else if (numdot > 5) {
+					l->err = err_f(err_bad_number_literal, tok.loc, "You put %d too many dots into your number! What the heck are you doing?", numdot - 1);
+				}
+				else if (numdot == 2) {
+					l->err = err_f(err_bad_number_literal, tok.loc, "You put %d too many dots into your number! There are no version literals.", numdot - 1);
 				}
 				else {
-					l->err = err_f(tok.loc, "You put %d too many dots into your number!", numdot - 1);
+					l->err = err_f(err_bad_number_literal, tok.loc, "You put %d too many dots into your number!.. Wait", numdot - 1);
 				}
 				tok.type = tok_inval;
 			}
@@ -115,7 +121,7 @@ Token next(Lexer *l) {
 		
 		// no valid token found !
 		if (start_pos == l->cursor) {
-			l->err = err_f(tok.loc, "I don't know this character!");
+			l->err = err_f(err_invalid_char, tok.loc, "I don't know this character!");
 			tok.type = tok_inval;
 		}
 
@@ -127,13 +133,13 @@ Token next(Lexer *l) {
 	return tok;
 }
 
-void print_tok(Token tok) {
-	static const char *type_lookup[] = {
-		"invalid", "lparen", "rparen", "lbrace", "rbrace", "dot", "colon", "semicolon",
-		"comma", "at", "variable", "keyword", "number", "string", "identifier",
-		"operator", "eof"
-	};
+const char *type_lookup[] = {
+	"invalid", "lparen", "rparen", "lbrace", "rbrace", "dot", "colon", "semicolon",
+	"comma", "at", "variable", "keyword", "number", "string", "identifier",
+	"operator", "eof"
+};
 
+void print_tok(Token tok) {
 	printf("tok (%d: %d) \'%.*s\' %s\n",
 		tok.loc.lineno, tok.loc.charno, tok.len, tok.val, type_lookup[tok.type]);
 }
