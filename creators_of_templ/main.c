@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "templ.h"
+#include "lang/templ.h"
 
 int main() {
 	Lexer l = {
