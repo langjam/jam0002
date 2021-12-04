@@ -168,8 +168,10 @@ static ErrCode atom(Parser *p, Node *dest) {
 			}
 		break;
 		case tok_var:
-			checkout(next_tok(p, &current));
-			node_set(dest, node_from(node_var, current));
+			push_note(current.loc, "Variable literals can't contain %s", (peek_tok(p, &current), type_lookup[current.type])) {
+				checkout(give_tok(p, tok_ident, &current));
+				node_set(dest, node_from(node_var, current));
+			}
 			break;
 		case tok_operator: {			
 			// Unary operators

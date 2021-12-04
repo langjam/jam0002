@@ -93,7 +93,7 @@ Token lex_next(Lexer *l) {
 
 		if (nums != 6 && nums != 8) {
 			tok.type = tok_inval;
-			l->err = err_f(err_bad_number_literal, tok.loc, "Hex literal can't be %d long.", tok.len);
+			l->err = err_f(err_bad_number_literal, tok.loc, "Hex literal can't be %d long.", nums);
 		}
 		break;
 	default:;
