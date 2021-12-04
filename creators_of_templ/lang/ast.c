@@ -90,6 +90,8 @@ void node_pretty_print(Node *node, int indent) {
 		case node_selector_and_props: printf("selector_and_props"); break;
 		case node_composite_selector: printf("composite_selector"); break;
 		case node_call:			   printf("node_call");		  break;
+		case node_pragma:			 printf("node_pragma");		break;
+		case node_binary:			 printf("node_binary");		break;
 	}
 	printf(": \x1b[37m");
 	

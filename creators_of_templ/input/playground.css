@@ -1,7 +1,6 @@
-circle.sussy {
-  x: 30.0;
-  y: #ffffff;
-  radius: 20.0;
+circle.someclass {
+  pos: vec2(10, 10);
+  radius: 2 + 2 * 2;
   color: 50.0;
   circle {
     red: blue;

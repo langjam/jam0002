@@ -1,11 +1,14 @@
 #include "parser.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define checkout(x) do { ErrCode err; if((err = (x))) { fprintf(stderr, ">>> %d %s:%d\n", err, __FILE__, __LINE__); return err;} } while (0)
+#define push_note(...) for(p->note = err_f(err_note, __VA_ARGS__);p->note.code; p->note = (Err) { 0 })
 
 static ErrCode property_list(Parser *p, Node *dest);
 static ErrCode atom(Parser *p, Node *dest);
+static ErrCode value(Parser *p, Node *left, int prec);
 
 // Creates a new parser from source code
 Parser parser_init(char *src) {
@@ -101,7 +104,9 @@ static ErrCode simple_selector(Parser *p, Node *dest) {
 		type = node_class_selector;
 	}
 	
-	checkout(give_tok(p, tok_ident, &name));
+	push_note(name.loc, "I was parsing a selector") {
+		checkout(give_tok(p, tok_ident, &name));
+	}
 
 	// Set the node 
 	node_set(dest, node_from(type, name));	
@@ -134,7 +139,7 @@ static ErrCode call(Parser *p, Token name, Node *dest) {
 	
 	while (isnt_tok(p, tok_rparen)) {
 		// Parse other atoms
-		checkout(atom(p, ast_make(&p->ast, dest)));
+		checkout(value(p, ast_make(&p->ast, dest), 11));
 		
 		// If rparen is met no don't expect the last comma
 		if (isnt_tok(p, tok_rparen))
@@ -173,7 +178,57 @@ static ErrCode atom(Parser *p, Node *dest) {
 	return err_ok;
 }
 
+// Operators ordered by their precedence
+static const char* OPERATORS[11][4] = {
+    { "*", "/", "%" },
+    { "+", "-" },
+    { "<<", ">>" },
+    
+    { "<", ">", ">=", "<=" },
+    { "==", "!=" },
+    { "&" },
+    { "^" },
+    
+    { "|" },
+    { "&&" },
+    { "||" },
+    { "=" },
+};
 
+static int precedence_of(Token tok) {
+    for (int i = 0; i < 11; i += 1) {
+        for (int j = 0; j < 4; j += 1) {
+            if (OPERATORS[i][j] == NULL) continue;
+            if (strncmp(tok.val, OPERATORS[i][j], tok.len) == 0) {
+				return i + 1;
+            }
+        }
+    }
+    return 0;
+}
+
+static ErrCode value(Parser *p, Node *left, int prec) {
+	// If precedence is zero then we parse the rest
+	if (prec == 0) return atom(p, left);
+
+	// Parse LHS
+	checkout(value(p, left, prec-1));
+	
+	while (is_tok(p, tok_operator) && precedence_of(p->current) == prec) {
+		// Skip the operator
+		Token operator;
+		checkout(give_tok(p, tok_operator, &operator));
+	
+		Node *new_node = ast_make(&p->ast, NULL);
+		*new_node = *left;
+		*left = node_from(node_binary, operator);
+		left->first_child = new_node;
+		checkout(value(p, ast_make(&p->ast, left), prec-1)); 
+	}
+	return err_ok;
+}
+
+// Parses a `x: y z;' property
 static ErrCode property(Parser *p, Node *dest) {
 	// Record savestate, because it can either be a property or a child! 
 	Parser savestate = record(p);
@@ -186,7 +241,7 @@ static ErrCode property(Parser *p, Node *dest) {
 		
 		// TODO: Parsing multiple properties
 		while (isnt_tok(p, tok_semicolon)) {
-			checkout(atom(p, ast_make(&p->ast, dest)));
+			checkout(value(p, ast_make(&p->ast, dest), 11));
 		}
 		checkout(give_tok(p, tok_semicolon, NULL)); 
 	}
@@ -198,6 +253,17 @@ static ErrCode property(Parser *p, Node *dest) {
 	return err_ok;
 }
 
+// Parses different pragmas, like @frame { ..code.. }
+static ErrCode pragma(Parser *p, Node *dest) {
+	checkout(give_tok(p, tok_at, NULL));
+	
+	Token pragma_name;
+	checkout(give_tok(p, tok_ident, &pragma_name));
+	node_set(dest, node_from(node_pragma, pragma_name));
+	
+	return property_list(p, dest);
+}
+
 
 static ErrCode property_list(Parser *p, Node *dest) {
 	checkout(give_tok(p, tok_lbrace, NULL));
@@ -205,6 +271,9 @@ static ErrCode property_list(Parser *p, Node *dest) {
 	
 	// Until we meet the closing brace
 	while (isnt_tok(p, tok_rbrace)) {
+		if (is_tok(p, tok_at)) {
+			checkout(pragma(p, ast_make(&p->ast, dest)));
+		}
 		checkout(property(p, ast_make(&p->ast, dest)));
 	}
 	
