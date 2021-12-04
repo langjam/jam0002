@@ -48,6 +48,21 @@ Node* node_set(Node *destination, Node source) {
     return destination;
 }
 
+
+Node node_of(NodeType type) {
+    return (Node) {
+        .type = type,
+    };
+}
+
+
+Node node_from(NodeType type, Token token) {
+    return (Node) {
+        .type = type,
+        .token = token
+    };
+}
+
 // Returns a child at index n, NULL if out of bounds
 Node* node_child(Node *node, size_t n) {
     Node *child = node->first_child;

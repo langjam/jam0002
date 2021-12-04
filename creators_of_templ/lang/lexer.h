@@ -37,7 +37,9 @@ typedef struct {
 	Err err;
 } Lexer;
 
-Token next(Lexer *l);
+extern const char *type_lookup[];
+
+Token lex_next(Lexer *l);
 void print_tok(Token tok);
 
 #endif

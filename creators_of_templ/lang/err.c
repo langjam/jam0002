@@ -5,13 +5,13 @@
 #include <stdarg.h>
 
 // Creates a formatted error
-Err err_f(Location at, char *fmt, ...) {
+Err err_f(ErrCode code, Location at, char *fmt, ...) {
     // va list setup
     va_list list;
     va_start(list, fmt);
     
     // create error at the location
-    Err new_err = { .location = at };
+    Err new_err = { .code = code, .location = at };
     
     // format the message 
     vsnprintf(new_err.buffer, sizeof(new_err.buffer), fmt, list);
@@ -39,7 +39,7 @@ void err_explain(Err *err, char *source_file) {
     int col = err->location.charno;
 
     // Print message
-    printf("\x1b[31mError(%d,%d)\x1b[0m: %s\n", line + 1, col + 1, err->buffer);
+    printf("\x1b[31m[E%04d](%d,%d)\x1b[0m: %s\n", err->code, line + 1, col + 1, err->buffer);
     
     // Retrieve the bounds of the line
     char *start = linestart(source_file, line);
@@ -50,6 +50,6 @@ void err_explain(Err *err, char *source_file) {
     printf("%4d | %.*s", line + 1, (int)(end-start), start);
         
     // Draw the cursor
-    printf("        %*c\n", err->location.charno, '^');
+    printf("       %*c\n", err->location.charno, '^');
 }
 

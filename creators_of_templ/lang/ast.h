@@ -2,11 +2,16 @@
 #define AST_H
 
 #include <stddef.h>
-#include "templ.h"
+#include "lexer.h"
 
 
 typedef enum NodeType {
     node_inval,
+    node_simple_selector,
+    node_property_list,
+    node_atom,
+    node_selector_and_props,
+    node_property
 } NodeType;
 
 
@@ -34,6 +39,12 @@ Node* node_child(Node *node, size_t n);
 
 // Safely assigns some fields from source, returns destination
 Node* node_set(Node *destination, Node source);
+
+// Convenient node constructor
+Node node_from(NodeType type, Token token);
+
+// Constructs node from type
+Node node_of(NodeType type);
 
 // Frees ast data
 void ast_deinit(Ast* ast);
