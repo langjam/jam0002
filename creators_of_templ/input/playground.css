@@ -1,11 +1,3 @@
-circle
-{
-  circle: 1;
-
-  square:
-  {
-    circle: 2;
-
-
-  };
+circle {
+  stst: rgba(2, 2, 2, 2);
 }

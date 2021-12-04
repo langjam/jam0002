@@ -105,14 +105,38 @@ static ErrCode selector_and_props(Parser *p, Node *dest) {
 	return property_list(p, ast_make(&p->ast, dest));
 }
 
+static ErrCode atom(Parser *p, Node *dest);
+
+static ErrCode call(Parser *p, Node *dest) {
+	checkout(give_tok(p, tok_lparen, NULL));
+	
+	while (isnt_tok(p, tok_rparen)) {
+		// Parse other atoms
+		checkout(atom(p, ast_make(&p->ast, dest)));
+		
+		// If rparen is met no don't expect the last comma
+		if (isnt_tok(p, tok_rparen))
+			checkout(give_tok(p, tok_comma, NULL));
+	}
+	
+	return give_tok(p, tok_rparen, NULL);
+}
+
 static ErrCode atom(Parser *p, Node *dest) {
 	Token current; checkout(next_tok(p, &current));
 	
 	switch (current.type) {
 		case tok_numlit:
 		case tok_ident:
-		case tok_strlit:
-			node_set(dest, node_from(node_atom, current));
+		case tok_strlit:			
+			// This is a call
+			if (current.type == tok_ident && is_tok(p, tok_lparen)) {
+				checkout(call(p, dest));
+			}
+			// This isn't a call
+			else {
+				node_set(dest, node_from(node_atom, current));
+			}
 		break;
 		default:
 			p->err = err_f(err_unexpected, current.loc, "I don't know what does %s do here", type_lookup[current.type]);
@@ -133,7 +157,9 @@ static ErrCode property(Parser *p, Node *dest) {
 		node_set(dest, node_of(node_property));
 		
 		// TODO: Parsing multiple properties
-		checkout(atom(p, ast_make(&p->ast, dest)));
+		while (isnt_tok(p, tok_semicolon)) {
+			checkout(atom(p, ast_make(&p->ast, dest)));
+		}
 		checkout(give_tok(p, tok_semicolon, NULL)); 
 	}
 	else {

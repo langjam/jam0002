@@ -82,6 +82,7 @@ Token lex_next(Lexer *l) {
 	default:;
 		char c = peekc(l);
 		int start_pos = l->cursor;
+		tok.len = 0;
 		
 		if (isdigit(c) || c == '-') {
 			tok.type = tok_numlit;
@@ -112,7 +113,6 @@ Token lex_next(Lexer *l) {
 			}
 		} else {
 			tok.type = tok_ident;
-			tok.len = 0;
 			for (c = peekc(l); isalnum(c) || c == '_'; c = movec(l)) {
 				tok.len++;
 			}
