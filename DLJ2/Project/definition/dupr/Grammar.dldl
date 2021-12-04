@@ -1,0 +1,67 @@
+/ DUPR Grammar 2021 Thimo Bohmer
+/ This grammar should be extremely generic, later deduction takes place
+/ to map the terminals with some IR, using the user defined pattern
+
+program
+	stmt*
+
+stmt
+	pattern_constructor
+	pattern_execution
+
+pattern_execution
+	pattern_name LEFT_BRACKET pattern_execution_content RIGHT_BRACKET
+
+pattern_execution_content
+	pattern_execution_content_stmt+
+
+pattern_execution_content_stmt
+	pattern_constructor_content_stmt
+
+pattern_constructor
+	pattern_type COLON pattern_name LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET
+
+pattern_type
+	VARNAME
+
+pattern_name
+	VARNAME
+
+pattern_constructor_content
+	pattern_constructor_content_stmt+
+
+pattern_constructor_content_stmt
+	pattern_constructor_operator
+	pattern_constructor_terminate
+	pattern_constructor_encapsulation
+	pattern_constructor_structure
+
+pattern_constructor_operator
+	ADD
+	MINUS
+	MULTI
+	DIVIDE
+	LT
+	LE
+	GT
+	GE
+	EQ
+
+pattern_constructor_structure
+	DOT
+	COMMA
+	COLON
+	SEMICOLON
+
+pattern_constructor_terminate
+	PATTERN_INSERTION
+	VARNAME
+	NUMBER
+	DECIMAL
+
+pattern_constructor_encapsulation
+	LEFT_BRACKET pattern_constructor_content_stmt+ RIGHT_BRACKET
+	LEFT_PARANTHESIS pattern_constructor_content_stmt+ RIGHT_PARANTHESIS
+	LEFT_SQUARE_BRACKET pattern_constructor_content_stmt+ RIGHT_SQUARE_BRACKET
+
+/
