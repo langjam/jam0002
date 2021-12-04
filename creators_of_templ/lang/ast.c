@@ -1,5 +1,5 @@
 #include "ast.h"
-#include "templ.h"
+#include "lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -79,18 +79,30 @@ void ast_deinit(Ast* ast) {
 }    
 
 void node_pretty_print(Node *node, int indent) {
+    printf("%*c{ ", indent, ' ');
+    print_tok(node->token);
+    printf("%*c  type ", indent, ' ');
+    switch (node->type) {
+        case node_inval:       	   printf("invalid");		    break;
+        case node_property:  	     printf("property");  	     break;
+        case node_atom:     	      printf("atom");		       break;
+        case node_property_list:      printf("property_list");      break;
+        case node_simple_selector:    printf("simple_selector");    break;
+        case node_selector_and_props: printf("selector_and_props"); break;
+    }
+		printf(" },\n");
+
     if (node->first_child) {
         printf("%*c(\n", indent, ' ');
         node_pretty_print(node->first_child, indent + 2);
-        printf("%*c(\n", indent, ' ');
-    } else {
-        printf("%*c", indent, ' ');
-        print_tok(node->token);
+        printf("%*c)\n", indent, ' ');
     }
+
+		if (node->sibling)
+			node_pretty_print(node->sibling, indent);
 }
 
 void ast_pretty_print(Ast *ast) {
-    for (Node *node = ast->nodes; node; node = node->sibling)
-        node_pretty_print(node, 0);
+    node_pretty_print(ast->nodes, 1);
 }
 

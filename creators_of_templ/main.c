@@ -18,23 +18,6 @@ char* read_file(const char *path) {
     return input;
 }
 
-void prettyprint_node(Node *node, int depth) {
-	printf("%*c", depth-1, ' ');
-	
-	switch (node->type) {
-		case node_inval:       	   printf("invalid");		    break;
-		case node_property:  	     printf("property");  	     break;
-		case node_atom:     	      printf("atom");		       break;
-		case node_property_list:      printf("property_list");      break;
-		case node_simple_selector:    printf("simple_selector");    break;
-		case node_selector_and_props: printf("selector_and_props"); break;
-	}
-	printf("\n");
-	for (Node *child = node->first_child; child; child = child->sibling) {
-		prettyprint_node(child, depth+4);
-	}
-}
-
 int main() {
 	char *file = read_file("input/playground.css");
 	if (file == NULL) {
@@ -45,7 +28,7 @@ int main() {
 	Parser p = parser_init(file);
 	if (parser_run(&p))
 		err_explain(&p.err, file);
-	prettyprint_node(&p.ast.nodes[0], 0);
+	ast_pretty_print(&p.ast);
 	parser_deinit(&p);
 	/*
 	Token tok;
