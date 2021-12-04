@@ -20,7 +20,8 @@ typedef enum {
 	tok_strlit,
 	tok_ident,
 	tok_operator,
-	tok_eof
+	tok_eof,
+	tok_hexlit
 } TokenType;
 
 typedef struct {

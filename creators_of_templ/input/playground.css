@@ -1,9 +1,9 @@
 circle {
   x: 30.0;
-  y: 30.0;
-  radius: 50.0;
-  color: red;
-  circle {
+  y: #ffffff;
+  radius: 20.0;
+  color: 50.0;
+  1circle {
     red: blue;
   }
 }
