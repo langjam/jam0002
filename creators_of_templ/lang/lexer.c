@@ -20,6 +20,12 @@ static char nextc(Lexer *l) {
 	return c;
 }
 
+// Moves by 1 but returns actual current character
+static char movec(Lexer *l) {
+	nextc(l);
+	return peekc(l);
+}
+
 Token next(Lexer *l) {
 	for (char c=peekc(l); c && is_skip_char(c); c=peekc(l))
 		nextc(l);
@@ -72,6 +78,8 @@ Token next(Lexer *l) {
 		break;
 	default:;
 		char c = peekc(l);
+		int start_pos = l->cursor;
+		
 		if (isdigit(c) || c == '-') {
 			tok.type = tok_numlit;
 			int numdot = 0;
@@ -83,10 +91,15 @@ Token next(Lexer *l) {
 			//if (numdot > 1) { } TODO handle error
 		} else {
 			tok.type = tok_ident;
-			for (c = nextc(l); (isalnum(c) || c == '_'); c = peekc(l)) {
-				c = nextc(l);
+			tok.len = 0;
+			for (c = peekc(l); isalnum(c) || c == '_'; c = movec(l)) {
 				tok.len++;
 			}
+		}
+		
+		// no valid token found !
+		if (start_pos == l->cursor) {
+			tok.type = tok_inval;
 		}
 
 		move = 0;
@@ -99,7 +112,7 @@ Token next(Lexer *l) {
 
 void print_tok(Token tok) {
 	static const char *type_lookup[] = {
-		"lparen", "rparen", "lbrace", "rbrace", "dot", "colon", "semicolon",
+		"invalid", "lparen", "rparen", "lbrace", "rbrace", "dot", "colon", "semicolon",
 		"comma", "at", "variable", "keyword", "number", "string", "identifier",
 		"operator", "eof"
 	};
@@ -107,3 +120,4 @@ void print_tok(Token tok) {
 	printf("tok (%d: %d) \'%.*s\' %s\n",
 		tok.loc.lineno, tok.loc.charno, tok.len, tok.val, type_lookup[tok.type]);
 }
+

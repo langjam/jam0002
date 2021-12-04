@@ -13,7 +13,7 @@ int main() {
 	};
 	printf("Welcome to templ!\n");
 
-	for (Token tok = next(&l); tok.type != tok_eof; tok = next(&l))
+	for (Token tok = next(&l); tok.type && tok.type != tok_eof; tok = next(&l))
 		print_tok(tok);
 	return 0;
 }

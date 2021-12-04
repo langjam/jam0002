@@ -2,6 +2,7 @@
 #define TEMPLE_H
 
 typedef enum {
+	tok_inval,
 	tok_lparen,
 	tok_rparen,
 	tok_lbrace,
@@ -42,3 +43,4 @@ Token next(Lexer *l);
 void print_tok(Token tok);
 
 #endif
+
