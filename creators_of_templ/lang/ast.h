@@ -10,14 +10,9 @@ typedef enum NodeType {
 } NodeType;
 
 
-typedef union NodeData {
-    Token token;
-} NodeData;
-
-
 typedef struct Node {
     NodeType type;
-    NodeData data;
+    Token token;
     struct Node *first_child;
     struct Node *sibling;
 } Node;

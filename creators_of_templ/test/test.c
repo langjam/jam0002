@@ -13,7 +13,7 @@ Token tok(char *s) {
 
 static
 Node node(char *s) {
-    return (Node) { .data.token = tok(s) };
+    return (Node) { .token = tok(s) };
 }
 
 int total_asserts = 0;
@@ -34,11 +34,11 @@ void test_ast() {
     node_set(left,   node("10"));
     node_set(right,  node("20"));
     
-    expect(strcmp(parent->data.token.val, "+") == 0);
+    expect(strcmp(parent->token.val, "+") == 0);
     expect(parent->first_child == left);
     expect(parent->first_child->sibling == right);
-    expect(strcmp(node_child(parent, 0)->data.token.val, "10") == 0);
-    expect(strcmp(node_child(parent, 1)->data.token.val, "20") == 0);
+    expect(strcmp(node_child(parent, 0)->token.val, "10") == 0);
+    expect(strcmp(node_child(parent, 1)->token.val, "20") == 0);
     expect(node_child(parent, 3) == NULL);
     
     ast_deinit(&ast);
