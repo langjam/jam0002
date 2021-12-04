@@ -85,8 +85,10 @@ void node_pretty_print(Node *node, int indent) {
 		case node_property:  		 printf("property");  		 break;
 		case node_atom:	 		  printf("atom");			   break;
 		case node_property_list:	  printf("property_list");	  break;
-		case node_simple_selector:	printf("simple_selector");	break;
+		case node_primitive_selector: printf("primitive_selector"); break;
+		case node_class_selector:	 printf("class_selector");	 break;
 		case node_selector_and_props: printf("selector_and_props"); break;
+		case node_composite_selector: printf("composite_selector"); break;
 		case node_call:			   printf("node_call");		  break;
 	}
 	printf(": \x1b[37m");

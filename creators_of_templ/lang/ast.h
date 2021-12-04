@@ -7,7 +7,9 @@
 
 typedef enum NodeType {
 	node_inval,
-	node_simple_selector,
+	node_primitive_selector,
+	node_class_selector,
+	node_composite_selector,
 	node_property_list,
 	node_atom,
 	node_selector_and_props,

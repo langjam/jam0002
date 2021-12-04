@@ -4,6 +4,9 @@
 
 #define checkout(x) do { ErrCode err; if((err = (x))) { fprintf(stderr, ">>> %d %s:%d\n", err, __FILE__, __LINE__); return err;} } while (0)
 
+static ErrCode property_list(Parser *p, Node *dest);
+static ErrCode atom(Parser *p, Node *dest);
+
 // Creates a new parser from source code
 Parser parser_init(char *src) {
 	return (Parser) {
@@ -89,22 +92,40 @@ static ErrCode give_tok(Parser *p, TokenType type, Token *dest) {
 // Parses a simple non-recursive selector
 static ErrCode simple_selector(Parser *p, Node *dest) {
 	Token name;
+	
+	NodeType type = node_primitive_selector;
+	
+	// This is a class
+	if (is_tok(p, tok_dot)) {
+		checkout(next_tok(p, NULL));
+		type = node_class_selector;
+	}
+	
 	checkout(give_tok(p, tok_ident, &name));
 
 	// Set the node 
-	node_set(dest, node_from(node_simple_selector, name));	
+	node_set(dest, node_from(type, name));	
 	return err_ok;
 }
 
+static ErrCode composite_selector(Parser *p, Node *dest) {
+	node_set(dest, node_of(node_composite_selector));
+	while (isnt_tok(p, tok_lbrace)) {
+		checkout(simple_selector(p, ast_make(&p->ast, dest)));
+	}
+	return err_ok;
+}
 
-static ErrCode property_list(Parser *p, Node *dest);
+static ErrCode selector(Parser *p, Node *dest) {
+	return composite_selector(p, dest);
+}
+
 static ErrCode selector_and_props(Parser *p, Node *dest) {
 	node_set(dest, node_of(node_selector_and_props));
-	checkout(simple_selector(p, ast_make(&p->ast, dest)));
+	checkout(selector(p, ast_make(&p->ast, dest)));
 	return property_list(p, ast_make(&p->ast, dest));
 }
 
-static ErrCode atom(Parser *p, Node *dest);
 
 static ErrCode call(Parser *p, Token name, Node *dest) {
 	node_set(dest, node_from(node_call, name));
