@@ -173,9 +173,8 @@ static ErrCode atom(Parser *p, Node *dest) {
 			break;
 		case tok_operator: {			
 			// Unary operators
-			if (strncmp(current.val, "+", 1) == 0 ||
-			    strncmp(current.val, "-", 1) == 0) {
-				atom(p, ast_make(&p->ast, dest));
+			if (*current.val == '-') {
+				checkout(atom(p, ast_make(&p->ast, dest)));
 				node_set(dest, node_from(node_unary, current));
 			}
 			else {
@@ -184,7 +183,7 @@ static ErrCode atom(Parser *p, Node *dest) {
 			}
 		} break;
 		case tok_lparen:
-			value(p, dest, 11);
+			checkout(value(p, dest, 11));
 			checkout(give_tok(p, tok_rparen, NULL));
 			break;
 		case tok_lbrace: 
