@@ -16,6 +16,7 @@ Node node(char *s) {
     return (Node) { .token = tok(s) };
 }
 
+
 int total_asserts = 0;
 int total_passed = 0;
 

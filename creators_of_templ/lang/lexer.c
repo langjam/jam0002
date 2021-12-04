@@ -88,7 +88,7 @@ Token lex_next(Lexer *l) {
 			++tok.len;
 		}
 		
-		// Since we include the # symbol we dont need to account for it
+		// Since we include the # symbol we dont want to account for it
 		int nums = tok.len-1;
 
 		if (nums != 6 && nums != 8) {

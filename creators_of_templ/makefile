@@ -1,4 +1,4 @@
-FILES=lang/*.c
+FILES=lang/*.c map/*.c
 TESTS=test/*.c
 FLAGS=-I.
 DEBUG=-Wextra -Wall -Werror -pedantic -g -fsanitize=address

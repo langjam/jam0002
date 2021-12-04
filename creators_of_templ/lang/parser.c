@@ -52,8 +52,6 @@ static bool isnt_tok(Parser *p, TokenType type) {
 // Returns current token and puts next one down the line
 static ErrCode next_tok(Parser *p, Token *dest) {
 
-	print_tok(p->current);
-	
 	// You can pass NULL and it will just skip
 	if (dest == NULL) {
 		// Put next token
