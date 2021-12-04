@@ -108,6 +108,8 @@ static ErrCode selector_and_props(Parser *p, Node *dest) {
 static ErrCode atom(Parser *p, Node *dest);
 
 static ErrCode call(Parser *p, Node *dest) {
+	node_set(dest, node_of(node_call));
+
 	checkout(give_tok(p, tok_lparen, NULL));
 	
 	while (isnt_tok(p, tok_rparen)) {
