@@ -110,8 +110,7 @@ static ErrCode atom(Parser *p, Node *dest) {
     switch (current.type) {
         case tok_numlit:
         case tok_ident:
-            node_set(ast_make(&p->ast, dest), node_from(node_atom, current));
-            node_set(ast_make(&p->ast, dest), node_from(node_atom, current));
+            node_set(dest, node_from(node_atom, current));
         break;
         default:
             p->err = err_f(err_unexpected, current.loc, "I didn't expect that.");
