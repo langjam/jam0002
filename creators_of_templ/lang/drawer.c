@@ -4,9 +4,15 @@
 
 bool should_close = false;
 
+Image screen_buffer;
+Texture2D screen_render;
+
 void draw_init(int canvas_size) {
 	InitWindow(canvas_size, canvas_size, "TEMPL");
 	SetTargetFPS(60);
+
+	screen_buffer = GenImageColor(canvas_size, canvas_size, WHITE);
+	screen_render = LoadTextureFromImage(screen_buffer);
 }
 
 bool draw_running() {
@@ -21,13 +27,18 @@ void draw_update() {
 	
 	ClearBackground(RAYWHITE);
 	
-	// Sandwich some code here
+	UpdateTexture(screen_render, screen_buffer.data);
+	DrawTexture(screen_render, 0, 0, WHITE);
 	
 	EndDrawing();
 }
 
 void draw_deinit() {
 	CloseWindow();
+
+	// the render uses a pointer to buffer's data, do not invert order
+	UnloadTexture(screen_render);
+	UnloadImage(screen_buffer);
 }
 
 void draw_circle(RunnerProps *props) {
@@ -43,7 +54,7 @@ void draw_circle(RunnerProps *props) {
 	if ( (p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
 
-	DrawCircle(pos.x, pos.y, r, *(Color *)&color);
+	ImageDrawCircle(&screen_buffer, pos.x, pos.y, r, *(Color *)&color);
 }
 
 void draw_rect(RunnerProps *props) {
@@ -59,7 +70,7 @@ void draw_rect(RunnerProps *props) {
 	if ( (p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
 
-	DrawRectangle(pos.x, pos.y, dm.x, dm.y, *(Color *)&color);
+	ImageDrawRectangle(&screen_buffer, pos.x, pos.y, dm.x, dm.y, *(Color *)&color);
 }
 
 void draw_runner_node(RunnerNode *node) {
