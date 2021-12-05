@@ -21,26 +21,26 @@ namespace dupr::ast::listener::user
 	public:
 		const dupr::ast::node::pattern_constructor_content* content = nullptr;
 		std::vector<const dupr::ast::node::pattern_constructor_content_stmt*> statements;
-		bool encapsulated_visited = false;
+		std::size_t encapsulated_visited = 0;
 
 		// self fixing encapsulated_visited
 		void ListenEntry(const dupr::ast::node::pattern_constructor_encapsulation* node) override
 		{
-			encapsulated_visited = true;
+			encapsulated_visited += 1;
 		}
 		void ListenExit(const dupr::ast::node::pattern_constructor_encapsulation* node) override
 		{
-			encapsulated_visited = false;
+			encapsulated_visited -= 1;
 		}
 
 		void ListenEntry(const dupr::ast::node::pattern_constructor_content* node) override
 		{
-			if (!encapsulated_visited)
+			if (encapsulated_visited == 0)
 				content = node;
 		}
 		void ListenEntry(const dupr::ast::node::pattern_constructor_content_stmt* node) override
 		{
-			if (!encapsulated_visited)
+			if (encapsulated_visited == 0)
 				statements.push_back(node);
 		}
 
