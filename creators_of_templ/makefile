@@ -1,6 +1,6 @@
 FILES=lang/*.c map/*.c
 TESTS=test/*.c
-FLAGS=-I.
+FLAGS=-I. -ldl -lpthread -lm
 DEBUG=-Wextra -Wall -Werror -pedantic -g -fsanitize=address
 
 all:

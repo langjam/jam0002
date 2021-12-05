@@ -1,9 +1,7 @@
-circle.someclass {
-  pos: vec2(10, 10 * 20);
-  radius: pos(2-$cvbm,xcvmb)^(2-2));
-  color: 50.0;
-  circle {
-    red: blue;
-  }
-  stst: rgba(2, 2, 2, 2);
+root {
+	circle {
+		radius: 10;
+		pos: vec2(30, 30);
+		color: red;
+	}
 }
