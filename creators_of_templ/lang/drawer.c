@@ -19,7 +19,9 @@ bool draw_running() {
 	return !should_close;
 }
 
-void draw_update() {
+void draw_runner_node(RunnerNode *node);
+
+void draw_update(Runner *runner) {
 	if (WindowShouldClose())
 		should_close = true;
 	
@@ -27,8 +29,10 @@ void draw_update() {
 	
 	ClearBackground(RAYWHITE);
 	
+	draw_runner_node(runner->root);
+	
 	UpdateTexture(screen_render, screen_buffer.data);
-	DrawTexture(screen_render, 0, 0, WHITE);
+	// DrawTexture(screen_render, 0, 0, WHITE);
 	
 	EndDrawing();
 }
@@ -53,8 +57,15 @@ void draw_circle(RunnerProps *props) {
 		r = p->data.number;
 	if ( (p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
+		
+	Color raycolor = {
+		.r = (color >> 16) & 0xFF,
+		.g = (color >> 8) & 0xFF,
+		.b = (color >> 0) & 0xFF,
+		.a = 255
+	};
 
-	ImageDrawCircle(&screen_buffer, pos.x, pos.y, r, *(Color *)&color);
+	DrawCircle(pos.x, pos.y, r, raycolor);
 }
 
 void draw_rect(RunnerProps *props) {

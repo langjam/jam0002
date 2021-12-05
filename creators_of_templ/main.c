@@ -4,6 +4,7 @@
 #include "lang/err.h"
 #include "lang/parser.h"
 #include "lang/drawer.h"
+#include "lang/runner.h"
 
 char* read_file(const char *path) {
     FILE *f = fopen(path, "rb");
@@ -34,7 +35,12 @@ int main() {
 	else {
         ast_pretty_print(&p.ast);
     }
-	parser_deinit(&p);
+	Runner runner;
+	if (runner_init(&p.ast, &runner))
+		return -1; // TODO: Print good error message!
+		
+	runner_dump(&runner);
+		
 	/*
 	Token tok;
 	for (tok = next(&l); tok.type && tok.type != tok_eof; tok = next(&l))
@@ -44,13 +50,16 @@ int main() {
 		err_explain(&l.err, l.buf);
 	}
 	*/
-	free(file);
+	
 
 	draw_init(400);
 	while (draw_running()) {
-		draw_update();
+		draw_update(&runner);
 	}
+
+	parser_deinit(&p);
 	draw_deinit();
+	free(file);
 
 	return 0;
 }

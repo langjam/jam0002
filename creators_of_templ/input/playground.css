@@ -1,8 +1,6 @@
 root {
 	circle {
-		radius: 10;
-		pos: vec2(30, 30);
-		color: red;
+		color: #234234;
 	}
 }
 

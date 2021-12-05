@@ -9,6 +9,7 @@
 
 
 typedef enum RunnerPropType {
+	type_nil,
 	type_number,
 	type_string,
 	type_position,
@@ -60,6 +61,11 @@ typedef struct Runner {
 // Initializes runner and uses AST,
 // The AST must persist throughout the entire execution
 ErrCode runner_init(Ast *ast, Runner *dest);
+
+// Looks up node property
+RunnerProp* runner_get_node_prop(RunnerNode *node, const char *key);
+
+void runner_dump(Runner *runner);
 
 // Executes the runner
 void runner_exec(Runner *runner);
