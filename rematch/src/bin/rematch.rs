@@ -5,7 +5,7 @@ use codespan_reporting::term::{
     self,
     termcolor::{ColorChoice, StandardStream},
 };
-use gtx::{
+use rematch::{
     loc::Located,
     parser::{parse, parse_repl, ReplParse},
     AstContext, ExecutionError,
