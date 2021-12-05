@@ -1,67 +1,89 @@
 use std::rc::Rc;
-use crate::parser::{Span, Spanned, ReplParse};
+use crate::loc::{Span, Located};
+use crate::parser::ReplParse;
 use crate::ast::*;
 
-grammar;
+grammar(file_id: codespan::FileId);
 
 extern {
     type Location = usize;
 }
 
+match {
+    "case",
+    "of",
+    "end",
+    "rematch",
+    "match",
+    r"[A-Z0-9_][a-zA-Z0-9_]*" => "CONSTR",
+} else {
+    r"[a-z_][a-zA-Z0-9_]*" => "IDENT",
+    _
+}
+
 pub Toplevel = { <Decl*> }
 
-pub Repl: Spanned<ReplParse> = {
+pub Repl: Located<ReplParse> = {
     <Decl> => <>.map(ReplParse::Decl),
     <Expr> => <>.map(ReplParse::Expr),
 }
 
-Decl: Spanned<Decl> = {
-    <name:Spanned<Ident>> "=" <body:Expr> => Spanned(
-        name.span().merge(body.span()),
-        Decl {
+Decl: Located<Decl> = {
+    <name:Located<Ident>> "=" <body:Expr> => Located {
+        file_id,
+        span: name.span().merge(body.span()),
+        value: Decl {
             name,
             body,
         }
-    )
+    }
 }
 
-Expr: Spanned<Expr> = {
+Expr: Located<Expr> = {
     <l:@L> "case" <on:RawExpr> "of" <arms:Clause*> "end" <r:@R> =>
-        Spanned(Span(l, r), Expr::Match {
-            on: on.map(Rc::new),
-            arms
-        }),
-    <RawExpr>,
+        Located {
+            span: Span(l, r),
+            file_id,
+            value: Expr::Match {
+                on: on.map(Rc::new),
+                arms
+            },
+        },
+    RawExpr,
 }
 
-Tier<Op, Next>: Spanned<Expr> = {
-    <l:Tier<Op, Next>> <op:Op> <r:Next> => Spanned(l.span().merge(r.span()), Expr::Binop {
-        lhs: l.map(Rc::new),
-        op,
-        rhs: r.map(Rc::new),
-    }),
-    Next
+Tier<Op, Next>: Located<Expr> = {
+    <l:Tier<Op, Next>> <op:Op> <r:Next> => Located {
+        file_id,
+        span: l.span().merge(r.span()),
+        value: Expr::Binop {
+            lhs: l.map(Rc::new),
+            op,
+            rhs: r.map(Rc::new),
+        },
+    },
+    Next,
 }
 
 RawExpr = Tier<ExprOp, Factor>;
 Factor = Tier<FactorOp, Atom>;
 
-ExprOp: Spanned<Binop> = {
-    Spanned<"+"> => <>.map(|_| Binop::Add),
-    Spanned<"-"> => <>.map(|_| Binop::Sub),
+ExprOp: Located<Binop> = {
+    Located<"+"> => <>.map(|_| Binop::Add),
+    Located<"-"> => <>.map(|_| Binop::Sub),
 }
-FactorOp: Spanned<Binop> = {
-    Spanned<"*"> => <>.map(|_| Binop::Mul),
-    Spanned<"/"> => <>.map(|_| Binop::Div),
+FactorOp: Located<Binop> = {
+    Located<"*"> => <>.map(|_| Binop::Mul),
+    Located<"/"> => <>.map(|_| Binop::Div),
 }
 
-Atom: Spanned<Expr> = {
-    Prim => <>.map(Expr::Primary),
+Atom: Located<Expr> = {
+    Prim => <>.map(Expr::Pattern),
     "(" <Expr> ")",
 }
 
 Clause: Clause = {
-    "|" <pattern:Pat> <recursive:MatchKind> <body:Expr> => {
+    "|" <pattern:Prim> <recursive:MatchKind> <body:Expr> => {
         Clause {
             recursive,
             pattern,
@@ -75,24 +97,38 @@ MatchKind: bool = {
     "rematch" => true,
 }
 
-Pat: Spanned<Pattern> = {
-    Prim => <>.map(Pattern::Primary),
-    <l:@L> "(" <name:Spanned<Ident>> <args:Pat*> ")" <r:@R> => Spanned(
-        Span(l, r),
-        Pattern::Constructor {
+Prim: Located<Pattern> = {
+    Located<Ident> => <>.map(Pattern::Var),
+    <l:@L> <name: Located<Constr>> <r:@R> => Located {
+        value: Pattern::Constructor {
+            name,
+            args: vec![],
+        },
+        file_id,
+        span: Span(l, r),
+    },
+    <l:@L> <name:Located<Constr>> "(" <args:Comma<Prim>> ")" <r:@R> => Located {
+        file_id,
+        span: Span(l, r),
+        value: Pattern::Constructor {
             name,
             args,
         }
-    )
+    },
 }
 
-Prim: Spanned<Primary> = {
-    Spanned<r"[0-9]+"> => <>.map(|s| Primary::Const(s.to_string())),
-    Spanned<Ident> => <>.map(Primary::Var),
+Comma<T>: Vec<T> = {
+    <x:T> "," <xs:T+> => std::iter::once(x).chain(xs.into_iter()).collect(),
+    <x:T> => vec![x],
 }
 
-Ident: String = { <r"[a-zA-Z_][a-zA-Z0-9_]*"> => <>.to_string() }
+Constr: String = { <"CONSTR"> => <>.to_string() }
+Ident: String = { <"IDENT"> => <>.to_string() }
 
-Spanned<T>: Spanned<T> = {
-    <l:@L> <i:T> <r:@R> => Spanned(Span(l, r), i)
+Located<T>: Located<T> = {
+    <l:@L> <value:T> <r:@R> => Located {
+        file_id,
+        span: Span(l, r),
+        value,
+    }
 }

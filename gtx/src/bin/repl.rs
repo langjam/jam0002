@@ -4,7 +4,8 @@ use codespan_reporting::term::{
     termcolor::{ColorChoice, StandardStream},
 };
 use gtx::{
-    parser::{parse_repl, ReplParse, Spanned},
+    loc::Located,
+    parser::{parse_repl, ReplParse},
     AstContext,
 };
 use rustyline::{error::ReadlineError, Editor};
@@ -46,14 +47,33 @@ impl Repl {
                 self.idx += 1;
                 let file_id = self.sources.add(name, line);
                 match parse_repl(&self.sources, file_id) {
-                    Ok(Spanned(_, ReplParse::Decl(decl))) => {
+                    Ok(Located {
+                        value: ReplParse::Decl(decl),
+                        ..
+                    }) => {
                         let name = decl.name.clone();
                         self.context.add_decl(decl);
                         println!("{:?}", self.context.binding(name.as_deref().into_inner()));
                     }
-                    Ok(Spanned(_, ReplParse::Expr(expr))) => {
-                        let ast = self.context.make_expr(expr);
-                        println!("{:?}", ast);
+                    Ok(
+                        expr
+                        @
+                        Located {
+                            value: ReplParse::Expr(_),
+                            ..
+                        },
+                    ) => {
+                        let ast = self.context.make_expr(expr.map(|p| {
+                            if let ReplParse::Expr(e) = p {
+                                e
+                            } else {
+                                unreachable!()
+                            }
+                        }));
+                        match ast.into_inner().run() {
+                            Some(ast) => println!("{:?}", ast),
+                            None => eprintln!("Error: execution error"),
+                        }
                     }
                     Err(diag) => {
                         term::emit(&mut writer, &write_config, &self.sources, &diag).unwrap()
