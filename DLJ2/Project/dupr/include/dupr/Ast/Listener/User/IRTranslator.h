@@ -226,6 +226,17 @@ namespace dupr::ast::listener::user
 			{
 				direction += dirDepth;
 			}
+			auto iterDir = mapDirectionWithPatterns.find(direction);
+			if (iterDir == mapDirectionWithPatterns.end())
+			{
+				mapDirectionWithPatterns.insert(
+					{direction, {direction + accessor.pattern_name().GetContent()[0]->GetText()}});
+			}
+			else
+			{
+				iterDir->second.push_back(direction +
+										  accessor.pattern_name().GetContent()[0]->GetText());
+			}
 			auto nodeOrder = terminalOrder.GetNodeOrder();
 
 			auto stateMachine = new PatternStateMachine(
@@ -236,15 +247,18 @@ namespace dupr::ast::listener::user
 					{
 						ConstructFunction(stateMachine);
 					}
-					else if (stateMachine->GetType() == "ConditionalIfPattern")
+					else if (stateMachine->GetType() == "ConditionalIfPattern" ||
+							 stateMachine->GetType() == "IfPattern")
 					{
 						ConstructConditionalIf(stateMachine);
 					}
-					else if (stateMachine->GetType() == "ConditionalElseIfPattern")
+					else if (stateMachine->GetType() == "ConditionalElseIfPattern" ||
+							 stateMachine->GetType() == "ElseIfPattern")
 					{
 						ConstructConditionalElseIf(stateMachine);
 					}
-					else if (stateMachine->GetType() == "ConditionalElsePattern")
+					else if (stateMachine->GetType() == "ConditionalElsePattern" ||
+							 stateMachine->GetType() == "ElsePattern")
 					{
 						ConstructConditionalElse(stateMachine);
 					}
@@ -255,6 +269,10 @@ namespace dupr::ast::listener::user
 					else if (stateMachine->GetType() == "VariableAssignmentPattern")
 					{
 						ConstructVariableAssignment(stateMachine);
+					}
+					else if (stateMachine->GetType() == "VariableInitializationPattern")
+					{
+						ConstructVariableIntialization(stateMachine);
 					}
 					else if (stateMachine->GetType() == "ReturnPattern")
 					{
@@ -465,7 +483,7 @@ namespace dupr::ast::listener::user
 			{
 				if (!ParseStatements(statement))
 				{
-					std::cout << "\tParsing arguments failed, aborting function construction\n";
+					std::cout << "\tParsing statements failed, aborting function construction\n";
 					return;
 				}
 				for (auto functionStatement : functionStatements)
@@ -487,6 +505,11 @@ namespace dupr::ast::listener::user
 		void ConstructVariableDeclaration(PatternStateMachine* stateMachine)
 		{
 			std::cout << "Constructing a variable declaration:\n";
+		}
+
+		void ConstructVariableIntialization(PatternStateMachine* stateMachine)
+		{
+			std::cout << "Constructing a variable initialization:\n";
 		}
 
 		void ConstructReturnStatement(PatternStateMachine* stateMachine)
