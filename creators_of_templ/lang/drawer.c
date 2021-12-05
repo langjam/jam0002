@@ -47,7 +47,7 @@ void draw_deinit() {
 }
 
 void draw_circle(RunnerProps *props) {
-	double r = 10;
+	double r = 0;
 	Pos pos = {0, 0};
 	uint32_t color = 0xff;
 

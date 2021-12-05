@@ -1,13 +1,16 @@
-root {
-	rect {
-		position: vec2(80, 90);
-		dimensions: vec2(40, 30);
-		color: #456456;
-	}
-	rect {
-		position: vec2(120, 90);
-		dimensions: vec2(40, 30);
-		color: #FF0000;
-	}
-}
+root
+{
+    rect
+    {
+        position: vec2(200, 255);
+        dimensions: vec2(200, 200);
+        color: #ff0011;
+    }
 
+    circle
+    {
+        position: vec2(22 + 44, 10 * 10)
+        radius: 100;
+        color: #ff2020;`
+    }
+}
