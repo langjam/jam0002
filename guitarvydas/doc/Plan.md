@@ -109,5 +109,13 @@ At the low level, a `future` must be able to automatically suspend the sender an
 Gendanken Q: What is the cost of using a `future` in whatever language you use?  Are you trying to squeeze blood out of your CPU?  If so, you need to know what's going on underneath.  While you're at it, ask what is the cost of using a thread?  What is the cost of using an operating system?
 
 # Diagrams
-I drew the diagrams in draw.io (aka diagrams.net) and have saved them as
-- 
+I drew the diagrams in draw.io (aka diagrams.net) and have saved them as .svg file in this directory.
+
+## Nesting
+https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-1.%20Nesting.svg
+
+## Race Condition
+https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-2.%20Race%20Condition.svg
+
+## Daisy Chain
+https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-3.%20Daisy%20Chain.svg
