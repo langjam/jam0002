@@ -34,11 +34,11 @@ void draw_update() {
 }
 
 void draw_deinit() {
-	CloseWindow();
-
 	// the render uses a pointer to buffer's data, do not invert order
 	UnloadTexture(screen_render);
 	UnloadImage(screen_buffer);
+	
+	CloseWindow();
 }
 
 void draw_circle(RunnerProps *props) {

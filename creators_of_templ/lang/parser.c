@@ -79,6 +79,8 @@ static ErrCode next_tok(Parser *p, Token *dest) {
 // Returns token if their types match
 static ErrCode give_tok(Parser *p, TokenType type, Token *dest) {
 	// Check if token is valid
+	if (p->current.type == tok_eof)
+		return err_eof;
 	if (isnt_tok(p, type)) {
 		p->err = err_f(err_unexpected, p->current.loc, "I didn't expect that. (I wanted `%s' but this is `%s')",
 														type_lookup[type], type_lookup[p->current.type]);
@@ -302,8 +304,12 @@ static ErrCode property_list(Parser *p, Node *dest) {
 // Check parser->err to find the details of the error
 ErrCode parser_run(Parser *p) {
 	Node *root = ast_make(&p->ast, NULL);
+	root->type = node_root;
 	p->current = lex_next(&p->lexer);
-	return selector_and_props(p, root); 
+
+	ErrCode err;
+	while (err = selector_and_props(p, ast_make(&p->ast, root)), p->current.type != tok_eof && !err);
+	return err; 
 }
 
 // Frees data from parser

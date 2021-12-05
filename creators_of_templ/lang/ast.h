@@ -19,6 +19,7 @@ typedef enum NodeType {
 	node_binary,
 	node_unary,
 	node_var,
+	node_root
 } NodeType;
 
 

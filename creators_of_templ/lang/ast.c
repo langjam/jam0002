@@ -94,6 +94,7 @@ void node_pretty_print(Node *node, int indent) {
 		case node_unary:	 		 printf("unary");			 break;
 		case node_binary:			 printf("binary");		     break;
 		case node_var:		   	 printf("var");	   		 break;
+		case node_root:   	   	 printf("root");	   		 break;
 	}
 	printf(": \x1b[37m");
 	
