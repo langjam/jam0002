@@ -29,24 +29,61 @@ RunnerNode *alloc(Runner *r, RunnerNode *parent) {
 }
 
 ErrCode make_atom(Node *atom, RunnerProp *dest) {
+	// token val isnt null terminated
+	char buf[64] = {0};
+	strncpy(buf, atom->token.val, atom->token.len);
 	switch (atom->token.type) {
 		case tok_hexlit: {
 			char *endptr = NULL;
-			uint32_t val = strtoul(atom->token.val+1, &endptr, 16);
+			uint32_t val = strtoul(buf+1, &endptr, 16);
+			if (endptr == buf) return err_bad_number_literal;
 			dest->type = type_color;
 			dest->data.color = val;
-			return err_ok;
+		} break;
+		case tok_numlit: {
+			char *endptr = NULL;
+			dest->type = type_number;
+			dest->data.number = strtod(buf, &endptr);
+			if (endptr == buf) return err_bad_number_literal;
 		} break;
 		default:
 			// TODO: Provide Err struct in runtime
 			return err_badprop;
 	}
+	return err_ok;
 }
 
 ErrCode make_call(Node *call, RunnerProp *dest) {
-	(void) dest;
-	if (strncmp(call->token.val, "vec2", call->token.len)) {
-		// TODO: Handle vec2 
+
+	if (strncmp(call->token.val, "vec2", call->token.len) == 0) {
+		dest->type = type_position;
+		char *endptr = NULL;
+		char buf[64] = {0};
+
+		// X
+		if (!call->first_child)
+			return err_badprop;
+		Node *node = call->first_child;
+		
+		if (node->type != node_atom || node->token.type != tok_numlit)
+			return err_badprop;
+		strncpy(buf, node->token.val, node->token.len);
+		dest->data.pos.x = strtod(buf, &endptr);
+		if (endptr == buf)
+			return err_bad_number_literal;
+
+		// Y
+		if (!node->sibling)
+			return err_badprop;
+		node = node->sibling;
+
+		if (node->type != node_atom || node->token.type != tok_numlit)
+			return err_badprop;
+		strncpy(buf, node->token.val, node->token.len);
+		dest->data.pos.y = strtod(buf, &endptr);
+		if (endptr == buf)
+			return err_bad_number_literal;
+
 		return err_ok;
 	}
 	else {
@@ -58,15 +95,16 @@ ErrCode make_call(Node *call, RunnerProp *dest) {
 ErrCode make_prop(Node *propdesc, RunnerProp *dest) {
 	switch (propdesc->type) {
 		case node_call:
-			return make_call(propdesc, dest);
+			checkout(make_call(propdesc, dest));
 			break;
 		case node_atom:
-			return make_atom(propdesc, dest);
+			checkout(make_atom(propdesc, dest));
 			break;
 		default:
 			// TODO: Provide Err struct in runtime
 			return err_badprop;
 	}
+	return err_ok;
 }
 
 ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
@@ -136,6 +174,9 @@ void _runner_dump(RunnerNode *node, int depth) {
 		case element_circle:
 			printf("circle");
 			break;
+		case element_root:
+			printf("root");
+			break;
 	}
 	printf("\n");
 	
@@ -154,7 +195,6 @@ void _runner_dump(RunnerNode *node, int depth) {
 }
 
 void runner_dump(Runner *runner) {
-	printf("root\n");
 	_runner_dump(runner->root, 0);
 }
 
@@ -170,6 +210,7 @@ ErrCode runner_init(Ast *ast, Runner *dest) {
 	};
 	(void)ast;
 	runner.root = alloc(&runner, NULL);
+	runner.root->type = element_root;
 	checkout(expand_tree(&runner, &ast->nodes[0], runner.root));
 	*dest = runner;
 	return err_ok;
@@ -178,6 +219,19 @@ ErrCode runner_init(Ast *ast, Runner *dest) {
 // Executes the runner
 void runner_exec(Runner *runner);
 
+void _runner_deinit(RunnerNode *node) {
+	if (node == NULL)
+		return;
+		
+	map_deinit(&node->props);
+	
+	_runner_deinit(node->first_child);
+	_runner_deinit(node->sibling);
+}
+
 // Removes data (doesn't touch AST)
-void runner_deinit(Runner *runner);
+void runner_deinit(Runner *runner) {
+	_runner_deinit(runner->root);
+	free(runner->nodes);
+}
 

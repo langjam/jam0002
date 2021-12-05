@@ -38,6 +38,7 @@ typedef map_t(RunnerProp) RunnerProps;
 typedef enum RunnerNodeType {
 	element_circle,
 	element_rect,
+	element_root
 } RunnerNodeType;
 
 

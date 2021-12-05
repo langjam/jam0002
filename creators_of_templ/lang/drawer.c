@@ -31,6 +31,7 @@ void draw_update(Runner *runner) {
 	
 	draw_runner_node(runner->root);
 	
+	
 	UpdateTexture(screen_render, screen_buffer.data);
 	// DrawTexture(screen_render, 0, 0, WHITE);
 	
@@ -91,6 +92,8 @@ void draw_runner_node(RunnerNode *node) {
 		break;
 	case element_rect:
 		draw_rect(&node->props);	
+		break;
+	case element_root:
 		break;
 	}
 

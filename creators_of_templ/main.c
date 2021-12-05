@@ -57,6 +57,7 @@ int main() {
 		draw_update(&runner);
 	}
 
+	runner_deinit(&runner);
 	parser_deinit(&p);
 	draw_deinit();
 	free(file);
