@@ -1,4 +1,9 @@
+pub mod ast;
+pub mod parser;
+
 use std::collections::HashMap;
+
+use parser::Spanned;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Pat {
@@ -215,6 +220,99 @@ impl Ast {
     }
 }
 
+#[derive(Debug, Default)]
+pub struct AstContext {
+    var_data: HashMap<String, Ast>,
+    var_ref: HashMap<u32, String>,
+    next_free: u32,
+}
+
+impl AstContext {
+    pub fn binding<S: AsRef<str>>(&self, name: S) -> Option<&Ast> {
+        self.var_data.get(name.as_ref())
+    }
+
+    pub fn variable(&self, var: u32) -> Option<&str> {
+        self.var_ref.get(&var).map(|s| s.as_str())
+    }
+
+    pub fn add_decl(&mut self, decl: ast::Decl) {
+        let ast = self.make_expr(decl.body.into_inner());
+        self.var_data.insert(decl.name.into_inner(), ast);
+    }
+
+    pub fn make_expr(&mut self, ast: ast::Expr) -> Ast {
+        match ast {
+            ast::Expr::Primary(p) => self.make_prim_expr(p),
+            ast::Expr::Binop { .. } => todo!(),
+            ast::Expr::Match {
+                on: Spanned(_, on),
+                arms,
+            } => Ast::Match {
+                on: Box::new(self.make_expr((*on).clone())),
+                clauses: arms
+                    .into_iter()
+                    .map(|clause| self.make_clause(clause))
+                    .collect(),
+            },
+        }
+    }
+
+    pub fn make_clause(&mut self, clause: ast::Clause) -> Clause {
+        Clause {
+            body: self.make_expr(clause.body.into_inner()),
+            pattern: self.make_pattern(clause.pattern.into_inner()),
+        }
+    }
+
+    pub fn make_pattern(&mut self, pattern: ast::Pattern) -> Pat {
+        match pattern {
+            ast::Pattern::Primary(p) => self.make_prim_pattern(p),
+            ast::Pattern::Constructor {
+                name: Spanned(_, name),
+                args,
+            } => Pat::PatConstr {
+                name,
+                args: args
+                    .into_iter()
+                    .map(|Spanned(_, pat)| self.make_pattern(pat))
+                    .collect(),
+            },
+        }
+    }
+
+    pub fn make_prim_expr(&mut self, prim: ast::Primary) -> Ast {
+        match prim {
+            ast::Primary::Const(c) => Ast::Constr {
+                name: c,
+                args: vec![],
+            },
+            ast::Primary::Var(v) => Ast::Var {
+                name: self.next_var(v),
+            },
+        }
+    }
+
+    pub fn make_prim_pattern(&mut self, prim: ast::Primary) -> Pat {
+        match prim {
+            ast::Primary::Const(c) => Pat::PatConstr {
+                name: c,
+                args: vec![],
+            },
+            ast::Primary::Var(v) => Pat::PatVar {
+                name: self.next_var(v),
+            },
+        }
+    }
+
+    fn next_var(&mut self, var: String) -> u32 {
+        self.var_ref.insert(self.next_free, var);
+        let v = self.next_free;
+        self.next_free += 1;
+        v
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::Ast::*;
@@ -328,8 +426,4 @@ mod test {
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
-}
-
-fn main() {
-    println!("hello")
 }

@@ -1,0 +1,98 @@
+use std::rc::Rc;
+use crate::parser::{Span, Spanned, ReplParse};
+use crate::ast::*;
+
+grammar;
+
+extern {
+    type Location = usize;
+}
+
+pub Toplevel = { <Decl*> }
+
+pub Repl: Spanned<ReplParse> = {
+    <Decl> => <>.map(ReplParse::Decl),
+    <Expr> => <>.map(ReplParse::Expr),
+}
+
+Decl: Spanned<Decl> = {
+    <name:Spanned<Ident>> "=" <body:Expr> => Spanned(
+        name.span().merge(body.span()),
+        Decl {
+            name,
+            body,
+        }
+    )
+}
+
+Expr: Spanned<Expr> = {
+    <l:@L> "case" <on:RawExpr> "of" <arms:Clause*> "end" <r:@R> =>
+        Spanned(Span(l, r), Expr::Match {
+            on: on.map(Rc::new),
+            arms
+        }),
+    <RawExpr>,
+}
+
+Tier<Op, Next>: Spanned<Expr> = {
+    <l:Tier<Op, Next>> <op:Op> <r:Next> => Spanned(l.span().merge(r.span()), Expr::Binop {
+        lhs: l.map(Rc::new),
+        op,
+        rhs: r.map(Rc::new),
+    }),
+    Next
+}
+
+RawExpr = Tier<ExprOp, Factor>;
+Factor = Tier<FactorOp, Atom>;
+
+ExprOp: Spanned<Binop> = {
+    Spanned<"+"> => <>.map(|_| Binop::Add),
+    Spanned<"-"> => <>.map(|_| Binop::Sub),
+}
+FactorOp: Spanned<Binop> = {
+    Spanned<"*"> => <>.map(|_| Binop::Mul),
+    Spanned<"/"> => <>.map(|_| Binop::Div),
+}
+
+Atom: Spanned<Expr> = {
+    Prim => <>.map(Expr::Primary),
+    "(" <Expr> ")",
+}
+
+Clause: Clause = {
+    "|" <pattern:Pat> <recursive:MatchKind> <body:Expr> => {
+        Clause {
+            recursive,
+            pattern,
+            body,
+        }
+    }
+}
+
+MatchKind: bool = {
+    "match" => false,
+    "rematch" => true,
+}
+
+Pat: Spanned<Pattern> = {
+    Prim => <>.map(Pattern::Primary),
+    <l:@L> "(" <name:Spanned<Ident>> <args:Pat*> ")" <r:@R> => Spanned(
+        Span(l, r),
+        Pattern::Constructor {
+            name,
+            args,
+        }
+    )
+}
+
+Prim: Spanned<Primary> = {
+    Spanned<r"[0-9]+"> => <>.map(|s| Primary::Const(s.to_string())),
+    Spanned<Ident> => <>.map(Primary::Var),
+}
+
+Ident: String = { <r"[a-zA-Z_][a-zA-Z0-9_]*"> => <>.to_string() }
+
+Spanned<T>: Spanned<T> = {
+    <l:@L> <i:T> <r:@R> => Spanned(Span(l, r), i)
+}
