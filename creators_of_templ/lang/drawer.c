@@ -71,7 +71,7 @@ void draw_circle(RunnerProps *props) {
 
 void draw_rect(RunnerProps *props) {
 	Pos pos = {0, 0};
-	Pos dm = {10, 10};
+	Pos dm = {0, 0};
 	uint32_t color = 0xff;
 
 	RunnerProp *p;
