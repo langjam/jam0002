@@ -156,26 +156,32 @@ pub enum Ast {
     Constr { name: String, args: Vec<Ast> },
 }
 
-struct DisplayAst {
+struct DisplayAst<'ctx, 'ast> {
     offset: usize,
-    ast: Ast,
+    context: &'ctx AstContext,
+    ast: &'ast Ast,
 }
 
-impl Display for DisplayAst {
+impl<'ctx, 'ast> Display for DisplayAst<'ctx, 'ast> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &self.ast {
-            Ast::Var { name } => write!(f, "x{}", name),
+        match self.ast {
+            Ast::Var { name } => match self.context.variable(*name) {
+                Some(name) => write!(f, "{}", name),
+                None => write!(f, "x{}", name),
+            },
             Ast::Match { on, clauses } => {
-                write!(f, "match {} with\n", on)?;
+                write!(f, "case {} of\n", on.display(self.context))?;
                 for cl in clauses {
                     write!(
                         f,
-                        "{:width$}| {} -> {}\n",
+                        "{:width$}| {} {} {}\n",
                         "",
                         cl.pattern,
+                        if cl.recursive { "match" } else { "rematch" },
                         DisplayAst {
                             offset: self.offset + 4,
-                            ast: cl.body.clone()
+                            context: self.context,
+                            ast: &cl.body
                         },
                         width = self.offset,
                     )?;
@@ -183,35 +189,26 @@ impl Display for DisplayAst {
                 write!(f, "{:width$}end", "", width = self.offset)
             }
             Ast::Constr { name, args } => {
-                write!(f, "{}(", name)?;
-                if args.len() != 0 {
-                    write!(f, "{}", args[0])?;
-                    for i in &args[1..] {
-                        write!(f, ", ")?;
-                        i.fmt(f)?
+                if args.is_empty() {
+                    write!(f, "{}", name)
+                } else {
+                    write!(f, "{}(", name)?;
+                    if args.len() != 0 {
+                        write!(f, "{}", args[0].display(self.context))?;
+                        for i in &args[1..] {
+                            write!(f, ", {}", i.display(self.context))?;
+                        }
                     }
+                    write!(f, ")")
                 }
-                write!(f, ")")
             }
         }
     }
 }
 
-impl Display for Ast {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            DisplayAst {
-                offset: 0,
-                ast: self.clone()
-            }
-        )
-    }
-}
-
 #[derive(Clone, Debug, PartialEq)]
 pub struct Clause {
+    recursive: bool,
     pattern: Pat,
     body: Ast,
 }
@@ -229,7 +226,11 @@ impl Clause {
         let binders = self.pattern.binders();
         let body = self.body.rename(&binders, offset);
         let pattern = self.pattern.rename(offset);
-        Clause { body, pattern }
+        Clause {
+            recursive: false, /* TODO: Make sure this is alright */
+            body,
+            pattern,
+        }
     }
 
     /// Perform safe parallel substitution of a frees variables by terms in
@@ -316,20 +317,42 @@ impl Ast {
         self.parallel_subst(&renaming)
     }
 
-    fn run(self) -> Option<Self> {
+    pub fn run(&self, ctx: &AstContext) -> Option<Self> {
         match self {
-            Ast::Var { .. } => Some(self),
+            Ast::Var { name } => {
+                let var_ast = ctx.binding(ctx.variable(*name)?)?;
+                var_ast.run(ctx)
+            }
             Ast::Match { on, clauses } => {
-                let arg = on.run()?;
-                clauses.into_iter().find_map(|cl| cl.run(arg.clone()))
+                let arg = on.run(ctx)?;
+                let (rec, res) = clauses
+                    .into_iter()
+                    .find_map(|cl| Some((cl.recursive, cl.run(arg.clone())?)))?;
+                if rec {
+                    Ast::Match {
+                        on: Box::new(res),
+                        clauses: clauses.clone(),
+                    }
+                    .run(ctx)
+                } else {
+                    Some(res)
+                }
             }
             Ast::Constr { name, args } => {
-                let args = args.into_iter().map(Ast::run).collect::<Option<_>>()?;
+                let args = args.iter().map(|ast| ast.run(ctx)).collect::<Option<_>>()?;
                 Some(Ast::Constr {
                     name: name.clone(),
                     args,
                 })
             }
+        }
+    }
+
+    pub fn display<'ctx, 'ast: 'ctx>(&'ast self, context: &'ctx AstContext) -> impl 'ctx + Display {
+        DisplayAst {
+            ast: self,
+            context,
+            offset: 0,
         }
     }
 }
@@ -374,6 +397,7 @@ impl AstContext {
 
     pub fn make_clause(&mut self, clause: ast::Clause) -> Clause {
         Clause {
+            recursive: clause.recursive,
             body: self.make_expr(clause.body.into_inner()),
             pattern: self.make_pattern(clause.pattern.into_inner()),
         }

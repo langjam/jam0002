@@ -53,7 +53,10 @@ impl Repl {
                     }
                     Ok(Spanned(_, ReplParse::Expr(expr))) => {
                         let ast = self.context.make_expr(expr);
-                        println!("{:?}", ast);
+                        match ast.run(&self.context) {
+                            Some(res) => println!("-> {}", res.display(&self.context)),
+                            None => println!("=> Execution error"),
+                        }
                     }
                     Err(diag) => {
                         term::emit(&mut writer, &write_config, &self.sources, &diag).unwrap()
