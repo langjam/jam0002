@@ -1,6 +1,6 @@
-FILES=lang/*.c map/*.c
+FILES=lang/*.c map/*.c raylib/lib/libraylib.a
 TESTS=test/*.c
-FLAGS=-I.
+FLAGS=-I. -Iraylib/include/
 DEBUG=-Wextra -Wall -Werror -pedantic -g -fsanitize=address
 
 all:

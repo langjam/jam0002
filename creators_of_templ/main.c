@@ -3,6 +3,7 @@
 #include "lang/lexer.h"
 #include "lang/err.h"
 #include "lang/parser.h"
+#include "lang/drawer.h"
 
 char* read_file(const char *path) {
     FILE *f = fopen(path, "rb");
@@ -44,6 +45,13 @@ int main() {
 	}
 	*/
 	free(file);
+
+	draw_init(400);
+	for (;;) {
+		draw_update();
+	}
+	draw_deinit();
+
 	return 0;
 }
 
