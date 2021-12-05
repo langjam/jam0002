@@ -9,8 +9,11 @@ enum ErrCode {
 	err_invalid_char	   = 2,
 	err_bad_number_literal = 3,
 	// Parser errors
-	err_unexpected		 = 4
-} /*__attribute__((warn_unused_result))*/;
+	err_unexpected		 = 4,
+	
+	// Runner errors
+	err_badprop 		   = 5,
+} __attribute__((warn_unused_result));
 
 typedef enum ErrCode ErrCode;
 

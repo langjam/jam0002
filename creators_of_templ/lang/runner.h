@@ -59,7 +59,7 @@ typedef struct Runner {
 
 // Initializes runner and uses AST,
 // The AST must persist throughout the entire execution
-Runner runner_init(Ast *ast);
+ErrCode runner_init(Ast *ast, Runner *dest);
 
 // Executes the runner
 void runner_exec(Runner *runner);
