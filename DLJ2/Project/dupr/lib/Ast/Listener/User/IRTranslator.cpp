@@ -78,6 +78,298 @@ std::vector<std::string> dupr::ast::listener::user::GetPatternDirections(std::st
 	return directions;
 }
 
+void dupr::ast::listener::user::PatternStateMachine::AddCallback(
+	std::function<void(PatternStateMachine*)> callback_)
+{
+	callbacks.push_back(callback_);
+}
+
+bool dupr::ast::listener::user::PatternStateMachine::IsEmpty() const
+{
+	return states.empty();
+}
+
+dupr::ast::listener::user::PatternStateMachine::~PatternStateMachine()
+{
+	for (auto* state : states)
+	{
+		delete state;
+	}
+}
+
+std::string dupr::ast::listener::user::PatternStateMachine::GetType() const
+{
+	return type;
+}
+
+std::string dupr::ast::listener::user::PatternStateMachine::GetName() const
+{
+	return name;
+}
+
+std::vector<dupr::ast::listener::user::PatternStateMachine::State*>
+dupr::ast::listener::user::PatternStateMachine::GetStates() const
+{
+	return states;
+}
+
+bool dupr::ast::listener::user::PatternStateMachine::Check(
+	const std::vector<const ::deamer::external::cpp::ast::Node*>& currentNodes, bool execute,
+	bool print)
+{
+	std::size_t index = 0;
+	auto currentState = GetCurrentState(index);
+	auto nextState = GetNextState(index);
+	if (print)
+	{
+		std::cout << "\tPatternType: " + type + "\n\tPatternName: " + name + "\n";
+	}
+	if (print)
+	{
+		std::cout << "\tParsing (ignoring escape chars): ";
+		for (auto currentNode : currentNodes)
+		{
+			std::cout << currentNode->GetText();
+		}
+		std::cout << "\n";
+	}
+
+	for (auto statement : currentNodes)
+	{
+		// It means the input given is not accepted with our current state machine.
+		if (index >= states.size())
+		{
+			if (print)
+			{
+				std::cout << "\tGiven input cannot be accepted by pattern, all states are "
+							 "already "
+							 "visited.\n";
+			}
+			return false;
+		}
+
+		if (statement->GetType() ==
+			static_cast<std::size_t>(dupr::ast::Type::pattern_constructor_content_stmt))
+		{
+			statement = statement->GetIndex(0);
+		}
+		auto text = statement->GetText();
+
+		if (print)
+		{
+			std::cout << "\t\tCurrent Value: " << text << "\n";
+		}
+		if (statement->GetType() ==
+			static_cast<std::size_t>(dupr::ast::Type::pattern_constructor_encapsulation))
+		{
+			const auto* terminatingNT =
+				static_cast<const node::pattern_constructor_encapsulation*>(statement);
+			const bool valid = Check(terminatingNT, index, execute);
+
+			if (!valid)
+			{
+				if (print)
+				{
+					std::cout << "\tPattern failed at '" + terminatingNT->GetText() +
+									 "': encapsulation\n";
+				}
+				return false;
+			}
+		}
+		if (statement->GetType() ==
+			static_cast<std::size_t>(dupr::ast::Type::pattern_constructor_operator))
+		{
+			const auto* terminatingNT =
+				static_cast<const node::pattern_constructor_operator*>(statement);
+			const bool valid = Check(terminatingNT, index, execute);
+
+			if (!valid)
+			{
+				if (print)
+				{
+					std::cout << "\tPattern failed at '" + terminatingNT->GetText() +
+									 "': operator, expected: " +
+									 GetCurrentState(index)->GetPredefinedFormat().value() + "\n";
+				}
+				return false;
+			}
+		}
+		if (statement->GetType() ==
+			static_cast<std::size_t>(dupr::ast::Type::pattern_constructor_terminate))
+		{
+			const auto* terminatingNT =
+				static_cast<const node::pattern_constructor_terminate*>(statement);
+			const bool valid = Check(terminatingNT, index, execute);
+
+			if (!valid)
+			{
+				if (print)
+				{
+					std::cout << "\tPattern failed at '" + terminatingNT->GetText() +
+									 "': termination, expected: " +
+									 GetCurrentState(index)->GetPredefinedFormat().value() + "\n";
+				}
+				return false;
+			}
+		}
+		if (statement->GetType() ==
+			static_cast<std::size_t>(dupr::ast::Type::pattern_constructor_structure))
+		{
+			const auto* terminatingNT =
+				static_cast<const node::pattern_constructor_structure*>(statement);
+			const bool valid = Check(terminatingNT, index, execute);
+
+			if (!valid)
+			{
+				if (print)
+				{
+					std::cout << "\tPattern failed at '" + terminatingNT->GetText() +
+									 "': structure, expected: " +
+									 GetCurrentState(index)->GetPredefinedFormat().value() + "\n";
+				}
+				return false;
+			}
+		}
+	}
+
+	if (index == states.size())
+	{
+		return true;
+	}
+	else
+	{
+		std::cout << "\tGiven input cannot be accepted by pattern, not all states are "
+					 "visited.\n";
+		return false;
+	}
+}
+
+void dupr::ast::listener::user::PatternStateMachine::Execute(
+	const std::vector<const ::deamer::external::cpp::ast::Node*>& currentNodes)
+{
+	ResetNodesOfStates();
+	Check(currentNodes, true, false);
+	for (auto callback : callbacks)
+	{
+		callback(this);
+	}
+}
+
+bool dupr::ast::listener::user::PatternStateMachine::Check(
+	const dupr::ast::node::pattern_constructor_content* currentNode, bool execute, bool print)
+{
+	std::size_t index = 0;
+	auto currentState = GetCurrentState(index);
+	auto nextState = GetNextState(index);
+	if (print)
+	{
+		std::cout << "\tPatternType: " + type + "\n\tPatternName: " + name + "\n";
+	}
+	if (print)
+	{
+		std::cout << "\tParsing (ignoring escape chars): " << currentNode->GetText() << "\n";
+	}
+	auto statements = GetAccessor(currentNode).pattern_constructor_content_stmt();
+	for (std::size_t statement_index = 0; statement_index < statements.GetContent().size();
+		 statement_index++)
+	{
+		// It means the input given is not accepted with our current state machine.
+		if (index >= states.size())
+		{
+			if (print)
+			{
+				std::cout << "\tGiven input cannot be accepted by pattern, all states are "
+							 "already "
+							 "visited.\n";
+			}
+			return false;
+		}
+
+		auto statement = GetAccessor(statements.GetContent()[statement_index]);
+		auto text = statement.GetContent()[0]->GetText();
+
+		if (print)
+		{
+			std::cout << "\t\tCurrent Value: " << text << "\n";
+		}
+		if (!statement.pattern_constructor_encapsulation().GetContent().empty())
+		{
+			const auto* terminatingNT =
+				statement.pattern_constructor_encapsulation().GetContent()[0];
+			const bool valid = Check(terminatingNT, index, execute);
+
+			if (!valid)
+			{
+				if (print)
+				{
+					std::cout << "\tPattern failed at '" + terminatingNT->GetText() +
+									 "': encapsulation\n";
+				}
+				return false;
+			}
+		}
+		if (!statement.pattern_constructor_operator().GetContent().empty())
+		{
+			const auto* terminatingNT = statement.pattern_constructor_operator().GetContent()[0];
+			const bool valid = Check(terminatingNT, index, execute);
+
+			if (!valid)
+			{
+				if (print)
+				{
+					std::cout << "\tPattern failed at '" + terminatingNT->GetText() +
+									 "': operator, expected: " +
+									 GetCurrentState(index)->GetPredefinedFormat().value() + "\n";
+				}
+				return false;
+			}
+		}
+		if (!statement.pattern_constructor_terminate().GetContent().empty())
+		{
+			const auto* terminatingNT = statement.pattern_constructor_terminate().GetContent()[0];
+			const bool valid = Check(terminatingNT, index, execute);
+
+			if (!valid)
+			{
+				if (print)
+				{
+					std::cout << "\tPattern failed at '" + terminatingNT->GetText() +
+									 "': termination, expected: " +
+									 GetCurrentState(index)->GetPredefinedFormat().value() + "\n";
+				}
+				return false;
+			}
+		}
+		if (!statement.pattern_constructor_structure().GetContent().empty())
+		{
+			const auto* terminatingNT = statement.pattern_constructor_structure().GetContent()[0];
+			const bool valid = Check(terminatingNT, index, execute);
+
+			if (!valid)
+			{
+				if (print)
+				{
+					std::cout << "\tPattern failed at '" + terminatingNT->GetText() +
+									 "': structure, expected: " +
+									 GetCurrentState(index)->GetPredefinedFormat().value() + "\n";
+				}
+				return false;
+			}
+		}
+	}
+
+	if (index == states.size())
+	{
+		return true;
+	}
+	else
+	{
+		std::cout << "\tGiven input cannot be accepted by pattern, not all states are "
+					 "visited.\n";
+		return false;
+	}
+}
+
 bool dupr::ast::listener::user::PatternStateMachine::Check(
 	const dupr::ast::node::pattern_constructor_encapsulation* currentNode, std::size_t& index,
 	bool execute)
@@ -253,4 +545,257 @@ bool dupr::ast::listener::user::PatternStateMachine::Check(
 	index += 1;
 
 	return true;
+}
+
+bool dupr::ast::listener::user::PatternStateMachine::Check(
+	const dupr::ast::node::pattern_constructor_operator* currentNode, std::size_t& index,
+	bool execute)
+{
+	bool valid = true;
+	const auto currentState = GetCurrentState(index);
+	const auto nextState = GetNextState(index);
+	switch (currentState->GetType())
+	{
+	case StateType::any_word: {
+		valid = false;
+		break;
+	}
+	case StateType::expression_tree: {
+		if (nextState.has_value() && (nextState.value()->GetType() == StateType::any_word ||
+									  nextState.value()->GetType() == StateType::expression_tree))
+		{
+			std::cout << "Unparsable situation!\n";
+			valid = false;
+		}
+		else if (nextState.has_value() && GetAccessor(currentNode).GetContent()[0]->GetText() ==
+											  nextState.value()->GetPredefinedFormat())
+		{
+			if (execute)
+			{
+				GetNextState(index).value()->AddNode(currentNode);
+			}
+			// do logic for the predefined part
+			index += 2; // skip states include the predefined part
+			valid = true;
+		}
+		else
+		{
+			if (execute)
+			{
+				GetCurrentState(index)->AddNode(currentNode);
+			}
+			valid = true;
+		}
+
+		break;
+	}
+	case StateType::predefined_formatter: {
+		if (GetAccessor(currentNode).GetContent()[0]->GetText() !=
+			currentState->GetPredefinedFormat().value())
+		{
+			valid = false;
+		}
+		else
+		{
+			index += 1;
+			valid = true;
+		}
+		break;
+	}
+	}
+
+	return valid;
+}
+
+bool dupr::ast::listener::user::PatternStateMachine::Check(
+	const dupr::ast::node::pattern_constructor_structure* currentNode, std::size_t& index,
+	bool execute)
+{
+	bool valid = true;
+	const auto currentState = GetCurrentState(index);
+	const auto nextState = GetNextState(index);
+	switch (currentState->GetType())
+	{
+	case StateType::any_word: {
+		valid = false;
+		break;
+	}
+	case StateType::expression_tree: {
+		if (nextState.has_value() && GetAccessor(currentNode).GetContent()[0]->GetText() ==
+										 nextState.value()->GetPredefinedFormat())
+		{
+			if (execute)
+			{
+				GetNextState(index).value()->AddNode(currentNode);
+			}
+			// do logic for the predefined part
+			index += 2; // skip states include the predefined part
+			valid = true;
+		}
+		else
+		{
+			valid = false;
+		}
+		break;
+	}
+	case StateType::predefined_formatter: {
+		if (GetAccessor(currentNode).GetContent()[0]->GetText() !=
+			currentState->GetPredefinedFormat().value())
+		{
+			valid = false;
+		}
+		else
+		{
+			if (execute)
+			{
+				GetCurrentState(index)->AddNode(currentNode);
+			}
+			index += 1;
+			valid = true;
+		}
+		break;
+	}
+	}
+
+	return valid;
+}
+
+bool dupr::ast::listener::user::PatternStateMachine::Check(
+	const dupr::ast::node::pattern_constructor_terminate* currentNode, std::size_t& index,
+	bool execute)
+{
+	bool valid = true;
+	const auto currentState = GetCurrentState(index);
+	const auto nextState = GetNextState(index);
+	switch (currentState->GetType())
+	{
+	case StateType::any_word: {
+		if (execute)
+		{
+			GetCurrentState(index)->AddNode(currentNode);
+		}
+		index += 1;
+		valid = true;
+		break;
+	}
+	case StateType::expression_tree: {
+		if (nextState.has_value() && (nextState.value()->GetType() == StateType::any_word ||
+									  nextState.value()->GetType() == StateType::expression_tree))
+		{
+			std::cout << "Unparsable situation!\n";
+			valid = false;
+		}
+		else if (nextState.has_value() && GetAccessor(currentNode).GetContent()[0]->GetText() ==
+											  nextState.value()->GetPredefinedFormat())
+		{
+			if (execute)
+			{
+				GetNextState(index).value()->AddNode(currentNode);
+			}
+			// do logic for the predefined part
+			index += 2; // skip states include the predefined part
+			valid = true;
+		}
+		else
+		{
+			if (execute)
+			{
+				GetCurrentState(index)->AddNode(currentNode);
+			}
+			valid = true;
+		}
+
+		break;
+	}
+	case StateType::predefined_formatter: {
+		if (GetAccessor(currentNode).GetContent()[0]->GetText() !=
+			currentState->GetPredefinedFormat().value())
+		{
+			valid = false;
+		}
+		else
+		{
+			if (execute)
+			{
+				GetCurrentState(index)->AddNode(currentNode);
+			}
+			index += 1;
+			valid = true;
+		}
+		break;
+	}
+	}
+
+	return valid;
+}
+
+dupr::ast::listener::user::PatternStateMachine::State*
+dupr::ast::listener::user::PatternStateMachine::GetCurrentState(std::size_t index) const
+{
+	if (index < states.size())
+	{
+		return states[index];
+	}
+
+	throw std::logic_error("There are no states left.");
+}
+
+std::optional<dupr::ast::listener::user::PatternStateMachine::State*>
+dupr::ast::listener::user::PatternStateMachine::GetNextState(std::size_t index) const
+{
+	if ((index + 1) < states.size())
+	{
+		return states[index + 1];
+	}
+
+	return std::nullopt;
+}
+
+void dupr::ast::listener::user::PatternStateMachine::ResetNodesOfStates()
+{
+	for (auto* state : states)
+	{
+		state->ResetNodes();
+	}
+}
+
+void dupr::ast::listener::user::PatternStateMachine::Execute(
+	const node::pattern_constructor_content* patternConstructorContent)
+{
+	ResetNodesOfStates();
+	Check(patternConstructorContent, true, false);
+	for (auto callback : callbacks)
+	{
+		callback(this);
+	}
+}
+
+std::vector<dupr::ast::listener::user::PatternStateMachine::State*>
+dupr::ast::listener::user::PatternStateMachine::GetStatesWithName(std::string name)
+{
+	std::vector<State*> foundMatches;
+	for (auto* state : states)
+	{
+		if (state->GetPredefinedFormat().value() == name)
+		{
+			foundMatches.push_back(state);
+		}
+	}
+
+	return foundMatches;
+}
+
+std::vector<dupr::ast::listener::user::PatternStateMachine::State*>
+dupr::ast::listener::user::PatternStateMachine::GetPatternInsertionWithName(std::string name)
+{
+	std::vector<State*> foundMatches;
+	for (auto* state : states)
+	{
+		if (GetPatternInsertion(state->GetPredefinedFormat().value()) == name)
+		{
+			foundMatches.push_back(state);
+		}
+	}
+
+	return foundMatches;
 }
