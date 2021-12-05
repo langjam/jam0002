@@ -19,7 +19,7 @@ bool draw_running() {
 	return !should_close;
 }
 
-void draw_runner_node(RunnerNode *node);
+void draw_runner_node(RunnerNode *node, Camera2D transform);
 
 void draw_update(Runner *runner) {
 	if (WindowShouldClose())
@@ -29,7 +29,10 @@ void draw_update(Runner *runner) {
 	
 	ClearBackground(RAYWHITE);
 	
-	draw_runner_node(runner->root);
+	Camera2D cam;
+	cam.zoom = 1.0;
+	
+	draw_runner_node(runner->root, cam);
 	
 	
 	// UpdateTexture(screen_render, screen_buffer.data);
@@ -92,9 +95,12 @@ void draw_rect(RunnerProps *props) {
 
 
 
-void draw_runner_node(RunnerNode *node) {
+void draw_runner_node(RunnerNode *node, Camera2D transform) {
 	if (node == NULL)
 		return;
+	
+	RunnerProp *p;
+
 	
 	switch (node->type) {
 	case element_circle:
@@ -107,7 +113,16 @@ void draw_runner_node(RunnerNode *node) {
 		break;
 	}
 
-	draw_runner_node(node->first_child);
-	draw_runner_node(node->sibling);
+	if ( (p = map_get(&node->props, "position")) && p->type == type_position) {
+		transform.offset.x += p->data.pos.x;
+		transform.offset.y += p->data.pos.y;
+	}
+	BeginMode2D(transform);
+	
+	draw_runner_node(node->first_child, transform);
+
+	EndMode2D();
+
+	draw_runner_node(node->sibling, transform);
 }
 
