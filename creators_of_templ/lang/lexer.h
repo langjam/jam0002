@@ -2,6 +2,8 @@
 #define TEMPLE_H
 
 #include "err.h"
+#include <string.h>
+#include <stdbool.h>
 
 typedef enum {
 	tok_inval,
@@ -41,6 +43,8 @@ typedef struct {
 extern const char *type_lookup[];
 
 Token lex_next(Lexer *l);
+
+bool tok_eq(Token tok, const char *s);
 void print_tok(Token tok);
 
 #endif

@@ -79,8 +79,58 @@ ErrCode checked_atom(Runner *r, Node *atom, RunnerProp *dest, RunnerPropType typ
 	return err_ok;
 }
 
-ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
+ErrCode make_value(Runner *r, Node *val, RunnerProp *dest, RunnerPropType type) {
+	switch (val->type) {
+		case node_unary:
+			if (tok_eq(val->token, "-")) {
+				if (type != type_number) {
+					r->err = err_f(err_badprop, val->token.loc, "Cannot negate `%s'", type_names[dest->type]);
+					return err_badprop;
+				}
+				checkout(make_value(r, val->first_child, dest, type_number));
+				dest->data.number *= -1;
+			}
+			return err_ok;
+			break;
+		case node_binary:
+			if (type != type_number) {
+				r->err = err_f(err_badprop, val->token.loc, "Cannot use `%.*s' on `%s'", val->token.len, val->token.val, type_names[dest->type]);
+				return err_badprop;
+			}
+			RunnerProp right;
+			if (tok_eq(val->token, "+")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child, &right, type_number));
+				dest->data.number += right.data.number;
+			}
+			else if (tok_eq(val->token, "-")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child, &right, type_number));
+				dest->data.number -= right.data.number;
+			}
+			else if (tok_eq(val->token, "*")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child, &right, type_number));
+				dest->data.number *= right.data.number;
+			}
+			else if (tok_eq(val->token, "/")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child, &right, type_number));
+				dest->data.number /= right.data.number;
+			}
+			else {
+				r->err = err_f(err_badprop, val->token.loc, "Sorry can't handle this operator for now");
+				return err_badprop;
+			}
+			return err_ok;
+			break;	
+		default:
+			return checked_atom(r, val, dest, type);
+	} 
+}
 
+
+ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 	if (strncmp(call->token.val, "vec2", call->token.len) == 0) {
 		dest->type = type_position;
 		if (node_child(call, 1) == NULL) {
@@ -89,8 +139,8 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 		}
 		
 		RunnerProp p1, p2;
-		checkout(checked_atom(r, node_child(call, 0), &p1, type_number));
-		checkout(checked_atom(r, node_child(call, 1), &p2, type_number));
+		checkout(make_value(r, node_child(call, 0), &p1, type_number));
+		checkout(make_value(r, node_child(call, 1), &p2, type_number));
 
 		dest->data.pos.x = p1.data.number;
 		dest->data.pos.y = p2.data.number;
@@ -102,6 +152,7 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 	return err_ok;
 }
 
+
 ErrCode make_prop(Runner *r, Node *propdesc, RunnerProp *dest) {
 	switch (propdesc->type) {
 		case node_call:
@@ -109,6 +160,10 @@ ErrCode make_prop(Runner *r, Node *propdesc, RunnerProp *dest) {
 			break;
 		case node_atom:
 			checkout(make_atom(r, propdesc, dest));
+			break;
+		case node_binary:
+		case node_unary:
+			checkout(make_value(r, propdesc, dest, type_number));
 			break;
 		default:
 			// TODO: Provide Err struct in runtime

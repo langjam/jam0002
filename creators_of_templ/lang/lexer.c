@@ -2,6 +2,11 @@
 #include <ctype.h>
 #include <stdio.h>
 
+
+bool tok_eq(Token tok, const char *s) {
+	return (int)strlen(s) == tok.len && strncmp(tok.val, s, tok.len) == 0;
+}
+
 static inline int is_skip_char(char c) {
 	return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
