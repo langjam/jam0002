@@ -1,1 +1,3 @@
-[delete this and put your project build and use instructions here]
+Sunday Dec. 5, 2021
+See `doc/Plan.md` for now.
+

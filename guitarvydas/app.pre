@@ -1,0 +1,10 @@
+$file "producer.c"
+
+$eof "producer.c"
+
+$file "consumer.c"
+$eof "consumer.c"
+
+$file "main.c"
+$eof "main.c"
+

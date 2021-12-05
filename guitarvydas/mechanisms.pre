@@ -1,0 +1,61 @@
+mechanism List {
+  $first (List) -> Datum;
+  $reverse (List) -> List;
+  $rest (List) -> List;
+  $isEmpty (List) -> Boolean;
+  $newListCell (Datum) -> List;
+  $append (List, Cell) -> List;
+}
+
+mechanism Component {
+  $newComponent (FunctionInit, FunctionReact)
+  $field (Component) -> any;
+  $appendInput (Component, Message);
+  $popInput (Component) -> Message;
+  $callReaction (Component, Message);
+  $hasInputs (Component) -> Boolean;
+}
+
+mechanism Message {
+  $newMessage (Datum) -> Message;
+  $data (Message) -> Datum;
+}
+
+mechanism ConnectionTable {
+  $connectedTo (Component) -> Component;
+  $connect (Component, Component);
+}
+
+mechanism Kernel {
+  $withLock (v) $block;
+  $send (Component, Message);
+  $panic (string);
+}
+
+mechanism Dispatcher {
+  $withLock $block;
+}
+
+---
+void panic (char* panicMessage) {
+  printf ("%s\n", panicMessage);
+  exit (1);
+}
+
+Message kernelPopInputQueue (Runnable* self) {
+  if (self->inputQueue) {
+    Message* m = self->inputQueue;
+    self->inputQueue = m->next;
+    m->next = NULL;
+    return m;
+  } else {
+    panic ("in kernelPopInputQueue");
+  }
+}
+
+void kernelSend (Runnable* self, Datum data) {
+  Message* outMessage = kernelNewMessage (data);
+  outMessage->next = self->outputQueue;
+  self->outputQueue = outMessage;
+}
+

@@ -1,0 +1,61 @@
+pre {
+  main = char+
+
+  char 
+    = macro       -- macro
+    | ~dollar any -- notDollar
+    | any         -- any
+    
+       
+  macro
+    // mechanism List
+    = "$first" param       -- first
+    | "$reverse" param     -- reverse
+    | "$rest" param        -- rest
+    | "$isEmpty" param     -- isEmpty
+    | "$newListCell" param -- newListCell
+    | "$append" param      -- append
+
+    // mechanism Component
+    | "$newComponent" twoparams -- newComponent
+    | "$field" param            -- field
+    | "$appendInput" twoparams  -- appendInput
+    | "$popInput" param         -- popInput
+    | "$callReaction" twoparams -- callReaction
+    | "$hasInputs" param        -- hasInputs
+
+    // mechanism Message
+    | "$newMessage" param -- newMessage
+    | "$data" param       -- data
+
+    // mechanism ConnectionTable
+    | "$connectedTo" param -- connectedTo
+    | "$connect" twoparams -- connect
+
+    // mechanism Kernel
+    | "$withLock" block -- withLock
+    | "$send" twoparams -- send
+    | "$panic" param    -- panic
+
+param
+  = "(" param* ")" -- nested
+  | notPAREN       -- raw
+  
+twoparams = param // cheating (time limitations)
+
+notPAREN = ~"(" ~")" any
+
+block = "{" block* "}" -- nested
+      | notBrace       -- raw
+
+notBrace = ~"{" ~"}" any
+
+space += comment
+comment = "//" notNL* nl
+nl = "\n"
+notNL = ~nl any
+
+dollar = "$"
+
+}
+
