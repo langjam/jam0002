@@ -47,34 +47,26 @@ impl Repl {
                 self.idx += 1;
                 let file_id = self.sources.add(name, line);
                 match parse_repl(&self.sources, file_id) {
-                    Ok(Located {
-                        value: ReplParse::Decl(decl),
-                        ..
-                    }) => {
-                        let name = decl.name.clone();
-                        self.context.add_decl(decl);
-                        println!("{:?}", self.context.binding(name.as_deref().into_inner()));
-                    }
-                    Ok(
-                        expr
-                        @
-                        Located {
-                            value: ReplParse::Expr(_),
-                            ..
-                        },
-                    ) => {
-                        let ast = self.context.make_expr(expr.map(|p| {
-                            if let ReplParse::Expr(e) = p {
-                                e
-                            } else {
-                                unreachable!()
-                            }
-                        }));
-                        match ast.into_inner().run() {
-                            Some(ast) => println!("{:?}", ast),
-                            None => eprintln!("Error: execution error"),
+                    Ok(parse) => match parse.value {
+                        ReplParse::Decl(decl) => {
+                            let name = decl.name.clone().into_inner();
+                            self.context.add_decl(decl);
+                            let ast = self.context.declaration(&name).unwrap();
+                            println!("{} = {:?}", name, ast.into_inner());
                         }
-                    }
+                        ReplParse::Expr(expr) => {
+                            let ast = self.context.make_expr(Located {
+                                value: expr,
+                                span: parse.span,
+                                file_id: parse.file_id,
+                            });
+                            if let Some(r) = ast.into_inner().run(&self.context) {
+                                println!("-> {:?}", r);
+                            } else {
+                                eprintln!("Error: cannot execute");
+                            }
+                        }
+                    },
                     Err(diag) => {
                         term::emit(&mut writer, &write_config, &self.sources, &diag).unwrap()
                     }

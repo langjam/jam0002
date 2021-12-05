@@ -62,6 +62,7 @@ impl Pat {
 #[derive(Clone, Debug, PartialEq)]
 pub enum Ast {
     Var { name: u32 },
+    DeclRef { name: String },
     Match { on: Box<Ast>, clauses: Vec<Clause> },
     Constr { name: String, args: Vec<Ast> },
 }
@@ -125,6 +126,7 @@ impl Ast {
                     vec![*name]
                 }
             }
+            Ast::DeclRef { .. } => vec![],
             Ast::Match { on, clauses } => {
                 let vars_on = on.free_vars_except(except);
                 let var_clauses = clauses
@@ -157,6 +159,7 @@ impl Ast {
                     Ast::Var { name: *name }
                 }
             }
+            Ast::DeclRef { .. } => self.clone(),
             Ast::Match { on, clauses } => Ast::Match {
                 on: Box::new((*on).subst(var, term.clone())),
                 clauses: clauses
@@ -183,6 +186,7 @@ impl Ast {
                     self
                 }
             }
+            Ast::DeclRef { .. } => self,
             Ast::Match { on, clauses } => Ast::Match {
                 on: Box::new((*on).rename(only, offset)),
                 clauses: clauses
@@ -204,17 +208,24 @@ impl Ast {
         }
     }
 
-    pub fn run(self) -> Option<Self> {
+    pub fn run(self, ctx: &AstContext) -> Option<Self> {
         match self {
             Ast::Var { .. } => Some(self),
+            Ast::DeclRef { name } => {
+                let Located { value: ast, .. } = ctx.declaration(name)?;
+                ast.clone().run(ctx)
+            }
             Ast::Match { on, clauses } => {
-                let arg = on.run()?;
+                let arg = on.run(ctx)?;
                 clauses
                     .into_iter()
                     .find_map(|cl| cl.match_with(arg.clone()))
             }
             Ast::Constr { name, args } => {
-                let args = args.into_iter().map(Ast::run).collect::<Option<_>>()?;
+                let args = args
+                    .into_iter()
+                    .map(|x| x.run(ctx))
+                    .collect::<Option<_>>()?;
                 Some(Ast::Constr {
                     name: name.clone(),
                     args,
@@ -226,23 +237,23 @@ impl Ast {
 
 #[derive(Debug, Default, Clone)]
 pub struct AstContext {
-    var_data: HashMap<String, Located<Ast>>,
-    var_ref: HashMap<u32, String>,
+    decls: HashMap<String, Located<Ast>>,
+    binding_names: HashMap<u32, String>,
     next_free: u32,
 }
 
 impl AstContext {
-    pub fn binding<S: AsRef<str>>(&self, name: S) -> Option<Located<&Ast>> {
-        self.var_data.get(name.as_ref()).map(|l| l.as_ref())
+    pub fn declaration<S: AsRef<str>>(&self, name: S) -> Option<Located<&Ast>> {
+        self.decls.get(name.as_ref()).map(|l| l.as_ref())
     }
 
-    pub fn variable(&self, var: u32) -> Option<&str> {
-        self.var_ref.get(&var).map(|s| s.as_str())
+    pub fn binding(&self, var: u32) -> Option<&str> {
+        self.binding_names.get(&var).map(|s| s.as_str())
     }
 
     pub fn add_decl(&mut self, decl: ast::Decl) {
         let ast = self.make_expr(decl.body);
-        self.var_data.insert(decl.name.into_inner(), ast);
+        self.decls.insert(decl.name.into_inner(), ast);
     }
 
     pub fn make_expr(&mut self, ast: Located<ast::Expr>) -> Located<Ast> {
@@ -337,7 +348,7 @@ impl AstContext {
     }
 
     fn next_var(&mut self, var: String) -> u32 {
-        self.var_ref.insert(self.next_free, var);
+        self.binding_names.insert(self.next_free, var);
         let v = self.next_free;
         self.next_free += 1;
         v
@@ -346,6 +357,8 @@ impl AstContext {
 
 #[cfg(test)]
 mod test {
+    use crate::AstContext;
+
     use super::Ast::*;
     use super::Clause;
     use super::Pat::*;
@@ -361,7 +374,7 @@ mod test {
             }],
         };
         let target = Var { name: 1 };
-        let res = prog.run();
+        let res = prog.run(&AstContext::default());
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
@@ -383,7 +396,7 @@ mod test {
             }],
         };
         let target = Var { name: 1 };
-        let res = prog.run();
+        let res = prog.run(&AstContext::default());
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
@@ -404,7 +417,7 @@ mod test {
                 body: Var { name: 1 },
             }],
         };
-        let res = prog.run();
+        let res = prog.run(&AstContext::default());
         println!("{:?}", res);
         assert_eq!(res, None)
     }
@@ -457,7 +470,7 @@ mod test {
             name: "First2".to_string(),
             args: vec![Var { name: 1 }, Var { name: 2 }],
         };
-        let res = prog.run();
+        let res = prog.run(&AstContext::default());
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
