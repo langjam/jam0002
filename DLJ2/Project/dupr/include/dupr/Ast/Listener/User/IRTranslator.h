@@ -86,6 +86,18 @@ namespace dupr::ast::listener::user
 				nodeValues.clear();
 			}
 
+			bool IsStartOfEncapsulation() const
+			{
+				return predefined_format == "(" || predefined_format == "{" ||
+					   predefined_format == "[";
+			}
+
+			bool IsEndOfEncapsulation() const
+			{
+				return predefined_format == ")" || predefined_format == "}" ||
+					   predefined_format == "]";
+			}
+
 		private:
 			std::function<void(State*)> callback;
 			std::vector<const ::deamer::external::cpp::ast::Node*> nodeValues;
@@ -384,6 +396,9 @@ namespace dupr::ast::listener::user
 		bool Check(const dupr::ast::node::pattern_constructor_encapsulation* currentNode,
 				   std::size_t& index, bool execute) const
 		{
+			// assumes the encapsulation exists of 3 parts: (pre) or ([[any_word]])
+			// However we need to know where the top part ends in the states, allowing us to go
+			// deeper if needed.
 			bool valid = true;
 			switch (GetCurrentState(index)->GetType())
 			{
