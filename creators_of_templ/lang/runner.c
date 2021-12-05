@@ -80,6 +80,8 @@ ErrCode make_call(Node *call, RunnerProp *dest) {
 		if (node->type != node_atom || node->token.type != tok_numlit)
 			return err_badprop;
 		strncpy(buf, node->token.val, node->token.len);
+		buf[node->token.len] = 0;
+		
 		dest->data.pos.y = strtod(buf, &endptr);
 		if (endptr == buf)
 			return err_bad_number_literal;
@@ -155,9 +157,13 @@ void dump_prop(RunnerProp prop) {
 		case type_number:
 			printf("%g", prop.data.number);
 			break;
-		default:
-			printf("TODO");
+		case type_position:
+			printf("vec2(%g, %g)", prop.data.pos.x, prop.data.pos.y);
 			break;
+		case type_string:
+			printf("'%s'", prop.data.string);
+			break;
+		
 	}
 }
 

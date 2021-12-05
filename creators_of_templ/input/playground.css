@@ -1,7 +1,37 @@
 root {
 	circle {
-		color: #234234;
+		color: #FF0000;
 		position: vec2(80, 80);
+		radius: 50;
+	}
+	circle {
+		color: #FFAA00;
+		position: vec2(100, 80);
+		radius: 50;
+	}
+	circle {
+		color: #FFFF00;
+		position: vec2(120, 80);
+		radius: 50;
+	}
+	circle {
+		color: #00FF00;
+		position: vec2(140, 80);
+		radius: 50;
+	}
+	circle {
+		color: #00FFAA;
+		position: vec2(160, 80);
+		radius: 50;
+	}
+	circle {
+		color: #0000FF;
+		position: vec2(180, 80);
+		radius: 50;
+	}
+	circle {
+		color: #AA00FF;
+		position: vec2(200, 80);
 		radius: 50;
 	}
 }

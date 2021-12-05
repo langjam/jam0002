@@ -32,7 +32,7 @@ void draw_update(Runner *runner) {
 	draw_runner_node(runner->root);
 	
 	
-	UpdateTexture(screen_render, screen_buffer.data);
+	// UpdateTexture(screen_render, screen_buffer.data);
 	// DrawTexture(screen_render, 0, 0, WHITE);
 	
 	EndDrawing();
@@ -82,25 +82,27 @@ void draw_rect(RunnerProps *props) {
 	if ( (p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
 
-	ImageDrawRectangle(&screen_buffer, pos.x, pos.y, dm.x, dm.y, *(Color *)&color);
+	DrawRectangle(pos.x, pos.y, dm.x, dm.y, *(Color *)&color);
 }
 
+
+
 void draw_runner_node(RunnerNode *node) {
+	if (node == NULL)
+		return;
+	
 	switch (node->type) {
 	case element_circle:
 		draw_circle(&node->props);	
 		break;
 	case element_rect:
-		draw_rect(&node->props);	
+		draw_rect(&node->props);
 		break;
 	case element_root:
 		break;
 	}
 
-	if (node->first_child)
-		draw_runner_node(node->first_child);
-
-	if (node->sibling)
-		draw_runner_node(node->sibling);
+	draw_runner_node(node->first_child);
+	draw_runner_node(node->sibling);
 }
 
