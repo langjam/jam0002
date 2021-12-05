@@ -55,6 +55,7 @@ typedef struct RunnerNode {
 
 
 typedef struct Runner {
+	Err err;
 	RunnerNode *root;
 	RunnerNode* nodes;
 	size_t node_count;

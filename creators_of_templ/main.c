@@ -36,9 +36,11 @@ int main() {
 	else {
         ast_pretty_print(&p.ast);
     }
-	Runner runner;
-	if (runner_init(&p.ast, &runner)) 
-		goto fail; // TODO: Print good error message!
+	Runner runner = { 0 };
+	if (runner_init(&p.ast, &runner))  {
+		err_explain(&runner.err, file);
+		goto fail2; 
+	}
 		
 	runner_dump(&runner);
 		
@@ -58,8 +60,9 @@ int main() {
 		draw_update(&runner);
 	}
 
-	runner_deinit(&runner);
 	draw_deinit();
+	fail2:
+	runner_deinit(&runner);
 	fail:
 	parser_deinit(&p);
 	free(file);

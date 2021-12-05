@@ -9,8 +9,8 @@ root
 
     circle
     {
-        position: vec2(22 + 44, 10 * 10)
+        position: vec2(22 + 44, 10 * 10);
         radius: 100;
-        color: #ff2020;`
+        color: #ff2020;
     }
 }

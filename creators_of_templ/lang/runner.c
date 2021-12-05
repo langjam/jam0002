@@ -5,6 +5,14 @@
 
 #define checkout(x) do { ErrCode err; if((err = (x))) { fprintf(stderr, ">>> %d %s:%d\n", err, __FILE__, __LINE__); return err;} } while (0)
 
+static char *type_names[] = {
+	"nil",
+	"number",
+	"string",
+	"position",
+	"color"
+};
+
 static
 RunnerNode *alloc(Runner *r, RunnerNode *parent) {
 	// Allocate a new node
@@ -28,7 +36,7 @@ RunnerNode *alloc(Runner *r, RunnerNode *parent) {
 	return new_node;
 }
 
-ErrCode make_atom(Node *atom, RunnerProp *dest) {
+ErrCode make_atom(Runner *r, Node *atom, RunnerProp *dest) {
 	// token val isnt null terminated
 	char buf[64] = {0};
 	strncpy(buf, atom->token.val, atom->token.len);
@@ -36,7 +44,10 @@ ErrCode make_atom(Node *atom, RunnerProp *dest) {
 		case tok_hexlit: {
 			char *endptr = NULL;
 			uint32_t val = strtoul(buf+1, &endptr, 16);
-			if (endptr == buf) return err_bad_number_literal;
+			if (endptr == buf) {
+				r->err = err_f(err_bad_number_literal, atom->token.loc, "Bad number literal");
+				return err_bad_number_literal;
+			}
 			dest->type = type_color;
 			dest->data.color = val;
 		} break;
@@ -44,66 +55,64 @@ ErrCode make_atom(Node *atom, RunnerProp *dest) {
 			char *endptr = NULL;
 			dest->type = type_number;
 			dest->data.number = strtod(buf, &endptr);
-			if (endptr == buf) return err_bad_number_literal;
+			if (endptr == buf) {
+				r->err = err_f(err_bad_number_literal, atom->token.loc, "Bad number literal");
+				return err_bad_number_literal;
+			}
 		} break;
 		default:
 			// TODO: Provide Err struct in runtime
+			r->err = err_f(err_badprop, atom->token.loc, "You can't use this in a property value");
 			return err_badprop;
 	}
 	return err_ok;
 }
 
-ErrCode make_call(Node *call, RunnerProp *dest) {
+
+
+ErrCode checked_atom(Runner *r, Node *atom, RunnerProp *dest, RunnerPropType type) {
+	checkout(make_atom(r, atom, dest));
+	if (dest->type != type) {
+		r->err = err_f(err_badprop, atom->token.loc, "Type mismatch, expected %s got %s", type_names[type], type_names[dest->type]);
+		return err_badprop;
+	}
+	return err_ok;
+}
+
+ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 
 	if (strncmp(call->token.val, "vec2", call->token.len) == 0) {
 		dest->type = type_position;
-		char *endptr = NULL;
-		char buf[64] = {0};
-
-		// X
-		if (!call->first_child)
+		if (node_child(call, 1) == NULL) {
+			r->err = err_f(err_badprop, call->token.loc, "Not enough parameters");
 			return err_badprop;
-		Node *node = call->first_child;
+		}
 		
-		if (node->type != node_atom || node->token.type != tok_numlit)
-			return err_badprop;
-		strncpy(buf, node->token.val, node->token.len);
-		dest->data.pos.x = strtod(buf, &endptr);
-		if (endptr == buf)
-			return err_bad_number_literal;
+		RunnerProp p1, p2;
+		checkout(checked_atom(r, node_child(call, 0), &p1, type_number));
+		checkout(checked_atom(r, node_child(call, 0), &p2, type_number));
 
-		// Y
-		if (!node->sibling)
-			return err_badprop;
-		node = node->sibling;
-
-		if (node->type != node_atom || node->token.type != tok_numlit)
-			return err_badprop;
-		strncpy(buf, node->token.val, node->token.len);
-		buf[node->token.len] = 0;
-		
-		dest->data.pos.y = strtod(buf, &endptr);
-		if (endptr == buf)
-			return err_bad_number_literal;
-
-		return err_ok;
+		dest->data.pos.x = p1.data.number;
+		dest->data.pos.y = p2.data.number;
 	}
 	else {
 		// TODO: Provide info about invalid call
 		return err_badprop;
 	}	
+	return err_ok;
 }
 
-ErrCode make_prop(Node *propdesc, RunnerProp *dest) {
+ErrCode make_prop(Runner *r, Node *propdesc, RunnerProp *dest) {
 	switch (propdesc->type) {
 		case node_call:
-			checkout(make_call(propdesc, dest));
+			checkout(make_call(r, propdesc, dest));
 			break;
 		case node_atom:
-			checkout(make_atom(propdesc, dest));
+			checkout(make_atom(r, propdesc, dest));
 			break;
 		default:
 			// TODO: Provide Err struct in runtime
+			r->err = err_f(err_badprop, propdesc->token.loc, "You can't use this in a property value");
 			return err_badprop;
 	}
 	return err_ok;
@@ -144,14 +153,12 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 			// Store the key in temporary storage
 			sprintf(keybuf, "%.*s", child->token.len, child->token.val);
 			
-			printf("Adding a key %s\n", keybuf);
-			
 			// Get the value of the prop 
 			Node *prop_val = node_child(child, 0);
 			
 			// Serialize the prop into runnerprop
 			RunnerProp dest_prop;
-			checkout(make_prop(prop_val, &dest_prop));
+			checkout(make_prop(r, prop_val, &dest_prop));
 
 			// Put it into props
 			map_set(&dest->props, keybuf, dest_prop); 
@@ -231,8 +238,8 @@ ErrCode runner_init(Ast *ast, Runner *dest) {
 	(void)ast;
 	runner.root = alloc(&runner, NULL);
 	runner.root->type = element_root;
-	checkout(expand_tree(&runner, &ast->nodes[0], runner.root));
 	*dest = runner;
+	checkout(expand_tree(dest, &ast->nodes[0], dest->root));
 	return err_ok;
 }
 
