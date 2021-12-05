@@ -119,3 +119,9 @@ https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-2.%20Race%
 
 ## Daisy Chain
 https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-3.%20Daisy%20Chain.svg
+
+## Deadlock Prevention
+https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-4.%20Deadlock%20Prevention.svg
+## Request - Acknowledge
+
+https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-5.%20Request%20-%20Acknowledge.svg
