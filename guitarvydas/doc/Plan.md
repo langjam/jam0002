@@ -115,13 +115,13 @@ I drew the diagrams in draw.io (aka diagrams.net) and have saved them as .svg fi
 <img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-1.%20Nesting.svg"/>
 
 ## Race Condition
-https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-2.%20Race%20Condition.svg
+<img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-2.%20Race%20Condition.svg"/>
 
 ## Daisy Chain
-https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-3.%20Daisy%20Chain.svg
+<img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-3.%20Daisy%20Chain.svg"/>
 
 ## Deadlock Prevention
-https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-4.%20Deadlock%20Prevention.svg
+<img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-4.%20Deadlock%20Prevention.svg"/>
 ## Request - Acknowledge
 
-https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-5.%20Request%20-%20Acknowledge.svg
+<img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-5.%20Request%20-%20Acknowledge.svg"/>
