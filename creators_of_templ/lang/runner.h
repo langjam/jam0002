@@ -16,10 +16,12 @@ typedef enum RunnerPropType {
 	type_color
 } RunnerPropType;
 
+
 typedef struct Pos {
 	double x;
 	double y;
 } Pos;
+
 
 typedef struct RunnerProp {
 	RunnerPropType type;

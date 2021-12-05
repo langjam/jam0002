@@ -113,7 +113,21 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 	if (node->type == node_root)
 		node = node->first_child;
 	assert(node->type == node_selector_and_props);
-	Node *prop_list = node_child(node, node->type == node_selector_and_props);
+
+	Node *selector = node_child(node, 0);
+	dest->selector = selector;
+	dest->type = element_root;
+	
+	if (selector->first_child->type == node_primitive_selector) {
+		char *tagname = selector->first_child->token.val;
+		int taglen = selector->first_child->token.len;
+		if (strncmp(tagname, "circle", taglen) == 0) 
+			dest->type = element_circle;
+		if (strncmp(tagname, "rect", taglen) == 0) 
+			dest->type = element_rect;
+	}
+	
+	Node *prop_list = node_child(node, 1);
 	assert(prop_list->type == node_property_list);
 	
 	map_init(&dest->props);

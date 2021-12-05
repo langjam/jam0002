@@ -77,12 +77,17 @@ void draw_rect(RunnerProps *props) {
 	RunnerProp *p;
 	if ( (p = map_get(props, "position")) && p->type == type_position)
 		pos = p->data.pos;
-	if ( (p = map_get(props, "dimensions")) && p->type == type_number)
+	if ( (p = map_get(props, "dimensions")) && p->type == type_position)
 		dm = p->data.pos;
 	if ( (p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
-
-	DrawRectangle(pos.x, pos.y, dm.x, dm.y, *(Color *)&color);
+	Color raycolor = {
+		.r = (color >> 16) & 0xFF,
+		.g = (color >> 8) & 0xFF,
+		.b = (color >> 0) & 0xFF,
+		.a = 255
+	};
+	DrawRectangle(pos.x, pos.y, dm.x, dm.y, raycolor);
 }
 
 
