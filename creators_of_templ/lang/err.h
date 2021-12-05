@@ -13,7 +13,7 @@ enum ErrCode {
 	
 	// Runner errors
 	err_badprop 		   = 5,
-} __attribute__((warn_unused_result));
+} /*__attribute__((warn_unused_result))*/;
 
 typedef enum ErrCode ErrCode;
 
