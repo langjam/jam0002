@@ -9,6 +9,18 @@ extern {
     type Location = usize;
 }
 
+match {
+    "case",
+    "of",
+    "end",
+    "rematch",
+    "match",
+    r"[A-Z0-9_][a-zA-Z0-9_]*" => "CONSTR",
+} else {
+    r"[a-z_][a-zA-Z0-9_]*" => "IDENT",
+    _
+}
+
 pub Toplevel = { <Decl*> }
 
 pub Repl: Located<ReplParse> = {
@@ -50,7 +62,7 @@ Tier<Op, Next>: Located<Expr> = {
             rhs: r.map(Rc::new),
         },
     },
-    Next
+    Next,
 }
 
 RawExpr = Tier<ExprOp, Factor>;
@@ -66,12 +78,12 @@ FactorOp: Located<Binop> = {
 }
 
 Atom: Located<Expr> = {
-    Prim => <>.map(Expr::Primary),
+    Prim => <>.map(Expr::Pattern),
     "(" <Expr> ")",
 }
 
 Clause: Clause = {
-    "|" <pattern:Pat> <recursive:MatchKind> <body:Expr> => {
+    "|" <pattern:Prim> <recursive:MatchKind> <body:Expr> => {
         Clause {
             recursive,
             pattern,
@@ -85,9 +97,17 @@ MatchKind: bool = {
     "rematch" => true,
 }
 
-Pat: Located<Pattern> = {
-    Prim => <>.map(Pattern::Primary),
-    <l:@L> "(" <name:Located<Ident>> <args:Pat*> ")" <r:@R> => Located {
+Prim: Located<Pattern> = {
+    Located<Ident> => <>.map(Pattern::Var),
+    <l:@L> <name: Located<Constr>> <r:@R> => Located {
+        value: Pattern::Constructor {
+            name,
+            args: vec![],
+        },
+        file_id,
+        span: Span(l, r),
+    },
+    <l:@L> <name:Located<Constr>> "(" <args:Comma<Prim>> ")" <r:@R> => Located {
         file_id,
         span: Span(l, r),
         value: Pattern::Constructor {
@@ -97,12 +117,13 @@ Pat: Located<Pattern> = {
     },
 }
 
-Prim: Located<Primary> = {
-    Located<r"[0-9]+"> => <>.map(|s| Primary::Const(s.to_string())),
-    Located<Ident> => <>.map(Primary::Var),
+Comma<T>: Vec<T> = {
+    <x:T> "," <xs:T+> => std::iter::once(x).chain(xs.into_iter()).collect(),
+    <x:T> => vec![x],
 }
 
-Ident: String = { <r"[a-zA-Z_][a-zA-Z0-9_]*"> => <>.to_string() }
+Constr: String = { <"CONSTR"> => <>.to_string() }
+Ident: String = { <"IDENT"> => <>.to_string() }
 
 Located<T>: Located<T> = {
     <l:@L> <value:T> <r:@R> => Located {

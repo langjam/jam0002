@@ -2,15 +2,9 @@ use std::rc::Rc;
 
 use crate::loc::Located;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum Primary {
-    Const(String),
-    Var(String),
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Pattern {
-    Primary(Primary),
+    Var(String),
     Constructor {
         name: Located<String>,
         args: Vec<Located<Self>>,
@@ -34,7 +28,7 @@ pub enum Binop {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Expr {
-    Primary(Primary),
+    Pattern(Pattern),
     Binop {
         lhs: Located<Rc<Self>>,
         rhs: Located<Rc<Self>>,

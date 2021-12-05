@@ -7,6 +7,7 @@ use std::{
     fmt::Display,
 };
 
+use ast::Binop;
 use codespan::FileId;
 use codespan_reporting::diagnostic::{Diagnostic, LabelStyle};
 use loc::{Located, Span};
@@ -15,17 +16,22 @@ use loc::{Located, Span};
 pub enum ExecutionError {
     #[error("Unknown binding")]
     UnknownBinding,
-    #[error("Unexpected case in match")]
-    UnexpectedCase { on: Located<Ast> },
+    #[error("Unexpected arm in case")]
+    UnexpectedCase { ctx: AstContext, on: Located<Ast> },
 }
 
 impl ExecutionError {
     pub fn make_diagnostic(this: Located<Self>) -> Diagnostic<FileId> {
         let mut labels = vec![this.clone().to_label(LabelStyle::Primary)];
         match &this.value {
-            Self::UnexpectedCase { on } => labels.push(
+            Self::UnexpectedCase { ctx, on } => labels.push(
                 on.as_ref()
-                    .map(|_| "this value does not match any of the case clauses")
+                    .map(|ast| {
+                        format!(
+                            "This case expression does not have an arm for `{}`",
+                            ast.display(&ctx)
+                        )
+                    })
                     .to_label(LabelStyle::Secondary),
             ),
             _ => {}
@@ -454,6 +460,7 @@ impl Ast {
                             span,
                             file_id: clauses.first().map(Located::file_id).unwrap_or(on.file_id),
                             value: ExecutionError::UnexpectedCase {
+                                ctx: ctx.clone(),
                                 on: on.as_deref().cloned(),
                             },
                         });
@@ -496,7 +503,7 @@ impl Ast {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct AstContext {
     var_data: HashMap<String, Located<Ast>>,
     var_ref: HashMap<u32, String>,
@@ -520,12 +527,21 @@ impl AstContext {
     pub fn make_expr(&mut self, ast: Located<ast::Expr>) -> Located<Ast> {
         let Located { file_id, span, .. } = ast;
         ast.map(|ast| match ast {
-            ast::Expr::Primary(p) => self.make_prim_expr(Located {
-                file_id,
-                span,
-                value: p,
-            }),
-            ast::Expr::Binop { .. } => todo!(),
+            ast::Expr::Pattern(p) => {
+                self.make_pat_expr(Located {
+                    file_id,
+                    span,
+                    value: p,
+                })
+                .value
+            }
+            ast::Expr::Binop { op, lhs, rhs } => Ast::Constr {
+                name: op.map(|binop| format!("{:?}", binop)),
+                args: vec![
+                    self.make_expr(lhs.as_deref().cloned()),
+                    self.make_expr(rhs.as_deref().cloned()),
+                ],
+            },
             ast::Expr::Match { on, arms } => Ast::Match {
                 on: self.make_expr(on.as_deref().cloned()).map(Box::new),
                 clauses: arms
@@ -554,8 +570,8 @@ impl AstContext {
 
     pub fn make_pattern(&mut self, pattern: Located<ast::Pattern>) -> Located<Pat> {
         match pattern.value {
-            ast::Pattern::Primary(p) => self.make_prim_pattern(Located {
-                value: p,
+            ast::Pattern::Var(p) => self.make_pat_pattern(Located {
+                value: ast::Pattern::Var(p),
                 span: pattern.span,
                 file_id: pattern.file_id,
             }),
@@ -570,38 +586,38 @@ impl AstContext {
         }
     }
 
-    pub fn make_prim_expr(&mut self, prim: Located<ast::Primary>) -> Ast {
-        match prim.value {
-            ast::Primary::Const(c) => Ast::Constr {
-                name: Located {
-                    value: c,
-                    span: prim.span,
-                    file_id: prim.file_id,
-                },
-                args: vec![],
-            },
-            ast::Primary::Var(v) => Ast::Var {
-                name: Located {
-                    value: self.next_var(v),
-                    span: prim.span,
-                    file_id: prim.file_id,
-                },
-            },
-        }
-    }
-
-    pub fn make_prim_pattern(&mut self, prim: Located<ast::Primary>) -> Located<Pat> {
+    pub fn make_pat_expr(&mut self, prim: Located<ast::Pattern>) -> Located<Ast> {
         let Located { file_id, span, .. } = prim;
         prim.map(|prim| match prim {
-            ast::Primary::Const(c) => Pat::PatConstr {
+            ast::Pattern::Constructor { name, args } => Ast::Constr {
+                name,
+                args: args
+                    .into_iter()
+                    .map(|pat| self.make_pat_expr(pat))
+                    .collect(),
+            },
+            ast::Pattern::Var(v) => Ast::Var {
                 name: Located {
-                    value: c,
+                    value: self.next_var(v),
                     span,
                     file_id,
                 },
-                args: vec![],
             },
-            ast::Primary::Var(v) => Pat::PatVar {
+        })
+    }
+
+    pub fn make_pat_pattern(&mut self, prim: Located<ast::Pattern>) -> Located<Pat> {
+        let Located { file_id, span, .. } = prim;
+        prim.map(|prim| match prim {
+            ast::Pattern::Constructor { name, args } => Pat::PatConstr {
+                name,
+                args: args
+                    .into_iter()
+                    .map(|pat| self.make_pat_pattern(pat))
+                    .collect(),
+            },
+            ast::Pattern::Var(v) if &v == "_" => Pat::PatHole,
+            ast::Pattern::Var(v) => Pat::PatVar {
                 name: Located {
                     value: self.next_var(v),
                     span,
