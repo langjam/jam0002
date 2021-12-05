@@ -90,7 +90,7 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 		
 		RunnerProp p1, p2;
 		checkout(checked_atom(r, node_child(call, 0), &p1, type_number));
-		checkout(checked_atom(r, node_child(call, 0), &p2, type_number));
+		checkout(checked_atom(r, node_child(call, 1), &p2, type_number));
 
 		dest->data.pos.x = p1.data.number;
 		dest->data.pos.y = p2.data.number;
