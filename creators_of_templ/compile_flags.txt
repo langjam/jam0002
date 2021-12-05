@@ -4,3 +4,4 @@
 -Wall
 -Werror
 -pedantic
+-Iraylib/include

@@ -1,21 +1,29 @@
 #include "drawer.h"
 #include "runner.h"
-#include <raylib.h>
+#include "raylib.h"
 
-int should_close = 0;
+bool should_close = false;
 
 void draw_init(int canvas_size) {
 	InitWindow(canvas_size, canvas_size, "TEMPL");
+	SetTargetFPS(60);
+}
 
-	WindowShouldClose();
-	BeginDrawing();
+bool draw_running() {
+	return !should_close;
 }
 
 void draw_update() {
-	EndDrawing();
-
-	should_close = WindowShouldClose();
+	if (WindowShouldClose())
+		should_close = true;
+	
 	BeginDrawing();
+	
+	ClearBackground(RAYWHITE);
+	
+	// Sandwich some code here
+	
+	EndDrawing();
 }
 
 void draw_deinit() {
@@ -70,3 +78,4 @@ void draw_runner_node(RunnerNode *node) {
 	if (node->sibling)
 		draw_runner_node(node->sibling);
 }
+

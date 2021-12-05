@@ -47,7 +47,7 @@ int main() {
 	free(file);
 
 	draw_init(400);
-	for (;;) {
+	while (draw_running()) {
 		draw_update();
 	}
 	draw_deinit();
