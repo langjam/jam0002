@@ -2,13 +2,13 @@ root
 {
     circle
     {
-        position: vec2(244, 110);
+        position: vec2(0, 210);
         radius: 100;
         color: #00ff00;
 
         rect
         {
-            position: vec2(1, 20);
+            position: vec2(0, 0);
             dimensions: vec2(200, 200);
             color: #ff0011;
         }

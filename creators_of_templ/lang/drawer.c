@@ -29,7 +29,7 @@ void draw_update(Runner *runner) {
 	
 	ClearBackground(RAYWHITE);
 	
-	Camera2D cam;
+	Camera2D cam = { 0 };
 	cam.zoom = 1.0;
 	
 	draw_runner_node(runner->root, cam);
@@ -99,29 +99,30 @@ void draw_runner_node(RunnerNode *node, Camera2D transform) {
 	if (node == NULL)
 		return;
 	
-	RunnerProp *p;
-
-	
+	BeginMode2D(transform);
 	switch (node->type) {
-	case element_circle:
-		draw_circle(&node->props);	
-		break;
-	case element_rect:
-		draw_rect(&node->props);
-		break;
-	case element_root:
-		break;
+		case element_circle:
+			draw_circle(&node->props);	
+			break;
+		case element_rect:
+			draw_rect(&node->props);
+			break;
+		case element_root:
+			break;
 	}
+	EndMode2D();
 
+	Camera2D old = transform; 
+
+	RunnerProp *p;
 	if ( (p = map_get(&node->props, "position")) && p->type == type_position) {
 		transform.offset.x += p->data.pos.x;
 		transform.offset.y += p->data.pos.y;
 	}
-	BeginMode2D(transform);
 	
 	draw_runner_node(node->first_child, transform);
 
-	EndMode2D();
+	transform = old;
 
 	draw_runner_node(node->sibling, transform);
 }
