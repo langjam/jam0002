@@ -2,8 +2,29 @@
 
 #include "parser.h"
 #include "map/map.h"
+#include <stdint.h>
 
-typedef map_t(Node) RunnerProps;
+typedef enum RunnerPropType {
+	type_number,
+	type_string,
+	type_position,
+	type_color
+} RunnerPropType;
+
+typedef struct RunnerProp {
+	RunnerPropType type;
+	union {
+		double number;
+		char *string;
+		struct Pos {
+			double x;
+			double y;
+		} pos;
+		uint32_t color;
+	} data;
+} RunnerProp;
+
+typedef map_t(RunnerProp) RunnerProps;
 
 typedef enum RunnerNodeType {
 	element_circle,
@@ -11,6 +32,7 @@ typedef enum RunnerNodeType {
 } RunnerNodeType;
 
 typedef struct RunnerNode {
+	Node *selector;
 	RunnerNodeType type;
 	RunnerProps props;
 	struct RunnerNode *parent;
@@ -18,8 +40,11 @@ typedef struct RunnerNode {
 	struct RunnerNode *first_child;
 } RunnerNode;
 
+
 typedef struct Runner {
 	RunnerNode *nodes;
 	size_t node_count;
 } Runner;
+
+
 
