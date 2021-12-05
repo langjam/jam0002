@@ -2,15 +2,13 @@ pub mod ast;
 pub mod loc;
 pub mod parser;
 
+use codespan::FileId;
+use codespan_reporting::diagnostic::{Diagnostic, LabelStyle};
+use loc::{Located, Span};
 use std::{
     collections::{BTreeSet, HashMap},
     fmt::Display,
 };
-
-use ast::Binop;
-use codespan::FileId;
-use codespan_reporting::diagnostic::{Diagnostic, LabelStyle};
-use loc::{Located, Span};
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum ExecutionError {

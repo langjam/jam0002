@@ -1,0 +1,6 @@
+value = 42
+
+main = case value of
+       | 0 match 1
+       | 42 rematch 0
+       end 

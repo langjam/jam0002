@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use codespan::Files;
 use codespan_reporting::term::{
     self,
@@ -5,10 +7,11 @@ use codespan_reporting::term::{
 };
 use gtx::{
     loc::Located,
-    parser::{parse_repl, ReplParse},
+    parser::{parse, parse_repl, ReplParse},
     AstContext, ExecutionError,
 };
 use rustyline::{error::ReadlineError, Editor};
+use structopt::StructOpt;
 
 struct Repl {
     rl: Editor<()>,
@@ -88,7 +91,53 @@ impl Repl {
     }
 }
 
-fn main() {
-    let mut repl = Repl::new();
-    while repl.read_line() {}
+#[derive(Debug, StructOpt)]
+struct Args {
+    input: Option<PathBuf>,
+}
+
+#[paw::main]
+fn main(args: Args) {
+    if let Some(input) = args.input {
+        let mut files = Files::new();
+        let mut writer = StandardStream::stderr(ColorChoice::Auto);
+        let config = term::Config::default();
+        let file_id = match std::fs::read_to_string(input.as_path()) {
+            Ok(content) => files.add(input.display().to_string(), content),
+            Err(err) => {
+                eprintln!("Cannot read {}: {}", input.display(), err);
+                return;
+            }
+        };
+        let ctx = match parse(&files, file_id) {
+            Ok(ast) => {
+                let mut ctx = AstContext::default();
+                for decl in ast {
+                    ctx.add_decl(decl.value);
+                }
+                ctx
+            }
+            Err(err) => {
+                term::emit(&mut writer, &config, &files, &err).unwrap();
+                return;
+            }
+        };
+        match ctx.binding("main") {
+            Some(ast) => match ast.run(&ctx) {
+                Ok(res) => println!("{}", res.display(&ctx)),
+                Err(err) => {
+                    let diag = ExecutionError::make_diagnostic(err);
+                    term::emit(&mut writer, &config, &files, &diag).unwrap();
+                }
+            },
+            None => {
+                let diag = codespan_reporting::diagnostic::Diagnostic::error()
+                    .with_message("No `main` binding found");
+                term::emit(&mut writer, &config, &files, &diag).unwrap();
+            }
+        }
+    } else {
+        let mut repl = Repl::new();
+        while repl.read_line() {}
+    }
 }
