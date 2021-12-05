@@ -1,28 +1,51 @@
 pub mod ast;
 pub mod parser;
 
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Display};
 
 use parser::Spanned;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Pat {
+    PatHole,
     PatVar { name: u32 },
     PatConstr { name: String, args: Vec<Pat> },
 }
 
+impl Display for Pat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Pat::PatHole => write!(f, "*"),
+            Pat::PatVar { name } => write!(f, "?x{}", *name),
+            Pat::PatConstr { name, args } => {
+                write!(f, "{}(", name)?;
+                if args.len() != 0 {
+                    write!(f, "{}", args[0])?;
+                    for i in &args[1..] {
+                        write!(f, ", ")?;
+                        i.fmt(f)?
+                    }
+                }
+                write!(f, ")")
+            }
+        }
+    }
+}
+
 impl Pat {
     /// Computes the set of binding variables in a pattern
-    fn binders(&self) -> Vec<u32> {
+    pub fn binders(&self) -> Vec<u32> {
         match self {
+            Pat::PatHole => vec![],
             Pat::PatVar { name } => vec![*name],
             Pat::PatConstr { args, .. } => args.iter().map(Pat::binders).flatten().collect(),
         }
     }
 
     /// Rename all the binders occurring in a pattern by increasing them of a given offset
-    fn rename(&self, offset: u32) -> Self {
+    pub fn rename(&self, offset: u32) -> Self {
         match self {
+            Pat::PatHole => Pat::PatHole,
             Pat::PatVar { name } => Pat::PatVar {
                 name: *name + offset,
             },
@@ -33,36 +56,158 @@ impl Pat {
         }
     }
 
-    fn match_with(&self, term: Ast, h: &mut HashMap<u32, Ast>) -> bool {
+    pub fn match_with(&self, term: Ast) -> Option<Substitution> {
         match self {
-            Pat::PatVar { name } => match h.insert(*name, term) {
-                Some(_) => panic!("multiple variables with the same name in a pattern"),
-                None => true,
-            },
+            Pat::PatHole => Some(Substitution::new()),
+            Pat::PatVar { name } => Some(Substitution::new().bind(*name, term)),
             Pat::PatConstr { name, args } => match term {
                 Ast::Constr {
                     name: real_name,
                     args: real_args,
                 } => {
                     if *name == real_name && args.len() == real_args.len() {
-                        args.iter()
-                            .zip(real_args)
-                            .all(|(pat, term)| pat.match_with(term, h))
+                        let s = Substitution::new();
+                        args.iter().zip(real_args).try_fold(s, |s, (pat, term)| {
+                            pat.match_with(term).map(|s2| s.extend(s2))
+                        })
                     } else {
-                        false
+                        None
                     }
                 }
-                _ => false,
+                _ => None,
             },
         }
     }
 }
+
+#[derive(Clone)]
+pub struct Substitution {
+    map: HashMap<u32, Ast>,
+    next_var: u32,
+}
+
+impl Substitution {
+    fn new() -> Self {
+        Substitution {
+            map: HashMap::new(),
+            next_var: 0,
+        }
+    }
+
+    fn bind(&self, var: u32, term: Ast) -> Self {
+        let free_vars_offset = term.fresh_var();
+        let mut new_map = self.map.clone();
+        let _ = new_map.insert(var, term);
+        Substitution {
+            map: new_map,
+            next_var: u32::max(self.next_var, free_vars_offset),
+        }
+    }
+
+    fn ignore(&self, varlist: &[u32]) -> Self {
+        let mut new_map = self.map.clone();
+        varlist.iter().for_each(|v| {
+            let _ = new_map.remove_entry(v);
+        });
+        Substitution {
+            map: new_map,
+            next_var: self.next_var,
+        }
+    }
+
+    fn subst(&self, var: u32) -> Ast {
+        if let Some(x) = self.map.get(&var) {
+            x.clone()
+        } else {
+            Ast::Var { name: var }
+        }
+    }
+
+    fn renaming(varlist: &[u32], offset: u32) -> Self {
+        let mut map = HashMap::<u32, Ast>::new();
+        let next_var = varlist.into_iter().fold(0, |next, v| {
+            let _ = map.insert(*v, Ast::Var { name: v + offset });
+            u32::max(next, v + offset + 1)
+        });
+        Substitution { map, next_var }
+    }
+
+    fn extend(self, s: Self) -> Self {
+        Substitution {
+            map: self.map.into_iter().chain(s.map.into_iter()).collect(),
+            next_var: u32::max(s.next_var, self.next_var),
+        }
+    }
+}
+
+// function sum_list
+// case
+//  (case (1, (2, Nil)) of
+//  | Nil match Nil
+//  | (x, Nil) match (x, Nil)
+//  | (x, (y, xs)) rematch (x + y, xs)) of
+//  | Nil match 0
+//  | (x, Nil) match x
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Ast {
     Var { name: u32 },
     Match { on: Box<Ast>, clauses: Vec<Clause> },
     Constr { name: String, args: Vec<Ast> },
+}
+
+struct DisplayAst {
+    offset: usize,
+    ast: Ast,
+}
+
+impl Display for DisplayAst {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.ast {
+            Ast::Var { name } => write!(f, "x{}", name),
+            Ast::Match { on, clauses } => {
+                write!(f, "match {} with\n", on)?;
+                for cl in clauses {
+                    write!(
+                        f,
+                        "{:width$}| {} -> {}\n",
+                        "",
+                        cl.pattern,
+                        DisplayAst {
+                            offset: self.offset + 4,
+                            ast: cl.body.clone()
+                        },
+                        width = self.offset,
+                    )?;
+                }
+                write!(f, "{:width$}end", "", width = self.offset)
+            }
+            Ast::Constr { name, args } => {
+                write!(f, "{}(", name)?;
+                if args.len() != 0 {
+                    write!(f, "{}", args[0])?;
+                    for i in &args[1..] {
+                        write!(f, ", ")?;
+                        i.fmt(f)?
+                    }
+                }
+                write!(f, ")")
+            }
+        }
+    }
+}
+
+impl Display for Ast {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            DisplayAst {
+                offset: 0,
+                ast: self.clone()
+            }
+        )
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -72,40 +217,35 @@ pub struct Clause {
 }
 
 impl Clause {
-    /// Perform safe substitution of a free variable by a term in
-    /// a clause. The binders of the clause are renamed to avoid unwanted
-    /// captures of free variables occurring in the term to substitute
-    fn subst_in_body(&self, var: u32, term: Ast) -> Self {
-        // We list the binders
-        let binders = self.pattern.binders();
-        // We list the free variables occurring in the term
-        // to substitute
-        let free_vars = term.free_vars();
-        // We compute a minimal offset to generate fresh variables
-        let fresh_vars_offset = *free_vars.iter().max().unwrap_or(&0) + 1;
-        // We rename the binding variables of the clause to avoid capturing
-        // free variables occurring in the term to substitute and then we safely perform
-        // substitution
-        Clause {
-            pattern: self.pattern.rename(fresh_vars_offset),
-            body: self
-                .body
-                .clone()
-                .rename(&binders, fresh_vars_offset)
-                .subst(var, term),
-        }
-    }
-
-    fn match_with(&self, matched: Ast) -> Option<Ast> {
-        let mut h = HashMap::<u32, Ast>::new();
-        if self.pattern.match_with(matched, &mut h) {
-            Some(
-                h.into_iter()
-                    .fold(self.body.clone(), |body, (x, valx)| body.subst(x, valx)),
-            )
+    fn run(&self, matched: Ast) -> Option<Ast> {
+        if let Some(s) = self.pattern.match_with(matched) {
+            Some(self.body.parallel_subst(&s))
         } else {
             None
         }
+    }
+
+    fn rename_binders(&self, offset: u32) -> Clause {
+        let binders = self.pattern.binders();
+        let body = self.body.rename(&binders, offset);
+        let pattern = self.pattern.rename(offset);
+        Clause { body, pattern }
+    }
+
+    /// Perform safe parallel substitution of a frees variables by terms in
+    /// a clause. The binders of the clause are renamed to avoid unwanted
+    /// captures of free variables occurring in the term to substitute
+    fn parallel_subst_in_body(&self, s: &Substitution) -> Clause {
+        // We list the bounded variables in the clause
+        let binders = self.pattern.binders();
+        // Bounded variables should not be substituted
+        let s = s.ignore(&binders);
+        // We rename the binders and the bounded variables with fresh names
+        // to avoid captures
+        let clause = self.rename_binders(s.next_var);
+        // We perform the substitution
+        let body = self.body.parallel_subst(&s);
+        Clause { body, ..clause }
     }
 }
 
@@ -143,61 +283,37 @@ impl Ast {
         self.free_vars_except(&[])
     }
 
-    /// Perform safe substitution of a variable by a term in a term.
-    /// Binders are renamed on-the-fly to avoid unwanted captures.
-    fn subst(&self, var: u32, term: Ast) -> Self {
+    fn fresh_var(&self) -> u32 {
+        self.free_vars().iter().max().unwrap_or(&0) + 1
+    }
+
+    fn parallel_subst(&self, s: &Substitution) -> Self {
         match self {
-            Ast::Var { name } => {
-                if *name == var {
-                    term
-                } else {
-                    Ast::Var { name: *name }
-                }
-            }
+            Ast::Var { name } => s.subst(*name),
             Ast::Match { on, clauses } => Ast::Match {
-                on: Box::new((*on).subst(var, term.clone())),
+                on: Box::new((*on).parallel_subst(s)),
                 clauses: clauses
                     .iter()
-                    .map(|cl| cl.subst_in_body(var, term.clone()))
+                    .map(|cl| cl.parallel_subst_in_body(s))
                     .collect(),
             },
             Ast::Constr { name, args } => Ast::Constr {
                 name: name.clone(),
-                args: args.iter().map(|a| a.subst(var, term.clone())).collect(),
+                args: args.iter().map(|term| term.parallel_subst(s)).collect(),
             },
         }
     }
 
-    fn rename(self, only: &[u32], offset: u32) -> Self {
-        match self {
-            Ast::Var { name } => {
-                println!("renaming {} -> {}", name, name + offset);
-                if only.contains(&name) {
-                    Ast::Var {
-                        name: name + offset,
-                    }
-                } else {
-                    self
-                }
-            }
-            Ast::Match { on, clauses } => Ast::Match {
-                on: Box::new((*on).rename(only, offset)),
-                clauses: clauses
-                    .iter()
-                    .map(|cl| Clause {
-                        pattern: cl.pattern.clone(),
-                        body: cl.body.clone().rename(only, offset),
-                    })
-                    .collect(),
-            },
-            Ast::Constr { name, args } => Ast::Constr {
-                name,
-                args: args
-                    .into_iter()
-                    .map(|term| term.rename(only, offset))
-                    .collect(),
-            },
-        }
+    /// Perform safe substitution of a variable by a term in a term.
+    /// Binders are renamed on-the-fly to avoid unwanted captures.
+    fn subst(&self, var: u32, term: Ast) -> Self {
+        let s = Substitution::new().bind(var, term);
+        self.parallel_subst(&s)
+    }
+
+    fn rename(&self, varlist: &[u32], offset: u32) -> Self {
+        let renaming = Substitution::renaming(varlist, offset);
+        self.parallel_subst(&renaming)
     }
 
     fn run(self) -> Option<Self> {
@@ -205,9 +321,7 @@ impl Ast {
             Ast::Var { .. } => Some(self),
             Ast::Match { on, clauses } => {
                 let arg = on.run()?;
-                clauses
-                    .into_iter()
-                    .find_map(|cl| cl.match_with(arg.clone()))
+                clauses.into_iter().find_map(|cl| cl.run(arg.clone()))
             }
             Ast::Constr { name, args } => {
                 let args = args.into_iter().map(Ast::run).collect::<Option<_>>()?;
@@ -425,5 +539,36 @@ mod test {
         let res = prog.run();
         println!("{:?}", res);
         assert_eq!(res, Some(target))
+    }
+
+    #[test]
+    pub fn test5() {
+        // match x2 with x1 -> x0
+        let inner = Match {
+            on: Box::new(Var { name: 2 }),
+            clauses: vec![Clause {
+                pattern: PatVar { name: 1 },
+                body: Var { name: 0 },
+            }],
+        };
+        // match x1 with x0 -> match x2 -> x0
+        let outer = Match {
+            on: Box::new(Var { name: 1 }),
+            clauses: vec![Clause {
+                pattern: PatVar { name: 0 },
+                body: inner,
+            }],
+        };
+        let res = outer.clone().run().unwrap();
+        println!("{}", outer.clone());
+        println!("{}", res);
+        let target = Match {
+            on: Box::new(Var { name: 2 }),
+            clauses: vec![Clause {
+                pattern: PatVar { name: 3 },
+                body: Var { name: 1 },
+            }],
+        };
+        assert_eq!(res, target)
     }
 }
