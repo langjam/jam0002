@@ -212,7 +212,7 @@ impl Ast {
         match self {
             Ast::Var { .. } => Some(self),
             Ast::DeclRef { name } => {
-                let Located { value: ast, .. } = ctx.declaration(name)?;
+                let ast = ctx.declaration(name)?;
                 ast.clone().run(ctx)
             }
             Ast::Match { on, clauses } => {
@@ -237,14 +237,14 @@ impl Ast {
 
 #[derive(Debug, Default, Clone)]
 pub struct AstContext {
-    decls: HashMap<String, Located<Ast>>,
+    decls: HashMap<String, Ast>,
     binding_names: HashMap<u32, String>,
     next_free: u32,
 }
 
 impl AstContext {
-    pub fn declaration<S: AsRef<str>>(&self, name: S) -> Option<Located<&Ast>> {
-        self.decls.get(name.as_ref()).map(|l| l.as_ref())
+    pub fn declaration<S: AsRef<str>>(&self, name: S) -> Option<&Ast> {
+        self.decls.get(name.as_ref())
     }
 
     pub fn binding(&self, var: u32) -> Option<&str> {
@@ -252,83 +252,90 @@ impl AstContext {
     }
 
     pub fn add_decl(&mut self, decl: ast::Decl) {
-        let ast = self.make_expr(decl.body);
+        let ast = self.make_expr(decl.body.into_inner());
         self.decls.insert(decl.name.into_inner(), ast);
     }
 
-    pub fn make_expr(&mut self, ast: Located<ast::Expr>) -> Located<Ast> {
-        let Located { file_id, span, .. } = ast;
-        ast.map(|ast| match ast {
-            ast::Expr::Pattern(p) => {
-                self.make_pat_expr(Located {
-                    file_id,
-                    span,
-                    value: p,
-                })
-                .value
-            }
+    pub fn make_expr(&mut self, ast: ast::Expr) -> Ast {
+        self.make_expr_with_binds(ast, &HashMap::new())
+    }
+
+    pub fn make_expr_with_binds(&mut self, ast: ast::Expr, binders: &HashMap<String, u32>) -> Ast {
+        match ast {
+            ast::Expr::Pattern(p) => self.make_pat_expr(p, binders),
             ast::Expr::Binop { op, lhs, rhs } => Ast::Constr {
                 name: format!("{:?}", op.into_inner()),
                 args: vec![
-                    self.make_expr(lhs.as_deref().cloned()).into_inner(),
-                    self.make_expr(rhs.as_deref().cloned()).into_inner(),
+                    self.make_expr_with_binds((*lhs.value).clone(), binders),
+                    self.make_expr_with_binds((*rhs.value).clone(), binders),
                 ],
             },
             ast::Expr::Match { on, arms } => Ast::Match {
-                on: self
-                    .make_expr(on.as_deref().cloned())
-                    .map(Box::new)
-                    .into_inner(),
+                on: Box::new(self.make_expr(on.as_deref().cloned().into_inner())),
                 clauses: arms
                     .into_iter()
                     .map(|clause| self.make_clause(clause))
                     .collect(),
             },
-        })
+        }
     }
 
     pub fn make_clause(&mut self, clause: ast::Clause) -> Clause {
+        let (pattern, binders) = self.make_pattern(clause.pattern.value);
         Clause {
             recursive: clause.recursive,
-            body: self.make_expr(clause.body).into_inner(),
-            pattern: self.make_pattern(clause.pattern).into_inner(),
+            body: self.make_expr_with_binds(clause.body.value, &binders),
+            pattern,
         }
     }
 
-    pub fn make_pattern(&mut self, pattern: Located<ast::Pattern>) -> Located<Pat> {
-        match pattern.value {
-            ast::Pattern::Var(p) => self.make_pat_pattern(Located {
-                value: ast::Pattern::Var(p),
-                span: pattern.span,
-                file_id: pattern.file_id,
-            }),
-            ast::Pattern::Constructor { name, args } => Located {
-                value: Pat::PatConstr {
-                    name: name.into_inner(),
-                    args: args
-                        .into_iter()
-                        .map(|pat| self.make_pattern(pat).into_inner())
-                        .collect(),
-                },
-                span: pattern.span,
-                file_id: pattern.file_id,
-            },
+    pub fn make_pattern(&mut self, pattern: ast::Pattern) -> (Pat, HashMap<String, u32>) {
+        match pattern {
+            ast::Pattern::Var(p) => {
+                let var = self.next_var(p.clone());
+                let mut map = HashMap::new();
+                map.insert(p.clone(), var);
+                (Pat::PatVar { name: var }, map)
+            }
+            ast::Pattern::Constructor { name, args } => {
+                let (args, bindings_iter): (Vec<_>, Vec<_>) = args
+                    .into_iter()
+                    .map(|pat| self.make_pattern(pat.value))
+                    .unzip();
+                let bindings = bindings_iter
+                    .into_iter()
+                    .fold(HashMap::new(), |mut map, b| {
+                        map.extend(b);
+                        map
+                    });
+                (
+                    Pat::PatConstr {
+                        name: name.value,
+                        args,
+                    },
+                    bindings,
+                )
+            }
         }
     }
 
-    pub fn make_pat_expr(&mut self, prim: Located<ast::Pattern>) -> Located<Ast> {
-        prim.map(|prim| match prim {
+    pub fn make_pat_expr(&mut self, prim: ast::Pattern, binders: &HashMap<String, u32>) -> Ast {
+        match prim {
             ast::Pattern::Constructor { name, args } => Ast::Constr {
-                name: name.into_inner(),
+                name: name.value,
                 args: args
                     .into_iter()
-                    .map(|pat| self.make_pat_expr(pat).into_inner())
+                    .map(|pat| self.make_pat_expr(pat.value, binders))
                     .collect(),
             },
-            ast::Pattern::Var(v) => Ast::Var {
-                name: self.next_var(v),
-            },
-        })
+            ast::Pattern::Var(v) => {
+                if let Some(&name) = binders.get(&v) {
+                    Ast::Var { name }
+                } else {
+                    Ast::DeclRef { name: v }
+                }
+            }
+        }
     }
 
     pub fn make_pat_pattern(&mut self, prim: Located<ast::Pattern>) -> Located<Pat> {

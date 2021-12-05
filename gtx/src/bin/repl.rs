@@ -4,7 +4,6 @@ use codespan_reporting::term::{
     termcolor::{ColorChoice, StandardStream},
 };
 use gtx::{
-    loc::Located,
     parser::{parse_repl, ReplParse},
     AstContext,
 };
@@ -52,15 +51,11 @@ impl Repl {
                             let name = decl.name.clone().into_inner();
                             self.context.add_decl(decl);
                             let ast = self.context.declaration(&name).unwrap();
-                            println!("{} = {:?}", name, ast.into_inner());
+                            println!("{} = {:?}", name, ast);
                         }
                         ReplParse::Expr(expr) => {
-                            let ast = self.context.make_expr(Located {
-                                value: expr,
-                                span: parse.span,
-                                file_id: parse.file_id,
-                            });
-                            if let Some(r) = ast.into_inner().run(&self.context) {
+                            let ast = self.context.make_expr(expr);
+                            if let Some(r) = ast.run(&self.context) {
                                 println!("-> {:?}", r);
                             } else {
                                 eprintln!("Error: cannot execute");
