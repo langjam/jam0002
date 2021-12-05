@@ -453,28 +453,41 @@ impl AstContext {
 
 #[cfg(test)]
 mod test {
+    use crate::parser::ReplParse;
+    use crate::Ast;
+    use crate::AstContext;
+
     use super::Ast::*;
-    use super::Clause;
-    use super::Pat::*;
+
+    fn parse_expr(
+        expr: &str,
+    ) -> Result<(AstContext, Ast), codespan_reporting::diagnostic::Diagnostic<codespan::FileId>>
+    {
+        let mut files = codespan::Files::new();
+        let file_id = files.add("<test>", expr);
+        let ast = crate::parser::parse_repl(&files, file_id)?;
+        if let crate::parser::Spanned(_, ReplParse::Expr(expr)) = ast {
+            let mut ctx = AstContext::default();
+            let expr = ctx.make_expr(expr);
+            Ok((ctx, expr))
+        } else {
+            unreachable!()
+        }
+    }
 
     #[test]
     pub fn test1() {
-        let prog = Match {
-            on: Box::new(Var { name: 1 }),
-            clauses: vec![Clause {
-                pattern: PatVar { name: 0 },
-                body: Var { name: 0 },
-            }],
-        };
+        let (ctx, prog) = parse_expr("case x1 of | x match x end").unwrap();
         let target = Var { name: 1 };
-        let res = prog.run();
+        let res = prog.run(&ctx);
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
 
     #[test]
     pub fn test2() {
-        let prog = Match {
+        let (ctx, prog) = parse_expr("case (MyConstr) of | (MyConstr) match x1 end").unwrap();
+        /*         let prog = Match {
             on: Box::new(Constr {
                 name: "MyConstr".to_string(),
                 args: vec![],
@@ -486,16 +499,17 @@ mod test {
                 },
                 body: Var { name: 1 },
             }],
-        };
+        }; */
         let target = Var { name: 1 };
-        let res = prog.run();
+        let res = prog.run(&ctx);
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
 
     #[test]
     pub fn test3() {
-        let prog = Match {
+        let (ctx, prog) = parse_expr("case (MyConstr) of | (MyConstr x) match x end").unwrap();
+        /*         let prog = Match {
             on: Box::new(Constr {
                 name: "MyConstr".to_string(),
                 args: vec![],
@@ -507,16 +521,22 @@ mod test {
                 },
                 body: Var { name: 1 },
             }],
-        };
-        let res = prog.run();
+        }; */
+        let res = prog.run(&ctx);
         println!("{:?}", res);
         assert_eq!(res, None)
     }
 
     #[test]
     pub fn test4() {
-        let cons = "Cons".to_string();
-        let prog = Match {
+        let (ctx, prog) = parse_expr(
+            r"
+            case (Cons x1 (Cons x2 Nil)) of
+            | (Cons a (Cons b Nil)) match (First2 a b)
+            end",
+        )
+        .unwrap();
+        /*         let prog = Match {
             on: Box::new(Constr {
                 name: cons.clone(),
                 args: vec![
@@ -555,17 +575,19 @@ mod test {
                     args: vec![Var { name: 0 }, Var { name: 1 }],
                 },
             }],
-        };
+        }; */
         let target = Constr {
             name: "First2".to_string(),
             args: vec![Var { name: 1 }, Var { name: 2 }],
         };
-        let res = prog.run();
+        let res = prog.run(&ctx);
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
 
     #[test]
+    #[cfg(never)]
+    /// Broken test
     pub fn test5() {
         // match x2 with x1 -> x0
         let inner = Match {
