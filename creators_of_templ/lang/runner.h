@@ -15,16 +15,17 @@ typedef enum RunnerPropType {
 	type_color
 } RunnerPropType;
 
+typedef struct Pos {
+	double x;
+	double y;
+} Pos;
 
 typedef struct RunnerProp {
 	RunnerPropType type;
 	union {
 		double number;
 		char *string;
-		struct Pos {
-			double x;
-			double y;
-		} pos;
+		Pos pos;
 		uint32_t color;
 	} data;
 } RunnerProp;
