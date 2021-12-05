@@ -29,23 +29,60 @@ RunnerNode *alloc(Runner *r, RunnerNode *parent) {
 }
 
 ErrCode make_atom(Node *atom, RunnerProp *dest) {
+	// token val isnt null terminated
+	char buf[64] = {0};
+	strncpy(buf, atom->token.val, atom->token.len);
 	switch (atom->token.type) {
 		case tok_hexlit: {
 			char *endptr = NULL;
-			uint32_t val = strtoul(atom->token.val, &endptr, 16);
+			uint32_t val = strtoul(buf, &endptr, 16);
+			if (endptr == buf) return err_bad_number_literal;
 			dest->type = type_color;
 			dest->data.color = val;
-			return err_ok;
+		} break;
+		case tok_numlit: {
+			char *endptr = NULL;
+			dest->type = type_number;
+			dest->data.number = strtod(buf, &endptr);
+			if (endptr == buf) return err_bad_number_literal;
 		} break;
 		default:
 			// TODO: Provide Err struct in runtime
 			return err_badprop;
 	}
+	return err_ok;
 }
 
 ErrCode make_call(Node *call, RunnerProp *dest) {
 	if (strncmp(call->token.val, "vec2", call->token.len)) {
-		// TODO: Handle vec2 
+		dest->type = type_position;
+		char *endptr = NULL;
+		char buf[64] = {0};
+
+		// X
+		if (!call->first_child)
+			return err_badprop;
+		Node *node = call->first_child;
+		
+		if (node->type != node_atom || node->token.type != tok_numlit)
+			return err_badprop;
+		strncpy(buf, node->token.val, node->token.len);
+		dest->data.pos.x = strtod(buf, &endptr);
+		if (endptr == buf)
+			return err_bad_number_literal;
+
+		// Y
+		if (!node->sibling)
+			return err_badprop;
+		node = node->sibling;
+
+		if (node->type != node_atom || node->token.type != tok_numlit)
+			return err_badprop;
+		strncpy(buf, node->token.val, node->token.len);
+		dest->data.pos.y = strtod(buf, &endptr);
+		if (endptr == buf)
+			return err_bad_number_literal;
+
 		return err_ok;
 	}
 	else {

@@ -1,7 +1,7 @@
 FILES=lang/*.c map/*.c raylib/lib/libraylib.a
 TESTS=test/*.c
 FLAGS=-I. -Iraylib/include/ -ldl -lpthread -lm
-DEBUG=-Wextra -Wall -Werror -pedantic -g -fsanitize=address
+DEBUG=-Wextra -Wall -Werror -pedantic -g -fsanitize=address -Wno-unused-parameter
 
 all:
 	mkdir -p bin
