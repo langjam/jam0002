@@ -1,26 +1,69 @@
 pub mod ast;
+pub mod loc;
 pub mod parser;
 
-use std::{collections::HashMap, fmt::Display};
+use std::{
+    collections::{BTreeSet, HashMap},
+    fmt::Display,
+};
 
-use parser::Spanned;
+use codespan::FileId;
+use codespan_reporting::diagnostic::{Diagnostic, LabelStyle};
+use loc::{Located, Span};
+
+#[derive(Debug, Clone, thiserror::Error)]
+pub enum ExecutionError {
+    #[error("Unknown binding")]
+    UnknownBinding,
+    #[error("Unexpected case in match")]
+    UnexpectedCase { on: Located<Ast> },
+}
+
+impl ExecutionError {
+    pub fn make_diagnostic(this: Located<Self>) -> Diagnostic<FileId> {
+        let mut labels = vec![this.clone().to_label(LabelStyle::Primary)];
+        match &this.value {
+            Self::UnexpectedCase { on } => labels.push(
+                on.as_ref()
+                    .map(|_| "this value does not match any of the case clauses")
+                    .to_label(LabelStyle::Secondary),
+            ),
+            _ => {}
+        }
+        Diagnostic::error()
+            .with_message(this.value.to_string())
+            .with_labels(labels)
+    }
+}
+
+pub type ExecR<T> = Result<T, Located<ExecutionError>>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Pat {
     PatHole,
-    PatVar { name: u32 },
-    PatConstr { name: String, args: Vec<Pat> },
+    PatVar {
+        name: Located<u32>,
+    },
+    PatConstr {
+        name: Located<String>,
+        args: Vec<Located<Self>>,
+    },
 }
 
 impl Display for Pat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Pat::PatHole => write!(f, "*"),
-            Pat::PatVar { name } => write!(f, "?x{}", *name),
-            Pat::PatConstr { name, args } => {
+            Pat::PatVar {
+                name: Located { value: name, .. },
+            } => write!(f, "?x{}", name),
+            Pat::PatConstr {
+                name: Located { value: name, .. },
+                args,
+            } => {
                 write!(f, "{}(", name)?;
                 if args.len() != 0 {
-                    write!(f, "{}", args[0])?;
+                    write!(f, "{}", *args[0])?;
                     for i in &args[1..] {
                         write!(f, ", ")?;
                         i.fmt(f)?
@@ -34,11 +77,19 @@ impl Display for Pat {
 
 impl Pat {
     /// Computes the set of binding variables in a pattern
-    pub fn binders(&self) -> Vec<u32> {
+    pub fn binders(&self) -> BTreeSet<Located<u32>> {
         match self {
-            Pat::PatHole => vec![],
-            Pat::PatVar { name } => vec![*name],
-            Pat::PatConstr { args, .. } => args.iter().map(Pat::binders).flatten().collect(),
+            Pat::PatHole => BTreeSet::default(),
+            Pat::PatVar { name } => {
+                let mut set = BTreeSet::default();
+                set.insert(name.as_ref().copied());
+                set
+            }
+            Pat::PatConstr { args, .. } => args
+                .iter()
+                .map(|p| p.as_ref().into_inner().binders())
+                .flatten()
+                .collect(),
         }
     }
 
@@ -47,28 +98,42 @@ impl Pat {
         match self {
             Pat::PatHole => Pat::PatHole,
             Pat::PatVar { name } => Pat::PatVar {
-                name: *name + offset,
+                name: name.as_ref().map(|&n| n + offset),
             },
             Pat::PatConstr { name, args } => Pat::PatConstr {
                 name: name.clone(),
-                args: args.iter().map(|p| p.rename(offset)).collect(),
+                args: args
+                    .iter()
+                    .map(|p| p.as_ref().map(|p| p.rename(offset)))
+                    .collect(),
             },
         }
     }
 
-    pub fn match_with(&self, term: Ast) -> Option<Substitution> {
+    pub fn match_with(&self, term: Located<Ast>) -> Option<Substitution> {
         match self {
             Pat::PatHole => Some(Substitution::new()),
-            Pat::PatVar { name } => Some(Substitution::new().bind(*name, term)),
-            Pat::PatConstr { name, args } => match term {
+            Pat::PatVar {
+                name: Located { value: name, .. },
+            } => Some(Substitution::new().bind(*name, term)),
+            Pat::PatConstr {
+                name: Located { value: name, .. },
+                args,
+            } => match term.into_inner() {
                 Ast::Constr {
-                    name: real_name,
+                    name:
+                        Located {
+                            value: real_name, ..
+                        },
                     args: real_args,
                 } => {
                     if *name == real_name && args.len() == real_args.len() {
                         let s = Substitution::new();
                         args.iter().zip(real_args).try_fold(s, |s, (pat, term)| {
-                            pat.match_with(term).map(|s2| s.extend(s2))
+                            pat.as_ref()
+                                .into_inner()
+                                .match_with(term)
+                                .map(|s2| s.extend(s2))
                         })
                     } else {
                         None
@@ -82,7 +147,7 @@ impl Pat {
 
 #[derive(Clone)]
 pub struct Substitution {
-    map: HashMap<u32, Ast>,
+    map: HashMap<u32, Located<Ast>>,
     next_var: u32,
 }
 
@@ -94,7 +159,7 @@ impl Substitution {
         }
     }
 
-    fn bind(&self, var: u32, term: Ast) -> Self {
+    fn bind(&self, var: u32, term: Located<Ast>) -> Self {
         let free_vars_offset = term.fresh_var();
         let mut new_map = self.map.clone();
         let _ = new_map.insert(var, term);
@@ -104,10 +169,10 @@ impl Substitution {
         }
     }
 
-    fn ignore(&self, varlist: &[u32]) -> Self {
+    fn ignore(&self, varlist: impl IntoIterator<Item = Located<u32>>) -> Self {
         let mut new_map = self.map.clone();
-        varlist.iter().for_each(|v| {
-            let _ = new_map.remove_entry(v);
+        varlist.into_iter().for_each(|v| {
+            let _ = new_map.remove_entry(&*v);
         });
         Substitution {
             map: new_map,
@@ -115,18 +180,25 @@ impl Substitution {
         }
     }
 
-    fn subst(&self, var: u32) -> Ast {
-        if let Some(x) = self.map.get(&var) {
-            x.clone()
+    fn subst(&self, var: Located<u32>) -> Ast {
+        if let Some(x) = self.map.get(var.as_ref().into_inner()) {
+            x.as_ref().into_inner().clone()
         } else {
             Ast::Var { name: var }
         }
     }
 
-    fn renaming(varlist: &[u32], offset: u32) -> Self {
-        let mut map = HashMap::<u32, Ast>::new();
+    fn renaming(varlist: impl IntoIterator<Item = Located<u32>>, offset: u32) -> Self {
+        let mut map = HashMap::new();
         let next_var = varlist.into_iter().fold(0, |next, v| {
-            let _ = map.insert(*v, Ast::Var { name: v + offset });
+            let loc = v.as_ref();
+            let v = *v.as_ref().into_inner();
+            let _ = map.insert(
+                v,
+                loc.clone().map(|&v| Ast::Var {
+                    name: loc.map(|_| v + offset),
+                }),
+            );
             u32::max(next, v + offset + 1)
         });
         Substitution { map, next_var }
@@ -151,9 +223,17 @@ impl Substitution {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Ast {
-    Var { name: u32 },
-    Match { on: Box<Ast>, clauses: Vec<Clause> },
-    Constr { name: String, args: Vec<Ast> },
+    Var {
+        name: Located<u32>,
+    },
+    Match {
+        on: Located<Box<Self>>,
+        clauses: Vec<Located<Clause>>,
+    },
+    Constr {
+        name: Located<String>,
+        args: Vec<Located<Self>>,
+    },
 }
 
 struct DisplayAst<'ctx, 'ast> {
@@ -165,18 +245,21 @@ struct DisplayAst<'ctx, 'ast> {
 impl<'ctx, 'ast> Display for DisplayAst<'ctx, 'ast> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.ast {
-            Ast::Var { name } => match self.context.variable(*name) {
+            Ast::Var {
+                name: Located { value: name, .. },
+            } => match self.context.variable(*name) {
                 Some(name) => write!(f, "{}", name),
                 None => write!(f, "x{}", name),
             },
             Ast::Match { on, clauses } => {
                 write!(f, "case {} of\n", on.display(self.context))?;
                 for cl in clauses {
+                    let Located { value: cl, .. } = cl.as_ref();
                     write!(
                         f,
                         "{:width$}| {} {} {}\n",
                         "",
-                        cl.pattern,
+                        cl.pattern.as_ref().into_inner(),
                         if cl.recursive { "match" } else { "rematch" },
                         DisplayAst {
                             offset: self.offset + 4,
@@ -188,7 +271,10 @@ impl<'ctx, 'ast> Display for DisplayAst<'ctx, 'ast> {
                 }
                 write!(f, "{:width$}end", "", width = self.offset)
             }
-            Ast::Constr { name, args } => {
+            Ast::Constr {
+                name: Located { value: name, .. },
+                args,
+            } => {
                 if args.is_empty() {
                     write!(f, "{}", name)
                 } else {
@@ -209,12 +295,12 @@ impl<'ctx, 'ast> Display for DisplayAst<'ctx, 'ast> {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Clause {
     recursive: bool,
-    pattern: Pat,
-    body: Ast,
+    pattern: Located<Pat>,
+    body: Located<Ast>,
 }
 
 impl Clause {
-    fn run(&self, matched: Ast) -> Option<Ast> {
+    fn run(&self, matched: Located<Ast>) -> Option<Ast> {
         if let Some(s) = self.pattern.match_with(matched) {
             Some(self.body.parallel_subst(&s))
         } else {
@@ -224,8 +310,11 @@ impl Clause {
 
     fn rename_binders(&self, offset: u32) -> Clause {
         let binders = self.pattern.binders();
-        let body = self.body.rename(&binders, offset);
-        let pattern = self.pattern.rename(offset);
+        let body = self
+            .body
+            .as_ref()
+            .map(|body| body.rename(binders.iter().copied(), offset));
+        let pattern = self.pattern.as_ref().map(|pat| pat.rename(offset));
         Clause {
             recursive: false, /* TODO: Make sure this is alright */
             body,
@@ -240,12 +329,12 @@ impl Clause {
         // We list the bounded variables in the clause
         let binders = self.pattern.binders();
         // Bounded variables should not be substituted
-        let s = s.ignore(&binders);
+        let s = s.ignore(binders.iter().copied());
         // We rename the binders and the bounded variables with fresh names
         // to avoid captures
         let clause = self.rename_binders(s.next_var);
         // We perform the substitution
-        let body = self.body.parallel_subst(&s);
+        let body = self.body.as_ref().map(|body| body.parallel_subst(&s));
         Clause { body, ..clause }
     }
 }
@@ -254,20 +343,30 @@ impl Ast {
     /// Computes the set of free variables occurring in
     /// a term.
     /// Free variables listed in 'except' are excluded from the search.
-    fn free_vars_except(&self, except: &[u32]) -> Vec<u32> {
+    fn free_vars_except(&self, except: &BTreeSet<u32>) -> BTreeSet<Located<u32>> {
         match self {
             Ast::Var { name } => {
-                if except.contains(name) {
-                    vec![]
+                if except.contains(*name.as_ref()) {
+                    BTreeSet::default()
                 } else {
-                    vec![*name]
+                    let mut set = BTreeSet::default();
+                    set.insert(*name);
+                    set
                 }
             }
             Ast::Match { on, clauses } => {
                 let vars_on = on.free_vars_except(except);
                 let var_clauses = clauses
                     .iter()
-                    .map(|cl| cl.body.free_vars_except(&cl.pattern.binders()))
+                    .map(|cl| {
+                        let binders = cl
+                            .pattern
+                            .binders()
+                            .into_iter()
+                            .map(Located::into_inner)
+                            .collect();
+                        cl.body.free_vars_except(&binders)
+                    })
                     .flatten();
                 var_clauses.chain(vars_on.into_iter()).collect()
             }
@@ -280,67 +379,107 @@ impl Ast {
     }
 
     /// Computes the set of free variables occurring in a term
-    fn free_vars(&self) -> Vec<u32> {
-        self.free_vars_except(&[])
+    fn free_vars(&self) -> BTreeSet<Located<u32>> {
+        self.free_vars_except(&BTreeSet::default())
     }
 
     fn fresh_var(&self) -> u32 {
-        self.free_vars().iter().max().unwrap_or(&0) + 1
+        self.free_vars()
+            .iter()
+            .map(|loc| loc.into_inner())
+            .max()
+            .unwrap_or(0)
+            + 1
     }
 
     fn parallel_subst(&self, s: &Substitution) -> Self {
         match self {
             Ast::Var { name } => s.subst(*name),
             Ast::Match { on, clauses } => Ast::Match {
-                on: Box::new((*on).parallel_subst(s)),
+                on: on.as_deref().map(|on| Box::new(on.parallel_subst(s))),
                 clauses: clauses
                     .iter()
-                    .map(|cl| cl.parallel_subst_in_body(s))
+                    .map(|cl| cl.as_ref().map(|cl| cl.parallel_subst_in_body(s)))
                     .collect(),
             },
             Ast::Constr { name, args } => Ast::Constr {
                 name: name.clone(),
-                args: args.iter().map(|term| term.parallel_subst(s)).collect(),
+                args: args
+                    .iter()
+                    .map(|term| term.as_ref().map(|term| term.parallel_subst(s)))
+                    .collect(),
             },
         }
     }
 
     /// Perform safe substitution of a variable by a term in a term.
     /// Binders are renamed on-the-fly to avoid unwanted captures.
-    fn subst(&self, var: u32, term: Ast) -> Self {
+    fn subst(&self, var: u32, term: Located<Ast>) -> Self {
         let s = Substitution::new().bind(var, term);
         self.parallel_subst(&s)
     }
 
-    fn rename(&self, varlist: &[u32], offset: u32) -> Self {
+    fn rename(&self, varlist: impl IntoIterator<Item = Located<u32>>, offset: u32) -> Self {
         let renaming = Substitution::renaming(varlist, offset);
         self.parallel_subst(&renaming)
     }
 
-    pub fn run(&self, ctx: &AstContext) -> Option<Self> {
+    pub fn run(&self, ctx: &AstContext) -> ExecR<Self> {
         match self {
             Ast::Var { name } => {
-                let var_ast = ctx.binding(ctx.variable(*name)?)?;
+                let var_ast = match ctx.variable(**name).and_then(|name| ctx.binding(name)) {
+                    Some(ast) => ast,
+                    None => return Err(name.map(|_| ExecutionError::UnknownBinding)),
+                };
                 var_ast.run(ctx)
             }
             Ast::Match { on, clauses } => {
-                let arg = on.run(ctx)?;
-                let (rec, res) = clauses
-                    .into_iter()
-                    .find_map(|cl| Some((cl.recursive, cl.run(arg.clone())?)))?;
+                let arg = on
+                    .as_deref()
+                    .map(|on| on.run(ctx))
+                    .transpose_result()
+                    .map_err(|err| err.flatten())?;
+                let (rec, res) = match clauses.into_iter().find_map(|cl| {
+                    Some((
+                        cl.recursive,
+                        cl.as_ref()
+                            .map(|cl| cl.run(arg.clone()))
+                            .transpose_option()?,
+                    ))
+                }) {
+                    Some(v) => v,
+                    None => {
+                        let span = clauses.iter().map(Located::span).fold(on.span, Span::merge);
+                        return Err(Located {
+                            span,
+                            file_id: clauses.first().map(Located::file_id).unwrap_or(on.file_id),
+                            value: ExecutionError::UnexpectedCase {
+                                on: on.as_deref().cloned(),
+                            },
+                        });
+                    }
+                };
                 if rec {
                     Ast::Match {
-                        on: Box::new(res),
+                        on: res.map(Box::new),
                         clauses: clauses.clone(),
                     }
                     .run(ctx)
                 } else {
-                    Some(res)
+                    Ok(res.into_inner())
                 }
             }
             Ast::Constr { name, args } => {
-                let args = args.iter().map(|ast| ast.run(ctx)).collect::<Option<_>>()?;
-                Some(Ast::Constr {
+                let args = args
+                    .iter()
+                    .map(|ast| {
+                        ast.as_ref()
+                            .map(|ast| ast.run(ctx))
+                            .transpose_result()
+                            .map_err(|err| err.flatten())
+                    })
+                    .collect::<ExecR<_>>()?;
+                Ok(Ast::Constr {
                     name: name.clone(),
                     args,
                 })
@@ -359,14 +498,14 @@ impl Ast {
 
 #[derive(Debug, Default)]
 pub struct AstContext {
-    var_data: HashMap<String, Ast>,
+    var_data: HashMap<String, Located<Ast>>,
     var_ref: HashMap<u32, String>,
     next_free: u32,
 }
 
 impl AstContext {
-    pub fn binding<S: AsRef<str>>(&self, name: S) -> Option<&Ast> {
-        self.var_data.get(name.as_ref())
+    pub fn binding<S: AsRef<str>>(&self, name: S) -> Option<Located<&Ast>> {
+        self.var_data.get(name.as_ref()).map(|l| l.as_ref())
     }
 
     pub fn variable(&self, var: u32) -> Option<&str> {
@@ -374,73 +513,102 @@ impl AstContext {
     }
 
     pub fn add_decl(&mut self, decl: ast::Decl) {
-        let ast = self.make_expr(decl.body.into_inner());
+        let ast = self.make_expr(decl.body);
         self.var_data.insert(decl.name.into_inner(), ast);
     }
 
-    pub fn make_expr(&mut self, ast: ast::Expr) -> Ast {
-        match ast {
-            ast::Expr::Primary(p) => self.make_prim_expr(p),
+    pub fn make_expr(&mut self, ast: Located<ast::Expr>) -> Located<Ast> {
+        let Located { file_id, span, .. } = ast;
+        ast.map(|ast| match ast {
+            ast::Expr::Primary(p) => self.make_prim_expr(Located {
+                file_id,
+                span,
+                value: p,
+            }),
             ast::Expr::Binop { .. } => todo!(),
-            ast::Expr::Match {
-                on: Spanned(_, on),
-                arms,
-            } => Ast::Match {
-                on: Box::new(self.make_expr((*on).clone())),
+            ast::Expr::Match { on, arms } => Ast::Match {
+                on: self.make_expr(on.as_deref().cloned()).map(Box::new),
                 clauses: arms
                     .into_iter()
-                    .map(|clause| self.make_clause(clause))
+                    .map(|clause| {
+                        let file_id = clause.body.file_id;
+                        let span = clause.pattern.span().merge(clause.body.span());
+                        self.make_clause(Located {
+                            value: clause,
+                            span,
+                            file_id,
+                        })
+                    })
                     .collect(),
             },
-        }
+        })
     }
 
-    pub fn make_clause(&mut self, clause: ast::Clause) -> Clause {
-        Clause {
+    pub fn make_clause(&mut self, clause: Located<ast::Clause>) -> Located<Clause> {
+        clause.map(|clause| Clause {
             recursive: clause.recursive,
-            body: self.make_expr(clause.body.into_inner()),
-            pattern: self.make_pattern(clause.pattern.into_inner()),
-        }
+            body: self.make_expr(clause.body),
+            pattern: self.make_pattern(clause.pattern),
+        })
     }
 
-    pub fn make_pattern(&mut self, pattern: ast::Pattern) -> Pat {
-        match pattern {
-            ast::Pattern::Primary(p) => self.make_prim_pattern(p),
-            ast::Pattern::Constructor {
-                name: Spanned(_, name),
-                args,
-            } => Pat::PatConstr {
-                name,
-                args: args
-                    .into_iter()
-                    .map(|Spanned(_, pat)| self.make_pattern(pat))
-                    .collect(),
+    pub fn make_pattern(&mut self, pattern: Located<ast::Pattern>) -> Located<Pat> {
+        match pattern.value {
+            ast::Pattern::Primary(p) => self.make_prim_pattern(Located {
+                value: p,
+                span: pattern.span,
+                file_id: pattern.file_id,
+            }),
+            ast::Pattern::Constructor { name, args } => Located {
+                value: Pat::PatConstr {
+                    name,
+                    args: args.into_iter().map(|pat| self.make_pattern(pat)).collect(),
+                },
+                span: pattern.span,
+                file_id: pattern.file_id,
             },
         }
     }
 
-    pub fn make_prim_expr(&mut self, prim: ast::Primary) -> Ast {
-        match prim {
+    pub fn make_prim_expr(&mut self, prim: Located<ast::Primary>) -> Ast {
+        match prim.value {
             ast::Primary::Const(c) => Ast::Constr {
-                name: c,
+                name: Located {
+                    value: c,
+                    span: prim.span,
+                    file_id: prim.file_id,
+                },
                 args: vec![],
             },
             ast::Primary::Var(v) => Ast::Var {
-                name: self.next_var(v),
+                name: Located {
+                    value: self.next_var(v),
+                    span: prim.span,
+                    file_id: prim.file_id,
+                },
             },
         }
     }
 
-    pub fn make_prim_pattern(&mut self, prim: ast::Primary) -> Pat {
-        match prim {
+    pub fn make_prim_pattern(&mut self, prim: Located<ast::Primary>) -> Located<Pat> {
+        let Located { file_id, span, .. } = prim;
+        prim.map(|prim| match prim {
             ast::Primary::Const(c) => Pat::PatConstr {
-                name: c,
+                name: Located {
+                    value: c,
+                    span,
+                    file_id,
+                },
                 args: vec![],
             },
             ast::Primary::Var(v) => Pat::PatVar {
-                name: self.next_var(v),
+                name: Located {
+                    value: self.next_var(v),
+                    span,
+                    file_id,
+                },
             },
-        }
+        })
     }
 
     fn next_var(&mut self, var: String) -> u32 {
@@ -453,35 +621,42 @@ impl AstContext {
 
 #[cfg(test)]
 mod test {
+    use codespan::FileId;
+    use codespan_reporting::diagnostic::Diagnostic;
+
+    use crate::loc::Located;
+    use crate::parser::parse_repl;
     use crate::parser::ReplParse;
     use crate::Ast;
     use crate::AstContext;
 
-    use super::Ast::*;
-
-    fn parse_expr(
-        expr: &str,
-    ) -> Result<(AstContext, Ast), codespan_reporting::diagnostic::Diagnostic<codespan::FileId>>
-    {
+    fn parse_expr(expr: &str) -> Result<(AstContext, Located<Ast>), Diagnostic<FileId>> {
         let mut files = codespan::Files::new();
         let file_id = files.add("<test>", expr);
-        let ast = crate::parser::parse_repl(&files, file_id)?;
-        if let crate::parser::Spanned(_, ReplParse::Expr(expr)) = ast {
-            let mut ctx = AstContext::default();
-            let expr = ctx.make_expr(expr);
-            Ok((ctx, expr))
-        } else {
-            unreachable!()
-        }
+        let ast = parse_repl(&files, file_id)?;
+        let expr = ast.map(|ast| {
+            if let ReplParse::Expr(expr) = ast {
+                expr
+            } else {
+                unreachable!()
+            }
+        });
+        let mut ctx = AstContext::default();
+        let expr = ctx.make_expr(expr);
+        Ok((ctx, expr))
     }
 
     #[test]
     pub fn test1() {
-        let (ctx, prog) = parse_expr("case x1 of | x match x end").unwrap();
-        let target = Var { name: 1 };
-        let res = prog.run(&ctx);
+        let (ctx, prog) = parse_expr("case x of | y match y end").unwrap();
+        let res = prog.run(&ctx).unwrap();
         println!("{:?}", res);
-        assert_eq!(res, Some(target))
+        match res {
+            Ast::Var {
+                name: Located { value, .. },
+            } => assert_eq!(1, value),
+            _ => assert!(false),
+        }
     }
 
     #[test]
@@ -500,10 +675,14 @@ mod test {
                 body: Var { name: 1 },
             }],
         }; */
-        let target = Var { name: 1 };
-        let res = prog.run(&ctx);
+        let res = prog.run(&ctx).unwrap();
         println!("{:?}", res);
-        assert_eq!(res, Some(target))
+        match res {
+            Ast::Var {
+                name: Located { value, .. },
+            } => assert_eq!(1, value),
+            _ => assert!(false),
+        }
     }
 
     #[test]
@@ -524,7 +703,7 @@ mod test {
         }; */
         let res = prog.run(&ctx);
         println!("{:?}", res);
-        assert_eq!(res, None)
+        assert!(res.is_err());
     }
 
     #[test]
@@ -576,13 +755,28 @@ mod test {
                 },
             }],
         }; */
-        let target = Constr {
-            name: "First2".to_string(),
-            args: vec![Var { name: 1 }, Var { name: 2 }],
-        };
-        let res = prog.run(&ctx);
+        let res = prog.run(&ctx).unwrap();
         println!("{:?}", res);
-        assert_eq!(res, Some(target))
+        match res {
+            Ast::Constr {
+                name: Located { value: name, .. },
+                args,
+            } => {
+                assert_eq!("First2", &name);
+                assert_eq!(
+                    vec![1, 2],
+                    args.into_iter()
+                        .filter_map(|l| match l.value {
+                            Ast::Var {
+                                name: Located { value, .. },
+                            } => Some(value),
+                            _ => None,
+                        })
+                        .collect::<Vec<_>>()
+                );
+            }
+            _ => assert!(false),
+        }
     }
 
     #[test]

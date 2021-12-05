@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::parser::Spanned;
+use crate::loc::Located;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Primary {
@@ -12,16 +12,16 @@ pub enum Primary {
 pub enum Pattern {
     Primary(Primary),
     Constructor {
-        name: Spanned<String>,
-        args: Vec<Spanned<Self>>,
+        name: Located<String>,
+        args: Vec<Located<Self>>,
     },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Clause {
     pub recursive: bool,
-    pub pattern: Spanned<Pattern>,
-    pub body: Spanned<Expr>,
+    pub pattern: Located<Pattern>,
+    pub body: Located<Expr>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -36,18 +36,18 @@ pub enum Binop {
 pub enum Expr {
     Primary(Primary),
     Binop {
-        lhs: Spanned<Rc<Self>>,
-        rhs: Spanned<Rc<Self>>,
-        op: Spanned<Binop>,
+        lhs: Located<Rc<Self>>,
+        rhs: Located<Rc<Self>>,
+        op: Located<Binop>,
     },
     Match {
-        on: Spanned<Rc<Self>>,
+        on: Located<Rc<Self>>,
         arms: Vec<Clause>,
     },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Decl {
-    pub name: Spanned<String>,
-    pub body: Spanned<Expr>,
+    pub name: Located<String>,
+    pub body: Located<Expr>,
 }
