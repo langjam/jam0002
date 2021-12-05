@@ -68,7 +68,7 @@ namespace dupr { namespace ast { namespace relation {
 			return true;
 		}
 
-		if (t == ::dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__)
+		if (t == ::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__)
 		{
 			return true;
 		}

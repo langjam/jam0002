@@ -46,7 +46,10 @@ bool dupr::ast::listener::user::IRTranslatorFunctionArguments::GetArguments(
 			if (valid)
 			{
 				currentTokens.clear();
-				argumentOrExtension = true;
+				if (!IsExtensionStateMachineEmpty(irTranslator, patternDirection + ">Extension"))
+				{
+					argumentOrExtension = true;
+				}
 			}
 		}
 	}
@@ -62,6 +65,25 @@ bool dupr::ast::listener::user::IRTranslatorFunctionArguments::GetArguments(
 	}
 
 	return success;
+}
+
+bool dupr::ast::listener::user::IRTranslatorFunctionArguments::IsExtensionStateMachineEmpty(
+	IRTranslator* irTranslator, const std::string& patternDirection)
+{
+	auto iter = irTranslator->mapNameWithPattern.find(patternDirection);
+	if (iter == irTranslator->mapNameWithPattern.end())
+	{
+		throw std::logic_error(
+			"ArgumentExtension pattern direction does not exist: " + patternDirection + "\n");
+	}
+
+	bool isEmpty = true;
+	for (auto stateMachine : iter->second)
+	{
+		isEmpty &= stateMachine->IsEmpty();
+	}
+
+	return isEmpty;
 }
 
 bool dupr::ast::listener::user::IRTranslatorFunctionArguments::ParseExtension(

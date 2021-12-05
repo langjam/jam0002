@@ -40,7 +40,8 @@ namespace dupr::ast::listener::user
 		}
 		void ListenEntry(const dupr::ast::node::pattern_constructor_content_stmt* node) override
 		{
-			statements.push_back(node);
+			if (!encapsulated_visited)
+				statements.push_back(node);
 		}
 
 	public:
@@ -54,6 +55,8 @@ namespace dupr::ast::listener::user
 		bool IsRightPositional(const std::string& cs);
 		bool GetArguments(IRTranslator* irTranslator, std::string patternDirection,
 						  std::vector<const ::deamer::external::cpp::ast::Node*> nodes);
+
+		bool IsExtensionStateMachineEmpty(IRTranslator* irTranslator, const std::string& cs);
 	};
 }
 

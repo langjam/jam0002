@@ -55,7 +55,7 @@
 #include "dupr/Ast/Node/deamerreserved_arrow__VARNAME__.h"
 #include "dupr/Ast/Node/deamerreserved_star__GT__VARNAME__.h"
 #include "dupr/Ast/Node/pattern_constructor_content.h"
-#include "dupr/Ast/Node/deamerreserved_plus__pattern_constructor_content_stmt__.h"
+#include "dupr/Ast/Node/deamerreserved_star__pattern_constructor_content_stmt__.h"
 #include "dupr/Ast/Node/pattern_constructor_content_stmt.h"
 #include "dupr/Ast/Node/pattern_constructor_operator.h"
 #include "dupr/Ast/Node/pattern_constructor_structure.h"

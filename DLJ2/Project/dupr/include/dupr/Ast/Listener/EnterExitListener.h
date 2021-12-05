@@ -48,7 +48,7 @@
 #include "dupr/Ast/Node/deamerreserved_arrow__VARNAME__.h"
 #include "dupr/Ast/Node/deamerreserved_star__GT__VARNAME__.h"
 #include "dupr/Ast/Node/pattern_constructor_content.h"
-#include "dupr/Ast/Node/deamerreserved_plus__pattern_constructor_content_stmt__.h"
+#include "dupr/Ast/Node/deamerreserved_star__pattern_constructor_content_stmt__.h"
 #include "dupr/Ast/Node/pattern_constructor_content_stmt.h"
 #include "dupr/Ast/Node/pattern_constructor_operator.h"
 #include "dupr/Ast/Node/pattern_constructor_structure.h"
@@ -466,12 +466,12 @@ namespace dupr { namespace ast { namespace listener {
 				break;
 			}
 
-			case dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__:
+			case dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__:
 			{
 				// Enter nonterminal
 				EnterAnything(node);
 				EnterNonTerminal(node);
-				ListenEntry(static_cast<const dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__*>(node));
+				ListenEntry(static_cast<const dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__*>(node));
 				break;
 			}
 
@@ -911,10 +911,10 @@ namespace dupr { namespace ast { namespace listener {
 				break;
 			}
 
-			case dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__:
+			case dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__:
 			{
 				// Exit nonterminal
-				ListenExit(static_cast<const dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__*>(node));
+				ListenExit(static_cast<const dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__*>(node));
 				ExitNonTerminal(node);
 				ExitAnything(node);
 				break;
@@ -1260,7 +1260,7 @@ namespace dupr { namespace ast { namespace listener {
 		{
 		}
 
-		virtual void ListenEntry(const dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__* node) 
+		virtual void ListenEntry(const dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__* node) 
 		{
 		}
 
@@ -1333,7 +1333,7 @@ namespace dupr { namespace ast { namespace listener {
 		{
 		}
 
-		virtual void ListenExit(const dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__* node) 
+		virtual void ListenExit(const dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__* node) 
 		{
 		}
 

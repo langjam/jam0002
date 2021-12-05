@@ -146,14 +146,14 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"pattern_constructor_content\"];\n";
 		}
 
-		void ListenEntry(const ::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__* node) override
+		void ListenEntry(const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__* node) override
 		{
 			for (const auto* child : node->GetNodes())
 			{
 				AddConnection(node, child);
 			}
 
-			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"deamerreserved_plus__pattern_constructor_content_stmt__\"];\n";
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"deamerreserved_star__pattern_constructor_content_stmt__\"];\n";
 		}
 
 		void ListenEntry(const ::dupr::ast::node::pattern_constructor_content_stmt* node) override
@@ -555,7 +555,7 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 		{
 		}
 
-		void ListenExit(const ::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__* node) override
+		void ListenExit(const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__* node) override
 		{
 		}
 

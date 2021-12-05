@@ -53,7 +53,7 @@ namespace dupr { namespace ast {
 		deamerreserved_arrow__VARNAME__,
 		deamerreserved_star__GT__VARNAME__,
 		pattern_constructor_content,
-		deamerreserved_plus__pattern_constructor_content_stmt__,
+		deamerreserved_star__pattern_constructor_content_stmt__,
 		pattern_constructor_content_stmt,
 		pattern_constructor_operator,
 		pattern_constructor_structure,

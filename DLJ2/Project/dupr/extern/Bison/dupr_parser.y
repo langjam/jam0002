@@ -53,7 +53,7 @@
 #include "dupr/Ast/Node/deamerreserved_arrow__VARNAME__.h"
 #include "dupr/Ast/Node/deamerreserved_star__GT__VARNAME__.h"
 #include "dupr/Ast/Node/pattern_constructor_content.h"
-#include "dupr/Ast/Node/deamerreserved_plus__pattern_constructor_content_stmt__.h"
+#include "dupr/Ast/Node/deamerreserved_star__pattern_constructor_content_stmt__.h"
 #include "dupr/Ast/Node/pattern_constructor_content_stmt.h"
 #include "dupr/Ast/Node/pattern_constructor_operator.h"
 #include "dupr/Ast/Node/pattern_constructor_structure.h"
@@ -115,7 +115,7 @@ static ::deamer::external::cpp::ast::Tree* outputTree = nullptr;
 %nterm<dupr_deamerreserved_arrow__VARNAME__> deamerreserved_arrow__VARNAME__
 %nterm<dupr_deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__
 %nterm<dupr_pattern_constructor_content> pattern_constructor_content
-%nterm<dupr_deamerreserved_plus__pattern_constructor_content_stmt__> deamerreserved_plus__pattern_constructor_content_stmt__
+%nterm<dupr_deamerreserved_star__pattern_constructor_content_stmt__> deamerreserved_star__pattern_constructor_content_stmt__
 %nterm<dupr_pattern_constructor_content_stmt> pattern_constructor_content_stmt
 %nterm<dupr_pattern_constructor_operator> pattern_constructor_operator
 %nterm<dupr_pattern_constructor_structure> pattern_constructor_structure
@@ -168,7 +168,7 @@ static ::deamer::external::cpp::ast::Tree* outputTree = nullptr;
 	::dupr::ast::node::deamerreserved_arrow__VARNAME__* dupr_deamerreserved_arrow__VARNAME__;
 	::dupr::ast::node::deamerreserved_star__GT__VARNAME__* dupr_deamerreserved_star__GT__VARNAME__;
 	::dupr::ast::node::pattern_constructor_content* dupr_pattern_constructor_content;
-	::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__* dupr_deamerreserved_plus__pattern_constructor_content_stmt__;
+	::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__* dupr_deamerreserved_star__pattern_constructor_content_stmt__;
 	::dupr::ast::node::pattern_constructor_content_stmt* dupr_pattern_constructor_content_stmt;
 	::dupr::ast::node::pattern_constructor_operator* dupr_pattern_constructor_operator;
 	::dupr::ast::node::pattern_constructor_structure* dupr_pattern_constructor_structure;
@@ -285,19 +285,19 @@ deamerreserved_star__GT__VARNAME__:
 ;
 
 pattern_constructor_content:
-	deamerreserved_plus__pattern_constructor_content_stmt__ {
+	deamerreserved_star__pattern_constructor_content_stmt__ {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_content({::dupr::ast::Type::pattern_constructor_content, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { $1 });
 		$$ = newNode;
 	}
 ;
 
-deamerreserved_plus__pattern_constructor_content_stmt__:
-	pattern_constructor_content_stmt {
-		auto* const newNode = new dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__({::dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { $1 });
+deamerreserved_star__pattern_constructor_content_stmt__:
+	pattern_constructor_content_stmt deamerreserved_star__pattern_constructor_content_stmt__ {
+		auto* const newNode = new dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__({::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { $1, $2 });
 		$$ = newNode;
 	}
-	| pattern_constructor_content_stmt deamerreserved_plus__pattern_constructor_content_stmt__ {
-		auto* const newNode = new dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__({::dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { $1, $2 });
+	| {
+		auto* const newNode = new dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__({::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, {  });
 		$$ = newNode;
 	}
 ;

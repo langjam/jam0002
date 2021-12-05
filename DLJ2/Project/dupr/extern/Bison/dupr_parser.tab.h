@@ -136,7 +136,7 @@ union YYSTYPE
 	::dupr::ast::node::deamerreserved_arrow__VARNAME__* dupr_deamerreserved_arrow__VARNAME__;
 	::dupr::ast::node::deamerreserved_star__GT__VARNAME__* dupr_deamerreserved_star__GT__VARNAME__;
 	::dupr::ast::node::pattern_constructor_content* dupr_pattern_constructor_content;
-	::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__* dupr_deamerreserved_plus__pattern_constructor_content_stmt__;
+	::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__* dupr_deamerreserved_star__pattern_constructor_content_stmt__;
 	::dupr::ast::node::pattern_constructor_content_stmt* dupr_pattern_constructor_content_stmt;
 	::dupr::ast::node::pattern_constructor_operator* dupr_pattern_constructor_operator;
 	::dupr::ast::node::pattern_constructor_structure* dupr_pattern_constructor_structure;

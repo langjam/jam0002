@@ -17,7 +17,7 @@ class pattern_name;
 class deamerreserved_arrow__VARNAME__;
 class deamerreserved_star__GT__VARNAME__;
 class pattern_constructor_content;
-class deamerreserved_plus__pattern_constructor_content_stmt__;
+class deamerreserved_star__pattern_constructor_content_stmt__;
 class pattern_constructor_content_stmt;
 class pattern_constructor_operator;
 class pattern_constructor_structure;
@@ -151,10 +151,10 @@ namespace dupr { namespace ast { namespace relation {
 	};
 
 	template<>
-	struct NodeTypeToEnum<::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__>
+	struct NodeTypeToEnum<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>
 	{
-		constexpr static auto value = ::dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__;
-		using type = ::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__;
+		constexpr static auto value = ::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__;
+		using type = ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__;
 	};
 
 	template<>

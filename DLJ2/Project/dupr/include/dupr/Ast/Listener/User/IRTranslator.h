@@ -43,6 +43,11 @@ namespace dupr::ast::listener::user
 			callbacks.push_back(callback_);
 		}
 
+		bool IsEmpty() const
+		{
+			return states.empty();
+		}
+
 		enum class StateType
 		{
 			any_word,
@@ -394,104 +399,7 @@ namespace dupr::ast::listener::user
 		}
 
 		bool Check(const dupr::ast::node::pattern_constructor_encapsulation* currentNode,
-				   std::size_t& index, bool execute) const
-		{
-			// assumes the encapsulation exists of 3 parts: (pre) or ([[any_word]])
-			// However we need to know where the top part ends in the states, allowing us to go
-			// deeper if needed.
-			bool valid = true;
-			switch (GetCurrentState(index)->GetType())
-			{
-			case StateType::any_word: {
-				valid = false;
-				break;
-			}
-			case StateType::expression_tree: {
-				valid = false;
-				break;
-			}
-			case StateType::predefined_formatter: {
-				if (currentNode->GetIndex(0)->GetText() !=
-					GetCurrentState(index)->GetPredefinedFormat().value())
-				{
-					valid = false;
-				}
-				else
-				{
-					if (execute)
-					{
-						GetCurrentState(index)->AddNode(currentNode);
-					}
-					index += 1;
-					valid = true;
-				}
-				break;
-			}
-			}
-			switch (GetCurrentState(index)->GetType())
-			{
-			case StateType::any_word: {
-				if (execute)
-				{
-					GetCurrentState(index)->AddNode(currentNode);
-				}
-				// Further deduction might be required, this is covered inside this states logic.
-				index += 1;
-				valid = true;
-				break;
-			}
-			case StateType::expression_tree: {
-				valid = false;
-				break;
-			}
-			case StateType::predefined_formatter: {
-				if (currentNode->GetIndex(1)->GetText() !=
-					GetCurrentState(index)->GetPredefinedFormat().value())
-				{
-					valid = false;
-				}
-				else
-				{
-					if (execute)
-					{
-						GetCurrentState(index)->AddNode(currentNode);
-					}
-					index += 1;
-					valid = true;
-				}
-				break;
-			}
-			}
-			switch (GetCurrentState(index)->GetType())
-			{
-			case StateType::any_word: {
-				valid = false;
-				break;
-			}
-			case StateType::expression_tree: {
-				valid = false;
-				break;
-			}
-			case StateType::predefined_formatter: {
-				if (currentNode->GetIndex(2)->GetText() !=
-					GetCurrentState(index)->GetPredefinedFormat().value())
-				{
-					valid = false;
-				}
-				else
-				{
-					if (execute)
-					{
-						GetCurrentState(index)->AddNode(currentNode);
-					}
-					index += 1;
-					valid = true;
-				}
-				break;
-			}
-			}
-			return valid;
-		}
+				   std::size_t& index, bool execute) const;
 
 		bool Check(const dupr::ast::node::pattern_constructor_operator* currentNode,
 				   std::size_t& index, bool execute) const
@@ -826,35 +734,35 @@ namespace dupr::ast::listener::user
 					{
 						ConstructFunction(stateMachine);
 					}
-					if (stateMachine->GetType() == "ConditionalIfPattern")
+					else if (stateMachine->GetType() == "ConditionalIfPattern")
 					{
 						ConstructConditionalIf(stateMachine);
 					}
-					if (stateMachine->GetType() == "ConditionalElseIfPattern")
+					else if (stateMachine->GetType() == "ConditionalElseIfPattern")
 					{
 						ConstructConditionalElseIf(stateMachine);
 					}
-					if (stateMachine->GetType() == "ConditionalElsePattern")
+					else if (stateMachine->GetType() == "ConditionalElsePattern")
 					{
 						ConstructConditionalElse(stateMachine);
 					}
-					if (stateMachine->GetType() == "VariableDeclarationPattern")
+					else if (stateMachine->GetType() == "VariableDeclarationPattern")
 					{
 						ConstructVariableDeclaration(stateMachine);
 					}
-					if (stateMachine->GetType() == "VariableAssignmentPattern")
+					else if (stateMachine->GetType() == "VariableAssignmentPattern")
 					{
 						ConstructVariableAssignment(stateMachine);
 					}
-					if (stateMachine->GetType() == "ReturnPattern")
+					else if (stateMachine->GetType() == "ReturnPattern")
 					{
 						ConstructReturnStatement(stateMachine);
 					}
-					if (stateMachine->GetType() == "ArgumentExtensionPattern")
+					else if (stateMachine->GetType() == "ArgumentExtensionPattern")
 					{
 						ConstructFunctionArgumentExtension(stateMachine);
 					}
-					if (stateMachine->GetType() == "ArgumentContentPattern")
+					else if (stateMachine->GetType() == "ArgumentContentPattern")
 					{
 						ConstructFunctionArgument(stateMachine);
 					}
@@ -868,7 +776,23 @@ namespace dupr::ast::listener::user
 				if (static_cast<dupr::ast::Type>(node->GetType()) ==
 					dupr::ast::Type::PATTERN_INSERTION)
 				{
-					if (node->GetText() == "[[expression]]")
+					if (GetPatternInsertion(node->GetText()) == "expression")
+					{
+						stateMachine->states.push_back(new PatternStateMachine::State(
+							PatternStateMachine::StateType::expression_tree, node->GetText(),
+							[this](PatternStateMachine::State*) {
+
+							}));
+					}
+					else if (GetPatternInsertion(node->GetText()) == "arguments")
+					{
+						stateMachine->states.push_back(new PatternStateMachine::State(
+							PatternStateMachine::StateType::expression_tree, node->GetText(),
+							[this](PatternStateMachine::State*) {
+
+							}));
+					}
+					else if (GetPatternInsertion(node->GetText()) == "statements")
 					{
 						stateMachine->states.push_back(new PatternStateMachine::State(
 							PatternStateMachine::StateType::expression_tree, node->GetText(),
@@ -1034,7 +958,13 @@ namespace dupr::ast::listener::user
 				return;
 			}
 
-			std::vector<ir::Argument> arguments_parsed = ParseArguments(arguments[0]);
+			if (!ParseArguments(arguments[0]))
+			{
+				std::cout << "\tParsing arguments failed, aborting function construction\n";
+				return;
+			}
+
+			std::vector<ir::Argument> arguments_parsed = functionArguments;
 			std::vector<ir::Statement> statements_parsed;
 
 			irTable->Add(new dupr::ir::Function(return_type[0]->GetNode()[0]->GetText(),
@@ -1128,7 +1058,7 @@ namespace dupr::ast::listener::user
 			std::cout << "Constructing a function argument extension:\n";
 		}
 
-		std::vector<ir::Argument> ParseArguments(PatternStateMachine::State* arguments)
+		bool ParseArguments(PatternStateMachine::State* arguments)
 		{
 			functionArguments.clear();
 
@@ -1139,11 +1069,11 @@ namespace dupr::ast::listener::user
 					  << GetPatternInsertion(arguments->GetPredefinedFormat().value()) << "\n";
 
 			auto functionArguments = IRTranslatorFunctionArguments();
-			functionArguments.GetArguments(
+			bool success = functionArguments.GetArguments(
 				this, GetPatternDirection(arguments->GetPredefinedFormat().value()),
 				arguments->GetNode());
 
-			return this->functionArguments;
+			return success;
 		}
 
 		// DO NOT CALL TWICE

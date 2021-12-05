@@ -31,7 +31,7 @@ namespace dupr
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::NonTerminal> deamerreserved_arrow__VARNAME__;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::NonTerminal> deamerreserved_star__GT__VARNAME__;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::NonTerminal> pattern_constructor_content;
-::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::NonTerminal> deamerreserved_plus__pattern_constructor_content_stmt__;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::NonTerminal> deamerreserved_star__pattern_constructor_content_stmt__;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::NonTerminal> pattern_constructor_content_stmt;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::NonTerminal> pattern_constructor_operator;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::NonTerminal> pattern_constructor_structure;
@@ -58,9 +58,9 @@ namespace dupr
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> deamerreserved_star__GT__VARNAME___GT_VARNAME_deamerreserved_star__GT__VARNAME__;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> deamerreserved_star__GT__VARNAME___EMPTY;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_name_deamerreserved_arrow__VARNAME__;
-::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> deamerreserved_plus__pattern_constructor_content_stmt___pattern_constructor_content_stmt;
-::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> deamerreserved_plus__pattern_constructor_content_stmt___pattern_constructor_content_stmt_deamerreserved_plus__pattern_constructor_content_stmt__;
-::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_content_deamerreserved_plus__pattern_constructor_content_stmt__;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> deamerreserved_star__pattern_constructor_content_stmt___pattern_constructor_content_stmt_deamerreserved_star__pattern_constructor_content_stmt__;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> deamerreserved_star__pattern_constructor_content_stmt___EMPTY;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_content_deamerreserved_star__pattern_constructor_content_stmt__;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_content_stmt_pattern_constructor_operator;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_content_stmt_pattern_constructor_terminate;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_content_stmt_pattern_constructor_encapsulation;

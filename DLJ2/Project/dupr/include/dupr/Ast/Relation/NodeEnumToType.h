@@ -15,7 +15,7 @@
 #include "dupr/Ast/Node/deamerreserved_arrow__VARNAME__.h"
 #include "dupr/Ast/Node/deamerreserved_star__GT__VARNAME__.h"
 #include "dupr/Ast/Node/pattern_constructor_content.h"
-#include "dupr/Ast/Node/deamerreserved_plus__pattern_constructor_content_stmt__.h"
+#include "dupr/Ast/Node/deamerreserved_star__pattern_constructor_content_stmt__.h"
 #include "dupr/Ast/Node/pattern_constructor_content_stmt.h"
 #include "dupr/Ast/Node/pattern_constructor_operator.h"
 #include "dupr/Ast/Node/pattern_constructor_structure.h"
@@ -148,10 +148,10 @@ namespace dupr { namespace ast { namespace relation {
 	};
 
 	template<>
-	struct NodeEnumToType<::dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__>
+	struct NodeEnumToType<::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__>
 	{
-		constexpr static auto value = ::dupr::ast::Type::deamerreserved_plus__pattern_constructor_content_stmt__;
-		using type = ::dupr::ast::node::deamerreserved_plus__pattern_constructor_content_stmt__;
+		constexpr static auto value = ::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__;
+		using type = ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__;
 	};
 
 	template<>
