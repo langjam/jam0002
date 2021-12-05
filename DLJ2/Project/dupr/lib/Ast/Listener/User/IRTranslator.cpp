@@ -80,7 +80,7 @@ std::vector<std::string> dupr::ast::listener::user::GetPatternDirections(std::st
 
 bool dupr::ast::listener::user::PatternStateMachine::Check(
 	const dupr::ast::node::pattern_constructor_encapsulation* currentNode, std::size_t& index,
-	bool execute) const
+	bool execute)
 {
 	// assumes the encapsulation exists of 3 parts: (pre) or ([[any_word]])
 	// However we need to know where the top part ends in the states, allowing us to go
@@ -145,26 +145,59 @@ bool dupr::ast::listener::user::PatternStateMachine::Check(
 
 	for (std::size_t statement_index = 0; statement_index < subStatements.size(); statement_index++)
 	{
-		const auto subStatement = subStatements[statement_index];
-		const auto statement = subStatement->GetIndex(0);
 		auto currentState = GetCurrentState(index);
+		auto nextState = GetNextState(index);
 		// If remaining belongs to an expression_tree type, add everything to tree and end.
 		// Otherwise the content is in some way predetermined, and we should look through it.
 		if (currentState->GetType() == StateType::expression_tree)
 		{
+			// Make sure the next state is not the same state, and not an expression tree.
+			if (nextState.has_value() && nextState.value()->GetType() == StateType::expression_tree)
+			{
+				while (nextState.has_value() && currentState->IsStateTheSame(nextState.value()))
+				{
+					states.erase(states.begin() + index);
+					nextState = GetNextState(index);
+				}
+
+				if (nextState.has_value() &&
+					nextState.value()->GetType() == StateType::expression_tree)
+				{
+					return false;
+				}
+			}
+			bool encounterPredefined = false;
 			for (std::size_t statement_index_remaining = statement_index;
 				 statement_index_remaining < subStatements.size(); statement_index_remaining++)
 			{
 				const auto subStatementRemaining = subStatements[statement_index_remaining];
+				if (nextState.has_value())
+				{
+					if (nextState.value()->GetPredefinedFormat().value() ==
+							subStatementRemaining->GetText() ||
+						nextState.value()->GetPredefinedFormat().value() ==
+							subStatementRemaining->GetIndex(0)->GetIndex(0)->GetText())
+					{
+						index += 1;
+						statement_index = statement_index_remaining;
+						encounterPredefined = true;
+						break;
+					}
+				}
 				if (execute)
 				{
 					currentState->AddNode(subStatementRemaining);
 				}
 			}
-			index += 2;
-			return true;
+			if (!encounterPredefined)
+			{
+				index += 2;
+				return true;
+			}
 		}
 
+		const auto subStatement = subStatements[statement_index];
+		const auto statement = subStatement->GetIndex(0);
 		switch (static_cast<dupr::ast::Type>(statement->GetType()))
 		{
 		case dupr::ast::Type::pattern_constructor_operator: {

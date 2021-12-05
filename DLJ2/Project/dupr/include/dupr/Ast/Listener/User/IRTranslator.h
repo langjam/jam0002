@@ -103,6 +103,12 @@ namespace dupr::ast::listener::user
 					   predefined_format == "]";
 			}
 
+			bool IsStateTheSame(const State* const rhs) const
+			{
+				return this->GetType() == rhs->GetType() &&
+					   this->predefined_format == rhs->predefined_format;
+			}
+
 		private:
 			std::function<void(State*)> callback;
 			std::vector<const ::deamer::external::cpp::ast::Node*> nodeValues;
@@ -399,10 +405,10 @@ namespace dupr::ast::listener::user
 		}
 
 		bool Check(const dupr::ast::node::pattern_constructor_encapsulation* currentNode,
-				   std::size_t& index, bool execute) const;
+				   std::size_t& index, bool execute);
 
 		bool Check(const dupr::ast::node::pattern_constructor_operator* currentNode,
-				   std::size_t& index, bool execute) const
+				   std::size_t& index, bool execute)
 		{
 			bool valid = true;
 			const auto currentState = GetCurrentState(index);
@@ -463,7 +469,7 @@ namespace dupr::ast::listener::user
 		}
 
 		bool Check(const dupr::ast::node::pattern_constructor_structure* currentNode,
-				   std::size_t& index, bool execute) const
+				   std::size_t& index, bool execute)
 		{
 			bool valid = true;
 			const auto currentState = GetCurrentState(index);
@@ -515,7 +521,7 @@ namespace dupr::ast::listener::user
 		}
 
 		bool Check(const dupr::ast::node::pattern_constructor_terminate* currentNode,
-				   std::size_t& index, bool execute) const
+				   std::size_t& index, bool execute)
 		{
 			bool valid = true;
 			const auto currentState = GetCurrentState(index);
@@ -929,14 +935,6 @@ namespace dupr::ast::listener::user
 				std::cout << "\tPattern did not match any [[arguments]]\n";
 				error = true;
 			}
-			else
-			{
-				if (!CheckAreEqual(arguments))
-				{
-					std::cout << "\tUser used different values for [[arguments]]\n";
-					error = true;
-				}
-			}
 			if (statements.empty())
 			{
 				std::cout << "\tPattern did not match any [[statements]]\n";
@@ -958,13 +956,21 @@ namespace dupr::ast::listener::user
 				return;
 			}
 
-			if (!ParseArguments(arguments[0]))
+			std::vector<ir::Argument> arguments_parsed;
+
+			for (auto argument : arguments)
 			{
-				std::cout << "\tParsing arguments failed, aborting function construction\n";
-				return;
+				if (!ParseArguments(argument))
+				{
+					std::cout << "\tParsing arguments failed, aborting function construction\n";
+					return;
+				}
+				for (auto functionArgument : functionArguments)
+				{
+					arguments_parsed.push_back(functionArgument);
+				}
 			}
 
-			std::vector<ir::Argument> arguments_parsed = functionArguments;
 			std::vector<ir::Statement> statements_parsed;
 
 			irTable->Add(new dupr::ir::Function(return_type[0]->GetNode()[0]->GetText(),
