@@ -1,0 +1,102 @@
+{
+  "main": {
+    "id": "90fc38c8cb3c2f51",
+    "type": "split",
+    "children": [
+      {
+        "id": "e8e30749ec6771d0",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "Plan.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "dd8ae0e82e3392fd",
+    "type": "split",
+    "children": [
+      {
+        "id": "28feadb16fbf1d85",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "722aa9409ac56ef0",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "39f5254f6ac6ad25",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "9300abb7a271eb30",
+    "type": "split",
+    "children": [
+      {
+        "id": "d08bb5ab28399a49",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0cf453813c1e8846",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Plan.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "e8e30749ec6771d0",
+  "lastOpenFiles": [
+    "Plan.md",
+    "Resources.md",
+    "ideas.md",
+    "Macros vs. DSLs.md",
+    "Doc.md",
+    "Pattern Matching.md",
+    "Normalization.md",
+    "Time.md",
+    "Triples - PROLOG, miniKanren.md",
+    "Glue.md"
+  ]
+}
