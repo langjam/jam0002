@@ -112,7 +112,7 @@ Gendanken Q: What is the cost of using a `future` in whatever language you use? 
 I drew the diagrams in draw.io (aka diagrams.net) and have saved them as .svg file in this directory.
 
 ## Nesting
-https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-1.%20Nesting.svg
+<img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-1.%20Nesting.svg"/>
 
 ## Race Condition
 https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/patterns-2.%20Race%20Condition.svg
