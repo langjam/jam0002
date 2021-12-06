@@ -1,0 +1,11 @@
+small {
+  main = lexChar+
+
+  Char 
+    = lex_any -- lex_any
+
+  lexChar 
+    = lex_any -- lex_any
+
+lex_any = any
+}
