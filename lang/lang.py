@@ -55,7 +55,7 @@ t_INT = r"int"
 t_BOOL = r"bool"
 t_EQUALS = "=="
 t_ASSIGN = "="
-t_NOT = r"!"
+t_NOT = r"\!"
 t_PLUS = r"\+"
 t_MINUS = r"\-"
 t_MULTIPLY = r"\*"
@@ -256,3 +256,9 @@ def p_error(p):
 
 import ply.yacc as yacc
 yacc.yacc()
+
+with open("./tests/simple.cel", "r") as f:
+  code = f.read()
+
+print(code)
+yacc.parse(code)
