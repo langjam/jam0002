@@ -1,10 +1,20 @@
 use std::{
     collections::{BTreeMap, HashMap},
     fmt::Display,
-    hash::Hash,
 };
+use thiserror::Error;
 
 pub mod loc;
+
+#[derive(Debug, Error)]
+pub enum RuntimeError {
+    #[error("Unknown binding 'x{name}'")]
+    UnknownBinding { name: u32 },
+    #[error("Unknown declaration '{name}'")]
+    UnknownDeclaration { name: String },
+    #[error("Cannot match '{value}' with any clause")]
+    MatchClauseNotFound { value: Ast },
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Pat {
@@ -321,23 +331,29 @@ impl Ast {
         self.parallel_subst(&renaming)
     }
 
-    pub fn run(self, ctx: &AstCtx) -> Option<Self> {
+    pub fn run(self, ctx: &AstCtx) -> Result<Self, RuntimeError> {
         match self {
-            Ast::Var { .. } => Some(self),
+            Ast::Var { .. } => Ok(self),
             Ast::DeclRef { name } => {
-                let ast = ctx.decl(&name).cloned()?;
+                let ast = ctx
+                    .decl(&name)
+                    .cloned()
+                    .ok_or(RuntimeError::UnknownDeclaration { name })?;
                 ast.run(ctx)
             }
             Ast::Match { on, clauses } => {
-                let arg = on.run(ctx)?;
-                clauses.into_iter().find_map(|cl| cl.run(arg.clone()))
+                let arg = on.clone().run(ctx)?;
+                clauses
+                    .into_iter()
+                    .find_map(|cl| cl.run(arg.clone()))
+                    .ok_or(RuntimeError::MatchClauseNotFound { value: *on })
             }
             Ast::Constr { name, args } => {
                 let args = args
                     .into_iter()
                     .map(|ast| ast.run(ctx))
-                    .collect::<Option<_>>()?;
-                Some(Ast::Constr {
+                    .collect::<Result<_, _>>()?;
+                Ok(Ast::Constr {
                     name: name.clone(),
                     args,
                 })
@@ -372,8 +388,6 @@ impl AstCtx {
 
 #[cfg(test)]
 mod test {
-    use std::sync::Once;
-
     use crate::AstCtx;
 
     use super::Ast::*;
@@ -393,9 +407,9 @@ mod test {
             }],
         };
         let target = Var { name: 1 };
-        let res = prog.run(&EMPTYCTX);
+        let res = prog.run(&EMPTYCTX).unwrap();
         println!("{:?}", res);
-        assert_eq!(res, Some(target))
+        assert_eq!(res, target);
     }
 
     #[test]
@@ -414,9 +428,9 @@ mod test {
             }],
         };
         let target = Var { name: 1 };
-        let res = prog.run(&EMPTYCTX);
+        let res = prog.run(&EMPTYCTX).unwrap();
         println!("{:?}", res);
-        assert_eq!(res, Some(target))
+        assert_eq!(res, target);
     }
 
     #[test]
@@ -436,7 +450,7 @@ mod test {
         };
         let res = prog.run(&EMPTYCTX);
         println!("{:?}", res);
-        assert_eq!(res, None)
+        assert!(res.is_err());
     }
 
     #[test]
@@ -486,9 +500,9 @@ mod test {
             name: "First2".to_string(),
             args: vec![Var { name: 1 }, Var { name: 2 }],
         };
-        let res = prog.run(&EMPTYCTX);
+        let res = prog.run(&EMPTYCTX).unwrap();
         println!("{:?}", res);
-        assert_eq!(res, Some(target))
+        assert_eq!(res, target);
     }
 
     #[test]

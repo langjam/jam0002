@@ -12,6 +12,7 @@ lalrpop = "0.19.6"
 codespan = "0.11.1"
 codespan-reporting = "0.11.1"
 lalrpop-util = "0.19.6"
-static_init = "1.0.0"
+thiserror = "1.0.30"
 
 [dev-dependencies]
+static_init = "1.0.0"
