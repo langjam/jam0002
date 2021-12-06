@@ -1,1 +1,3 @@
-[delete this and put your project build and use instructions here]
+# Rematch
+
+A pattern matching-only programming language.
