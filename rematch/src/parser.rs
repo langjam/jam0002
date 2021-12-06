@@ -2,8 +2,7 @@ use codespan::{FileId, Files};
 use codespan_reporting::diagnostic::{Diagnostic, Label};
 use lalrpop_util::{lalrpop_mod, lexer::Token, ParseError};
 
-use crate::ast::Decl;
-use crate::loc::Located;
+use crate::{ast::Decl, loc::Located};
 
 lalrpop_mod!(grammar);
 

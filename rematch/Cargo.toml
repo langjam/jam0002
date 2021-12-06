@@ -13,7 +13,6 @@ lalrpop-util = { version = "0.19.6", features = ["lexer"] }
 paw = "1.0.0"
 rustyline = "9.1.0"
 structopt = { version = "0.3.25", features = ["paw"] }
-thiserror = "1.0.30"
 
 [build-dependencies]
 lalrpop = "0.19.6"

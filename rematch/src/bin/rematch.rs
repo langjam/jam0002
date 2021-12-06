@@ -8,7 +8,7 @@ use codespan_reporting::term::{
 use rematch::{
     loc::Located,
     parser::{parse, parse_repl, ReplParse},
-    AstContext, ExecutionError,
+    AstContext,
 };
 use rustyline::{error::ReadlineError, Editor};
 use structopt::StructOpt;
@@ -50,31 +50,22 @@ impl Repl {
                 self.idx += 1;
                 let file_id = self.sources.add(name, line);
                 match parse_repl(&self.sources, file_id) {
-                    Ok(Located {
-                        value: ReplParse::Decl(decl),
-                        ..
-                    }) => {
-                        let name = decl.name.clone();
-                        self.context.add_decl(decl);
-                        println!("{:?}", self.context.binding(name.as_deref().into_inner()));
-                    }
-                    Ok(expr) => {
-                        let ast = self.context.make_expr(expr.map(|p| {
-                            if let ReplParse::Expr(e) = p {
-                                e
+                    Ok(parse) => match parse.value {
+                        ReplParse::Decl(decl) => {
+                            let name = decl.name.clone().into_inner();
+                            self.context.add_decl(decl);
+                            let ast = self.context.declaration(&name).unwrap();
+                            println!("{} = {:?}", name, ast);
+                        }
+                        ReplParse::Expr(expr) => {
+                            let ast = self.context.make_expr(expr);
+                            if let Some(r) = ast.run(&self.context) {
+                                println!("-> {:?}", r);
                             } else {
-                                unreachable!()
-                            }
-                        }));
-                        match ast.run(&self.context) {
-                            Ok(res) => println!("-> {}", res.display(&self.context)),
-                            Err(err) => {
-                                let diag = ExecutionError::make_diagnostic(err);
-                                term::emit(&mut writer, &write_config, &self.sources, &diag)
-                                    .unwrap();
+                                eprintln!("Error: cannot execute");
                             }
                         }
-                    }
+                    },
                     Err(diag) => {
                         term::emit(&mut writer, &write_config, &self.sources, &diag).unwrap()
                     }
@@ -99,21 +90,15 @@ struct Args {
 #[paw::main]
 fn main(args: Args) {
     if let Some(input) = args.input {
-        let mut files = Files::new();
         let mut writer = StandardStream::stderr(ColorChoice::Auto);
         let config = term::Config::default();
-        let file_id = match std::fs::read_to_string(input.as_path()) {
-            Ok(content) => files.add(input.display().to_string(), content),
-            Err(err) => {
-                eprintln!("Cannot read {}: {}", input.display(), err);
-                return;
-            }
-        };
+        let mut files = Files::new();
+        let file_id = files.add(input.clone(), std::fs::read_to_string(input).unwrap());
         let ctx = match parse(&files, file_id) {
             Ok(ast) => {
                 let mut ctx = AstContext::default();
-                for decl in ast {
-                    ctx.add_decl(decl.value);
+                for Located { value: decl, .. } in ast {
+                    ctx.add_decl(decl);
                 }
                 ctx
             }
@@ -122,19 +107,11 @@ fn main(args: Args) {
                 return;
             }
         };
-        match ctx.binding("main") {
-            Some(ast) => match ast.run(&ctx) {
-                Ok(res) => println!("{}", res.display(&ctx)),
-                Err(err) => {
-                    let diag = ExecutionError::make_diagnostic(err);
-                    term::emit(&mut writer, &config, &files, &diag).unwrap();
-                }
-            },
-            None => {
-                let diag = codespan_reporting::diagnostic::Diagnostic::error()
-                    .with_message("No `main` binding found");
-                term::emit(&mut writer, &config, &files, &diag).unwrap();
-            }
+        if let Some(ast) = ctx
+            .declaration("main")
+            .and_then(|ast| ast.clone().run(&ctx))
+        {
+            println!("{:?}", ast);
         }
     } else {
         let mut repl = Repl::new();

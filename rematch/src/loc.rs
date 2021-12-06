@@ -1,7 +1,4 @@
-use std::{
-    fmt::Display,
-    ops::{Deref, Range},
-};
+use std::ops::{Deref, Range};
 
 use codespan::FileId;
 use codespan_reporting::diagnostic::{Label, LabelStyle};
