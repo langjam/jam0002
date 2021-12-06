@@ -1,0 +1,33 @@
+Main [@Chars] = [[${Chars}]]
+
+Char_macro [Macro] = [[${Macro}]]
+Char_bad [c] = [[${support.panic ()}^^^]]
+Char_notMacro [c] = [[${c}]]
+       
+Macro_data [k klp Expr krp] = [[(${Expr})->data]]
+Macro_newMessage [k klp expr1 kcomma expr2 krp]
+  = [[${k}${klp}${expr1}${kcomma}${expr2}${krp}]]
+
+Expr_funccall [expr klp @Arglist krp] = [[${expr}(${Arglist})]]
+
+Expr_nested [klp expr krp] = [[${klp}${expr}${krp}]]
+Expr_flat [c] = [[${c}]]
+
+Arglist [@ArgComma] = [[${ArgComma}]]
+ArgComma [expr kcomma] = [[${expr},]]
+
+block_nested [klbrace @Block krbrace] = [[${klbrace}${Block}${krbrace}]]
+block_raw [notBrace] = [[${notBrace}]]
+
+notBrace [c] = [[${c}]]
+
+space [c] = [[${c}]]
+
+comment [kss @notNL nl] = [[${kss}${notNL}${nl}]]
+
+nl [c] = [[${c}]]
+notNL [c] = [[${c}]]
+
+dollar [c] = [[${c}]]
+
+lex_any [c] = [[${c}]]

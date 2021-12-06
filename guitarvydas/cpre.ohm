@@ -3,8 +3,6 @@ pre {
 
   char 
     = macro       -- macro
-    | ~dollar any -- notDollar
-    | any         -- any
     
        
   macro
@@ -37,8 +35,10 @@ pre {
     | "$send" twoparams -- send
     | "$panic" param    -- panic
 
+    | any       -- default
+
 param
-  = "(" param* ")" -- nested
+  = ws* "(" param* ")" -- nested
   | notPAREN       -- raw
   
 twoparams = param // cheating (time limitations)
@@ -56,6 +56,8 @@ nl = "\n"
 notNL = ~nl any
 
 dollar = "$"
+
+ws = " " | "\t"
 
 }
 
