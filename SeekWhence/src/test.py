@@ -3,11 +3,18 @@ import os
 import sys
 import subprocess
 import yaml
+import time
 
 from types import SimpleNamespace as dotdict
 
 def indent(s):
   return '\n'.join(['  '+line for line in s.splitlines()])
+
+def timeit(fn):
+  start_time = time.time()
+  value = fn()
+  elapsed_time = time.time() - start_time
+  return value, elapsed_time*1000
 
 if __name__ == '__main__':
   if len(sys.argv) < 2:
@@ -34,7 +41,7 @@ if __name__ == '__main__':
       with open(f'{testdir}/{filename}', 'r') as info:
         testinfo = yaml.safe_load(info)
         testinfd = dotdict(**testinfo)
-        testproc = subprocess.run(['python3', f'{os.path.dirname(sys.argv[0])}/main.py', testsrc], capture_output = True, text = True)
+        testproc, testtime = timeit(lambda: subprocess.run(['python3', f'{os.path.dirname(sys.argv[0])}/main.py', testsrc], capture_output = True, text = True))
 
         if 'status' in testinfo and testproc.returncode != testinfd.status:
           failed, current_failed = fail(testname, f'Expected exit code {testinfd.status}, got {testproc.returncode}', current_failed)
@@ -50,7 +57,8 @@ if __name__ == '__main__':
           failed, current_failed = fail(testname, f'Expected stderr:\n{indent(testinfd.stderr)}\nActual stderr:\n{indent(testproc.stderr)}', current_failed)
 
         if not current_failed:
-          print(f'{succMark} Test passed: {testname}')
+          name = testname.ljust(10,' ')
+          print(f'{succMark} Test passed: {name}\t(in %.4f ms)' % testtime)
     except Exception as e:
       failed, current_failed = fail(testname, e.message if 'message' in e.__dict__ else str(e), current_failed)
 
