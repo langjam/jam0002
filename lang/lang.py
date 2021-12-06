@@ -39,45 +39,161 @@ tokens = (
   "NAME",
 )
 
-t_META = r"Meta"
-t_CELL = r"Cell"
-t_SELECTORS = r"Selectors"
-t_MATCHCOUNT = r"MatchCount"
-t_RULES = r"Rules"
-t_ALIASES = r"Aliases"
-t_LPAREN = r"\("
-t_RPAREN = r"\)"
-t_LBRACE = r"\{"
-t_RBRACE = r"\}"
-t_LSQBRACE = r"\["
-t_RSQBRACE = r"\]"
-t_INT = r"int"
-t_BOOL = r"bool"
-t_EQUALS = "=="
-t_ASSIGN = "="
-t_NOT = r"\!"
-t_PLUS = r"\+"
-t_MINUS = r"\-"
-t_MULTIPLY = r"\*"
-t_DIVIDE = r"\/"
-t_AND = r"\&"
-t_OR = r"\|"
-t_GREATER = r"\>"
-t_LESS = r"\<"
-t_GREATEREQ = r"\>="
-t_LESSEQ = r"\<="
-t_NW = r"NW"
-t_N = r"N"
-t_NE = r"NE"
-t_W = r"W"
-t_E = r"E"
-t_SW = r"SW"
-t_S = r"S"
-t_SE = r"SE"
-t_NEIGHBOURS = r"neighbours"
-t_ROW = r"row"
-t_COL = r"col"
-t_COMMA = r","
+def t_META(t):
+  r"Meta"
+  return t
+
+def t_CELL(t):
+  r"Cell"
+  return t
+
+def t_SELECTORS(t):
+  r"Selectors"
+  return t
+
+def t_MATCHCOUNT(t):
+  r"MatchCount"
+  return t
+
+def t_RULES(t):
+  r"Rules"
+  return t
+
+def t_ALIASES(t):
+  r"Aliases"
+  return t
+
+def t_LPAREN(t):
+  r"\("
+  return t
+
+def t_RPAREN(t):
+  r"\)"
+  return t
+
+def t_LBRACE(t):
+  r"\{"
+  return t
+
+def t_RBRACE(t):
+  r"\}"
+  return t
+
+def t_LSQBRACE(t):
+  r"\["
+  return t
+
+def t_RSQBRACE(t):
+  r"\]"
+  return t
+
+def t_INT(t):
+  r"int"
+  return t
+
+def t_BOOL(t):
+  r"bool"
+  return t
+
+def t_EQUALS(t):
+  "=="
+  return t
+
+def t_ASSIGN(t):
+  "="
+  return t
+
+def t_NOT(t):
+  r"\!"
+  return t
+
+def t_PLUS(t):
+  r"\+"
+  return t
+
+def t_MINUS(t):
+  r"\-"
+  return t
+
+def t_MULTIPLY(t):
+  r"\*"
+  return t
+
+def t_DIVIDE(t):
+  r"\/"
+  return t
+
+def t_AND(t):
+  r"\&"
+  return t
+
+def t_OR(t):
+  r"\|"
+  return t
+
+def t_GREATER(t):
+  r"\>"
+  return t
+
+def t_LESS(t):
+  r"\<"
+  return t
+
+def t_GREATEREQ(t):
+  r"\>="
+  return t
+
+def t_LESSEQ(t):
+  r"\<="
+  return t
+
+def t_NW(t):
+  r"NW"
+  return t
+
+def t_N(t):
+  r"N"
+  return t
+
+def t_NE(t):
+  r"NE"
+  return t
+
+def t_W(t):
+  r"W"
+  return t
+
+def t_E(t):
+  r"E"
+  return t
+
+def t_SW(t):
+  r"SW"
+  return t
+
+def t_S(t):
+  r"S"
+  return t
+
+def t_SE(t):
+  r"SE"
+  return t
+
+def t_NEIGHBOURS(t):
+  r"neighbours"
+  return t
+
+def t_ROW(t):
+  r"row"
+  return t
+
+def t_COL(t):
+  r"col"
+  return t
+
+def t_COMMA(t):
+  r","
+  return t
 
 def t_NUMBER(t):
   r"[0-9]+"
@@ -94,17 +210,20 @@ def t_FALSE(t):
   t.value = False
   return t
 
-t_NAME = r"[a-zA-Z_][a-zA-Z0-9_]*"
-
-t_ignore = " \t"
+def t_NAME(t):
+  r"[a-zA-Z_][a-zA-Z0-9_]*"
+  return t
 
 def t_newline(t):
   r"\n+"
   t.lexer.lineno += t.value.count("\n")
 
+t_ignore = " \t"
+
 def t_error(t):
   print(f"Illegal character {t.value[0]!r}")
-  t.lexer.skip (1)
+  t.lexer.skip(1)
+
 
 import ply.lex as lex
 lex.lex()
@@ -121,7 +240,7 @@ precedence = (
 
 def p_lang(p):
   """
-  lang : meta cell aliases selectors rules
+  lang : meta aliases selectors rules
   """
 
 def p_meta(p):
@@ -252,7 +371,7 @@ def p_bool_exp(p):
   """
 
 def p_error(p):
-  print(f"Syntax error at {p.value!r}")
+  print(f"Syntax error at {p.value!r}: {repr(p)}")
 
 import ply.yacc as yacc
 yacc.yacc()
