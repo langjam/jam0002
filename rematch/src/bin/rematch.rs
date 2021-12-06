@@ -1,13 +1,17 @@
+use std::path::PathBuf;
+
 use codespan::Files;
 use codespan_reporting::term::{
     self,
     termcolor::{ColorChoice, StandardStream},
 };
-use gtx::{
-    parser::{parse_repl, ReplParse},
+use rematch::{
+    loc::Located,
+    parser::{parse, parse_repl, ReplParse},
     AstContext,
 };
 use rustyline::{error::ReadlineError, Editor};
+use structopt::StructOpt;
 
 struct Repl {
     rl: Editor<()>,
@@ -78,7 +82,39 @@ impl Repl {
     }
 }
 
-fn main() {
-    let mut repl = Repl::new();
-    while repl.read_line() {}
+#[derive(Debug, StructOpt)]
+struct Args {
+    input: Option<PathBuf>,
+}
+
+#[paw::main]
+fn main(args: Args) {
+    if let Some(input) = args.input {
+        let mut writer = StandardStream::stderr(ColorChoice::Auto);
+        let config = term::Config::default();
+        let mut files = Files::new();
+        let file_id = files.add(input.clone(), std::fs::read_to_string(input).unwrap());
+        let ctx = match parse(&files, file_id) {
+            Ok(ast) => {
+                let mut ctx = AstContext::default();
+                for Located { value: decl, .. } in ast {
+                    ctx.add_decl(decl);
+                }
+                ctx
+            }
+            Err(err) => {
+                term::emit(&mut writer, &config, &files, &err).unwrap();
+                return;
+            }
+        };
+        if let Some(ast) = ctx
+            .declaration("main")
+            .and_then(|ast| ast.clone().run(&ctx))
+        {
+            println!("{:?}", ast);
+        }
+    } else {
+        let mut repl = Repl::new();
+        while repl.read_line() {}
+    }
 }
