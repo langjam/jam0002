@@ -236,6 +236,12 @@ pub struct Clause {
 
 impl Clause {
     fn run(&self, matched: Ast) -> Option<Ast> {
+        log::trace!(
+            "Running clause `{} match {}` on `{}`",
+            self.pattern,
+            self.body,
+            matched
+        );
         if let Some(s) = self.pattern.match_with(matched) {
             Some(self.body.parallel_subst(&s))
         } else {
@@ -347,6 +353,7 @@ impl Ast {
                 ast.run(ctx)
             }
             Ast::Match { on, clauses } => {
+                log::trace!("Matching on {}", on);
                 let arg = on.clone().run(ctx)?;
                 clauses
                     .into_iter()

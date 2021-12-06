@@ -29,6 +29,8 @@ struct Args {
 
 #[paw::main]
 fn main(args: Args) -> anyhow::Result<()> {
+    env_logger::init();
+
     match args.input {
         Some(input) => {
             let mut compiler = match input {

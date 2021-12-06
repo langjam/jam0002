@@ -34,6 +34,7 @@ impl Compiler {
     }
 
     pub fn from_file(path: &Path) -> io::Result<Self> {
+        log::debug!("Compiler from {}", path.display());
         let mut this = Self::init();
         this.main_file_id = this.parse_file(path)?;
         Ok(this)
@@ -63,9 +64,12 @@ impl Compiler {
 
     fn parse_file(&mut self, path: &Path) -> io::Result<Option<FileId>> {
         let file_id = self.parse_ctx.add_file(path)?;
+        log::debug!("Parsing {} -> {:?}", path.display(), file_id);
+
         match self.parse_ctx.parse_full(file_id) {
             Ok(ast) => {
                 for decl in ast {
+                    log::debug!("[{:?}] Adding declaraion for {}", file_id, decl.name.value);
                     self.ast_ctx.add_decl(decl.value);
                 }
                 Ok(Some(file_id))

@@ -50,11 +50,13 @@ impl Repl {
 
     pub fn read_line(&mut self) -> bool {
         let name = format!("<gtx:{}>", self.idx);
-        match self.rl.readline(&name[1..]) {
+        match self.rl.readline(&format!("{} ", &name[1..])) {
             Ok(line) => {
                 self.rl.add_history_entry(&line);
                 self.idx += 1;
                 let file_id = self.parse_ctx.add_source(name.clone(), line);
+
+                log::debug!("Parse {} into {:?}", name, file_id);
                 match self.parse_ctx.parse_as_repl(file_id) {
                     Ok(ReplParse { name, expr }) => {
                         if let Some(Located { value: name, .. }) = name {
