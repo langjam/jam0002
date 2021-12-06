@@ -311,7 +311,7 @@ impl Ast {
         self.parallel_subst(&renaming)
     }
 
-    fn run(self) -> Option<Self> {
+    pub fn run(self) -> Option<Self> {
         match self {
             Ast::Var { .. } => Some(self),
             Ast::Match { on, clauses } => {
@@ -473,8 +473,4 @@ mod test {
         };
         assert_eq!(res, target)
     }
-}
-
-fn main() {
-    println!("hello")
 }
