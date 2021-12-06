@@ -328,7 +328,6 @@ def p_expression(p):
              | ROW
              | COL
              | MATCHCOUNT LPAREN list COMMA NAME RPAREN
-
              | expression GREATER expression
              | expression LESS expression
              | expression GREATEREQ expression
