@@ -1,10 +1,15 @@
+use ast::Decl;
 use std::{
     collections::{BTreeMap, HashMap},
     fmt::Display,
 };
 use thiserror::Error;
 
+pub mod ast;
+pub mod compile;
 pub mod loc;
+pub mod parser;
+pub mod repl;
 
 #[derive(Debug, Error)]
 pub enum RuntimeError {
@@ -376,6 +381,89 @@ impl AstCtx {
 
     pub fn decl(&self, name: &str) -> Option<&Ast> {
         self.decls.get(name)
+    }
+
+    pub fn add_decl(&mut self, decl: Decl) {
+        let ast = self.make_expr(decl.body.value);
+        self.decls.insert(decl.name.value, ast);
+    }
+
+    pub fn make_expr(&mut self, ast: ast::Expr) -> Ast {
+        self.make_expr_with_binds(ast, &BTreeMap::default())
+    }
+
+    fn make_expr_with_binds(&mut self, ast: ast::Expr, binders: &BTreeMap<String, u32>) -> Ast {
+        match ast {
+            ast::Expr::Pattern(p) => self.make_pat_expr(p, binders),
+            ast::Expr::Binop { op, lhs, rhs } => Ast::Constr {
+                name: format!("{:?}", op.value),
+                args: vec![
+                    self.make_expr_with_binds((*lhs.value).clone(), binders),
+                    self.make_expr_with_binds((*rhs.value).clone(), binders),
+                ],
+            },
+            ast::Expr::Match { on, arms } => Ast::Match {
+                on: Box::new(self.make_expr_with_binds((*on.value).clone(), binders)),
+                clauses: arms.into_iter().map(|cl| self.make_clause(cl)).collect(),
+            },
+        }
+    }
+
+    fn make_clause(&mut self, clause: ast::Clause) -> Clause {
+        let (pattern, binders) = self.make_pattern(clause.pattern.value);
+        Clause {
+            // recursive: clause.recursive,
+            body: self.make_expr_with_binds(clause.body.value, &binders),
+            pattern,
+        }
+    }
+
+    fn make_pattern(&mut self, pattern: ast::Pattern) -> (Pat, BTreeMap<String, u32>) {
+        match pattern {
+            ast::Pattern::Var(s) if &s == "_" => (Pat::PatHole, BTreeMap::default()),
+            ast::Pattern::Var(name) => {
+                let var = self.next_binding(name.clone());
+                let mut map = BTreeMap::new();
+                map.insert(name, var);
+                (Pat::PatVar { name: var }, map)
+            }
+            ast::Pattern::Constructor { name, args } => {
+                let (args, bindings_iter): (Vec<_>, Vec<_>) = args
+                    .into_iter()
+                    .map(|pat| self.make_pattern(pat.value))
+                    .unzip();
+                let bindings = bindings_iter
+                    .into_iter()
+                    .fold(BTreeMap::new(), |mut map, b| {
+                        map.extend(b);
+                        map
+                    });
+                let pat = Pat::PatConstr {
+                    name: name.value,
+                    args,
+                };
+                (pat, bindings)
+            }
+        }
+    }
+
+    fn make_pat_expr(&self, prim: ast::Pattern, binders: &BTreeMap<String, u32>) -> Ast {
+        match prim {
+            ast::Pattern::Var(name) => {
+                if let Some(&name) = binders.get(&name) {
+                    Ast::Var { name }
+                } else {
+                    Ast::DeclRef { name }
+                }
+            }
+            ast::Pattern::Constructor { name, args } => Ast::Constr {
+                name: name.value,
+                args: args
+                    .into_iter()
+                    .map(|pat| self.make_pat_expr(pat.value, binders))
+                    .collect(),
+            },
+        }
     }
 
     fn next_binding(&mut self, name: String) -> u32 {
