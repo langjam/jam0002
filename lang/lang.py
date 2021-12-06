@@ -240,7 +240,7 @@ precedence = (
 
 def p_lang(p):
   """
-  lang : meta aliases selectors rules
+  lang : meta cell aliases selectors rules
   """
 
 def p_meta(p):
@@ -304,12 +304,6 @@ def p_statement(p):
   statement : NAME ASSIGN expression
   """
 
-def p_expression(p):
-  """
-  expression : numeric_exp
-             | bool_exp
-  """
-
 def p_declarations(p):
   """
   declarations : 
@@ -318,23 +312,34 @@ def p_declarations(p):
 
 def p_declaration(p):
   """
-  declaration : INT NAME ASSIGN numeric_exp
-              | BOOL NAME ASSIGN bool_exp
+  declaration : INT NAME ASSIGN expression
+              | BOOL NAME ASSIGN expression
   """
 
-def p_numeric_exp(p):
+def p_expression(p):
   """
-  numeric_exp : numeric_exp PLUS numeric_exp
-              | numeric_exp MINUS numeric_exp
-              | numeric_exp MULTIPLY numeric_exp
-              | numeric_exp DIVIDE numeric_exp
-              | MINUS numeric_exp %prec UMINUS
-              | LPAREN numeric_exp RPAREN
-              | NUMBER
-              | NAME
-              | ROW
-              | COL
-              | MATCHCOUNT LPAREN list COMMA NAME RPAREN
+  expression : expression PLUS expression
+             | expression MINUS expression
+             | expression MULTIPLY expression
+             | expression DIVIDE expression
+             | MINUS expression %prec UMINUS
+             | LPAREN expression RPAREN
+             | NUMBER
+             | ROW
+             | COL
+             | MATCHCOUNT LPAREN list COMMA NAME RPAREN
+
+             | expression GREATER expression
+             | expression LESS expression
+             | expression GREATEREQ expression
+             | expression LESSEQ expression
+             | expression EQUALS expression
+             | expression OR expression
+             | expression AND expression
+             | NOT expression
+             | TRUE
+             | FALSE
+             | NAME
   """
 
 def p_list(p):
@@ -355,29 +360,13 @@ def p_directions(p):
              | SE 
   """
 
-def p_bool_exp(p):
-  """
-  bool_exp : numeric_exp GREATER numeric_exp
-           | numeric_exp LESS numeric_exp
-           | numeric_exp GREATEREQ numeric_exp
-           | numeric_exp LESSEQ numeric_exp
-           | bool_exp EQUALS bool_exp
-           | bool_exp OR bool_exp
-           | bool_exp AND bool_exp
-           | NOT bool_exp
-           | LPAREN bool_exp RPAREN
-           | TRUE
-           | FALSE
-  """
-
 def p_error(p):
   print(f"Syntax error at {p.value!r}: {repr(p)}")
 
 import ply.yacc as yacc
 yacc.yacc()
 
-with open("./tests/simple.cel", "r") as f:
+with open("./tests/test.cel", "r") as f:
   code = f.read()
 
-print(code)
 yacc.parse(code)
