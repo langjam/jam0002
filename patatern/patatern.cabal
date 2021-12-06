@@ -11,7 +11,7 @@ homepage:           github
 -- bug-reports:
 license:            AGPL-3.0-or-later
 license-file:       LICENSE
-author:             Lorenzo Tabacchini & Francesco Magliocca
+author:             Lorenzo Tabacchini, Francesco Magliocca
 maintainer:         none
 
 -- A copyright notice.
@@ -25,7 +25,7 @@ executable patatern
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
+    other-modules:    SyntaxTree
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
