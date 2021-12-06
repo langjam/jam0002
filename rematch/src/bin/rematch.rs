@@ -39,7 +39,10 @@ fn main(args: Args) -> anyhow::Result<()> {
                     Compiler::from_file(&p).context(format!("Parsing from `{}`", p.display()))
                 }
             }?;
-            compiler.execute().map(|_| ()).unwrap_or_default();
+            compiler
+                .execute()
+                .map(|x| println!("{}", x))
+                .unwrap_or_default();
         }
         None => {
             let mut repl = Repl::new();

@@ -200,17 +200,14 @@ impl Display for DisplayAst {
                 write!(f, "{:width$}end", "", width = self.offset)
             }
             Ast::DeclRef { name } => write!(f, "{}", name),
-            Ast::Constr { name, args } => {
-                write!(f, "{}(", name)?;
-                if args.len() != 0 {
-                    write!(f, "{}", args[0])?;
-                    for i in &args[1..] {
-                        write!(f, ", ")?;
-                        i.fmt(f)?
-                    }
+            Ast::Constr { name, args } if !args.is_empty() => {
+                write!(f, "{}({}", name, args[0])?;
+                for i in &args[1..] {
+                    write!(f, ", {}", i)?;
                 }
                 write!(f, ")")
             }
+            Ast::Constr { name, .. } => write!(f, "{}", name),
         }
     }
 }
