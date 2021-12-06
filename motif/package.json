@@ -1,0 +1,13 @@
+{
+  "name": "motif",
+  "version": "1.0.0",
+  "description": "Motif Language",
+  "license": "MIT",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.11"
+  }
+}
