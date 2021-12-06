@@ -339,6 +339,7 @@ def p_expression(p):
              | NOT expression
              | TRUE
              | FALSE
+
              | NAME
   """
 
