@@ -227,6 +227,7 @@ impl Display for Ast {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Clause {
+    recursive: bool,
     pattern: Pat,
     body: Ast,
 }
@@ -234,8 +235,9 @@ pub struct Clause {
 impl Clause {
     fn run(&self, matched: Ast) -> Option<Ast> {
         log::trace!(
-            "Running clause `{} match {}` on `{}`",
+            "Running clause `{} {}match {}` on `{}`",
             self.pattern,
+            if self.recursive { "re" } else { "" },
             self.body,
             matched
         );
@@ -250,7 +252,11 @@ impl Clause {
         let binders = self.pattern.binders();
         let body = self.body.rename(&binders, offset);
         let pattern = self.pattern.rename(offset);
-        Clause { body, pattern }
+        Clause {
+            recursive: self.recursive,
+            body,
+            pattern,
+        }
     }
 
     /// Perform safe parallel substitution of a frees variables by terms in
@@ -352,10 +358,19 @@ impl Ast {
             Ast::Match { on, clauses } => {
                 log::trace!("Matching on {}", on);
                 let arg = on.clone().run(ctx)?;
-                clauses
-                    .into_iter()
-                    .find_map(|cl| cl.run(arg.clone()))
-                    .ok_or(RuntimeError::MatchClauseNotFound { value: *on })
+                let (rec, res) = clauses
+                    .iter()
+                    .find_map(|cl| Some((cl.recursive, cl.run(arg.clone())?)))
+                    .ok_or(RuntimeError::MatchClauseNotFound { value: *on })?;
+                if rec {
+                    Ast::Match {
+                        on: Box::new(res),
+                        clauses,
+                    }
+                    .run(ctx)
+                } else {
+                    Ok(res)
+                }
             }
             Ast::Constr { name, args } => {
                 let args = args
@@ -416,7 +431,7 @@ impl AstCtx {
     fn make_clause(&mut self, clause: ast::Clause) -> Clause {
         let (pattern, binders) = self.make_pattern(clause.pattern.value);
         Clause {
-            // recursive: clause.recursive,
+            recursive: clause.recursive,
             body: self.make_expr_with_binds(clause.body.value, &binders),
             pattern,
         }
@@ -494,6 +509,7 @@ mod test {
         let prog = Match {
             on: Box::new(Var { name: 1 }),
             clauses: vec![Clause {
+                recursive: false,
                 pattern: PatVar { name: 0 },
                 body: Var { name: 0 },
             }],
@@ -512,6 +528,7 @@ mod test {
                 args: vec![],
             }),
             clauses: vec![Clause {
+                recursive: false,
                 pattern: PatConstr {
                     name: "MyConstr".to_string(),
                     args: vec![],
@@ -533,6 +550,7 @@ mod test {
                 args: vec![],
             }),
             clauses: vec![Clause {
+                recursive: false,
                 pattern: PatConstr {
                     name: "MyConstr".to_string(),
                     args: vec![PatVar { name: 1 }],
@@ -566,6 +584,7 @@ mod test {
                 ],
             }),
             clauses: vec![Clause {
+                recursive: false,
                 pattern: PatConstr {
                     name: cons.clone(),
                     args: vec![
@@ -603,6 +622,7 @@ mod test {
         let inner = Match {
             on: Box::new(Var { name: 2 }),
             clauses: vec![Clause {
+                recursive: false,
                 pattern: PatVar { name: 1 },
                 body: Var { name: 0 },
             }],
@@ -611,6 +631,7 @@ mod test {
         let outer = Match {
             on: Box::new(Var { name: 1 }),
             clauses: vec![Clause {
+                recursive: false,
                 pattern: PatVar { name: 0 },
                 body: inner,
             }],
@@ -621,6 +642,7 @@ mod test {
         let target = Match {
             on: Box::new(Var { name: 2 }),
             clauses: vec![Clause {
+                recursive: false,
                 pattern: PatVar { name: 3 },
                 body: Var { name: 1 },
             }],
