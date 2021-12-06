@@ -1,4 +1,10 @@
-use std::{collections::HashMap, fmt::Display};
+use std::{
+    collections::{BTreeMap, HashMap},
+    fmt::Display,
+    hash::Hash,
+};
+
+pub mod loc;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Pat {
@@ -147,6 +153,7 @@ impl Substitution {
 #[derive(Clone, Debug, PartialEq)]
 pub enum Ast {
     Var { name: u32 },
+    DeclRef { name: String },
     Match { on: Box<Ast>, clauses: Vec<Clause> },
     Constr { name: String, args: Vec<Ast> },
 }
@@ -177,6 +184,7 @@ impl Display for DisplayAst {
                 }
                 write!(f, "{:width$}end", "", width = self.offset)
             }
+            Ast::DeclRef { name } => write!(f, "{}", name),
             Ast::Constr { name, args } => {
                 write!(f, "{}(", name)?;
                 if args.len() != 0 {
@@ -257,6 +265,7 @@ impl Ast {
                     vec![*name]
                 }
             }
+            Ast::DeclRef { .. } => vec![],
             Ast::Match { on, clauses } => {
                 let vars_on = on.free_vars_except(except);
                 let var_clauses = clauses
@@ -285,6 +294,7 @@ impl Ast {
     fn parallel_subst(&self, s: &Substitution) -> Self {
         match self {
             Ast::Var { name } => s.subst(*name),
+            Ast::DeclRef { .. } => self.clone(),
             Ast::Match { on, clauses } => Ast::Match {
                 on: Box::new((*on).parallel_subst(s)),
                 clauses: clauses
@@ -311,15 +321,22 @@ impl Ast {
         self.parallel_subst(&renaming)
     }
 
-    pub fn run(self) -> Option<Self> {
+    pub fn run(self, ctx: &AstCtx) -> Option<Self> {
         match self {
             Ast::Var { .. } => Some(self),
+            Ast::DeclRef { name } => {
+                let ast = ctx.decl(&name).cloned()?;
+                ast.run(ctx)
+            }
             Ast::Match { on, clauses } => {
-                let arg = on.run()?;
+                let arg = on.run(ctx)?;
                 clauses.into_iter().find_map(|cl| cl.run(arg.clone()))
             }
             Ast::Constr { name, args } => {
-                let args = args.into_iter().map(Ast::run).collect::<Option<_>>()?;
+                let args = args
+                    .into_iter()
+                    .map(|ast| ast.run(ctx))
+                    .collect::<Option<_>>()?;
                 Some(Ast::Constr {
                     name: name.clone(),
                     args,
@@ -329,11 +346,42 @@ impl Ast {
     }
 }
 
+#[derive(Debug, Clone, Default)]
+pub struct AstCtx {
+    decls: BTreeMap<String, Ast>,
+    bindings: BTreeMap<u32, String>,
+    next_free: u32,
+}
+
+impl AstCtx {
+    pub fn binding<V: AsRef<u32>>(&self, var: V) -> Option<&str> {
+        self.bindings.get(var.as_ref()).map(|s| s.as_str())
+    }
+
+    pub fn decl(&self, name: &str) -> Option<&Ast> {
+        self.decls.get(name)
+    }
+
+    fn next_binding(&mut self, name: String) -> u32 {
+        self.bindings.insert(self.next_free, name);
+        let v = self.next_free;
+        self.next_free += 1;
+        v
+    }
+}
+
 #[cfg(test)]
 mod test {
+    use std::sync::Once;
+
+    use crate::AstCtx;
+
     use super::Ast::*;
     use super::Clause;
     use super::Pat::*;
+
+    #[static_init::dynamic]
+    static EMPTYCTX: AstCtx = AstCtx::default();
 
     #[test]
     pub fn test1() {
@@ -345,7 +393,7 @@ mod test {
             }],
         };
         let target = Var { name: 1 };
-        let res = prog.run();
+        let res = prog.run(&EMPTYCTX);
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
@@ -366,7 +414,7 @@ mod test {
             }],
         };
         let target = Var { name: 1 };
-        let res = prog.run();
+        let res = prog.run(&EMPTYCTX);
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
@@ -386,7 +434,7 @@ mod test {
                 body: Var { name: 1 },
             }],
         };
-        let res = prog.run();
+        let res = prog.run(&EMPTYCTX);
         println!("{:?}", res);
         assert_eq!(res, None)
     }
@@ -438,7 +486,7 @@ mod test {
             name: "First2".to_string(),
             args: vec![Var { name: 1 }, Var { name: 2 }],
         };
-        let res = prog.run();
+        let res = prog.run(&EMPTYCTX);
         println!("{:?}", res);
         assert_eq!(res, Some(target))
     }
@@ -461,7 +509,7 @@ mod test {
                 body: inner,
             }],
         };
-        let res = outer.clone().run().unwrap();
+        let res = outer.clone().run(&EMPTYCTX).unwrap();
         println!("{}", outer.clone());
         println!("{}", res);
         let target = Match {
