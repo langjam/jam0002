@@ -232,15 +232,21 @@ pub struct Clause {
     body: Ast,
 }
 
-impl Clause {
-    fn run(&self, matched: Ast) -> Option<Ast> {
-        log::trace!(
-            "Running clause `{} {}match {}` on `{}`",
+impl Display for Clause {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} {}match {}",
             self.pattern,
             if self.recursive { "re" } else { "" },
-            self.body,
-            matched
-        );
+            self.body
+        )
+    }
+}
+
+impl Clause {
+    fn run(&self, matched: Ast) -> Option<Ast> {
+        log::trace!("Running clause `{}` on `{}`", self, matched);
         if let Some(s) = self.pattern.match_with(matched) {
             Some(self.body.parallel_subst(&s))
         } else {
@@ -349,10 +355,12 @@ impl Ast {
         match self {
             Ast::Var { .. } => Ok(self),
             Ast::DeclRef { name } => {
+                log::debug!("Lookup of `{}`", name);
                 let ast = ctx
                     .decl(&name)
                     .cloned()
                     .ok_or(RuntimeError::UnknownDeclaration { name })?;
+                log::debug!("\t-> {}", ast);
                 ast.run(ctx)
             }
             Ast::Match { on, clauses } => {
