@@ -29,9 +29,9 @@ instance Unifiable (Term UVar) where
   transformTermM = transformM
   termChildren = children
 
--- | A rewrite-rule
+-- | A logic rule
 data Rule v = Rule
   { lhs :: Term v,
-    rhs :: Term v
+    rhs :: [Term v]
   }
   deriving (Eq, Show)
