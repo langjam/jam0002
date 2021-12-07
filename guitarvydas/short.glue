@@ -1,12 +1,10 @@
-Main [@Chars] = [[${Chars}]]
+main [@findMacros] = [[${findMacros}]]
 
-Char_macro [Macro] = [[${Macro}]]
-Char_bad [c] = [[${support.panic ()}^^^]]
-Char_notMacro [c] = [[${c}]]
-       
-Macro_data [k klp Expr krp] = [[(${Expr})->data]]
+findMacros [x] = [[${x}]]
+
+Macro_data [k klp Expr krp] = [[ (${Expr})->data]]
 Macro_newMessage [k klp expr1 kcomma expr2 krp]
-  = [[${k}${klp}${expr1}${kcomma}${expr2}${krp}]]
+  = [[ newMessage(${expr1},${expr2})]]
 
 Expr_funccall [expr klp @Arglist krp] = [[${expr}(${Arglist})]]
 
@@ -29,5 +27,3 @@ nl [c] = [[${c}]]
 notNL [c] = [[${c}]]
 
 dollar [c] = [[${c}]]
-
-lex_any [c] = [[${c}]]

@@ -1,4 +1,4 @@
-pre {
+cmm {
   main = findMacros+
 
  findMacros
