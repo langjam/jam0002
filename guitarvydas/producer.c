@@ -3,12 +3,12 @@
 int counter;
 
 void initProducer (Component self) {
-  counter = 10;
+  $initializeCounter
 }
 
 void reactProducer (Component self, Message m) {
-  counter -= 1;
-  if (counter > 0) {
+  $decCounter
+  if ($counterIsGreaterThanZero) {
       $send (self, '*');
     } else {
       $withLock {

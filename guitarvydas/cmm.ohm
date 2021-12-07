@@ -1,0 +1,68 @@
+pre {
+  main = findMacros+
+
+ findMacros
+    = experimentalApplySyntactic<Macro>+
+    | any
+
+  Macro
+    // mechanism List
+    = "$first" Param       -- first
+    | "$reverse" Param     -- reverse
+    | "$rest" Param        -- rest
+    | "$isEmpty" Param     -- isEmpty
+    | "$newListCell" Param -- newListCell
+    | "$append" Param      -- append
+
+    // mechanism Component
+    | "$newComponent" TwoParams -- newComponent
+    | "$field" Param            -- field
+    | "$appendInput" TwoParams  -- appendInput
+    | "$popInput" Param         -- popInput
+    | "$callReaction" TwoParams -- callReaction
+    | "$hasInputs" Param        -- hasInputs
+
+    // mechanism Message
+    | "$newMessage" Param -- newMessage
+    | "$data" Param       -- data
+
+    // mechanism ConnectionTable
+    | "$connectedTo" Param -- connectedTo
+    | "$connect" TwoParams -- connect
+
+    // mechanism Kernel
+    | "$withLock" block -- withLock
+    | "$send" TwoParams -- send
+    | "$panic" Param    -- panic
+
+    // mechanism Counter
+    | "$initializeCounter" -- initializeCounter
+    | "$decCounter" -- decCounter
+    | "$counterIsGreaterThanZero" -- counterIsGreaterThanZero
+
+Param = "(" Expr ")"
+TwoParams = "(" Expr "," Expr ")"
+Expr
+  = "(" Expr ")" -- nested
+  | Expr "(" Arglist? ")" -- funccall
+  | ~"," ~"(" ~")" any -- flat
+
+Arglist = ArgComma+
+ArgComma = Expr ","
+
+block = "{" block* "}" -- nested
+      | notBrace       -- raw
+
+notBrace = ~"{" ~"}" any
+
+space += comment
+comment = "//" notNL* nl
+nl = "\n"
+notNL = ~nl any
+
+dollar = "$"
+
+ws = " " | "\t"
+
+}
+
