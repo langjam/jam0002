@@ -1,11 +1,11 @@
 void DispatchTransferOutputsForOneComponent (Component c) {
-  List outputs = $field;
+  List outputs = c->outputQueue;
   outputs = listReverse (outputs);
   while (!NULL == outputs) {
     Component receiver = connectionsConnectedTo (c);
     Datum data = outputs->data;
     Message m = messageNew (data);
-$appendInput;
+componentAppendInput (receiver, m);
 outputs->next;
   }
 }
@@ -16,7 +16,7 @@ void DispatchOnce () {
       component = all->data;
       if (component->inputQueue) {
 	Message m = componentPopInput (component);
-$callReaction;
+componentCallReaction (component, m);
       }
 all->next;
     }

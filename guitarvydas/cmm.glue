@@ -8,13 +8,19 @@ Macro_reverse [k Param] = [[listReverse (${support.getParam1 ()})]]
 Macro_rest [k Param] = [[${support.getParam1 ()}->next]]
 Macro_isEmpty [k Param] = [[NULL == ${support.getParam1 ()}]]
 Macro_newListCell [k Param] = [[listNewCell (${support.getParam1 ()})]]
-Macro_append [k TwoParams] = [[${k}${TwoParams})]]
+Macro_append [k TwoParams] = [[${support.getParam1 ()} = listAppend1 (${support.getParam1 ()}, ${support.getParam2 ()})]]
 
-Macro_newComponent [k TwoParams] = [[${k}${TwoParams}]]
-Macro_field [k TwoParams] = [[${k}${TwoParams}]]
-Macro_appendInput [k TwoParams] = [[${k}${TwoParams}]]
+Macro_newComponent [k TwoParams] 
+  = [[ componentNew (${support.getParam1 ()}, ${support.getParam2 ()}) ]]
+  
+Macro_field [k TwoParams] = [[${support.getParam1 ()}->${support.getParam2 ()}]]
+
+Macro_appendInput [k TwoParams] = [[componentAppendInput (${support.getParam1 ()}, ${support.getParam2 ()})]]
+
 Macro_popInput [k Param] = [[componentPopInput (${support.getParam1 ()})]]
-Macro_callReaction [k TwoParams] = [[${k}${TwoParams}]]
+
+Macro_callReaction [k TwoParams] = [[componentCallReaction (${support.getParam1 ()}, ${support.getParam2 ()})]]
+
 Macro_hasInputs [k Param] = [[${support.getParam1 ()}->inputQueue]]
 
 Macro_newMessage [k Param] = [[messageNew (${support.getParam1 ()})]]

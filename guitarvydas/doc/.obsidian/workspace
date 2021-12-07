@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "Plan.md",
+            "file": "cmmmac.md",
             "mode": "source"
           }
         }
@@ -68,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Plan.md",
+                "file": "cmmmac.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -88,6 +88,8 @@
   },
   "active": "e8e30749ec6771d0",
   "lastOpenFiles": [
+    "cmmmac.md",
+    "Future.md",
     "Plan.md",
     "Resources.md",
     "ideas.md",
@@ -95,8 +97,6 @@
     "Doc.md",
     "Pattern Matching.md",
     "Normalization.md",
-    "Time.md",
-    "Triples - PROLOG, miniKanren.md",
-    "Glue.md"
+    "Time.md"
   ]
 }
