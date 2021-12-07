@@ -30,11 +30,15 @@ extend_syntax
         ]}' top_level -> .{
             '[Expr|
                 let string_pattern = ,[(prefab (string_to_sequence (ident_to_string start_pattern)))], ; in
-                # Inconveniently, `cell` is also Unseemly's word for a mutable container.
-                let pattern = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ; in
+                    # Inconveniently, `cell` is also Unseemly's word for a mutable container.
+                let pattern = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
+                    # Buffer all writes so that subsequent rules don't "see" each other's effects.
+                    # (This is different than how PuzzleScript does it, but it allows cellular-automaton-like behavior)
+                    pattern_buffer = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
+                    output = (new_cell "") ; in
 
-                let output = (new_cell "") ; in -{
 
+                -{
                     for step in (range 0 10) -{
                         # output:
                         for entry in pattern
@@ -44,12 +48,17 @@ extend_syntax
                         (assign output (concat (value output) "
 ")) ;
 
-                        for entry in pattern -{
-                            let **[matches ignored]** = (,[lhs], (value entry)) ; in
+                        for i in (range 0 (len pattern)) -{
+                            let **[matches ignored]** = (,[lhs], (value (index pattern i))) ; in
                                 (if matches
-                                    let **[ignore output]** = (,[rhs], (value entry)) ; in
-                                        (assign entry output)
+                                    let **[ignore output]** = (,[rhs], (value (index pattern i))) ; in
+                                        (assign (index pattern_buffer i) output)
                                     **[]**)
+                        }- ;
+
+                        # Flip the buffer:
+                        for i in (range 0 (len pattern)) -{
+                            (assign (index pattern i) (value (index pattern_buffer i)))
                         }-
 
 
@@ -84,7 +93,8 @@ in
 Atoms
   cell '#'
 Rules
-  [ cell ] -> [ No cell ]
+  [ No cell ] -> [ cell ]
+  # [ No cell ] -> [ cell ]
   # [ | | ] -> [ | cell | ]                    # By default, cells are on...
   # [ | No cell | No cell ] -> [ | No cell | ] # Unless they and their rightwards neighbor are off...
   # [ cell | cell | cell ] -> [ | No cell | ]  # Or they and both neighbors are on.
