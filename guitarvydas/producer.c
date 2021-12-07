@@ -3,17 +3,17 @@
 int counter;
 
 void initProducer (Component self) {
-$initializeCounter;
+  counter = 0;
 }
 
 void reactProducer (Component self, Message m) {
-$decCounter;
-  if ($counterIsGreaterThanZero) {
-      $send (self, '*');
-    } else {
-$withLock{
-	systemRunning = 0;
-      }
-}
+  counter -= 1;
+  if (counter > 0) {
+    $send (self, '*');
+  } else {
+    $withLock{
+      systemRunning = 0;
+    }
+  }
 }
 
