@@ -1,5 +1,5 @@
 use std::rc::Rc;
-use crate::loc::{Span, Located};
+use crate::loc::{Span, Location, Located, LocatedExt};
 use crate::parser::ReplParse;
 use crate::ast::*;
 
@@ -23,45 +23,36 @@ match {
 
 pub Toplevel = { <Decl*> }
 
-pub Repl: Located<ReplParse> = {
-    <Decl> => <>.map(ReplParse::Decl),
-    <Expr> => <>.map(ReplParse::Expr),
+pub Repl: ReplParse = {
+    <name:Located<(<Ident> "=")>> <expr:Expr> => ReplParse { name: Some(name), expr },
+    <Expr> => ReplParse { name: None, expr: <> },
 }
 
 Decl: Located<Decl> = {
-    <name:Located<Ident>> "=" <body:Expr> => Located {
-        file_id,
-        span: name.span().merge(body.span()),
-        value: Decl {
+    <name:Located<Ident>> "=" <body:Expr> => {
+        let loc = name.loc.and_then(|l| l.merge(body.loc?));
+        Decl {
             name,
             body,
-        }
-    }
+        }.located(loc)
+    },
 }
 
 Expr: Located<Expr> = {
     <l:@L> "case" <on:RawExpr> "of" <arms:Clause*> "end" <r:@R> =>
-        Located {
-            span: Span(l, r),
-            file_id,
-            value: Expr::Match {
+        Expr::Match {
                 on: on.map(Rc::new),
                 arms
-            },
-        },
+            }.located(Location { file_id, span: Span(l, r) }),
     RawExpr,
 }
 
 Tier<Op, Next>: Located<Expr> = {
-    <l:Tier<Op, Next>> <op:Op> <r:Next> => Located {
-        file_id,
-        span: l.span().merge(r.span()),
-        value: Expr::Binop {
-            lhs: l.map(Rc::new),
+    <l:@L> <lhs:Tier<Op, Next>> <op:Op> <rhs:Next> <r:@R> => Expr::Binop {
+            lhs: lhs.map(Rc::new),
             op,
-            rhs: r.map(Rc::new),
-        },
-    },
+            rhs: rhs.map(Rc::new),
+        }.located(Location { file_id, span: Span(l, r) }),
     Next,
 }
 
@@ -78,12 +69,12 @@ FactorOp: Located<Binop> = {
 }
 
 Atom: Located<Expr> = {
-    Prim => <>.map(Expr::Pattern),
+    Prim => <>,
     "(" <Expr> ")",
 }
 
 Clause: Clause = {
-    "|" <pattern:Prim> <recursive:MatchKind> <body:Expr> => {
+    "|" <pattern:Pattern> <recursive:MatchKind> <body:Expr> => {
         Clause {
             recursive,
             pattern,
@@ -97,28 +88,32 @@ MatchKind: bool = {
     "rematch" => true,
 }
 
-Prim: Located<Pattern> = {
-    Located<Ident> => <>.map(Pattern::Var),
-    <l:@L> <name: Located<Constr>> <r:@R> => Located {
-        value: Pattern::Constructor {
+Prim: Located<Expr> = {
+    Located<Ident> => <>.map(Expr::Var),
+    <l:@L> <name: Located<Constr>> <r:@R> => Expr::Constructor {
             name,
             args: vec![],
-        },
-        file_id,
-        span: Span(l, r),
-    },
-    <l:@L> <name:Located<Constr>> "(" <args:Comma<Prim>> ")" <r:@R> => Located {
-        file_id,
-        span: Span(l, r),
-        value: Pattern::Constructor {
+        }.located(Location { file_id, span: Span(l, r) }),
+    <l:@L> <name:Located<Constr>> "(" <args:Comma<Expr>> ")" <r:@R> => Expr::Constructor {
+        name,
+        args,
+    }.located(Location { file_id, span: Span(l, r) }),
+}
+
+Pattern: Located<Pattern> = {
+    Located<Ident> => <>.map(Pattern::Var),
+    <l:@L> <name: Located<Constr>> <r:@R> => Pattern::Constructor {
             name,
-            args,
-        }
-    },
+            args: vec![],
+        }.located(Location { file_id, span: Span(l, r) }),
+    <l:@L> <name:Located<Constr>> "(" <args:Comma<Pattern>> ")" <r:@R> => Pattern::Constructor {
+        name,
+        args,
+    }.located(Location { file_id, span: Span(l, r) }),
 }
 
 Comma<T>: Vec<T> = {
-    <x:T> "," <xs:T+> => std::iter::once(x).chain(xs.into_iter()).collect(),
+    <x:T> "," <xs:Comma<T>> => std::iter::once(x).chain(xs.into_iter()).collect(),
     <x:T> => vec![x],
 }
 
@@ -126,9 +121,5 @@ Constr: String = { <"CONSTR"> => <>.to_string() }
 Ident: String = { <"IDENT"> => <>.to_string() }
 
 Located<T>: Located<T> = {
-    <l:@L> <value:T> <r:@R> => Located {
-        file_id,
-        span: Span(l, r),
-        value,
-    }
+    <l:@L> <value:T> <r:@R> => value.located(Location { file_id, span: Span(l, r) })
 }

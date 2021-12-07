@@ -1,9 +1,12 @@
-use std::ops::{Deref, Range};
+use std::{
+    fmt,
+    ops::{Deref, Range},
+};
 
 use codespan::FileId;
 use codespan_reporting::diagnostic::{Label, LabelStyle};
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Span(pub usize, pub usize);
 
 impl From<Range<usize>> for Span {
@@ -18,6 +21,12 @@ impl Into<Range<usize>> for Span {
     }
 }
 
+impl fmt::Display for Span {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}:{}", self.0, self.1)
+    }
+}
+
 impl Span {
     pub fn merge(self, other: Self) -> Self {
         Self(self.0.min(other.0), self.1.max(other.1))
@@ -25,9 +34,27 @@ impl Span {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Located<T> {
-    pub file_id: FileId,
+pub struct Location {
     pub span: Span,
+    pub file_id: FileId,
+}
+
+impl Location {
+    pub fn merge(self, other: Self) -> Option<Self> {
+        if self.file_id == other.file_id {
+            Some(Self {
+                span: self.span.merge(other.span),
+                file_id: self.file_id,
+            })
+        } else {
+            None
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Located<T> {
+    pub loc: Option<Location>,
     pub value: T,
 }
 
@@ -43,87 +70,69 @@ impl<T> Located<T> {
     pub fn map<U>(self, map: impl FnOnce(T) -> U) -> Located<U> {
         Located {
             value: map(self.value),
-            file_id: self.file_id,
-            span: self.span,
+            loc: self.loc,
         }
     }
 
     pub fn and_then<U>(self, then: impl FnOnce(T) -> Located<U>) -> Located<U> {
-        self.map(then).flatten()
+        let Located { value, loc } = then(self.value);
+        Located {
+            value,
+            loc: self.loc.and_then(|a| a.merge(loc?)),
+        }
     }
 
     pub fn as_ref(&self) -> Located<&T> {
         Located {
+            loc: self.loc,
             value: &self.value,
-            file_id: self.file_id,
-            span: self.span,
         }
     }
 
-    pub fn as_deref(&self) -> Located<&<T as Deref>::Target>
-    where
-        T: Deref,
-    {
-        Located {
-            value: self.value.deref(),
-            file_id: self.file_id,
-            span: self.span,
-        }
+    pub fn file_id(&self) -> Option<FileId> {
+        Some(self.loc?.file_id)
     }
 
-    pub fn file_id(&self) -> FileId {
-        self.file_id
-    }
-
-    pub fn span(&self) -> Span {
-        self.span
-    }
-
-    pub fn into_inner(self) -> T {
-        self.value
+    pub fn span(&self) -> Option<Span> {
+        Some(self.loc?.span)
     }
 }
 
 impl<T> Located<Located<T>> {
     pub fn flatten(self) -> Located<T> {
-        Located {
-            span: self.span.merge(self.value.span),
-            file_id: self.value.file_id,
-            value: self.value.value,
-        }
+        self.and_then(|x| x)
     }
 }
 
 impl<T> Located<Option<T>> {
-    pub fn transpose_option(self) -> Option<Located<T>> {
+    pub fn transpose(self) -> Option<Located<T>> {
         self.value.map(|value| Located {
             value,
-            span: self.span,
-            file_id: self.file_id,
+            loc: self.loc,
         })
     }
 }
 
 impl<T, E> Located<Result<T, E>> {
-    pub fn transpose_result(self) -> Result<Located<T>, Located<E>> {
+    pub fn transpose(self) -> Result<Located<T>, Located<E>> {
         match self.value {
             Ok(value) => Ok(Located {
                 value,
-                file_id: self.file_id,
-                span: self.span,
+                loc: self.loc,
             }),
             Err(value) => Err(Located {
                 value,
-                file_id: self.file_id,
-                span: self.span,
+                loc: self.loc,
             }),
         }
     }
 }
 
 impl<T: ToString> Located<T> {
-    pub fn to_label(self, style: LabelStyle) -> Label<FileId> {
-        Label::new(style, self.file_id, self.span).with_message(self.value.to_string())
+    pub fn to_label(self, style: LabelStyle) -> Option<Label<FileId>> {
+        self.loc.map(|Location { span, file_id }| {
+            Label::new(style, file_id, span).with_message(self.value.to_string())
+        })
     }
 }
 
@@ -138,3 +147,19 @@ impl<'a, T: Copy> Located<&'a T> {
         self.map(|&x| x)
     }
 }
+
+impl<T: Deref> Located<T> {
+    pub fn as_deref(&self) -> Located<&T::Target> {
+        self.as_ref().map(Deref::deref)
+    }
+}
+
+pub trait LocatedExt: Sized {
+    fn located(self, loc: impl Into<Option<Location>>) -> Located<Self> {
+        Located {
+            value: self,
+            loc: loc.into(),
+        }
+    }
+}
+impl<T> LocatedExt for T {}
