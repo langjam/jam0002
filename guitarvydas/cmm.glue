@@ -31,8 +31,8 @@ Macro_initializeCounter [m] = [[counter = 0]]
 Macro_decCounter [m] = [[counter -= 1]]
 Macro_counterIsGreaterThanZero [m] = [[counter > 0]]
 
-Param [klp Expr krp] = [[${klp}${Expr}${krp}]]
-TwoParams [klp Expr1 kcomma Expr2 krp] = [[${klp}${Expr1}${kcomma}${Expr2}${krp}]]
+Param [klp Expr krp] = [[${support.pushParam1 (Expr)}]]
+TwoParams [klp Expr1 kcomma Expr2 krp] = [[${support.pushParam1 (Expr1)}${support.pushParam2 (Expr2)}]]
 
 
 Expr_funccall [expr klp @Arglist krp] = [[${expr}(${Arglist})]]

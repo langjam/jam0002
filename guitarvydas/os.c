@@ -2,7 +2,7 @@ void DispatchTransferOutputsForOneComponent (Component c) {
   List outputs = $field (c, outputQueue);
   outputs = $reverse (outputs);
   while (!$isEmpty (outputs)) {
-    Component receiver =$connectedTo(c);
+    Component receiver =$connectedTo;
     Datum data = $data (outputs);
     Message m = $newMessage (data, NULL);
     $appendInput (receiver, m);
