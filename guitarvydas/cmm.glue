@@ -27,6 +27,10 @@ Macro_withLock [k Block] = [[${k}${Block}\n]]
 Macro_send [k TwoParams] = [[${k}${TwoParams}]]
 Macro_panic [k Param] = [[${k}${Param}]]
 
+Macro_initializeCounter [m] = [[${m}]]
+Macro_decCounter [m] = [[${m}]]
+Macro_counterIsGreaterThanZero [m] = [[${m}]]
+
 Param [klp Expr krp] = [[${klp}${Expr}${krp}]]
 TwoParams [klp Expr1 kcomma Expr2 krp] = [[${klp}${Expr1}${kcomma}${Expr2}${krp}]]
 

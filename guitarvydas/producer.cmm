@@ -3,11 +3,11 @@
 int counter;
 
 void initProducer (Component self) {
-  $initializeCounter
+  $initializeCounter;
 }
 
 void reactProducer (Component self, Message m) {
-  $decCounter
+  $decCounter;
   if ($counterIsGreaterThanZero) {
       $send (self, '*');
     } else {
