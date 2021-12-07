@@ -1,73 +1,0 @@
-Welcome to fish, the friendly interactive shell
-Type `help` for instructions on how to use fish
-[?2004h]0;fish /home/ishidex2/progs/jam0002/creators_of_templ[30m(B[m[37m~/p/j/creators_of_templ[37m | [K[26Cm[27C[38;5;196mm[27C[30m(B[m[38;5;240make[27C[30m(B[m[38;5;196ma[38;5;240mke[28C[30m(B[m[38;5;196mk[38;5;240me[29C[30m(B[m[38;5;196me[30C[30m(B[m[38;5;26mmake[30C[30m(B[m[30C
-[30m(B[m[?2004l]0;make /home/ishidex2/progs/jam0002/creators_of_templ[30m(B[mmkdir -p bin
-cc main.c -I. -Iraylib/include/ -ldl -lpthread -lm lang/*.c map/*.c raylib/lib/libraylib.a -Wextra -Wall -Werror -pedantic -g -fsanitize=address -Wno-unused-parameter -o bin/templ
-clear
-[H[2J[3J./bin/templ
- [34mroot: [37m
-[0m   [34mselector_and_props: [37m
-[0m     [34mcomposite_selector: [37m
-[0m       [34mprimitive_selector: [37mtok (0: 0) 'root' identifier
-[0m     [34mproperty_list: [37m
-[0m       [34mselector_and_props: [37m
-[0m         [34mcomposite_selector: [37m
-[0m           [34mprimitive_selector: [37mtok (1: 1) 'circle' identifier
-[0m         [34mproperty_list: [37m
-[0m           [34mproperty: [37mtok (3: 2) 'position' identifier
-[0m             [34mcall: [37mtok (3: 12) 'vec2' identifier
-[0m               [34matom: [37mtok (3: 17) '50' number
-[0m               [34matom: [37mtok (3: 21) '100' number
-[0m           [34mproperty: [37mtok (4: 2) 'radius' identifier
-[0m             [34matom: [37mtok (4: 10) '69' number
-[0m           [34mproperty: [37mtok (5: 2) 'color' identifier
-[0m             [34matom: [37mtok (5: 9) '#00ff00' hex literal
-[0m root
-   circle
-   color ff00
-   position vec2(50, 100)
-   radius 69
-INFO: Initializing raylib 4.0
-INFO: DISPLAY: Device initialized successfully
-INFO:     > Display size: 1920 x 1080
-INFO:     > Screen size:  400 x 400
-INFO:     > Render size:  400 x 400
-INFO:     > Viewport offsets: 0, 0
-INFO: GLAD: OpenGL extensions loaded successfully
-INFO: GL: Supported extensions count: 225
-INFO: GL: OpenGL device information:
-INFO:     > Vendor:   Intel
-INFO:     > Renderer: Mesa Intel(R) HD Graphics 620 (KBL GT2)
-INFO:     > Version:  4.6 (Core Profile) Mesa 21.2.5
-INFO:     > GLSL:     4.60
-INFO: GL: DXT compressed textures supported
-INFO: GL: ETC2/EAC compressed textures supported
-INFO: TEXTURE: [ID 1] Texture loaded successfully (1x1 | R8G8B8A8 | 1 mipmaps)
-INFO: TEXTURE: [ID 1] Default texture loaded successfully
-INFO: SHADER: [ID 1] Vertex shader compiled successfully
-INFO: SHADER: [ID 2] Fragment shader compiled successfully
-INFO: SHADER: [ID 3] Program shader loaded successfully
-INFO: SHADER: [ID 3] Default shader loaded successfully
-INFO: RLGL: Render batch vertex buffers loaded successfully in RAM (CPU)
-INFO: RLGL: Render batch vertex buffers loaded successfully in VRAM (GPU)
-INFO: RLGL: Default OpenGL state initialized successfully
-INFO: TEXTURE: [ID 2] Texture loaded successfully (128x128 | GRAY_ALPHA | 1 mipmaps)
-INFO: FONT: Default font loaded successfully (224 glyphs)
-INFO: TIMER: Target time per frame: 16.667 milliseconds
-INFO: TEXTURE: [ID 3] Texture loaded successfully (400x400 | R8G8B8A8 | 1 mipmaps)
-INFO: TEXTURE: [ID 3] Unloaded texture data from VRAM (GPU)
-INFO: TEXTURE: [ID 2] Unloaded texture data from VRAM (GPU)
-INFO: SHADER: [ID 3] Default shader unloaded successfully
-INFO: TEXTURE: [ID 1] Default texture unloaded successfully
-INFO: Window closed successfully
-
-=================================================================
-[1m[31m==778326==ERROR: LeakSanitizer: detected memory leaks
-[1m[0m
-[1m[34mDirect leak of 408 byte(s) in 1 object(s) allocated from:
-[1m[0m    #0 0x7f9093e93459 in __interceptor_calloc /build/gcc/src/gcc/libsanitizer/asan/asan_malloc_linux.cpp:154
-    #1 0x7f908fa5b25c in _XimOpenIM (/usr/lib/../lib/libX11.so.6+0x6825c)
-
-SUMMARY: AddressSanitizer: 408 byte(s) leaked in 1 allocation(s).
-make: *** [makefile:10: all] Error 1
-[2m⏎(B[m                                                                               ⏎ [K[?2004h]0;fish /home/ishidex2/progs/jam0002/creators_of_templ[30m(B[m[37m~/p/j/creators_of_templ[37m | [K[26C
