@@ -1,7 +1,7 @@
-cmm {
+small {
   main = findMacros+
 
- findMacros
+  findMacros
     = experimentalApplySyntactic<Macro>+
     | any
 
@@ -9,6 +9,8 @@ cmm {
     = "$data" "(" Expr ")"  -- data
     | "$newMessage" "(" Expr "," Expr ")" -- newMessage
 
+  Args = "(" notRPAR* ")"
+  
 Expr
   = "(" Expr ")" -- nested
   | Expr "(" Arglist? ")" -- funccall
@@ -31,8 +33,17 @@ dollar = "$"
 
 ws = " " | "\t"
 
+lex_any = any
+
 }
 
 
 
-
+G {
+  start = findMacros*
+  findMacros =
+    | experimentalApplySyntactic<Macro>
+    | any
+  Macro = "$macro" "(" arg "," arg ")"
+  arg = letter+
+}
