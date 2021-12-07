@@ -2,7 +2,7 @@
 
 sequence fibonacci from 0, 1 = x + S:(n-2)
 
-for 12 of fibonacci as n {
+for 12 of fibonacci as n do {
 	print n
 }
 

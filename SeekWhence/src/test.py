@@ -33,7 +33,6 @@ if __name__ == '__main__':
   for filename in os.listdir(testdir):
     if not filename.endswith('.yaml'): continue
     
-    testsrc  = os.path.splitext(f'{testdir}/{filename}')[0]+'.seq'
     testname = os.path.splitext(os.path.basename(f'{testdir}/{filename}'))[0]
     current_failed = False
 
@@ -41,7 +40,11 @@ if __name__ == '__main__':
       with open(f'{testdir}/{filename}', 'r') as info:
         testinfo = yaml.safe_load(info)
         testinfd = dotdict(**testinfo)
-        testproc, testtime = timeit(lambda: subprocess.run(['python3', f'{os.path.dirname(sys.argv[0])}/main.py', testsrc], capture_output = True, text = True))
+        testsrc  = f'{testdir}/{testinfd.source}' if 'source' in testinfo else os.path.splitext(f'{testdir}/{filename}')[0]+'.seq'
+
+        testproc, testtime = timeit(lambda: subprocess
+          .run(['python3', f'{os.path.dirname(sys.argv[0])}/main.py', testsrc], capture_output=True, text=True, 
+            input=(testinfd.stdin if 'stdin' in testinfo else '')))
 
         if 'status' in testinfo and testproc.returncode != testinfd.status:
           failed, current_failed = fail(testname, f'Expected exit code {testinfd.status}, got {testproc.returncode}', current_failed)

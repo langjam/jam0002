@@ -2,7 +2,7 @@
 
 sequence bottles from 99 = x-1
 
-for :inf of bottles as b {
+for :inf of bottles as b do {
 	if b == 0 then {
 		print "No more bottles of beer on the wall,"
 		print "No more bottles of beer,"

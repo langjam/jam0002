@@ -1,0 +1,16 @@
+; Sequence slices
+; Creates a view of a sequence which starts from a different index
+
+; A slice is not itself a sequence, just a view of one; changing the definition
+;   of the underlying sequence will also change the slice, and if the sequence
+;   goes out of scope, the slice will error on access.
+
+sequence indices = n
+
+set slice = indices::10
+print slice
+print slice:4             ; Access a slice saved to a variable
+
+; Looping over a slice
+for 10 of indices::10 as i do print i
+for 10 of slice as i do print i

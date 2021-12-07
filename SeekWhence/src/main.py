@@ -2,11 +2,13 @@
 
 import os
 import sys
+import math
 
 from parsy import *
 from dataclasses import dataclass
 from typing import Any
 from codecs import escape_decode
+from time import time as systime
 
 # Datatypes
 
@@ -15,22 +17,34 @@ class Sequence:
   exprs: tuple
   ident: str = "<anonymous>"
   baseCase: list = None
+  baseIndx: int = 0
 
   __cache = {}
 
+  def __post_init__(self):
+    if self.baseIndx is None: self.baseIndx = 0
+    if self.baseIndx < 0 and abs(self.baseIndx) > len(self.baseCase):
+      raise Exception(f'Cannot define sequence {self.ident} with negative indices not covered by its base cases')
+
   def generator(self, ctx={}):
-    current, prev = 0, 0
+    current, prev = max(self.baseIndx or 0, 0), None
     while True: 
       yield (nextval := self.value_at(current, ctx, prev))
       current, prev = current+1, nextval
 
   def value_at(self, n, ctx={}, prev=None):
-    if n < 0: return 0
-    if self.baseCase is not None and n < len(self.baseCase): return self.baseCase[n]
+    if n < self.baseIndx: return 0
     if n in self.__cache: return self.__cache[n]
-    
-    if prev == None and find_in_expr(self.exprs[n % len(self.exprs)], 'x', 'S'): prev = self.value_at(n-1, ctx)
-    self.__cache[n] = exec_expr(self.exprs[n % len(self.exprs)], { **ctx, 'x': prev, 'n': n, 'S': self })
+
+    if self.baseCase is not None and n < len(self.baseCase)+self.baseIndx:
+      if self.baseIndx < 0:
+        self.__cache[n] = exec_expr(self.baseCase[n-self.baseIndx], ctx)
+      else:
+        self.__cache[n] = exec_expr(self.baseCase[n], ctx)
+    else:
+      if prev is None and find_in_expr(self.exprs[n % len(self.exprs)], 'x', 'S'): prev = self.value_at(n-1, ctx)
+      self.__cache[n] = exec_expr(self.exprs[n % len(self.exprs)], { **ctx, 'x': prev, 'n': n, 'S': self })
+
     return self.__cache[n]
 
   def __str__(self):
@@ -39,6 +53,31 @@ class Sequence:
       basec = ", ".join([str(i) for i in self.baseCase])
       return f"[sequence {self.ident}: {basec} | {exprs}]"
     return f"[sequence {self.ident}: {exprs}]"
+
+@dataclass
+class SequenceSlice:
+  ident: str
+  sliceIndx: int
+
+  def generator(self, ctx={}):
+    if self.ident not in ctx or not isinstance(ctx[self.ident], Sequence):
+      raise Exception(f"Can't slice undefined sequence {self.ident}")
+
+    sequence = ctx[self.ident]
+    current, prev = max(self.sliceIndx, 0), 0
+    while True: 
+      yield (nextval := sequence.value_at(current, ctx, prev))
+      current, prev = current+1, nextval
+
+  def value_at(self, n, ctx={}, prev=None):
+    if self.ident not in ctx or not isinstance(ctx[self.ident], Sequence):
+      raise Exception(f"Can't slice undefined sequence {self.ident}")
+
+    return ctx[self.ident].value_at(n+self.sliceIndx, ctx)
+
+  def __str__(self):
+    return f"[slice of {self.ident} from {self.sliceIndx}]"
+
 
 @dataclass
 class Identifier:
@@ -50,7 +89,7 @@ class Identifier:
 @dataclass
 class ForLoop:
   amount: Any
-  srcseq: str
+  srcseq: Any
   ident: str
   body: Any
 
@@ -118,7 +157,7 @@ def create_parser():
   newline    = regex(r'\s*(\n\s*)+').desc('newline')
   validident = regex(r'[a-zA-Z_]\w*').desc('valid identifier')
   identifier = validident.map(Identifier)
-  integer    = regex(r'\d+').map(int).desc('integer')
+  integer    = regex(r'-?\d+').map(int).desc('integer')
 
   # Strings
   string_lit_double = regex(r'"(?:[^"\\]|\\.)*"').desc('string literal')
@@ -126,11 +165,14 @@ def create_parser():
   string_lit        = (string_lit_double | string_lit_single).map(lambda s: escape_decode(bytes(s[1:-1], 'utf-8'))[0].decode('utf-8'))
 
   # Expressions
-  collapse_expr  = lambda l,o=None: l if o == None else (o[0], collapse_expr(l), collapse_expr(o[1]))
-  expression     = forward_declaration()
-  funcCall       = forward_declaration()
-  sequenceAccess = seq(validident << string(':'), integer | identifier | (string('(') >> (expression | funcCall).optional() << string(')'))).combine(SequenceAccess)
-  operand        = sequenceAccess | identifier | integer | string_lit | (string('(') >> (expression | funcCall).optional() << string(')'))
+  collapse_expr    = lambda l,o=None: l if o == None else (o[0], collapse_expr(l), collapse_expr(o[1]))
+  expression       = forward_declaration()
+  expressionInline = string('(') >> padding >> expression.optional() << padding << string(')')
+  funcCall         = forward_declaration()
+  funcCallInline   = string('[') >> padding >> funcCall << padding << string(']')
+  sequenceSlice    = seq(validident << string('::'), integer | identifier | funcCallInline | expressionInline).combine(SequenceSlice)
+  sequenceAccess   = seq(validident << string(':'), integer | identifier | funcCallInline | expressionInline).combine(SequenceAccess)
+  operand          = sequenceAccess | sequenceSlice | identifier | integer | string_lit | funcCallInline | expressionInline
 
   mulOp = seq(padding >> char_from('*/%') << padding, operand)
   mulTm = seq(operand, mulOp.optional()).combine(collapse_expr)
@@ -149,13 +191,22 @@ def create_parser():
   statements = newline.optional() >> padding >> statement.sep_by(newline, min=1) << padding << newline.optional()
 
   # Sequence definitions
-  sequenceDef = seq(
-    _1       = string('sequence') << whitespace,
-    ident    = validident << whitespace,
-    baseCase = (string('from') >> whitespace >> integer.sep_by(padding >> string(',') << padding, min=1) << whitespace).optional(),
-    _2       = string('=') << whitespace,
-    exprs    = expression.sep_by(padding >> string(',') << padding, min=1)
-  ).combine_dict(Sequence)
+  sequenceDef = alt(
+    seq(
+      _1    = string('sequence') << whitespace,
+      ident = validident << whitespace,
+      _2    = string('=') << whitespace,
+      exprs = expression.sep_by(padding >> string(',') << padding, min=1)
+    ).combine_dict(Sequence),
+    seq(
+      _1       = string('sequence') << whitespace,
+      ident    = validident << whitespace,
+      baseCase = string('from') >> whitespace >> operand.sep_by(padding >> string(',') << padding, min=1) << whitespace,
+      baseIndx = (string('at') >> whitespace >> integer << whitespace).optional(),
+      _2       = string('=') << whitespace,
+      exprs    = expression.sep_by(padding >> string(',') << padding, min=1)
+    ).combine_dict(Sequence)
+  )
 
   # Function definitions and calls
   funcDef = seq(
@@ -166,8 +217,8 @@ def create_parser():
   ).combine_dict(FuncDef)
 
   funcCall.become(seq(
-    name = validident << whitespace,
-    args = expression.sep_by(padding >> string(',') << padding, min=0)
+    name = validident,
+    args = (whitespace >> expression.sep_by(padding >> string(',') << padding, min=1)).optional()
   ).combine_dict(FuncCall))
 
   # Variable definitions
@@ -183,9 +234,10 @@ def create_parser():
     _1     = string('for') << whitespace,
     amount = (expression | string(':inf').result(InfiniteLoop)) << whitespace,
     _2     = string('of') << whitespace,
-    srcseq = validident << whitespace,
+    srcseq = expression << whitespace,
     _3     = string('as') << whitespace,
     ident  = validident << whitespace,
+    _4     = string('do') << whitespace,
     body   = block
   ).combine_dict(ForLoop)
 
@@ -216,6 +268,11 @@ def create_parser():
 
 default_ctx = {
   'print': lambda _,*s: print(*s),
+  'input': lambda _,p=None: (input() if p is None else input(p)) if sys.stdin.isatty() else sys.stdin.readline().rstrip('\n'),
+  'systime': lambda _: systime()*1000,
+  'floor': lambda _,x: math.floor(x),
+  'ceil': lambda _,x: math.ceil(x),
+  'round': lambda _,x: math.round(x),
   'true': True,
   'false': False,
   'none': None
@@ -243,7 +300,7 @@ def exec_expr(expr, ctx={}):
     return ctx[expr.name] if expr.name in ctx else None
 
   if isinstance(expr, SequenceAccess):
-    if expr.ident not in ctx or not isinstance(ctx[expr.ident], Sequence):
+    if expr.ident not in ctx or (not isinstance(ctx[expr.ident], Sequence) and not isinstance(ctx[expr.ident], SequenceSlice)):
       raise Exception(f"Can't access undefined sequence {expr.ident}")
     index = exec_expr(expr.index, ctx)
     if isinstance(index, float): index = int(index)
@@ -254,7 +311,7 @@ def exec_expr(expr, ctx={}):
   if isinstance(expr, FuncCall):
     if expr.name not in ctx or not callable(ctx[expr.name]):
       raise Exception(f"Can't call undefined function {expr.name}")
-    return ctx[expr.name](ctx, *[exec_expr(a, ctx) for a in expr.args])
+    return ctx[expr.name](ctx, *[exec_expr(a, ctx) for a in expr.args or []])
 
   if isinstance(expr, tuple):
     if expr[0] in operators:
@@ -282,10 +339,12 @@ def find_in_expr(expr, *idns):
 
   if isinstance(expr, int): return expr in idns
   if isinstance(expr, Identifier): return expr.name in idns
+  if isinstance(expr, FuncCall): 
+    return expr.name in idns or any(find_in_expr(e, *idns) for e in expr.args)
   if isinstance(expr, tuple):
     return find_in_expr(expr[1], *idns) or find_in_expr(expr[2], *idns)
 
-  return false
+  return False
 
 def execute(program, ctx=default_ctx, in_loop=False):
   '''Execute a list of parsed statements'''
@@ -308,11 +367,13 @@ def execute(program, ctx=default_ctx, in_loop=False):
 
     # For loops
     if isinstance(statement, ForLoop):
-      if statement.srcseq not in ctx or not isinstance(ctx[statement.srcseq], Sequence):
+      srcseq = exec_expr(statement.srcseq, ctx)
+
+      if not srcseq or (not isinstance(srcseq, Sequence) and not isinstance(srcseq, SequenceSlice)):
         raise Exception(f"Can't iterate over undefined sequence {statement.srcseq}")
 
       if statement.amount is InfiniteLoop:
-        for value in ctx[statement.srcseq].generator():
+        for value in srcseq.generator(ctx):
           value = execute(statement.body, { **ctx, statement.ident: value }, True)
           if value is BreakStmt: break
       else:
@@ -320,7 +381,7 @@ def execute(program, ctx=default_ctx, in_loop=False):
         if not isinstance(maxiters, int):
           raise Exception(f"Amount expression of for loop must evaluate to an integer")
 
-        for value in ctx[statement.srcseq].generator():
+        for value in srcseq.generator(ctx):
           value = execute(statement.body, { **ctx, statement.ident: value }, True)
           if value is BreakStmt: break
           numiters += 1

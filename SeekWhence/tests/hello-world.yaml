@@ -1,0 +1,3 @@
+source: ../examples/hello-world.seq
+status: 0
+stdout: "Hello, world!\n"

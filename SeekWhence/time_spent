@@ -1,2 +1,14 @@
-Dec 3: 8h code, 0h docs; core parser/runtime
-Dec 4: 2h code, 10m docs; test framework, basic CLI, variables, string escapes
+Dec 3: 
+	8h code, 0h docs
+	Core parser/runtime
+
+Dec 4: 
+	2h code, 10m docs
+	Test framework, basic CLI, variables, string escapes
+
+Dec 6: 
+	Stdin support
+	Systime and rounding functions
+	Inline function calls
+	Custom base indices
+	Sequence slicing
