@@ -1,5 +1,5 @@
 ; Random number generation via LCG
-; For "unseeded" RNG, set the base case to [floor [systime]]
+; For "unseeded" RNG, set the base case to [systime]
 
 ; This also uses a "hidden" base case via negative base indices; for loops
 ;   will never iterate over negative indices, so you can hide a base case 
@@ -7,7 +7,7 @@
 ;   indices must have a corresponding base case, and can't be calculated from
 ;   the default expression.
 
-sequence random from 120395 at -1 = [floor (x * 1103515245 + 12345) % 2147483647]
+sequence random from 120395 at -1 = (x * 1103515245 + 12345) % 2147483647
 
 print 'Seed:', random:-1           ; The seed can be accessed directly, but is hidden from loops
 for 10 of random as r do print r

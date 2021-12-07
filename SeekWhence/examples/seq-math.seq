@@ -1,0 +1,35 @@
+; Arithmetic operations on sequences
+
+; The default version of each operator will apply to both the base cases and expressions.
+; Suffixing an operator with ~ (eg +~) will only apply to the base cases.
+; Suffixing an operator with : (eg +:) will only apply to the expressions.
+; Which side of the operator the sequence is on will translate to each base case and expression.
+
+sequence fibonacci from 0, 1 = x + S:(n-2)
+
+print (fibonacci + 4)   ; Addition
+print (fibonacci +~ 4)
+print (fibonacci +: 4)
+
+print (fibonacci - 4)   ; Subtraction
+print (fibonacci -~ 4)
+print (fibonacci -: 4)
+
+print (fibonacci * 4)   ; Multiplication
+print (fibonacci *~ 4)
+print (fibonacci *: 4)
+
+print (fibonacci / 4)   ; Division
+print (fibonacci /~ 4)
+print (fibonacci /: 4)
+
+print (fibonacci % 4)   ; Modulus
+print (fibonacci %~ 4)
+print (fibonacci %: 4)
+
+print (fibonacci ^ 4)   ; Exponentiation
+print (fibonacci ^~ 4)
+print (fibonacci ^: 4)
+
+print (4 + fibonacci)   ; Opposite order (matters for -/%^)
+

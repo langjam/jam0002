@@ -1,0 +1,22 @@
+source: ../examples/seq-math.seq
+status: 0
+stdout: |
+  [sequence <fibonacci+4>: (0 + 4), (1 + 4) | ((x + S:(n - 2)) + 4)]
+  [sequence <fibonacci+4>: (0 + 4), (1 + 4) | (x + S:(n - 2))]
+  [sequence <fibonacci+4>: 0, 1 | ((x + S:(n - 2)) + 4)]
+  [sequence <fibonacci-4>: (0 - 4), (1 - 4) | ((x + S:(n - 2)) - 4)]
+  [sequence <fibonacci-4>: (0 - 4), (1 - 4) | (x + S:(n - 2))]
+  [sequence <fibonacci-4>: 0, 1 | ((x + S:(n - 2)) - 4)]
+  [sequence <fibonacci*4>: (0 * 4), (1 * 4) | ((x + S:(n - 2)) * 4)]
+  [sequence <fibonacci*4>: (0 * 4), (1 * 4) | (x + S:(n - 2))]
+  [sequence <fibonacci*4>: 0, 1 | ((x + S:(n - 2)) * 4)]
+  [sequence <fibonacci/4>: (0 / 4), (1 / 4) | ((x + S:(n - 2)) / 4)]
+  [sequence <fibonacci/4>: (0 / 4), (1 / 4) | (x + S:(n - 2))]
+  [sequence <fibonacci/4>: 0, 1 | ((x + S:(n - 2)) / 4)]
+  [sequence <fibonacci%4>: (0 % 4), (1 % 4) | ((x + S:(n - 2)) % 4)]
+  [sequence <fibonacci%4>: (0 % 4), (1 % 4) | (x + S:(n - 2))]
+  [sequence <fibonacci%4>: 0, 1 | ((x + S:(n - 2)) % 4)]
+  [sequence <fibonacci^4>: (0 ^ 4), (1 ^ 4) | ((x + S:(n - 2)) ^ 4)]
+  [sequence <fibonacci^4>: (0 ^ 4), (1 ^ 4) | (x + S:(n - 2))]
+  [sequence <fibonacci^4>: 0, 1 | ((x + S:(n - 2)) ^ 4)]
+  [sequence <4+fibonacci>: (4 + 0), (4 + 1) | (4 + (x + S:(n - 2)))]

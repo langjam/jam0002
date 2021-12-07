@@ -1,3 +1,36 @@
 source: ../examples/slice.seq
 status: 0
-stdout: "[slice of indices from 10]\n14\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n"
+stdout: |
+  [slice indices::10]
+  14
+  14
+  10
+  11
+  12
+  13
+  14
+  15
+  16
+  17
+  18
+  19
+  10
+  11
+  12
+  13
+  14
+  15
+  16
+  17
+  18
+  19
+  100
+  101
+  102
+  103
+  104
+  105
+  106
+  107
+  108
+  109

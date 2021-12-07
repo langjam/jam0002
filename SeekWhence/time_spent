@@ -4,12 +4,19 @@ Dec 3:
 
 Dec 4: 
 	2h code, 10m docs
-	Test framework, basic CLI, variables, string escapes
+	Test framework
+	Basic CLI
+	Variables
+	String escapes
 
 Dec 6: 
-	2h code, 0h docs
+	5h code, 0h docs
 	Stdin support
 	Systime and rounding functions
 	Inline function calls
 	Custom base indices
 	Sequence slicing
+	Arithmetic operations on sequences
+	Accesses/slices are operators instead of special syntax
+	Correct operator associativity
+	Other refactoring
