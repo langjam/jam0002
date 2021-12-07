@@ -121,6 +121,8 @@ class SequenceSlice(SequenceLike):
     if isinstance(self.sequence, SequenceSlice):
       self.sliceIndx = self.sliceIndx + self.sequence.sliceIndx
       self.sequence  = self.sequence.sequence
+    if self.sliceIndx < 0:
+      raise Exception(f"Can't create a slice which starts at negative indices of its base sequence")
 
   def generator(self, ctx={}):
     '''Generator function which yields each step of the sequence from 0.'''
