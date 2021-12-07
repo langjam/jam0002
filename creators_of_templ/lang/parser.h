@@ -6,7 +6,6 @@
 #include "lexer.h"
 #include "ast.h"
 
-
 typedef struct Parser {
 	Lexer lexer;
 	Token current;

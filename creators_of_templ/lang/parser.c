@@ -97,7 +97,7 @@ static ErrCode give_tok(Parser *p, TokenType type, Token *dest) {
 // Parses a simple non-recursive selector
 static ErrCode simple_selector(Parser *p, Node *dest) {
 	Token name;
-	
+
 	NodeType type = node_primitive_selector;
 	
 	// This is a class
@@ -123,9 +123,11 @@ static ErrCode composite_selector(Parser *p, Node *dest) {
 	return err_ok;
 }
 
+
 static ErrCode selector(Parser *p, Node *dest) {
 	return composite_selector(p, dest);
 }
+
 
 static ErrCode selector_and_props(Parser *p, Node *dest) {
 	node_set(dest, node_of(node_selector_and_props));

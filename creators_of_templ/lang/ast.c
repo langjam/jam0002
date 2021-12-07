@@ -38,7 +38,7 @@ Node* node_set(Node *destination, Node source) {
 	// Acquire sensetive fields
 	Node *first_child = destination->first_child;
 	Node *sibling = destination->sibling;
-	
+
 	*destination = source;
 	
 	// Set them back
@@ -59,8 +59,8 @@ Node node_of(NodeType type) {
 
 Node node_from(NodeType type, Token token) {
 	return (Node) {
-	.type = type,
-	.token = token
+		.type = type,
+		.token = token
 	};
 }
 
@@ -68,7 +68,7 @@ Node node_from(NodeType type, Token token) {
 Node* node_child(Node *node, size_t n) {
 	Node *child = node->first_child;
 	while (n-- && child) {
-	child = child->sibling;
+		child = child->sibling;
 	}
 	return child;
 }
@@ -80,6 +80,8 @@ void ast_deinit(Ast* ast) {
 
 void node_pretty_print(Node *node, int indent) {
 	printf("%*c\x1b[34m", indent, ' ');
+
+
 	switch (node->type) {
 		case node_inval:	   	   printf("invalid");			break;
 		case node_property:  		 printf("property");  		 break;
@@ -91,10 +93,10 @@ void node_pretty_print(Node *node, int indent) {
 		case node_composite_selector: printf("composite_selector"); break;
 		case node_call:			   printf("call");		  	 break;
 		case node_pragma:			 printf("pragma");			 break;
-		case node_unary:	 		 printf("unary");			 break;
+		case node_unary:	 		 printf("unary");			  break;
 		case node_binary:			 printf("binary");		     break;
 		case node_var:		   	 printf("var");	   		 break;
-		case node_root:   	   	 printf("root");	   		 break;
+		case node_root:   	   	 printf("root");	   		break;
 	}
 	printf(": \x1b[37m");
 	
@@ -115,8 +117,8 @@ void node_pretty_print(Node *node, int indent) {
 		// printf("%*c)\n", indent, ' ');
 	}
 
-		if (node->sibling)
-			node_pretty_print(node->sibling, indent);
+	if (node->sibling)
+		node_pretty_print(node->sibling, indent);
 }
 
 void ast_pretty_print(Ast *ast) {

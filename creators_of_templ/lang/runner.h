@@ -61,13 +61,13 @@ typedef struct Runner {
 	size_t node_count;
 } Runner;
 
-
 // Initializes runner and uses AST,
 // The AST must persist throughout the entire execution
 ErrCode runner_init(Ast *ast, Runner *dest);
 
 // Looks up node property
 RunnerProp* runner_get_node_prop(RunnerNode *node, const char *key);
+
 
 void runner_dump(Runner *runner);
 

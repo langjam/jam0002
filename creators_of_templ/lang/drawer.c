@@ -10,7 +10,7 @@ Texture2D screen_render;
 void draw_init(int canvas_size) {
 	InitWindow(canvas_size, canvas_size, "TEMPL");
 	SetTargetFPS(60);
-
+	
 	screen_buffer = GenImageColor(canvas_size, canvas_size, WHITE);
 	screen_render = LoadTextureFromImage(screen_buffer);
 }
@@ -55,11 +55,11 @@ void draw_circle(RunnerProps *props) {
 	uint32_t color = 0xff;
 
 	RunnerProp *p;
-	if ( (p = map_get(props, "position")) && p->type == type_position)
+	if ((p = map_get(props, "position")) && p->type == type_position)
 		pos = p->data.pos;
-	if ( (p = map_get(props, "radius")) && p->type == type_number)
+	if ((p = map_get(props, "radius")) && p->type == type_number)
 		r = p->data.number;
-	if ( (p = map_get(props, "color")) && p->type == type_color)
+	if ((p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
 		
 	Color raycolor = {
@@ -78,11 +78,11 @@ void draw_rect(RunnerProps *props) {
 	uint32_t color = 0xff;
 
 	RunnerProp *p;
-	if ( (p = map_get(props, "position")) && p->type == type_position)
+	if ((p = map_get(props, "position")) && p->type == type_position)
 		pos = p->data.pos;
-	if ( (p = map_get(props, "dimensions")) && p->type == type_position)
+	if ((p = map_get(props, "dimensions")) && p->type == type_position)
 		dm = p->data.pos;
-	if ( (p = map_get(props, "color")) && p->type == type_color)
+	if ((p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
 	Color raycolor = {
 		.r = (color >> 16) & 0xFF,
@@ -92,8 +92,6 @@ void draw_rect(RunnerProps *props) {
 	};
 	DrawRectangle(pos.x, pos.y, dm.x, dm.y, raycolor);
 }
-
-
 
 void draw_runner_node(RunnerNode *node, Camera2D transform) {
 	if (node == NULL)

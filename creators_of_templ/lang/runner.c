@@ -21,7 +21,9 @@ RunnerNode *alloc(Runner *r, RunnerNode *parent) {
 	// Zero-initialize the node
 	*new_node = (RunnerNode) { 0 };
 	new_node->parent = parent;
-
+	
+	
+	
 	// Make node if we have a parent
 	if (parent != NULL)
 	{
@@ -61,14 +63,12 @@ ErrCode make_atom(Runner *r, Node *atom, RunnerProp *dest) {
 			}
 		} break;
 		default:
-			// TODO: Provide Err struct in runtime
-			r->err = err_f(err_badprop, atom->token.loc, "You can't use this in a property value");
-			return err_badprop;
+		// TODO: Provide Err struct in runtime
+		r->err = err_f(err_badprop, atom->token.loc, "You can't use this in a property value");
+		return err_badprop;
 	}
 	return err_ok;
 }
-
-
 
 ErrCode checked_atom(Runner *r, Node *atom, RunnerProp *dest, RunnerPropType type) {
 	checkout(make_atom(r, atom, dest));
@@ -82,55 +82,56 @@ ErrCode checked_atom(Runner *r, Node *atom, RunnerProp *dest, RunnerPropType typ
 ErrCode make_value(Runner *r, Node *val, RunnerProp *dest, RunnerPropType type) {
 	switch (val->type) {
 		case node_unary:
-			if (tok_eq(val->token, "-")) {
-				if (type != type_number) {
-					r->err = err_f(err_badprop, val->token.loc, "Cannot negate `%s'", type_names[dest->type]);
-					return err_badprop;
-				}
-				checkout(make_value(r, val->first_child, dest, type_number));
-				dest->data.number *= -1;
-			}
-			return err_ok;
-			break;
-		case node_binary:
+		if (tok_eq(val->token, "-")) {
 			if (type != type_number) {
-				r->err = err_f(err_badprop, val->token.loc, "Cannot use `%.*s' on `%s'", val->token.len, val->token.val, type_names[dest->type]);
+				r->err = err_f(err_badprop, val->token.loc, "Cannot negate `%s'", type_names[dest->type]);
 				return err_badprop;
 			}
-			RunnerProp right;
-			if (tok_eq(val->token, "+")) {
-				checkout(make_value(r, val->first_child, dest, type_number));
-				checkout(make_value(r, val->first_child, &right, type_number));
-				dest->data.number += right.data.number;
-			}
-			else if (tok_eq(val->token, "-")) {
-				checkout(make_value(r, val->first_child, dest, type_number));
-				checkout(make_value(r, val->first_child, &right, type_number));
-				dest->data.number -= right.data.number;
-			}
-			else if (tok_eq(val->token, "*")) {
-				checkout(make_value(r, val->first_child, dest, type_number));
-				checkout(make_value(r, val->first_child, &right, type_number));
-				dest->data.number *= right.data.number;
-			}
-			else if (tok_eq(val->token, "/")) {
-				checkout(make_value(r, val->first_child, dest, type_number));
-				checkout(make_value(r, val->first_child, &right, type_number));
-				dest->data.number /= right.data.number;
-			}
-			else {
-				r->err = err_f(err_badprop, val->token.loc, "Sorry can't handle this operator for now");
-				return err_badprop;
-			}
-			return err_ok;
-			break;	
+			checkout(make_value(r, val->first_child, dest, type_number));
+			dest->data.number *= -1;
+		}
+		return err_ok;
+		break;
+		case node_binary:
+		if (type != type_number) {
+			r->err = err_f(err_badprop, val->token.loc, "Cannot use `%.*s' on `%s'", val->token.len, val->token.val, type_names[dest->type]);
+			return err_badprop;
+		}
+		RunnerProp right;
+		if (tok_eq(val->token, "+")) {
+			checkout(make_value(r, val->first_child, dest, type_number));
+			checkout(make_value(r, val->first_child, &right, type_number));
+			dest->data.number += right.data.number;
+		}
+		else if (tok_eq(val->token, "-")) {
+			checkout(make_value(r, val->first_child, dest, type_number));
+			checkout(make_value(r, val->first_child, &right, type_number));
+			dest->data.number -= right.data.number;
+		}
+		else if (tok_eq(val->token, "*")) {
+			checkout(make_value(r, val->first_child, dest, type_number));
+			checkout(make_value(r, val->first_child, &right, type_number));
+			dest->data.number *= right.data.number;
+		}
+		else if (tok_eq(val->token, "/")) {
+			checkout(make_value(r, val->first_child, dest, type_number));
+			checkout(make_value(r, val->first_child, &right, type_number));
+			dest->data.number /= right.data.number;
+		}
+		else {
+			r->err = err_f(err_badprop, val->token.loc, "Sorry can't handle this operator for now");
+			return err_badprop;
+		}
+		return err_ok;
+		break;	
 		default:
-			return checked_atom(r, val, dest, type);
+		return checked_atom(r, val, dest, type);
 	} 
 }
 
 
 ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
+	
 	if (strncmp(call->token.val, "vec2", call->token.len) == 0) {
 		dest->type = type_position;
 		if (node_child(call, 1) == NULL) {
@@ -141,7 +142,7 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 		RunnerProp p1, p2;
 		checkout(make_value(r, node_child(call, 0), &p1, type_number));
 		checkout(make_value(r, node_child(call, 1), &p2, type_number));
-
+		
 		dest->data.pos.x = p1.data.number;
 		dest->data.pos.y = p2.data.number;
 	}
@@ -156,19 +157,19 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 ErrCode make_prop(Runner *r, Node *propdesc, RunnerProp *dest) {
 	switch (propdesc->type) {
 		case node_call:
-			checkout(make_call(r, propdesc, dest));
-			break;
+		checkout(make_call(r, propdesc, dest));
+		break;
 		case node_atom:
-			checkout(make_atom(r, propdesc, dest));
-			break;
+		checkout(make_atom(r, propdesc, dest));
+		break;
 		case node_binary:
 		case node_unary:
-			checkout(make_value(r, propdesc, dest, type_number));
-			break;
+		checkout(make_value(r, propdesc, dest, type_number));
+		break;
 		default:
-			// TODO: Provide Err struct in runtime
-			r->err = err_f(err_badprop, propdesc->token.loc, "You can't use this in a property value");
-			return err_badprop;
+		// TODO: Provide Err struct in runtime
+		r->err = err_f(err_badprop, propdesc->token.loc, "You can't use this in a property value");
+		return err_badprop;
 	}
 	return err_ok;
 }
@@ -177,7 +178,7 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 	if (node->type == node_root)
 		node = node->first_child;
 	assert(node->type == node_selector_and_props);
-
+	
 	Node *selector = node_child(node, 0);
 	dest->selector = selector;
 	dest->type = element_root;
@@ -194,14 +195,15 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 	Node *prop_list = node_child(node, 1);
 	assert(prop_list->type == node_property_list);
 	
-	map_init(&dest->props);
 	
 	static char keybuf[1024] = { 0 };
 	
 	for (Node *child = prop_list->first_child; child; child = child->sibling) {
-	
+		
+		
 		if (child->type == node_selector_and_props) {
 			// Expand children
+			
 			checkout(expand_tree(r, child, alloc(r, dest)));
 		}
 		if (child->type == node_property) {
@@ -214,31 +216,32 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 			// Serialize the prop into runnerprop
 			RunnerProp dest_prop;
 			checkout(make_prop(r, prop_val, &dest_prop));
-
+			
 			// Put it into props
 			map_set(&dest->props, keybuf, dest_prop); 
 		}
 	}
+	
 	return err_ok;
 }
 
 void dump_prop(RunnerProp prop) {
 	switch (prop.type) {
 		case type_nil:
-			printf("nil");
-			break;
+		printf("nil");
+		break;
 		case type_color:
-			printf("%x", prop.data.color);
-			break;
+		printf("%x", prop.data.color);
+		break;
 		case type_number:
-			printf("%g", prop.data.number);
-			break;
+		printf("%g", prop.data.number);
+		break;
 		case type_position:
-			printf("vec2(%g, %g)", prop.data.pos.x, prop.data.pos.y);
-			break;
+		printf("vec2(%g, %g)", prop.data.pos.x, prop.data.pos.y);
+		break;
 		case type_string:
-			printf("'%s'", prop.data.string);
-			break;
+		printf("'%s'", prop.data.string);
+		break;
 		
 	}
 }
@@ -251,14 +254,14 @@ void _runner_dump(RunnerNode *node, int depth) {
 	
 	switch (node->type) {
 		case element_rect:
-			printf("rect");
-			break;
+		printf("rect");
+		break;
 		case element_circle:
-			printf("circle");
-			break;
+		printf("circle");
+		break;
 		case element_root:
-			printf("root");
-			break;
+		printf("root");
+		break;
 	}
 	printf("\n");
 	
@@ -271,7 +274,7 @@ void _runner_dump(RunnerNode *node, int depth) {
 		dump_prop(*map_get(&node->props, key));
 		printf("\n");
 	}	
-		
+	
 	_runner_dump(node->first_child, depth + 4);
 	_runner_dump(node->sibling, depth);
 }
@@ -304,7 +307,7 @@ void runner_exec(Runner *runner);
 void _runner_deinit(RunnerNode *node) {
 	if (node == NULL)
 		return;
-		
+	
 	map_deinit(&node->props);
 	
 	_runner_deinit(node->first_child);

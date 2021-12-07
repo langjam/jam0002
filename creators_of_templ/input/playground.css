@@ -1,7 +1,9 @@
-circle
-{
-	position: vec2(50, 100);
-	radius: 100+20;
-	color: #00ff00;
+root {
+	circle
+	{
+		position: vec2(50, 100);
+		radius: 69;
+		color: #00ff00;
+	}
 }
 

@@ -88,6 +88,7 @@ static int map_resize(map_base_t *m, int nbuckets) {
       node = next;
     }
   }
+  
   /* Return error code if realloc() failed */
   return (buckets == NULL) ? -1 : 0;
 }
@@ -140,6 +141,7 @@ int map_set_(map_base_t *m, const char *key, void *value, int vsize) {
     memcpy((*next)->value, value, vsize);
     return 0;
   }
+  
   /* Add new node */
   node = map_newnode(key, value, vsize);
   if (node == NULL) goto fail;
@@ -158,7 +160,7 @@ int map_set_(map_base_t *m, const char *key, void *value, int vsize) {
 
 
 void map_remove_(map_base_t *m, const char *key) {
-  map_node_t *node;
+  map_node_t *node; 
   map_node_t **next = map_getref(m, key);
   if (next) {
     node = *next;

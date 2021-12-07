@@ -25,8 +25,10 @@ Err err_f(ErrCode code, Location at, char *fmt, ...) {
 // Returns start of a specific line
 char* linestart(char *source_file, int line) {
 	while (line > 0 && *source_file) {
-		if (*source_file++ == '\n')
+		if (*source_file++ == '\n') {
 			line -= 1;
+		}
+		
 	}
 	
 	return source_file;
@@ -37,7 +39,7 @@ void print_line(char *source, int line) {
 	// Retrieve the bounds of the line
 	char *start = linestart(source, line);
 	char *end = linestart(source, line+1);
-	
+
 	// Print it
 	printf("%.*s", (int)(end-start), start);
 }
@@ -50,6 +52,8 @@ void err_explain(Err *err, char *source_file) {
 	// Store line for convenience
 	int line = err->location.lineno;
 	int col = err->location.charno;
+	
+	
 
 	// Print message
 	// TODO: We might want to print the note line as a parameter
