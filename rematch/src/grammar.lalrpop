@@ -69,12 +69,12 @@ FactorOp: Located<Binop> = {
 }
 
 Atom: Located<Expr> = {
-    Prim => <>.map(Expr::Pattern),
+    Prim => <>,
     "(" <Expr> ")",
 }
 
 Clause: Clause = {
-    "|" <pattern:Prim> <recursive:MatchKind> <body:Expr> => {
+    "|" <pattern:Pattern> <recursive:MatchKind> <body:Expr> => {
         Clause {
             recursive,
             pattern,
@@ -88,20 +88,32 @@ MatchKind: bool = {
     "rematch" => true,
 }
 
-Prim: Located<Pattern> = {
+Prim: Located<Expr> = {
+    Located<Ident> => <>.map(Expr::Var),
+    <l:@L> <name: Located<Constr>> <r:@R> => Expr::Constructor {
+            name,
+            args: vec![],
+        }.located(Location { file_id, span: Span(l, r) }),
+    <l:@L> <name:Located<Constr>> "(" <args:Comma<Expr>> ")" <r:@R> => Expr::Constructor {
+        name,
+        args,
+    }.located(Location { file_id, span: Span(l, r) }),
+}
+
+Pattern: Located<Pattern> = {
     Located<Ident> => <>.map(Pattern::Var),
     <l:@L> <name: Located<Constr>> <r:@R> => Pattern::Constructor {
             name,
             args: vec![],
         }.located(Location { file_id, span: Span(l, r) }),
-    <l:@L> <name:Located<Constr>> "(" <args:Comma<Prim>> ")" <r:@R> => Pattern::Constructor {
+    <l:@L> <name:Located<Constr>> "(" <args:Comma<Pattern>> ")" <r:@R> => Pattern::Constructor {
         name,
         args,
     }.located(Location { file_id, span: Span(l, r) }),
 }
 
 Comma<T>: Vec<T> = {
-    <x:T> "," <xs:T+> => std::iter::once(x).chain(xs.into_iter()).collect(),
+    <x:T> "," <xs:Comma<T>> => std::iter::once(x).chain(xs.into_iter()).collect(),
     <x:T> => vec![x],
 }
 

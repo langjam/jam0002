@@ -28,7 +28,11 @@ pub enum Binop {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Expr {
-    Pattern(Pattern),
+    Var(String),
+    Constructor {
+        name: Located<String>,
+        args: Vec<Located<Self>>,
+    },
     Binop {
         lhs: Located<Rc<Self>>,
         rhs: Located<Rc<Self>>,

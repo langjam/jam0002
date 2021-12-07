@@ -421,7 +421,20 @@ impl AstCtx {
 
     fn make_expr_with_binds(&mut self, ast: ast::Expr, binders: &BTreeMap<String, u32>) -> Ast {
         match ast {
-            ast::Expr::Pattern(p) => self.make_pat_expr(p, binders),
+            ast::Expr::Var(name) => {
+                if let Some(&name) = binders.get(&name) {
+                    Ast::Var { name }
+                } else {
+                    Ast::DeclRef { name }
+                }
+            }
+            ast::Expr::Constructor { name, args } => Ast::Constr {
+                name: name.value,
+                args: args
+                    .into_iter()
+                    .map(|expr| self.make_expr_with_binds(expr.value, binders))
+                    .collect(),
+            },
             ast::Expr::Binop { op, lhs, rhs } => Ast::Constr {
                 name: format!("{:?}", op.value),
                 args: vec![
@@ -471,25 +484,6 @@ impl AstCtx {
                 };
                 (pat, bindings)
             }
-        }
-    }
-
-    fn make_pat_expr(&self, prim: ast::Pattern, binders: &BTreeMap<String, u32>) -> Ast {
-        match prim {
-            ast::Pattern::Var(name) => {
-                if let Some(&name) = binders.get(&name) {
-                    Ast::Var { name }
-                } else {
-                    Ast::DeclRef { name }
-                }
-            }
-            ast::Pattern::Constructor { name, args } => Ast::Constr {
-                name: name.value,
-                args: args
-                    .into_iter()
-                    .map(|pat| self.make_pat_expr(pat.value, binders))
-                    .collect(),
-            },
         }
     }
 
