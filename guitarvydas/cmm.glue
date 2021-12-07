@@ -29,7 +29,7 @@ Macro_data [k Param] = [[${support.getParam1 ()}->data]]
 Macro_connectedTo [k Param] = [[connectionsConnectedTo (${support.getParam1 ()})]]
 Macro_connect [k TwoParams] = [[connectionsConnect (${support.getParam1 ()}, ${support.getParam2 ()})]]
 
-Macro_withLock [k Block] = [[${k}${Block}\n]]
+Macro_withLock [k Block] = [[\{${Block}\}\n]]
 Macro_send [k TwoParams] = [[kernelSend (${support.getParam1 ()}, ${support.getParam2 ()})]]
 Macro_panic [k Param] = [[kernelPanic (${support.getParam1 ()})]]
 
@@ -50,7 +50,7 @@ Expr_atom [a] = [[${a}]]
 Arglist [@ArgComma] = [[${ArgComma}]]
 ArgComma [expr kcomma] = [[${expr},]]
 
-block_nested [klbrace @Block krbrace] = [[${klbrace}${Block}${krbrace}]]
+block_nested [klbrace @Block krbrace] = [[${Block}]]
 block_raw [notBrace] = [[${notBrace}]]
 
 notBrace [c] = [[${c}]]
