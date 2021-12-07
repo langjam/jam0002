@@ -2,7 +2,7 @@ pre {
   main = findMacro+
 
  findMacro
-    = nl? experimentalApplySyntactic<Macro>+ -- macro
+    = wsnl? experimentalApplySyntactic<Macro>+ -- macro
     | any                                    --default
 
   Macro
@@ -65,6 +65,7 @@ dollar = "$"
 
 ws = " " | "\t"
 
+wsnl = ws | nl
 
 atom = atomchar+
 atomchar = ~"$" ~"," ~"(" ~")" any 

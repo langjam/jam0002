@@ -1,6 +1,6 @@
 main [@findMacros] = [[${findMacros}]]
 
-findMacro_macro [nl x] = [[${nl}${x}]]
+findMacro_macro [wsnl x] = [[${wsnl}${x}]]
 findMacro_default [x] = [[${x}]]
 
 Macro_first [k Param] = [[${support.getParam1 ()}->data]]

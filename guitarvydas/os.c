@@ -1,9 +1,9 @@
 void DispatchTransferOutputsForOneComponent (Component c) {
   List outputs = $field (c, outputQueue);
-  outputs =listReverse (outputs);
+  outputs = listReverse (outputs);
   while (!NULL == outputs) {
-    Component receiver =$connectedToc;
-    Datum data =outputs->data;
+    Component receiver = $connectedToc;
+    Datum data = outputs->data;
     Message m = $newMessage (data, NULL);
 $appendInput;
 outputs->next;
@@ -13,9 +13,9 @@ outputs->next;
 void DispatchOnce () {
   List all = runQueue;
   while (!NULL == all{
-      component =all->data;
+      component = all->data;
       if (component->inputQueue) {
-	Message m =$popInputcomponent;
+	Message m = $popInputcomponent;
 $callReaction;
       }
 all->next;
@@ -31,7 +31,7 @@ void Dispatcher () {
 
 void DispatchTransferOutputs () {
   List all = runQueue;
-  c =all->data;
+  c = all->data;
   while (!NULL == all) {
     DispatchTransferOutputsForOneComponent (componentList);
 all->next;
