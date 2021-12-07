@@ -7,6 +7,7 @@ Dec 4:
 	Test framework, basic CLI, variables, string escapes
 
 Dec 6: 
+	2h code, 0h docs
 	Stdin support
 	Systime and rounding functions
 	Inline function calls
