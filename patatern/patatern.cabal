@@ -29,12 +29,14 @@ executable patatern
                     , Utils
                     , Instantiate
                     , Evaluate
+                    , Parser
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:    base ^>=4.14.0.0
                     , containers
                     , lens
+                    , megaparsec
                     , mtl
                     , text
                     , unify
