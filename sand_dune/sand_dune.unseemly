@@ -7,7 +7,8 @@ extend_syntax
     DefaultToken ::= /\s*(\[|\]|\||->|capture_language)/ ;
 
     Expr ::= alt[
-        forall . '{[
+        # `ActuallyBool` is a hack; we need type variable inside each `*`
+        forall ActuallyBool . '{[
             lit ,{DefaultWord}, = 'Atoms'
             # [
                 atom_name := ( ,{Pat<Bool>}, )
@@ -15,15 +16,15 @@ extend_syntax
                 spelling := ( /'(.)'/ )  # any single character in quotes
             # ] *
             lit ,{DefaultWord}, = 'Rules'
-            # [
+            [
                 lit ,{DefaultToken}, = '['
-                lhs := ( ,{Expr< [Bool -> **[Bool Bool]** ] >}, ) # <-- atom_name : Bool
+                lhs := ( ,{Expr< [ActuallyBool -> **[Bool Bool]** ] >}, ) # <-- atom_name : Bool
                 lit ,{DefaultToken}, = ']'
                 lit ,{DefaultToken}, = '->'
                 lit ,{DefaultToken}, = '['
-                rhs := ( ,{Expr< [Bool -> **[Bool Bool]** ] >}, )
+                rhs := ( ,{Expr< [ActuallyBool -> **[Bool Bool]** ] >}, )
                 lit ,{DefaultToken}, = ']'
-            # ]*
+            ] *
             lit ,{DefaultWord}, = 'Start'
             ,{DefaultSeparator},
             start_pattern := ( /\[([^\]]*)\]/ )
@@ -49,11 +50,14 @@ extend_syntax
 ")) ;
 
                         for i in (range 0 (len pattern)) -{
+                            ...[ ,lhs, ,rhs, >>
                             let **[matches ignored]** = (,[lhs], (value (index pattern i))) ; in
                                 (if matches
                                     let **[ignore output]** = (,[rhs], (value (index pattern i))) ; in
                                         (assign (index pattern_buffer i) output)
                                     **[]**)
+                            ]...
+                            ; **[]**
                         }- ;
 
                         # Flip the buffer:
@@ -93,8 +97,8 @@ in
 Atoms
   cell '#'
 Rules
+  [ cell ] -> [ No cell ]
   [ No cell ] -> [ cell ]
-  # [ No cell ] -> [ cell ]
   # [ | | ] -> [ | cell | ]                    # By default, cells are on...
   # [ | No cell | No cell ] -> [ | No cell | ] # Unless they and their rightwards neighbor are off...
   # [ cell | cell | cell ] -> [ | No cell | ]  # Or they and both neighbors are on.
