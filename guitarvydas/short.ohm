@@ -1,11 +1,10 @@
 pre {
-  Main = Char+
+  main = findMacros+
 
-  Char 
-    = Macro       -- macro
-    | "$" -- bad
-    | lex_any -- notMacro
-       
+ findMacros
+    = experimentalApplySyntactic<Macro>+
+    | any
+
   Macro
     = "$data" "(" Expr ")"  -- data
     | "$newMessage" "(" Expr "," Expr ")" -- newMessage
@@ -32,9 +31,8 @@ dollar = "$"
 
 ws = " " | "\t"
 
-lex_any = any
-
 }
+
 
 
 

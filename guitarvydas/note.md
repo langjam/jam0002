@@ -19,3 +19,21 @@ An example (untested at this moment) of dataless C is https://github.com/guitarv
 [FYI - This is with respect to langjam #0002.]
 
 [FYI - I've built various attempts using only lexical rules. The result is ugly.
+
+
+---
+
+Let me see if I can state this more coherently...
+
+I want to parse:
+
+```
+  | "$macro" "(" arg "," arg ")"
+  | any
+```
+
+I want to write the first line syntactically (ignoring spaces), but, I want the second line to act lexically (keeping all spaces).
+
+Hmm, maybe this is already possible? ... thinking ...
+
+

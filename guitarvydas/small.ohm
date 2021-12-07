@@ -1,11 +1,49 @@
 small {
-  main = lexChar+
+  main = findMacros+
 
-  Char 
-    = lex_any -- lex_any
+  findMacros
+    = experimentalApplySyntactic<Macro>+
+    | any
 
-  lexChar 
-    = lex_any -- lex_any
+  Macro
+    = "$data" "(" Expr ")"  -- data
+    | "$newMessage" "(" Expr "," Expr ")" -- newMessage
+
+  Args = "(" notRPAR* ")"
+  
+Expr
+  = "(" Expr ")" -- nested
+  | Expr "(" Arglist? ")" -- funccall
+  | ~"," ~"(" ~")" any -- flat
+
+Arglist = ArgComma+
+ArgComma = Expr ","
+
+block = "{" block* "}" -- nested
+      | notBrace       -- raw
+
+notBrace = ~"{" ~"}" any
+
+space += comment
+comment = "//" notNL* nl
+nl = "\n"
+notNL = ~nl any
+
+dollar = "$"
+
+ws = " " | "\t"
 
 lex_any = any
+
+}
+
+
+
+G {
+  start = findMacros*
+  findMacros =
+    | experimentalApplySyntactic<Macro>
+    | any
+  Macro = "$macro" "(" arg "," arg ")"
+  arg = letter+
 }
