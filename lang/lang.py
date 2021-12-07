@@ -29,9 +29,9 @@ tokens = (
   "NUMBER",
   "TRUE",
   "FALSE",
-  "NW", "N", "NE",
+  "NW", "NE", "N", # Put N at the end because we should first match NE or NW
   "W", "E",
-  "SW", "S", "SE",
+  "SW", "SE", "S", # Put S at the end because we should first match SE or SW
   "NEIGHBOURS",
   "ROW",
   "COL",
@@ -151,12 +151,12 @@ def t_NW(t):
   r"NW"
   return t
 
-def t_N(t):
-  r"N"
-  return t
-
 def t_NE(t):
   r"NE"
+  return t
+
+def t_N(t):
+  r"N"
   return t
 
 def t_W(t):
@@ -171,12 +171,12 @@ def t_SW(t):
   r"SW"
   return t
 
-def t_S(t):
-  r"S"
-  return t
-
 def t_SE(t):
   r"SE"
+  return t
+
+def t_S(t):
+  r"S"
   return t
 
 def t_NEIGHBOURS(t):
@@ -226,6 +226,8 @@ def t_error(t):
 
 
 import ply.lex as lex
+from nodes import *
+
 lex.lex()
 
 precedence = (
@@ -238,55 +240,76 @@ precedence = (
   ("left", "NOT"),
 )
 
+def _epsilon_or_list(p):
+  if len(p) <= 1:
+    p[0] = []
+  else:
+    hd = p[1]
+    tl = p[2]
+    tl.insert(0, hd)
+    p[0] = tl
+
 def p_lang(p):
   """
   lang : meta cell aliases selectors rules
   """
+  p[0] = ProgramNode(p[1], p[2], p[3], p[4], p[5])
 
 def p_meta(p):
   """
   meta : META LBRACE statements RBRACE
   """
+  p[0] = MetaNode(p[3])
 
 def p_cell(p):
   """
   cell : CELL LBRACE declarations RBRACE
   """
+  p[0] = CellNode(p[3])
 
 def p_aliases(p):
   """
   aliases :
           | ALIASES LBRACE statement_groups RBRACE
   """
+  stmt_grps = p[3] if len(p) >= 4 else []
+  p[0] = AliasesNode(stmt_grps)
 
 def p_selectors(p):
   """
   selectors :
             | SELECTORS LBRACE statements RBRACE
   """
+  stmts = p[3] if len(p) >= 4 else []
+  p[0] = SelectorsNode(stmts)
 
 def p_rules(p):
   """
   rules :
         | RULES LBRACE rule_statements RBRACE
   """
+  rules = p[3] if len(p) >= 4 else []
+  p[0] = RulesNode(rules)
 
 def p_rule_statements(p):
   """
   rule_statements :
                   | rule_statement rule_statements
   """
+  _epsilon_or_list(p)
 
 def p_rule_statement(p):
   """
   rule_statement : NAME LPAREN NAME RPAREN ASSIGN LBRACE statements RBRACE
   """
+  p[0] = RuleStatementNode(ruleName = p[1], selectorName = p[3], stmts = p[7])
 
 def p_statement_groups(p):
   """
   statement_groups :
                    | statement_group statement_groups
   """
+  _epsilon_or_list(p)
 
 def p_statement_group(p):
   """
@@ -298,67 +321,134 @@ def p_statements(p):
   statements :
              | statement statements
   """
+  _epsilon_or_list(p)
 
 def p_statement(p):
   """
   statement : NAME ASSIGN expression
   """
+  p[0] = StatementNode(name = p[1], exp = p[3])
 
 def p_declarations(p):
   """
   declarations : 
                | declaration declarations
   """
+  _epsilon_or_list(p)
 
 def p_declaration(p):
   """
   declaration : INT NAME ASSIGN expression
               | BOOL NAME ASSIGN expression
   """
+  p[0] = DeclarationNode(typ = p[1], name = p[2], exp = p[4])
 
 def p_expression(p):
   """
-  expression : expression PLUS expression
-             | expression MINUS expression
-             | expression MULTIPLY expression
-             | expression DIVIDE expression
-             | MINUS expression %prec UMINUS
-             | LPAREN expression RPAREN
-             | NUMBER
-             | ROW
-             | COL
-             | MATCHCOUNT LPAREN list COMMA NAME RPAREN
-             | expression GREATER expression
-             | expression LESS expression
-             | expression GREATEREQ expression
-             | expression LESSEQ expression
-             | expression EQUALS expression
-             | expression OR expression
-             | expression AND expression
-             | NOT expression
-             | TRUE
-             | FALSE
+  expression : binop
+             | bool_literal
+             | int_literal
+             | unaryop
+             | reference
+             | subexp
+             | matchcount
+  """
+  p[0] = p[1]
 
-             | NAME
+def p_binop(p):
   """
+  binop : expression PLUS expression
+        | expression MINUS expression
+        | expression MULTIPLY expression
+        | expression DIVIDE expression
+        | expression GREATER expression
+        | expression LESS expression
+        | expression GREATEREQ expression
+        | expression LESSEQ expression
+        | expression EQUALS expression
+        | expression OR expression
+        | expression AND expression
+  """
+  p[0] = BinOpNode(left = p[1], op = p[2], right = p[3])
 
-def p_list(p):
+def p_bool_literal(p):
   """
-  list : LSQBRACE directions RSQBRACE
-       | NEIGHBOURS
+  bool_literal : TRUE
+               | FALSE
   """
+  p[0] = BoolLiteralNode(value = p[1])
 
-def p_directions(p):
+def p_int_literal(p):
   """
-  directions : NW
-             | N
-             | NE
-             | W
-             | E
-             | SW
-             | S 
-             | SE 
+  int_literal : NUMBER
   """
+  p[0] = IntLiteralNode(value = int(p[1]))
+
+def p_unaryop(p):
+  """
+  unaryop : NOT expression
+          | MINUS expression %prec UMINUS
+  """
+  p[0] = UnaryOpNode(op = p[1], exp = [2])
+
+def p_reference(p):
+  """
+  reference : NAME
+            | ROW
+            | COL
+  """
+  p[0] = ReferenceNode(name = p[1])
+
+def p_subexp(p):
+  """
+  subexp : LPAREN expression RPAREN
+  """
+  p[0] = p[2]
+
+def p_matchcount(p):
+  """
+  matchcount : MATCHCOUNT LPAREN dir_list COMMA NAME RPAREN
+             | MATCHCOUNT LPAREN NEIGHBOURS COMMA NAME RPAREN
+  """
+  dirs = p[3]
+  # TODO dirs can be represented in an 8 bit mask, then neighbours == (uint) 255
+  if isinstance(dirs, str) and dirs == 'neighbours':
+    dir_list = ['NW', 'N', 'NE', 'W', 'E', 'SW', 'S', 'SE']
+  else:
+    dir_list = dirs
+  p[0] = MatchCountNode(dirs = dir_list, selector = p[5])
+
+def p_dir_list(p):
+  """
+  dir_list : LSQBRACE dir_list_loop RSQBRACE
+  """
+  p[0] = p[1]
+
+def p_dir_list_loop(p):
+  """
+  dir_list_loop : direction
+                | direction COMMA dir_list_loop
+  """
+  hd = p[1]
+  try:
+    tl = p[3]
+  except IndexError:
+    tl = []
+  tl.insert(0, hd)
+  p[0] = tl
+
+def p_direction(p):
+  """
+  direction : NW
+            | NE
+            | N
+            | W
+            | E
+            | SW
+            | SE
+            | S
+  """
+  p[0] = p[1]
 
 def p_error(p):
   print(f"Syntax error at {p.value!r}: {repr(p)}")
@@ -366,7 +456,13 @@ def p_error(p):
 import ply.yacc as yacc
 yacc.yacc()
 
-with open("./tests/test.cel", "r") as f:
-  code = f.read()
+### Entry point
+### Usage: python lang.py <inputFileName>
+import sys
+from pprint import pprint
+if __name__ == '__main__':
+  fileName = sys.argv[1]
+  with open(fileName, "r") as f:
+    code = f.read()
 
-yacc.parse(code)
+  pprint(yacc.parse(code))
