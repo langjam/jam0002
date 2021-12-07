@@ -70,6 +70,7 @@ class Sequence(SequenceLike):
     else:
       new_exprs = [(op, opr if flip else e, e if flip else opr) for e in self.exprs]
       new_basec = [(op, opr if flip else e, e if flip else opr) for e in self.baseCase] if self.baseCase is not None else None
+      op        = op + ('~' if mode == 'base' else ':' if mode == 'expr' else '')
 
       return copy_dc(self,
         ident = f'<{display_expr(opr)}{op}{self.ident}>' if flip else f'<{self.ident}{op}{display_expr(opr)}>',
