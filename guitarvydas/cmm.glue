@@ -1,39 +1,43 @@
-main [@Chars] = [[${Chars}]]
+main [@findMacros] = [[${findMacros}]]
 
-char_macro [Macro] = [[${Macro}]]
-       
-macro_first [k Param] = [[${k}${Param}]]    
-macro_reverse [k Param] = [[${k}${Param}]]    
-macro_rest [k Param] = [[${k}${Param}]]    
-macro_isEmpty [k Param] = [[${k}${Param}]]    
-macro_newListCell [k Param] = [[${k}${Param}]]    
-macro_append [k Param] = [[${k}${Param}]]    
+findMacro_macro [nl x] = [[${nl}${x}]]
+findMacro_default [x] = [[${x}]]
 
-macro_newComponent [k TwoParams] = [[${k}${TwoParams}]]    
-macro_field [k Param] = [[${k}${Param}]]    
-macro_appendInput [k TwoParams] = [[${k}${TwoParams}]]    
-macro_popInput [k Param] = [[${k}${Param}]]    
-macro_callReaction [k TwoParams] = [[${k}${TwoParams}]]    
-macro_hasInputs [k Param] = [[${support.popParam ()}->inputQueue]]    
+Macro_first [k Param] = [[${k}${Param}]]    
+Macro_reverse [k Param] = [[${k}${Param}]]    
+Macro_rest [k Param] = [[${k}${Param}]]    
+Macro_isEmpty [k Param] = [[${k}${Param}]]    
+Macro_newListCell [k Param] = [[${k}${Param}]]    
+Macro_append [k Param] = [[${k}${Param}]]    
 
-macro_newMessage [k Param] = [[${k}${Param}]]    
-macro_data [k Param] = [[${support.popParam ()}->data]]    
+Macro_newComponent [k TwoParams] = [[${k}${TwoParams}]]    
+Macro_field [k Param] = [[${k}${Param}]]    
+Macro_appendInput [k TwoParams] = [[${k}${TwoParams}]]    
+Macro_popInput [k Param] = [[${k}${Param}]]    
+Macro_callReaction [k TwoParams] = [[${k}${TwoParams}]]    
+Macro_hasInputs [k Param] = [[${support.popParam ()}->inputQueue]]    
 
-macro_connectedTo [k Param] = [[${k}${Param}]]    
-macro_connect [k TwoParams] = [[${k}${TwoParams}]]    
+Macro_newMessage [k Param] = [[${k}${Param}]]    
+Macro_data [k Param] = [[${support.popParam ()}->data]]    
 
-macro_withLock [k Block] = [[${k}${Block}\n]]
-macro_send [k TwoParams] = [[${k}${TwoParams}]]
-macro_panic [k Param] = [[${k}${Param}]]
+Macro_connectedTo [k Param] = [[${k}${Param}]]    
+Macro_connect [k TwoParams] = [[${k}${TwoParams}]]    
 
-macro_default [c] = [[${c}]]
+Macro_withLock [k Block] = [[${k}${Block}\n]]
+Macro_send [k TwoParams] = [[${k}${TwoParams}]]
+Macro_panic [k Param] = [[${k}${Param}]]
 
-param_nested [@ws klpar @Param krpar] = [[${support.pushParam (Param)}]]
-param_raw [notPAREN] = [[${notPAREN}]]
+Param [klp Expr krp] = [[${klp}${Expr}${krp}]]
+TwoParams [klp Expr1 kcomma Expr2 krp] = [[${klp}${Expr1}${kcomma}${Expr2}${krp}]]
 
-twoparams [Param] = [[${Param}]]
 
-notPAREN [c] = [[${c}]]
+Expr_funccall [expr klp @Arglist krp] = [[${expr}(${Arglist})]]
+
+Expr_nested [klp expr krp] = [[${klp}${expr}${krp}]]
+Expr_flat [c] = [[${c}]]
+
+Arglist [@ArgComma] = [[${ArgComma}]]
+ArgComma [expr kcomma] = [[${expr},]]
 
 block_nested [klbrace @Block krbrace] = [[${klbrace}${Block}${krbrace}]]
 block_raw [notBrace] = [[${notBrace}]]

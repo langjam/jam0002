@@ -1,9 +1,9 @@
 pre {
-  main = findMacros+
+  main = findMacro+
 
- findMacros
-    = experimentalApplySyntactic<Macro>+
-    | any
+ findMacro
+    = nl? experimentalApplySyntactic<Macro>+ -- macro
+    | any                                    --default
 
   Macro
     // mechanism List
