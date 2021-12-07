@@ -6,7 +6,7 @@ void main (int argc, char **argv) {
   List lis2 = listNewCell (c);
   List lis = $append (lis1, lis2);
   runQueue = lis;
-$connect;
+connectionsConnect (p, c);
   Dispatcher ();
 }
 
