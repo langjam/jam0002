@@ -4,7 +4,7 @@ void DispatchTransferOutputsForOneComponent (Component c) {
   while (!NULL == outputs) {
     Component receiver = connectionsConnectedTo (c);
     Datum data = outputs->data;
-    Message m = $newMessage (data, NULL);
+    Message m = messageNew (data);
 $appendInput;
 outputs->next;
   }
