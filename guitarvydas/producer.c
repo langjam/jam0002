@@ -9,7 +9,7 @@ counter = 0;
 void reactProducer (Component self, Message m) {
 counter -= 1;
   if (counter > 0) {
-      $send (self, '*');
+$send;
     } else {
 $withLock{
 	systemRunning = 0;

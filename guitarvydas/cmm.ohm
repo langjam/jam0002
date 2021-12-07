@@ -45,6 +45,7 @@ TwoParams = "(" Expr "," Expr ")"
 Expr
   = "(" Expr ")" -- nested
   | Expr "(" Arglist? ")" -- funccall
+  | atom -- atom
   | ~"," ~"(" ~")" any -- flat
 
 Arglist = ArgComma+
@@ -63,6 +64,11 @@ notNL = ~nl any
 dollar = "$"
 
 ws = " " | "\t"
+
+
+atom = atomchar+
+atomchar = ~"$" ~"," ~"(" ~")" any 
+
 
 }
 

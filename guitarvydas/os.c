@@ -1,24 +1,24 @@
 void DispatchTransferOutputsForOneComponent (Component c) {
   List outputs = $field (c, outputQueue);
-  outputs = $reverse (outputs);
-  while (!$isEmpty (outputs)) {
-    Component receiver =$connectedTo;
-    Datum data = $data (outputs);
+  outputs =listReverse (outputs);
+  while (!NULL == outputs) {
+    Component receiver =$connectedToc;
+    Datum data =outputs->data;
     Message m = $newMessage (data, NULL);
-    $appendInput (receiver, m);
-    $rest (outputs);
+$appendInput;
+outputs->next;
   }
 }
 
 void DispatchOnce () {
   List all = runQueue;
-  while (!$isEmpty (all) {
-      component = $data (all);
-      if ($hasInputs (component)) {
-	Message m = $popInput (component);
-	$callReaction (component, m);
+  while (!NULL == all{
+      component =all->data;
+      if (component->inputQueue) {
+	Message m =$popInputcomponent;
+$callReaction;
       }
-      $rest (all);
+all->next;
     }
 }
   
@@ -31,10 +31,10 @@ void Dispatcher () {
 
 void DispatchTransferOutputs () {
   List all = runQueue;
-  c = $first (all);
-  while (!$isEmpty (all)) {
+  c =all->data;
+  while (!NULL == all) {
     DispatchTransferOutputsForOneComponent (componentList);
-    $rest (all);
+all->next;
   }
 }
 

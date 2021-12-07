@@ -3,29 +3,29 @@ main [@findMacros] = [[${findMacros}]]
 findMacro_macro [nl x] = [[${nl}${x}]]
 findMacro_default [x] = [[${x}]]
 
-Macro_first [k Param] = [[${Param}->data]]
-Macro_reverse [k Param] = [[${Param} = listReverse (${Param})]]
-Macro_rest [k Param] = [[${Param}->next]]
-Macro_isEmpty [k Param] = [[NULL == ${Param}]]
-Macro_newListCell [k Param] = [[listNewCell (${Param})]]
+Macro_first [k Param] = [[${support.getParam1 ()}->data]]
+Macro_reverse [k Param] = [[listReverse (${support.getParam1 ()})]]
+Macro_rest [k Param] = [[${support.getParam1 ()}->next]]
+Macro_isEmpty [k Param] = [[NULL == ${support.getParam1 ()}]]
+Macro_newListCell [k Param] = [[listNewCell (${support.getParam1 ()})]]
 Macro_append [k TwoParams] = [[${k}${TwoParams})]]
 
 Macro_newComponent [k TwoParams] = [[${k}${TwoParams}]]
-Macro_field [k Param] = [[${k}${Param}]]
+Macro_field [k Param] = [[${k}${support.getParam1 ()}]]
 Macro_appendInput [k TwoParams] = [[${k}${TwoParams}]]
-Macro_popInput [k Param] = [[${k}${Param}]]
+Macro_popInput [k Param] = [[${k}${support.getParam1 ()}]]
 Macro_callReaction [k TwoParams] = [[${k}${TwoParams}]]
-Macro_hasInputs [k Param] = [[${support.popParam ()}->inputQueue]]
+Macro_hasInputs [k Param] = [[${support.getParam1 ()}->inputQueue]]
 
-Macro_newMessage [k Param] = [[${k}${Param}]]
-Macro_data [k Param] = [[${support.popParam ()}->data]]
+Macro_newMessage [k Param] = [[${k}${support.getParam1 ()}]]
+Macro_data [k Param] = [[${support.getParam1 ()}->data]]
 
-Macro_connectedTo [k Param] = [[${k}${Param}]]
+Macro_connectedTo [k Param] = [[${k}${support.getParam1 ()}]]
 Macro_connect [k TwoParams] = [[${k}${TwoParams}]]
 
 Macro_withLock [k Block] = [[${k}${Block}\n]]
 Macro_send [k TwoParams] = [[${k}${TwoParams}]]
-Macro_panic [k Param] = [[${k}${Param}]]
+Macro_panic [k Param] = [[${k}${support.getParam1 ()}]]
 
 Macro_initializeCounter [m] = [[counter = 0]]
 Macro_decCounter [m] = [[counter -= 1]]
@@ -39,6 +39,7 @@ Expr_funccall [expr klp @Arglist krp] = [[${expr}(${Arglist})]]
 
 Expr_nested [klp expr krp] = [[${klp}${expr}${krp}]]
 Expr_flat [c] = [[${c}]]
+Expr_atom [a] = [[${a}]]
 
 Arglist [@ArgComma] = [[${ArgComma}]]
 ArgComma [expr kcomma] = [[${expr},]]
@@ -58,3 +59,7 @@ notNL [c] = [[${c}]]
 dollar [c] = [[${c}]]
 
 ws [c] = [[${c}]]
+
+atom [@cs] = [[${cs}]]
+atomchar [c] = [[${c}]]
+
