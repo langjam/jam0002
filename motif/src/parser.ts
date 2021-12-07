@@ -3,7 +3,7 @@ import { Checker, CheckerIrregular, Pattern, PatternType, Rainbow, RainbowIrregu
 export type Palette = Map<string, number>;
 export type Program = {palette: Palette, patterns: Pattern[]};
 
-export function lexText(text: string): Program | null {
+export function parseText(text: string): Program | null {
   const lines = text.split(/\r?\n/g);
 
   // parse color palette & width
@@ -78,7 +78,7 @@ interface MatchResult {
   sizes: number[];
 }
 
-export function matchPattern(chars: string[]): MatchResult | null {
+function matchPattern(chars: string[]): MatchResult | null {
   if (chars.length === 0) return null;
 
   let symbolIds = new Map<string, number>();

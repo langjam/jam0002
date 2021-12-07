@@ -1,4 +1,4 @@
-import { lexText } from "./lexer";
+import { parseText } from "./parser";
 
 const text =
 `
@@ -13,6 +13,6 @@ const text =
 222222
 123321
 `
-let patterns = lexText(text);
+let patterns = parseText(text);
 console.log(patterns?.palette);
 console.log(patterns?.patterns);
