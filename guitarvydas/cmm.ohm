@@ -16,10 +16,10 @@ pre {
 
     // mechanism Component
     | "$newComponent" TwoParams -- newComponent
-    | "$field" Param            -- field
+    | "$field" TwoParams        -- field
     | "$appendInput" TwoParams  -- appendInput
     | "$popInput" Param         -- popInput
-    | "$callReaction" TwoParams -- callReaction
+    | "$callReaction" TwoParams    -- callReaction
     | "$hasInputs" Param        -- hasInputs
 
     // mechanism Message
