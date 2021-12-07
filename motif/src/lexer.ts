@@ -1,28 +1,88 @@
-import { PatternType } from "./pattern";
+import { Checker, CheckerIrregular, Pattern, PatternType, Rainbow, RainbowIrregular, Solid, Wave, WaveIrregular } from "./pattern";
 
-export function lexText(text: string) {
+export type Palette = Map<string, number>;
+export type Program = {palette: Palette, patterns: Pattern[]};
+
+export function lexText(text: string): Program | null {
   const lines = text.split(/\r?\n/g);
 
-  for (let line of lines) {
-    if (line.length === 0) continue;
+  // parse color palette & width
+  let startIdx = 0;
+  let firstMatch: MatchResult | null = null;
+  let width = 0;
+
+  do {
+    const line = lines[startIdx++];
+    const chars = line.split("");
+    width = chars.length;
+    firstMatch = matchPattern(chars);
+  } while(!firstMatch && startIdx < lines.length)
+
+  if (!firstMatch) return null;
+
+  const palette: Palette = new Map();
+
+  if (firstMatch.type !== PatternType.SOLID) {
+    for (let i = 0; i < firstMatch.symbols.length; i++) {
+      palette.set(firstMatch.symbols[i], i);
+    }
+  }
+
+  // parse the rest of program
+  let patterns: Pattern[] = [];
+  for (let i = startIdx; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.length !== width) continue;
+
     const chars = line.split("");
     const match = matchPattern(chars);
-    console.log(match);
+
+    if (match) {
+      patterns.push(buildPattern(palette, match));
+    }
   }
+
+  return {palette, patterns};
+}
+
+function buildPattern(palette: Palette, match: MatchResult): Pattern {
+  const colors = match.symbols.map((symbol) => getColor(palette, symbol));
+
+  switch (match.type) {
+    case PatternType.SOLID:
+      return new Solid(colors[0]);
+    case PatternType.RAINBOW:
+      return new Rainbow(colors, match.sizes[0]);
+    case PatternType.CHECKER:
+      return new Checker(colors, match.sizes[0]);
+    case PatternType.WAVE:
+      return new Wave(colors, match.sizes[0]);
+    case PatternType.RAINBOW_IRREGULAR:
+      return new RainbowIrregular(colors, match.sizes);
+    case PatternType.CHECKER_IRREGULAR:
+      return new CheckerIrregular(colors, match.sizes);
+    case PatternType.WAVE_IRREGULAR:
+      return new WaveIrregular(colors, match.sizes);
+  }
+}
+
+function getColor(palette: Palette, symbol: string): number {
+  let color = palette.get(symbol);
+  if (color == null) color = symbol.charCodeAt(0);
+  return color;
 }
 
 interface MatchResult {
   type: PatternType;
   symbols: string[];
   sizes: number[];
-  length: number;
 }
 
 export function matchPattern(chars: string[]): MatchResult | null {
-  let symbolIds = new Map<string, number>();
+  if (chars.length === 0) return null;
 
+  let symbolIds = new Map<string, number>();
   let previous: number = -1;
-  let previousChar: string | null = null;
   let occurences: number[] = [];
   let sizes: number[] = [];
 
@@ -41,14 +101,12 @@ export function matchPattern(chars: string[]): MatchResult | null {
     occurences.push(id);
     sizes.push(1);
     previous = id;
-    previousChar = char;
   }
 
   const symbols = Array.from(symbolIds.keys());
-  const length = chars.length;
 
   if (symbols.length === 1) {
-    return {type: PatternType.SOLID, symbols, sizes, length};
+    return {type: PatternType.SOLID, symbols, sizes};
   }
 
   const uniform = (new Set(sizes)).size === 1;
@@ -56,15 +114,15 @@ export function matchPattern(chars: string[]): MatchResult | null {
   const increasingPattern = matchIncreasingPattern(occurences, symbols.length);
   if (increasingPattern === 1) {
     let type = uniform ? PatternType.RAINBOW : PatternType.RAINBOW_IRREGULAR;
-    return {type, symbols, sizes, length};
+    return {type, symbols, sizes};
   } else if (increasingPattern > 1) {
     let type = uniform ? PatternType.CHECKER : PatternType.CHECKER_IRREGULAR;
-    return {type, symbols, sizes, length};
+    return {type, symbols, sizes};
   }
 
   if (matchWavePattern(occurences, symbols.length)) {
     let type = uniform ? PatternType.WAVE : PatternType.WAVE_IRREGULAR;
-    return {type, symbols, sizes, length};
+    return {type, symbols, sizes};
   }
 
   return null;
