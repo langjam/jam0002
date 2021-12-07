@@ -35,7 +35,7 @@ impl Display for Pat {
             Pat::PatVar { name } => write!(f, "?x{}", *name),
             Pat::PatConstr { name, args } => {
                 write!(f, "{}(", name)?;
-                if args.len() != 0 {
+                if !args.is_empty() {
                     write!(f, "{}", args[0])?;
                     for i in &args[1..] {
                         write!(f, ", ")?;
@@ -141,7 +141,7 @@ impl Substitution {
 
     fn renaming(varlist: &[u32], offset: u32) -> Self {
         let mut map = HashMap::<u32, Ast>::new();
-        let next_var = varlist.into_iter().fold(0, |next, v| {
+        let next_var = varlist.iter().fold(0, |next, v| {
             let _ = map.insert(*v, Ast::Var { name: v + offset });
             u32::max(next, v + offset + 1)
         });
@@ -183,11 +183,11 @@ impl Display for DisplayAst {
         match &self.ast {
             Ast::Var { name } => write!(f, "x{}", name),
             Ast::Match { on, clauses } => {
-                write!(f, "match {} with\n", on)?;
+                writeln!(f, "match {} with", on)?;
                 for cl in clauses {
-                    write!(
+                    writeln!(
                         f,
-                        "{:width$}| {} -> {}\n",
+                        "{:width$}| {} -> {}",
                         "",
                         cl.pattern,
                         DisplayAst {
@@ -247,11 +247,7 @@ impl Display for Clause {
 impl Clause {
     fn run(&self, matched: Ast) -> Option<Ast> {
         log::trace!("Running clause `{}` on `{}`", self, matched);
-        if let Some(s) = self.pattern.match_with(matched) {
-            Some(self.body.parallel_subst(&s))
-        } else {
-            None
-        }
+        self.pattern.match_with(matched).map(|s| self.body.parallel_subst(&s))
     }
 
     fn rename_binders(&self, offset: u32) -> Clause {
@@ -386,7 +382,7 @@ impl Ast {
                     .map(|ast| ast.run(ctx))
                     .collect::<Result<_, _>>()?;
                 Ok(Ast::Constr {
-                    name: name.clone(),
+                    name,
                     args,
                 })
             }
@@ -592,7 +588,7 @@ mod test {
                     args: vec![
                         PatVar { name: 0 },
                         PatConstr {
-                            name: cons.clone(),
+                            name: cons,
                             args: vec![
                                 PatVar { name: 1 },
                                 PatConstr {
@@ -639,7 +635,7 @@ mod test {
             }],
         };
         let res = outer.clone().run(&EMPTYCTX).unwrap();
-        println!("{}", outer.clone());
+        println!("{}", outer);
         println!("{}", res);
         let target = Match {
             on: Box::new(Var { name: 2 }),

@@ -62,7 +62,7 @@ impl Repl {
                         if let Some(Located { value: name, .. }) = name {
                             let ast = self.context.make_expr(expr.value);
                             println!("{} = {}", name, ast);
-                            self.context.decls.insert(name.clone(), ast);
+                            self.context.decls.insert(name, ast);
                         } else {
                             let ast = self.context.make_expr(expr.value);
                             match ast.run(&self.context) {
