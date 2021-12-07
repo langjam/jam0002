@@ -21,3 +21,8 @@ Dec 6:
 	Sequence and slice equality
 	Correct operator associativity
 	Other refactoring
+
+Dec 7:
+	2.5h code, 0h docs
+	Unary negation operator
+	Expanded expression simplification to partial operation folding
