@@ -10,13 +10,14 @@ Dec 4:
 	String escapes
 
 Dec 6: 
-	5h code, 0h docs
+	7.5h code, 0h docs
 	Stdin support
 	Systime and rounding functions
 	Inline function calls
-	Custom base indices
-	Sequence slicing
-	Arithmetic operations on sequences
+	Sequence slicing, slice-on-definition syntax sugar
+	Arithmetic operations on sequences and slices
 	Accesses/slices are operators instead of special syntax
+	Constant folding for sequence definitions
+	Sequence and slice equality
 	Correct operator associativity
 	Other refactoring

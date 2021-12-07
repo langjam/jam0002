@@ -9,8 +9,10 @@ sequence indices = n
 
 set slice = indices::10
 print slice
-print slice:4         ; Access a slice saved to a variable
-print indices::10:4   ; Or directly
+print slice:4            ; Access a slice saved to a variable
+print indices::10:4      ; Or directly
+print slice::4           ; Slicing a slice gives a new slice of the original, with the indices added
+print [unslice slice]    ; The unslice function can retrieve the original sequence from a slice
 
 ; Looping over a slice
 for 10 of indices::10 as i do print i

@@ -1,5 +1,6 @@
 ; Arithmetic operations on sequences
 
+; Each operation returns a new anonymous sequence with the operation applied to its elements.
 ; The default version of each operator will apply to both the base cases and expressions.
 ; Suffixing an operator with ~ (eg +~) will only apply to the base cases.
 ; Suffixing an operator with : (eg +:) will only apply to the expressions.
@@ -7,29 +8,30 @@
 
 sequence fibonacci from 0, 1 = x + S:(n-2)
 
-print (fibonacci + 4)   ; Addition
-print (fibonacci +~ 4)
-print (fibonacci +: 4)
+print (fibonacci + 4)      ; Addition
+print (fibonacci +~ 4)     ; Base cases only
+print (fibonacci +: 4)     ; Expression only
 
-print (fibonacci - 4)   ; Subtraction
-print (fibonacci -~ 4)
-print (fibonacci -: 4)
+print (fibonacci - 4)      ; Subtraction
+print (fibonacci -~ 4)     ; Base cases only
+print (fibonacci -: 4)     ; Expression only
 
-print (fibonacci * 4)   ; Multiplication
-print (fibonacci *~ 4)
-print (fibonacci *: 4)
+print (fibonacci * 4)      ; Multiplication
+print (fibonacci *~ 4)     ; Base cases only
+print (fibonacci *: 4)     ; Expression only
 
-print (fibonacci / 4)   ; Division
-print (fibonacci /~ 4)
-print (fibonacci /: 4)
+print (fibonacci / 4)      ; Division
+print (fibonacci /~ 4)     ; Base cases only
+print (fibonacci /: 4)     ; Expression only
 
-print (fibonacci % 4)   ; Modulus
-print (fibonacci %~ 4)
-print (fibonacci %: 4)
+print (fibonacci % 4)      ; Modulus
+print (fibonacci %~ 4)     ; Base cases only
+print (fibonacci %: 4)     ; Expression only
 
-print (fibonacci ^ 4)   ; Exponentiation
-print (fibonacci ^~ 4)
-print (fibonacci ^: 4)
+print (fibonacci ^ 4)      ; Exponentiation
+print (fibonacci ^~ 4)     ; Base cases only
+print (fibonacci ^: 4)     ; Expression only
 
-print (4 + fibonacci)   ; Opposite order (matters for -/%^)
+print (4 + fibonacci)      ; Opposite order (matters for -/%^)
 
+print (fibonacci::5 + 4)   ; Math on slices makes a new slice of an anonymous sequence

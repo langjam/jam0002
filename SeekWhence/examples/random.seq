@@ -1,13 +1,13 @@
 ; Random number generation via LCG
 ; For "unseeded" RNG, set the base case to [systime]
 
-; This also uses a "hidden" base case via negative base indices; for loops
-;   will never iterate over negative indices, so you can hide a base case 
-;   like an RNG seed in the negative indices of a sequence. However, negative
-;   indices must have a corresponding base case, and can't be calculated from
-;   the default expression.
+; This also uses a bit of syntax sugar to define and slice a sequence in the same line. By 
+;   doing this, the internal sequence is inaccessible except via the [unslice] function, and
+;   the name given is assigned to the slice. This allows for "hiding" base cases underneath
+;   the slice, which is useful since we don't want the seed itself to be our first generated
+;   pseudo-random number.
 
-sequence random from 120395 at -1 = (x * 1103515245 + 12345) % 2147483647
+sequence random::1 from 120395 = (x * 1103515245 + 12345) % 2147483647
 
 print 'Seed:', random:-1           ; The seed can be accessed directly, but is hidden from loops
 for 10 of random as r do print r
