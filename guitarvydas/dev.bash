@@ -11,5 +11,6 @@ cdir=`pwd`
 node pfr.js producer.cmm cmm.ohm cmm.glue ${cdir}/support.js >producer.c
 node pfr.js consumer.cmm cmm.ohm cmm.glue ${cdir}/support.js >consumer.c
 node pfr.js os.cmm cmm.ohm cmm.glue ${cdir}/support.js >os.c
+node pfr.js main.cmm cmm.ohm cmm.glue ${cdir}/support.js >main.c
 
 
