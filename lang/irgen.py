@@ -4,6 +4,7 @@ class IRGen:
   def __init__(self, ast):
     self.tabs = 0
     self.out = ""
+    self.cell_props = set()
     self.consume(ast)
     print(self.out)
 
@@ -19,17 +20,20 @@ class IRGen:
 
   def consume(self, ast):
     if isinstance(ast, ProgramNode):
+      preamble = self.println("from collections import namedtuple")
+      preamble += self.println("Selector = namedtuple(\"Selector\", [\"name\", \"func\"])")
+      preamble += self.println("Rule = namedtuple(\"Rule\", [\"name\", \"selector\", \"func\"])")
       meta = self.consume(ast.meta)
       cell = self.consume(ast.cell)
       aliases = self.consume(ast.aliases)
       selectors = self.consume(ast.selectors)
       rules = self.consume(ast.rules)
-      self.out = meta + cell + aliases
+      self.out = preamble + meta + cell + aliases + selectors + rules
     elif isinstance(ast, MetaNode):
       meta = self.println("meta = {")
       self.inctabs()
       for stmt in ast.stmts:
-        meta += self.println(f"\"{stmt.name}\": {self.consume(stmt.exp)}")
+        meta += self.println(f"\"{stmt.name}\": {self.consume(stmt.exp)},")
       self.dectabs()
       meta += self.println("}")
       return meta
@@ -37,7 +41,8 @@ class IRGen:
       cell = self.println("cell = {")
       self.inctabs()
       for decl in ast.decls:
-        cell += self.println(f"\"{decl.name}\": {self.consume(decl.exp)}")
+        self.cell_props.add(decl.name)
+        cell += self.println(f"\"{decl.name}\": {self.consume(decl.exp)},")
       self.dectabs()
       cell += self.println("}")
       return cell
@@ -48,18 +53,37 @@ class IRGen:
         aliases += self.println(f"\"{stmt_group.name}\": {{")
         self.inctabs()
         for stmt in stmt_group.stmts:
-          aliases += self.println(f"\"{stmt.name}\": {self.consume(stmt.exp)}")
+          aliases += self.println(f"\"{stmt.name}\": {self.consume(stmt.exp)},")
         self.dectabs()
-        aliases += self.println("}")
+        aliases += self.println("},")
       self.dectabs()
       aliases += self.println("}")
       return aliases
     elif isinstance(ast, SelectorsNode):
-      pass
+      selectors = self.println("selectors = [")
+      self.inctabs()
+      for stmt in ast.stmts:
+        print(stmt.exp)
+        func = f"lambda cell: {self.consume(stmt.exp)}"
+        selectors += self.println(f"Selector(name=\"{stmt.name}\", func={func}),")
+      self.dectabs()
+      selectors += self.println("]")
+      return selectors
     elif isinstance(ast, RulesNode):
-      pass
+      rules = self.println("rules = [")
+      self.inctabs()
+      for rule_stmt in ast.rule_stmts:
+        rules += self.consume(rule_stmt)
+      self.dectabs()
+      rules += self.println("]")
+      return rules
     elif isinstance(ast, RuleStatementNode):
-      pass
+      func = "lamba cell: {"
+      for stmt in ast.stmts:
+        func += f"\"{stmt.name}\": {self.consume(stmt.exp)}"
+      func += "}"
+      rule = self.println(f"Rule(name=\"{ast.ruleName}\", selector=\"{ast.selectorName}\", func={func})")
+      return rule
     elif isinstance(ast, StatementGroupNode):
       pass
     elif isinstance(ast, StatementNode):
@@ -67,16 +91,45 @@ class IRGen:
     elif isinstance(ast, DeclarationNode):
       pass
     elif isinstance(ast, UnaryOpNode):
-      pass
+      if ast.op == "MINUS":
+        return f"-{self.consume(ast.exp)}"
+      elif ast.op == "NOT":
+        return f"not {self.consume(ast.exp)}"
     elif isinstance(ast, BinOpNode):
-      pass
+      if ast.op == "+":
+        return f"({self.consume(ast.left)}) + ({self.consume(ast.right)})"
+      if ast.op == "-":
+        return f"({self.consume(ast.left)}) - ({self.consume(ast.right)})"
+      if ast.op == "*":
+        return f"({self.consume(ast.left)}) * ({self.consume(ast.right)})"
+      if ast.op == "/":
+        return f"({self.consume(ast.left)}) // ({self.consume(ast.right)})"
+      if ast.op == "%":
+        return f"({self.consume(ast.left)}) % ({self.consume(ast.right)})"
+      if ast.op == "&":
+        return f"({self.consume(ast.left)}) and ({self.consume(ast.right)})"
+      if ast.op == "|":
+        return f"({self.consume(ast.left)}) or ({self.consume(ast.right)})"
+      if ast.op == ">":
+        return f"({self.consume(ast.left)}) > ({self.consume(ast.right)})"
+      if ast.op == "<":
+        return f"({self.consume(ast.left)}) < ({self.consume(ast.right)})"
+      if ast.op == ">=":
+        return f"({self.consume(ast.left)}) >= ({self.consume(ast.right)})"
+      if ast.op == "<=":
+        return f"({self.consume(ast.left)}) <= ({self.consume(ast.right)})"
     elif isinstance(ast, MatchCountNode):
-      pass
+      return "MatchCount"
     elif isinstance(ast, BoolLiteralNode):
-      pass
+      if ast.value:
+        return "True"
+      return "False"
     elif isinstance(ast, IntLiteralNode):
-      pass
+      return f"{ast.value}"
     elif isinstance(ast, ReferenceNode):
-      pass
+      if ast.name in self.cell_props:
+        return f"cell.{ast.name}"
+      else:
+        return f"{ast.name}(cell)"
     else:
       raise ValueError(f"Unexpected node type {type(ast)}")
