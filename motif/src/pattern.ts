@@ -8,39 +8,39 @@ export enum PatternType {
   WAVE_IRREGULAR,
 }
 
-export interface Pattern { type: PatternType }
+export type Pattern = Solid | Rainbow | Checker | Wave | RainbowIrregular | CheckerIrregular | WaveIrregular;
 
-export class Solid implements Pattern {
+export class Solid {
   readonly type = PatternType.SOLID;
   constructor(public color: number) {}
 }
 
-export class Rainbow implements Pattern {
+export class Rainbow {
   readonly type = PatternType.RAINBOW;
   constructor(public colors: number[], public cellSize: number){}
 }
 
-export class Checker implements Pattern {
+export class Checker {
   readonly type = PatternType.CHECKER;
   constructor(public colors: number[], public cellSize: number){}
 }
 
-export class Wave implements Pattern {
+export class Wave {
   readonly type = PatternType.WAVE;
   constructor(public colors: number[], public cellSize: number){}
 }
 
-export class RainbowIrregular implements Pattern {
+export class RainbowIrregular {
   readonly type = PatternType.RAINBOW_IRREGULAR;
   constructor(public colors: number[], public cellSizes: number[]){}
 }
 
-export class CheckerIrregular implements Pattern {
+export class CheckerIrregular {
   readonly type = PatternType.CHECKER_IRREGULAR;
   constructor(public colors: number[], public cellSizes: number[]){}
 }
 
-export class WaveIrregular implements Pattern {
+export class WaveIrregular {
   readonly type = PatternType.WAVE_IRREGULAR;
   constructor(public colors: number[], public cellSizes: number[]){}
 }
