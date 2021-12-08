@@ -347,7 +347,7 @@ def p_unaryop(p):
   unaryop : NOT expression
           | MINUS expression %prec UMINUS
   """
-  p[0] = UnaryOpNode(op = p[1], exp = [2])
+  p[0] = UnaryOpNode(op = p[1], exp = p[2])
 
 def p_reference(p):
   """
@@ -427,4 +427,10 @@ if __name__ == '__main__':
   pprint(ast)
 
 from irgen import IRGen
-IRGen(ast)
+ir = IRGen(ast)
+
+with open("./ir.py", "w") as f:
+  f.write(ir.out)
+
+from run_cell import Simulation
+# sim = Simulation()

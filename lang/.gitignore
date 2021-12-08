@@ -147,3 +147,4 @@ cython_debug/
 *.out
 parsetab.py
 *.swp
+ir.py

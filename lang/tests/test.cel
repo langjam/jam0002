@@ -1,6 +1,6 @@
 Meta {
-  Rows = 80
-  Cols = 80
+  Rows = 8
+  Cols = 8
   MaxFPS = 1
 }
 
@@ -30,7 +30,7 @@ Rules {
     live = false
   }
 
-  Birth (BabyCell) = {
+  Birth (DeadCell) = {
     live = true
   }
 }
