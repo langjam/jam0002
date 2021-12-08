@@ -1,9 +1,9 @@
-pre {
-  main = findMacros+
+cmm {
+  main = findMacro+
 
- findMacros
-    = experimentalApplySyntactic<Macro>+
-    | any
+ findMacro
+    = wsnl? experimentalApplySyntactic<Macro>+ -- macro
+    | any                                    --default
 
   Macro
     // mechanism List
@@ -12,19 +12,23 @@ pre {
     | "$rest" Param        -- rest
     | "$isEmpty" Param     -- isEmpty
     | "$newListCell" Param -- newListCell
-    | "$append" Param      -- append
+    | "$append" TwoParams  -- append
 
     // mechanism Component
     | "$newComponent" TwoParams -- newComponent
-    | "$field" Param            -- field
-    | "$appendInput" TwoParams  -- appendInput
+    | "$field" TwoParams        -- field
+    | "$enqueueMessage" TwoParams  -- enqueueMessage
     | "$popInput" Param         -- popInput
-    | "$callReaction" TwoParams -- callReaction
+    | "$callReaction" TwoParams    -- callReaction
     | "$hasInputs" Param        -- hasInputs
+    | "$hasOutputs" Param        -- hasOutputs
+    | "$isReady" Param        -- isReady
 
     // mechanism Message
     | "$newMessage" Param -- newMessage
-    | "$data" Param       -- data
+    | "$dataComponent" Param  -- dataComponent
+    | "$dataMessage" Param    -- dataMessage
+    | "$dataConnection" Param -- dataConnection
 
     // mechanism ConnectionTable
     | "$connectedTo" Param -- connectedTo
@@ -32,8 +36,20 @@ pre {
 
     // mechanism Kernel
     | "$withLock" block -- withLock
-    | "$send" TwoParams -- send
+    | "$sendc" TwoParams -- sendc
     | "$panic" Param    -- panic
+    | "$quit"           -- quit
+    | "$beginWalkingComponentList" Param -- beginWalkingComponentList
+    | "$endWalkingComponentList" Param -- endWalkingComponentList
+    | "$walkMore" Param -- walkMore
+    | "$nextComponentInList" Param -- nextComponentInList
+    | "$advance" Param -- advance
+
+    | "$beginWalkingOutputsAsSent" TwoParams -- beginWalkingOutputsAsSent
+    | "$endWalkingOutputsAsSent" TwoParams -- endWalkingOutputsAsSent
+    | "$walkMoreOutputs" Param -- walkMoreOutputs
+    | "$nextOutput" Param -- nextOutput
+    | "$advanceOutputs" Param -- advanceOutputs
 
     // mechanism Counter
     | "$initializeCounter" -- initializeCounter
@@ -43,8 +59,10 @@ pre {
 Param = "(" Expr ")"
 TwoParams = "(" Expr "," Expr ")"
 Expr
-  = "(" Expr ")" -- nested
+  = "(" Expr ")" Expr -- cast
+  | "(" Expr ")" -- nested
   | Expr "(" Arglist? ")" -- funccall
+  | atom -- atom
   | ~"," ~"(" ~")" any -- flat
 
 Arglist = ArgComma+
@@ -63,6 +81,12 @@ notNL = ~nl any
 dollar = "$"
 
 ws = " " | "\t"
+
+wsnl = ws | nl
+
+atom = atomchar+
+atomchar = ~"$" ~"," ~"(" ~")" any 
+
 
 }
 

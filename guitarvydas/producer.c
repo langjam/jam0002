@@ -1,19 +1,19 @@
+#include "cos.h"
+#include "producer.h"
 
 // producer
 int counter;
 
 void initProducer (Component self) {
-  $initializeCounter
+counter = 0;
 }
 
 void reactProducer (Component self, Message m) {
-  $decCounter
-  if ($counterIsGreaterThanZero) {
-      $send (self, '*');
+counter -= 1;
+  if (counter > 0) {
+kernelSendc (self, '*');
     } else {
-      $withLock {
-	systemRunning = 0;
-      }
+kernelStop ();
     }
 }
 

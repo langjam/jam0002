@@ -6,10 +6,17 @@
 # pfr short.cpre cpre.ohm cpre.glue support.js
 # #pfr os.cpre cpre.ohm cpre.glue support.js
 
+clear
 cdir=`pwd`
-#node parse.js short.cmm short.ohm short.glue ${cdir}/support.js
-node parse.js producer.cmm short.ohm short.glue ${cdir}/support.js >producer.c
-node parse.js consumer.cmm short.ohm short.glue ${cdir}/support.js >consumer.c
-node parse.js os.cmm short.ohm short.glue ${cdir}/support.js >os.c
+#node parse.js cmm.cmm cmm.ohm cmm.glue ${cdir}/support.js
+node pfr.js producer.cmm cmm.ohm cmm.glue ${cdir}/support.js >producer.c
+node pfr.js consumer.cmm cmm.ohm cmm.glue ${cdir}/support.js >consumer.c
+node pfr.js os.cmm cmm.ohm cmm.glue ${cdir}/support.js >os.c
+node pfr.js main.cmm cmm.ohm cmm.glue ${cdir}/support.js >main.c
 
-
+# echo gcc producer.c
+# gcc producer.c
+# echo gcc consumer.c
+# gcc consumer.c
+echo gcc os.c
+gcc os.c

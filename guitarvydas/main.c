@@ -1,11 +1,12 @@
 
 void main (int argc, char **argv) {
-  Component p = $newComponent (initProducer, reactProducer);
-  Component c = $newComponent (initConsumer, reactConsumer);
-  List lis1 = $newListCell (p);
-  List lis2 = $newListCell (c);
-  List lis = $append (lis1, lis2);
+  Component p =  componentNew (initProducer, reactProducer) ;
+  Component c =  componentNew (initConsumer, reactConsumer) ;
+  List lis1 = listNewCell (p);
+  List lis2 = listNewCell (c);
+  List lis = lis1 = listAppend1 (lis1, lis2);
   runQueue = lis;
-  $connect (p, c);
+connectionsConnect (p, c);
   Dispatcher ();
 }
+

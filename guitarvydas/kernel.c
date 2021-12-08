@@ -1,11 +1,3 @@
-#include "runnable.h"
-#include <malloc.h>
-
-void panic (char* panicMessage) {
-  printf ("%s\n", panicMessage);
-  exit (1);
-}
-
 Message* kernelNewMessage (Datum* data) {
   Message* m = (Message*) malloc (sizeof (Message));
   m->datum = data;
