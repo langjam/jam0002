@@ -119,7 +119,7 @@ describe("Emitter test", () => {
       // rainbow_irr-wave_irr: print int
       "aabbbbbb",
       "abccccba",
-      // wave_irr-rainbow_irr: print symbol
+      // wave_irr-rainbow_irr: halt
       "abddddba",
       "aabbbbbb",
 
@@ -127,7 +127,7 @@ describe("Emitter test", () => {
       "aabbbaab",
       "abccccba",
 
-      // wave_irr-checker_irr: halt
+      // wave_irr-checker_irr: print symbol
       "abddddba",
       "aabbbaab",
     ].join("\n");
@@ -135,7 +135,7 @@ describe("Emitter test", () => {
     let program = runParseEmit(lines);
 
     let bytecodes = program.mainSection.bytecodes;
-    let expected = [Instructions.PRINT_INT, Instructions.PRINT_SYMB, Instructions.PRINT_CHAR, Instructions.HALT];
+    let expected = [Instructions.PRINT_INT, Instructions.HALT, Instructions.PRINT_CHAR, Instructions.PRINT_SYMB];
 
     expect(bytecodes).to.have.length(expected.length);
     expect(bytecodes).to.deep.eq(expected);

@@ -92,10 +92,10 @@ const CombinationTable: {[key in number]: Instructions | EmitFunction } = {
   [combine(PatternType.WAVE, PatternType.RAINBOW_IRREGULAR)]         : Instructions.AND,
   [combine(PatternType.RAINBOW_IRREGULAR, PatternType.WAVE)]         : Instructions.OR,
 
+  [combine(PatternType.WAVE_IRREGULAR, PatternType.RAINBOW_IRREGULAR)]    : Instructions.HALT,
   [combine(PatternType.RAINBOW_IRREGULAR, PatternType.WAVE_IRREGULAR)]    : Instructions.PRINT_INT,
-  [combine(PatternType.WAVE_IRREGULAR, PatternType.RAINBOW_IRREGULAR)]    : Instructions.PRINT_SYMB,
   [combine(PatternType.CHECKER_IRREGULAR, PatternType.WAVE_IRREGULAR)]    : Instructions.PRINT_CHAR,
-  [combine(PatternType.WAVE_IRREGULAR, PatternType.CHECKER_IRREGULAR)]    : Instructions.HALT,
+  [combine(PatternType.WAVE_IRREGULAR, PatternType.CHECKER_IRREGULAR)]    : Instructions.PRINT_SYMB,
 
 };
 

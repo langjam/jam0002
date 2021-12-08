@@ -7,8 +7,8 @@ export const enum Instructions {
   LOAD, STORE, GREATER, LESS,
   EQUAL, NOT, OR, AND,
   FWD, BACK, FWD_IF, BACK_IF,
-  CALL, RETURN, PRINT_INT, PRINT_SYMB,
-  PRINT_CHAR, HALT
+  CALL, RETURN, HALT,
+  PRINT_INT, PRINT_CHAR, PRINT_SYMB,
 };
 
 export class RuntimeError extends Error {}
