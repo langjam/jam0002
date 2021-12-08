@@ -70,6 +70,6 @@ program = many rule <* eof
 
 parseProgram :: String -> Text -> Either String [Rule Text]
 parseProgram filename input =
-  case parse (space *> program) filename input of
+  case parse (sc *> program) filename input of
     Left err -> Left $ errorBundlePretty err
     Right res -> Right res
