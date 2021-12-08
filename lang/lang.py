@@ -271,6 +271,7 @@ def p_statement_group(p):
   """
   statement_group : NAME ASSIGN LBRACE statements RBRACE
   """
+  p[0] = StatementGroupNode(name = p[1], stmts = p[4])
 
 def p_statements(p):
   """
@@ -422,4 +423,8 @@ if __name__ == '__main__':
   with open(fileName, "r") as f:
     code = f.read()
 
-  pprint(yacc.parse(code))
+  ast = yacc.parse(code)
+  pprint(ast)
+
+# from irgen import IRGen
+# IRGen(ast)

@@ -147,4 +147,3 @@ cython_debug/
 *.out
 parsetab.py
 *.swp
-generate.py
