@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "cmmmac.md",
+            "file": "Gotchas.md",
             "mode": "source"
           }
         }
@@ -68,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "cmmmac.md",
+                "file": "Gotchas.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -88,6 +88,7 @@
   },
   "active": "e8e30749ec6771d0",
   "lastOpenFiles": [
+    "Gotchas.md",
     "cmmmac.md",
     "Future.md",
     "Plan.md",
@@ -96,7 +97,6 @@
     "Macros vs. DSLs.md",
     "Doc.md",
     "Pattern Matching.md",
-    "Normalization.md",
-    "Time.md"
+    "Normalization.md"
   ]
 }

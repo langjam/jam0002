@@ -1,19 +1,19 @@
+#include "cos.h"
+#include "producer.h"
 
 // producer
 int counter;
 
 void initProducer (Component self) {
-  counter = 0;
+counter = 0;
 }
 
 void reactProducer (Component self, Message m) {
-  counter -= 1;
+counter -= 1;
   if (counter > 0) {
-    kernelSend (self, '*');
-  } else {
-    {
-      systemRunning = 0;
+kernelSendc (self, '*');
+    } else {
+kernelStop ();
     }
-  }
 }
 

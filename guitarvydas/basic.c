@@ -13,49 +13,8 @@ int systemRunning;
 
 Connection connections [1];
 
-void DispatchOnce () {
-  Component* component = runQueue;
-  while (*component) {
-    if (component->inputQeue) {
-      Message* m = kernelPopInputQueue (*component);
-      (*component->react) (*comonent, m);
-    }
-    component = component->next;
-  }
-}
-
-void Dispatcher () {
-  while (systemRunning) {
-    DispatchOnce ();
-  }
-  DispatchTransferOutputs ();
-}
-
-void DispatchTransferOutputs () {
-  Component* componentList = runQueue;
-  while (*componentList) {
-    DispatchTransferOutputsForOneComponent (componentList);
-    $next (componentList);
-  }
-}
-
 int counter;
 
-// producer
-void initProducer (Component* self) {
-  counter = 10;
-}
-
-void reactProducer (Component* self, Message* m) {
-  counter -= 1;
-  if (counter > 0) {
-      $send (self, '*');
-    } else {
-      $withLock (systemRunning) {
-	systemRunning = 0;
-      }
-    }
-}
 
 
 // consumer

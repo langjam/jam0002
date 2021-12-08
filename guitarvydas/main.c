@@ -4,7 +4,7 @@ void main (int argc, char **argv) {
   Component c =  componentNew (initConsumer, reactConsumer) ;
   List lis1 = listNewCell (p);
   List lis2 = listNewCell (c);
-  List lis = $append (lis1, lis2);
+  List lis = lis1 = listAppend1 (lis1, lis2);
   runQueue = lis;
 connectionsConnect (p, c);
   Dispatcher ();
