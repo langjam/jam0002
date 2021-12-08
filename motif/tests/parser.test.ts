@@ -24,8 +24,15 @@ describe("Parser test", () => {
       "", // skipped
       "abc", // comment because wrong width
       "cccccc",  // c
+      "cccccc",
+      "cccccc",
       "ccbbaa",  // c b a, 2
+      "ccbbaa",
       "bbccbb",  // b c, 2
+      "bbccbb",
+      "bbccbb",
+      "bbccbb",
+      "bbccbb",
       "abcbab",  // a b c, 1
       "aaabcc",  // a b c, 3 1 2
       "this is a comment",

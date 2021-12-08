@@ -30,6 +30,7 @@ export function parseText(text: string): Program | null {
 
   // parse the rest of program
   let patterns: Pattern[] = [];
+  let lastMatch: MatchResult | null = null;
   for (let i = startIdx; i < lines.length; i++) {
     const line = lines[i];
     if (line.length !== width) continue;
@@ -37,8 +38,9 @@ export function parseText(text: string): Program | null {
     const chars = line.split("");
     const match = matchPattern(chars);
 
-    if (match) {
+    if (match && !isMatchEqual(lastMatch, match)) {
       patterns.push(buildPattern(palette, match));
+      lastMatch = match;
     }
   }
 
@@ -128,7 +130,7 @@ function matchPattern(chars: string[]): MatchResult | null {
   return null;
 }
 
-function matchIncreasingPattern(occurences: number[], numSymbols: number) {
+function matchIncreasingPattern(occurences: number[], numSymbols: number): number {
   let repetition = 0;
   let expected = 0;
 
@@ -142,7 +144,7 @@ function matchIncreasingPattern(occurences: number[], numSymbols: number) {
   return repetition;
 }
 
-function matchWavePattern(occurences: number[], numSymbols: number) {
+function matchWavePattern(occurences: number[], numSymbols: number): boolean {
   const maxId = numSymbols - 1;
   let expected = 0;
   let ascending = true;
@@ -154,6 +156,27 @@ function matchWavePattern(occurences: number[], numSymbols: number) {
     else if (id === 0) ascending = true;
 
     expected += ascending ? 1 : -1;
+  }
+
+  return true;
+}
+
+function isMatchEqual(a: MatchResult | null, b: MatchResult | null): boolean {
+  if ((a == null) || (b == null) || (a.type !== b.type) || (a.symbols.length !== b.symbols.length) ||
+      a.sizes.length !== b.sizes.length) {
+    return false;
+  }
+
+  for (let i = 0; i < a.symbols.length; i++) {
+    if (a.symbols[i] !== b.symbols[i]) {
+      return false;
+    }
+  }
+
+  for (let i = 0; i < a.sizes.length; i++) {
+    if (a.sizes[i] !== b.sizes[i]) {
+      return false;
+    }
   }
 
   return true;
