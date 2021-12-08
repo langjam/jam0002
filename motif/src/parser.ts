@@ -2,42 +2,47 @@ import { Checker, CheckerIrregular, Pattern, PatternType, Rainbow, RainbowIrregu
 
 export type Palette = Map<string, number>;
 export type Program = {palette: Palette, patterns: Pattern[]};
+export class ParseError extends Error {}
 
 export function parseText(text: string): Program | null {
   const lines = text.split(/\r?\n/g);
 
-  // parse color palette & width
+  // parse color palette & width until first section marker
   let startIdx = 0;
-  let firstMatch: MatchResult | null = null;
   let width = 0;
+  let lastMatch: MatchResult | null = null;
+
+  const palette: Palette = new Map();
 
   do {
     const line = lines[startIdx++];
     const chars = line.split("");
-    width = chars.length;
-    firstMatch = matchPattern(chars);
-  } while(!firstMatch && startIdx < lines.length)
+    if (width > 0 && chars.length !== width) continue;
 
-  if (!firstMatch) return null;
+    const match = matchPattern(chars);
+    if (match && !isMatchEqual(lastMatch, match)) {
+      width = chars.length;
+      lastMatch = match;
 
-  const palette: Palette = new Map();
+      if (match.type === PatternType.SOLID) {
+        break;
+      }
 
-  if (firstMatch.type !== PatternType.SOLID) {
-    for (let i = 0; i < firstMatch.symbols.length; i++) {
-      palette.set(firstMatch.symbols[i], i);
+      addToPalette(palette, match);
     }
-  }
+  } while(startIdx < lines.length)
+
+  if (!lastMatch || lastMatch.type !== PatternType.SOLID) return null;
+  if (palette.size === 0) throw new ParseError("Palette is empty");
 
   // parse the rest of program
-  let patterns: Pattern[] = [];
-  let lastMatch: MatchResult | null = null;
+  let patterns: Pattern[] = [ buildPattern(palette, lastMatch) ];
   for (let i = startIdx; i < lines.length; i++) {
     const line = lines[i];
-    if (line.length !== width) continue;
-
     const chars = line.split("");
-    const match = matchPattern(chars);
+    if (chars.length !== width) continue;
 
+    const match = matchPattern(chars);
     if (match && !isMatchEqual(lastMatch, match)) {
       patterns.push(buildPattern(palette, match));
       lastMatch = match;
@@ -68,9 +73,16 @@ function buildPattern(palette: Palette, match: MatchResult): Pattern {
   }
 }
 
+function addToPalette(palette: Palette, match: MatchResult) {
+  for (let symbol of match.symbols) {
+    if (palette.has(symbol)) throw new ParseError(`Symbol is already declared in palette: ${symbol}`)
+    palette.set(symbol, palette.size);
+  }
+}
+
 function getColor(palette: Palette, symbol: string): number {
   let color = palette.get(symbol);
-  if (color == null) color = symbol.charCodeAt(0);
+  if (color == null) throw new ParseError(`Symbol is not declared in palette: ${symbol}`);
   return color;
 }
 
