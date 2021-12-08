@@ -25,7 +25,7 @@ keyword :: Text -> Parser Text
 keyword = L.symbol sc
 
 isOperator :: Char -> Bool
-isOperator c = c `elem` ['+', '-', '*', '/', '?']
+isOperator c = c `elem` ['+', '-', '*', '/', '?', '=']
 
 symbol :: Parser Text
 symbol = T.pack <$> lexeme chars
@@ -65,8 +65,20 @@ rule = do
     keyword "."
     return $ Rule lhs rhs
 
+queryTerms :: Parser [Term Text]
+queryTerms = do
+    terms <- sepBy term (keyword ",")
+    keyword "."   
+    pure terms
+
 program :: Parser [Rule Text]
 program = many rule <* eof
+
+parseQueryTerms :: Text -> Either String [Term Text]
+parseQueryTerms input =
+  case parse (sc *> queryTerms) "#user#" input of
+    Left err -> Left $ errorBundlePretty err
+    Right res -> Right res
 
 parseProgram :: String -> Text -> Either String [Rule Text]
 parseProgram filename input =
