@@ -17,4 +17,4 @@ evalBuiltin (Int x :< Symbol "+" :< Var y :< Symbol "=" :< Int r) =
   void $ unify (Var y) (Int (r - x))
 evalBuiltin (Var x :< Symbol "+" :< Int y :< Symbol "=" :< Int r) =
   void $ unify (Var x) (Int (r - y))
-evalBuiltin t = error ("Invalid term: " <> show t)
+evalBuiltin t = liftIO $ putStrLn ("Unmatched pattern: " <> show t)

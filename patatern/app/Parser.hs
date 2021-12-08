@@ -76,7 +76,7 @@ program = many rule <* eof
 
 parseQueryTerms :: Text -> Either String [Term Text]
 parseQueryTerms input =
-  case parse (sc *> queryTerms) "#user#" input of
+  case parse (sc *> queryTerms) "#REPL#" input of
     Left err -> Left $ errorBundlePretty err
     Right res -> Right res
 

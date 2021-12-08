@@ -26,7 +26,7 @@ runQuery :: IORef [Rule Text] -> Text -> IO ()
 runQuery ref input = do
   let eitherTerms = parseQueryTerms input
   case eitherTerms of
-    Left err -> print err
+    Left err -> putStrLn err
     Right terms -> evalUnifyT $ do
       rules <- liftIO $ readIORef ref
       termsI <- runInstantiateTerms terms

@@ -1,12 +1,31 @@
 module Main where
 
-import Parser
-import qualified Data.Text.IO as T
+import Control.Monad.Catch
+import Control.Monad.IO.Class
+import Data.IORef
+import Data.Text (Text)
+import qualified Data.Text as T
+import Interpret
+import SyntaxTree
+import System.Console.Haskeline
 
 main :: IO ()
 main = do
-    file <- T.readFile "example.pt"
-    case parseProgram "example.pt" file of
-        Left err -> putStrLn err
-        Right res -> mapM_ print res
+  ref <- newIORef []
+  runInputT defaultSettings (loop ref)
+  where
+    loop :: IORef [Rule Text] -> InputT IO ()
+    loop ref = do
+      minput <- getInputLine "patatern> "
+      case minput of
+        Nothing -> pure ()
+        Just "quit" -> pure ()
+        Just "exit" -> pure ()
+        Just ('l':'o':'a':'d':' ':files) ->
+          catchAll (liftIO (handleLoadCmd ref files) >> loop ref) $ \e ->
+            liftIO (print e) >> loop ref
+        Just query ->
+          finally (liftIO (runQuery ref (T.pack query))) (loop ref)
 
+handleLoadCmd :: IORef [Rule Text] -> String -> IO ()
+handleLoadCmd ref args = loadFiles ref (words args)
