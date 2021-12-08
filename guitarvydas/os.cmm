@@ -23,7 +23,7 @@ void Dispatcher () {
 
 void Dispatch () {
   List componentList;
-  $beingWalkingComponentList (componentList);
+  $beginWalkingComponentList (componentList);
   while ($walkMore (componentList) {
       c = $nextComponentInList (componentList);
       DispatchMaybe (c);
@@ -44,7 +44,7 @@ void RunComponentOnce (Component c) {
 }
 
 void DistributeOutputsToReceivers () {
-  List componentList = $beingWalkingComponentList;
+  List componentList = $beginWalkingComponentList;
   while ($walkMore (componentList) {
       c = $nextComponentInList (componentList);
       DispatchMaybe (c);

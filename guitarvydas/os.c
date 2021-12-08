@@ -23,7 +23,7 @@ void Dispatcher () {
 
 void Dispatch () {
   List componentList;
-  $beingWalkingComponentList (componentList);
+componentList = runQueue;
   while ((componentList != NULL){
       c = componentList->data.component;
       DispatchMaybe (c);
@@ -44,7 +44,7 @@ componentCallReaction (c, m);
 }
 
 void DistributeOutputsToReceivers () {
-  List componentList = $beingWalkingComponentList;
+  List componentList = $beginWalkingComponentList;
   while ((componentList != NULL){
       c = componentList->data.component;
       DispatchMaybe (c);
