@@ -1,0 +1,39 @@
+; Expression simplification
+
+; Expressions in sequences are simplified via constant and operation folding at construct
+;   time. The process isn't especially smart and could do more, but for now it recognizes
+;   the following fold types, regardless of and properly respecting operand order. This
+;   allows for easier sequence equality checks as well as slight optimizations when
+;   accessing / iterating (since fewer operations need to be done at each step).
+; 
+; All examples are given in the sequence expressions, but work on base cases too.
+
+sequence raw_consts = 3 * 8 + 0
+print "[sequence raw_consts: ((3 * 8) + 0)] ->", raw_consts
+
+sequence mul_to_exp = n * n * n
+print "[sequence mul_to_exp: ((n * n) * n)] ->", mul_to_exp
+
+sequence mul_consts = n * 3 * 8
+print "[sequence mul_consts: ((n * 3) * 8)] ->", mul_consts
+
+sequence add_to_mul = n + n + n
+print "[sequence add_to_mul: ((n + n) + n)] ->", add_to_mul
+
+sequence add_consts = n + 3 + 8
+print "[sequence add_consts: ((n + 3) + 8)] ->", add_consts
+
+sequence sub_consts = n - 3 - 8
+print "[sequence sub_consts: ((n - 3) - 8)] ->", sub_consts
+
+sequence add_to_sub = n + 3 - 8
+print "[sequence add_to_sub: ((n + 3) - 8)] ->", add_to_sub
+
+sequence sub_to_add = n - 3 + 8
+print "[sequence sub_to_add: ((n - 3) + 8)] ->", sub_to_add
+
+sequence neg_to_sub = n + -3 + 8
+print "[sequence neg_to_sub: ((n + -3) + 8)] ->", neg_to_sub
+
+sequence neg_to_add = n - -3 + 8
+print "[sequence neg_to_add: ((n - -3) + 8)] ->", neg_to_add

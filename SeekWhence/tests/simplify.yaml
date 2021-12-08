@@ -1,0 +1,13 @@
+source: ../examples/simplify.seq
+status: 0
+stdout: |
+  [sequence raw_consts: ((3 * 8) + 0)] -> [sequence raw_consts: 24]
+  [sequence mul_to_exp: ((n * n) * n)] -> [sequence mul_to_exp: (n ^ 3)]
+  [sequence mul_consts: ((n * 3) * 8)] -> [sequence mul_consts: (n * 11)]
+  [sequence add_to_mul: ((n + n) + n)] -> [sequence add_to_mul: (n * 3)]
+  [sequence add_consts: ((n + 3) + 8)] -> [sequence add_consts: (n + 11)]
+  [sequence sub_consts: ((n - 3) - 8)] -> [sequence sub_consts: (n - 11)]
+  [sequence add_to_sub: ((n + 3) - 8)] -> [sequence add_to_sub: (n - 5)]
+  [sequence sub_to_add: ((n - 3) + 8)] -> [sequence sub_to_add: (n + 5)]
+  [sequence neg_to_sub: ((n + -3) + 8)] -> [sequence neg_to_sub: (n + 5)]
+  [sequence neg_to_add: ((n - -3) + 8)] -> [sequence neg_to_add: (n + 11)]

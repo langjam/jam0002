@@ -161,6 +161,7 @@ FuncDefn     = namedtuple('func',    ['ident', 'argNames', 'body'])
 FuncCall     = namedtuple('call',    ['name', 'args'])
 VarDef       = namedtuple('setv',    ['ident', 'expr'])
 ReturnStmt   = namedtuple('_return', ['value'])
+BoolOp       = namedtuple('boolop',  ['op', 'lho', 'rho'])
 BreakStmt    = namedtuple('_break',  [])()
 InfiniteLoop = namedtuple('_inflp',  [])()
 
@@ -202,14 +203,14 @@ def create_parser():
 
   def collapse_preop(op, rho):
     if len(op) < 1: return rho
-    if len(op) < 2: return (unary_opc[op[0]], rho)
-    return (unary_opc[op[0]], collapse_preop(op[1:], rho))
+    if len(op) < 2: return (op[0], 0, rho)
+    return (op[0], 0, collapse_preop(op[1:], rho))
 
-  def collapse_binop(lho, opr=None):
+  def collapse_binop(lho, opr=None, constr=mktuple):
     if opr is None: return lho
     op, rho = opr[0]
-    expr = (op, collapse_binop(lho), collapse_binop(rho))
-    return collapse_binop(expr, opr[1:]) if len(opr) > 1 else expr
+    expr = constr(op, collapse_binop(lho, None, constr), collapse_binop(rho, None, constr))
+    return collapse_binop(expr, opr[1:], constr) if len(opr) > 1 else expr
 
   opr_terms = [operand]
   def define_binop(parse_op, suffixable=False):
@@ -226,6 +227,11 @@ def create_parser():
   define_binop(char_from('*/%'), True)
   define_binop(char_from('+-'), True)
   define_binop(string_from('<=', '<', '>=', '>', '==', '!='))
+
+  opr_terms.append(alt(
+    seq(opr_terms[-1], seq(padding >> string_from('and','or') << padding, opr_terms[-1]).at_least(1).optional()).combine(lambda l,o: collapse_binop(l,o,BoolOp)),
+    opr_terms[-1]
+  ))
 
   expression.become(opr_terms[-1])
 
@@ -303,7 +309,7 @@ def create_parser():
 # Runtime
 
 default_ctx = {
-  'print': lambda _,*s: print(*s),
+  'print': lambda _,*s: print(*[(str(x).lower() if x in [True,False,None] else x) for x in s]),
   'input': lambda _,p=None: (input() if p is None else input(p)) if sys.stdin.isatty() else sys.stdin.readline().rstrip('\n'),
   'systime': lambda _: math.floor(systime()*1000),
 
@@ -315,11 +321,10 @@ default_ctx = {
 
   'true': True,
   'false': False,
-  'none': None
+  'none': None,
+  'not': lambda _,x: not x
 }
 
-unary_opc = { '-': ':unary_neg' }
-unary_opd = { ':unary_neg': '-' }
 operators = {
   # Arithmetic
   '+': lambda _,x,y: x+y,
@@ -348,9 +353,6 @@ operators = {
   # Sequence access / slicing
   ':': lambda c,x,y: x.value_at(math.floor(y),c) if isinstance(x,SequenceLike) and isnumber(y) else None,
   '::': lambda _,x,y: SequenceSlice(x,math.floor(y)) if isinstance(x,SequenceLike) and isnumber(y) else None,
-
-  # Unary operators
-  ':unary_neg': lambda _,x: -x
 }
 
 def exec_expr(expr, ctx={}):
@@ -364,11 +366,16 @@ def exec_expr(expr, ctx={}):
       raise Exception(f"Can't call undefined function {expr.name}")
     return ctx[expr.name](ctx, *[exec_expr(a, ctx) for a in expr.args or []])
 
-  if isinstance(expr, tuple):
-    if expr[0] in operators and len(expr) == 3:
+  if isinstance(expr, BoolOp):
+    lhr = exec_expr(expr.lho, ctx)
+    if expr.op == 'and' and not bool(lhr): return False
+    if expr.op == 'or' and bool(lhr): return True
+    rhr = exec_expr(expr.rho, ctx)
+    return bool(rhr)
+
+  if istuple(expr):
+    if expr[0] in operators:
       return operators[expr[0]](ctx, exec_expr(expr[1], ctx), exec_expr(expr[2], ctx))
-    if expr[0] in operators and len(expr) == 2:
-      return operators[expr[0]](ctx, exec_expr(expr[1], ctx))
     raise Exception(f"Unknown operator {expr[0]}")
 
   return expr
@@ -386,6 +393,9 @@ def display_expr(expr):
     disp = expr.replace("\f", "\\\f")
     return f'"{disp}"'
 
+  if expr is None or isinstance(expr, bool):
+    return str(expr).lower()
+
   if isinstance(expr, Identifier):
     return expr.name
 
@@ -395,15 +405,17 @@ def display_expr(expr):
       return f"[call_function {expr.name}: {args}]"
     return f"[call_function {expr.name}]"
 
-  if isinstance(expr, tuple):
+  if isinstance(expr, BoolOp):
+    return f'({display_expr(expr.lho)} {expr.op} {display_expr(expr.rho)})'
+
+  if istuple(expr):
     if expr[0] == ':':
       return f"{display_expr(expr[1])}:{display_expr(expr[2])}"
     if expr[0] == '::':
       return f"{display_expr(expr[1])}::{display_expr(expr[2])}"
-    if expr[0] in operators and len(expr) == 3:
+    if expr[0] in operators:
+      if expr[0] == '-' and expr[1] == 0: return f"-{display_expr(expr[1])}"
       return f"({display_expr(expr[1])} {expr[0]} {display_expr(expr[2])})"
-    if expr[0] in operators and len(expr) == 2:
-      return f"{unary_opd[expr[0]]}{display_expr(expr[1])}"
     raise Exception("Unexpected tuple when displaying expression")
 
   return str(expr)
@@ -442,92 +454,74 @@ def expr_equal(a, b):
 def simplify_expr(expr):
   '''Simplify an expression if possible via constant and operation folding.'''
 
-  print('DEBUG:', expr)
-
   if not istuple(expr) or expr[0] not in operators: return expr
 
-  # Simplify binary operators
-  if len(expr) == 3:
-    lho = simplify_expr(expr[1])
-    rho = simplify_expr(expr[2])
+  lho  = simplify_expr(expr[1])
+  rho  = simplify_expr(expr[2])
+  expr = (expr[0], lho, rho)
 
-    if isnumber(lho) and isnumber(rho):
-      return operators[expr[0]]({}, lho, rho)
+  if isnumber(lho) and isnumber(rho):
+    return operators[expr[0]]({}, lho, rho)
 
-    collapse_bl = lambda l,r,o: istuple(l) and istuple(r) and l[0] == r[0] == o and isnumber(l[2]) and isnumber(r[2]) and expr_equal(l[1], r[1])
-    collapse_br = lambda l,r,o: istuple(l) and istuple(r) and l[0] == r[0] == o and isnumber(l[1]) and isnumber(r[1]) and expr_equal(l[2], r[2])
-    collapse_il = lambda l,r,o: istuple(r) and r[0] == o and isnumber(r[2]) and expr_equal(l, r[1])
-    collapse_ir = lambda l,r,o: istuple(r) and r[0] == o and isnumber(r[1]) and expr_equal(l, r[2])
-    collapse_cl = lambda l,r,o: istuple(r) and r[0] == o and isnumber(r[1]) and isnumber(l)
-    collapse_cr = lambda l,r,o: istuple(r) and r[0] == o and isnumber(r[2]) and isnumber(l)
-    collapse_un = lambda l,r,o: istuple(r) and r[0] == unary_opc[o]
-    collapse_ng = lambda l,r: isnumber(r) and r < 0
+  collapse_bl = lambda l,r,o: istuple(l) and istuple(r) and l[0] == r[0] == o and isnumber(l[2]) and isnumber(r[2]) and expr_equal(l[1], r[1])
+  collapse_br = lambda l,r,o: istuple(l) and istuple(r) and l[0] == r[0] == o and isnumber(l[1]) and isnumber(r[1]) and expr_equal(l[2], r[2])
+  collapse_il = lambda l,r,o: istuple(r) and r[0] == o and isnumber(r[2]) and expr_equal(l, r[1])
+  collapse_ir = lambda l,r,o: istuple(r) and r[0] == o and isnumber(r[1]) and expr_equal(l, r[2])
+  collapse_cl = lambda l,r,o: istuple(r) and r[0] == o and isnumber(r[1]) and isnumber(l)
+  collapse_cr = lambda l,r,o: istuple(r) and r[0] == o and isnumber(r[2]) and isnumber(l)
+  collapse_ng = lambda l,r: isnumber(r) and r < 0
 
-    # Simplify multiplication by merging constants and increasing exponents
-    if expr[0] == '*':
-      if collapse_bl(lho, rho, '^'): return simplify_expr(('^', lho[1], lho[2]+rho[2]))
-      if collapse_il(lho, rho, '^'): return simplify_expr(('^', rho[1], rho[2]+1))
-      if collapse_il(rho, lho, '^'): return simplify_expr(('^', lho[1], lho[2]+1))
-      if expr_equal(lho, rho):       return simplify_expr(('^', lho, 2))
+  # Simplify multiplication by merging constants and increasing exponents
+  if expr[0] == '*':
+    if collapse_bl(lho, rho, '^'): return simplify_expr(('^', lho[1], lho[2]+rho[2]))
+    if collapse_il(lho, rho, '^'): return simplify_expr(('^', rho[1], rho[2]+1))
+    if collapse_il(rho, lho, '^'): return simplify_expr(('^', lho[1], lho[2]+1))
+    if expr_equal(lho, rho):       return simplify_expr(('^', lho, 2))
 
-      if collapse_cl(lho, rho, '*'): return simplify_expr(('*', rho[2], lho+rho[1]))
-      if collapse_cl(rho, lho, '*'): return simplify_expr(('*', lho[2], lho[1]+rho))
-      if collapse_cr(lho, rho, '*'): return simplify_expr(('*', rho[1], lho+rho[2]))
-      if collapse_cr(rho, lho, '*'): return simplify_expr(('*', lho[1], lho[2]+rho))
+    if collapse_cl(lho, rho, '*'): return simplify_expr(('*', rho[2], lho+rho[1]))
+    if collapse_cl(rho, lho, '*'): return simplify_expr(('*', lho[2], lho[1]+rho))
+    if collapse_cr(lho, rho, '*'): return simplify_expr(('*', rho[1], lho+rho[2]))
+    if collapse_cr(rho, lho, '*'): return simplify_expr(('*', lho[1], lho[2]+rho))
 
-    # Simplify addition by merging constants, increasing coefficients, and flattening with subtraction/negation
-    if expr[0] == '+':
-      if collapse_bl(lho, rho, '*'): return simplify_expr(('*', lho[1], lho[2]+rho[2]))
-      if collapse_br(lho, rho, '*'): return simplify_expr(('*', lho[2], lho[1]+rho[1]))
-      if collapse_il(lho, rho, '*'): return simplify_expr(('*', rho[1], rho[2]+1))
-      if collapse_il(rho, lho, '*'): return simplify_expr(('*', lho[1], lho[2]+1))
-      if collapse_ir(lho, rho, '*'): return simplify_expr(('*', rho[2], rho[1]+1))
-      if collapse_ir(rho, lho, '*'): return simplify_expr(('*', lho[2], lho[1]+1))
-      if expr_equal(lho, rho):       return simplify_expr(('*', lho, 2))
+  # Simplify addition by merging constants, increasing coefficients, and flattening with subtraction/negation
+  if expr[0] == '+':
+    if collapse_bl(lho, rho, '*'): return simplify_expr(('*', lho[1], lho[2]+rho[2]))
+    if collapse_br(lho, rho, '*'): return simplify_expr(('*', lho[2], lho[1]+rho[1]))
+    if collapse_il(lho, rho, '*'): return simplify_expr(('*', rho[1], rho[2]+1))
+    if collapse_il(rho, lho, '*'): return simplify_expr(('*', lho[1], lho[2]+1))
+    if collapse_ir(lho, rho, '*'): return simplify_expr(('*', rho[2], rho[1]+1))
+    if collapse_ir(rho, lho, '*'): return simplify_expr(('*', lho[2], lho[1]+1))
+    if expr_equal(lho, rho):       return simplify_expr(('*', lho, 2))
 
-      if collapse_cl(lho, rho, '+'): return simplify_expr(('+', rho[2], lho+rho[1]))
-      if collapse_cl(rho, lho, '+'): return simplify_expr(('+', lho[2], lho[1]+rho))
-      if collapse_cr(lho, rho, '+'): return simplify_expr(('+', rho[1], lho+rho[2]))
-      if collapse_cr(rho, lho, '+'): return simplify_expr(('+', lho[1], lho[2]+rho))
+    if collapse_cl(lho, rho, '+'): return simplify_expr(('+', rho[2], lho+rho[1]))
+    if collapse_cl(rho, lho, '+'): return simplify_expr(('+', lho[2], lho[1]+rho))
+    if collapse_cr(lho, rho, '+'): return simplify_expr(('+', rho[1], lho+rho[2]))
+    if collapse_cr(rho, lho, '+'): return simplify_expr(('+', lho[1], lho[2]+rho))
 
-      if collapse_cl(lho, rho, '-'): return simplify_expr(('-', lho+rho[1], rho[2]))
-      if collapse_cl(rho, lho, '-'): return simplify_expr(('-', rho+lho[1], lho[2]))
-      if collapse_cr(lho, rho, '-'): return simplify_expr(('+', rho[1], lho-rho[2]))
-      if collapse_cr(rho, lho, '-'): return simplify_expr(('+', lho[1], rho-lho[2]))
+    if collapse_cl(lho, rho, '-'): return simplify_expr(('-', lho+rho[1], rho[2]))
+    if collapse_cl(rho, lho, '-'): return simplify_expr(('-', rho+lho[1], lho[2]))
+    if collapse_cr(lho, rho, '-'): return simplify_expr(('+', rho[1], lho-rho[2]))
+    if collapse_cr(rho, lho, '-'): return simplify_expr(('+', lho[1], rho-lho[2]))
 
-      if collapse_un(lho, rho, '-'): return simplify_expr(('-', lho, rho[1]))
-      if collapse_un(rho, lho, '-'): return simplify_expr(('-', rho, lho[1]))
-      if collapse_ng(lho, rho):      return simplify_expr(('-', lho, -rho))
-      if collapse_ng(rho, lho):      return simplify_expr(('-', rho, -lho))
+    if collapse_ng(lho, rho): return simplify_expr(('-', lho, -rho))
+    if collapse_ng(rho, lho): return simplify_expr(('-', rho, -lho))
 
-    # Simplify subtraction by merging constants and flattening with addition/negation
-    if expr[0] == '-':
-      if collapse_cl(lho, rho, '+'): return simplify_expr(('-', lho-rho[1], rho[2]))
-      if collapse_cl(rho, lho, '+'): return simplify_expr(('+', lho[1]-rho, lho[2]))
-      if collapse_cr(lho, rho, '+'): return simplify_expr(('-', lho-rho[2], rho[1]))
-      if collapse_cr(rho, lho, '+'): return simplify_expr(('+', lho[2]-rho, lho[1]))
+  # Simplify subtraction by merging constants and flattening with addition/negation
+  if expr[0] == '-':
+    if collapse_cl(lho, rho, '+'): return simplify_expr(('-', lho-rho[1], rho[2]))
+    if collapse_cl(rho, lho, '+'): return simplify_expr(('+', lho[1]-rho, lho[2]))
+    if collapse_cr(lho, rho, '+'): return simplify_expr(('-', lho-rho[2], rho[1]))
+    if collapse_cr(rho, lho, '+'): return simplify_expr(('+', lho[2]-rho, lho[1]))
 
-      if collapse_cl(lho, rho, '-'): return simplify_expr(('+', lho-rho[1], rho[2]))
-      if collapse_cl(rho, lho, '-'): return simplify_expr(('-', lho[1]-rho, lho[2]))
-      if collapse_cr(lho, rho, '-'): return simplify_expr(('-', lho+rho[2], rho[1]))
-      if collapse_cr(rho, lho, '-'): return simplify_expr(('-', lho[1], lho[2]+rho))
+    if collapse_cl(lho, rho, '-'): return simplify_expr(('+', lho-rho[1], rho[2]))
+    if collapse_cl(rho, lho, '-'): return simplify_expr(('-', lho[1]-rho, lho[2]))
+    if collapse_cr(lho, rho, '-'): return simplify_expr(('-', lho+rho[2], rho[1]))
+    if collapse_cr(rho, lho, '-'): return simplify_expr(('-', lho[1], lho[2]+rho))
 
-      if collapse_un(lho, rho, '-'): return simplify_expr(('+', lho, rho[1]))
-      if collapse_un(rho, lho, '-'): return simplify_expr(('+', rho, lho[1]))
-      if collapse_ng(lho, rho):      return simplify_expr(('+', lho, -rho))
-      if collapse_ng(rho, lho):      return simplify_expr(('+', rho, -lho))
+    if collapse_ng(lho, rho): return simplify_expr(('+', lho, -rho))
+    if collapse_ng(rho, lho): return simplify_expr(('+', rho, -lho))
 
-    return (expr[0], lho, rho)
-
-  # Simplify unary operators
-  if len(expr) == 2:
-    rho = simplify_expr(expr[1])
-
-    # Simplify negation of constants
-    if expr[0] == ':unary_neg':
-      if isnumber(rho): return -rho
-
-    return (expr[0], rho)
+  return expr
 
 def execute(program, ctx=dict(default_ctx), in_loop=False, in_func=False):
   '''Execute a list of parsed statements'''
@@ -611,6 +605,9 @@ def istuple(x):
 
 def isnamedtuple(x):
   return isinstance(x, tuple) and hasattr(x, '_asdict') and hasattr(x, '_fields')
+
+def mktuple(*xs):
+  return tuple(xs)
 
 
 # CLI
