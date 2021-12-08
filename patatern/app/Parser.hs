@@ -44,18 +44,12 @@ variable = T.pack <$> lexeme chars
 int :: Parser Integer
 int = lexeme L.decimal
 
-lazyPattern :: Parser (Term Text)
-lazyPattern = do
-    keyword "~"
-    Lazy <$> atom
-
 atom :: Parser (Term Text)
 atom = choice
   [ between (keyword "(") (keyword ")") term
   , Symbol <$> symbol
   , Int <$> int
   , Var <$> variable
-  , lazyPattern
   ]
 
 term :: Parser (Term Text)

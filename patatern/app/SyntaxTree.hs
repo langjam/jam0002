@@ -16,7 +16,6 @@ data Term v
   | Int Integer
   | Var v
   | (:<) (Term v) (Term v)
-  | Lazy (Term v)
   deriving (Eq, Show, Data)
 
 infixr 5 :<
