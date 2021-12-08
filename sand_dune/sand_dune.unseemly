@@ -4,7 +4,7 @@ extend_syntax
     DefaultAtom ::= common ( ,{DefaultWord}, reserving 'Atoms' 'Rules' 'Start' 'No' ) ;
 
     # Reserve some symbols:
-    DefaultToken ::= /\s*(\[|\]|\||->|capture_language)/ ;
+    DefaultToken ::= /\s*(\[|\]|\||->|capture_language|_)/ ;
 
     Expr ::= alt[
         # `ActuallyBool` is a hack; we need type variable inside each `*`
@@ -17,13 +17,18 @@ extend_syntax
             # ] *
             lit ,{DefaultWord}, = 'Rules'
             [
+                ,{DefaultSeparator},
                 lit ,{DefaultToken}, = '['
-                lhs := ( ,{Expr< [ActuallyBool -> **[Bool Bool]** ] >}, ) # <-- atom_name : Bool
-                lit ,{DefaultToken}, = ']'
+                [
+                    lhs := ( ,{Expr< [ActuallyBool -> **[Bool Bool]** ] >}, ) # <-- atom_name : Bool
+                    alt[ lit ,{DefaultToken}, = ']'  lit ,{DefaultToken}, = '|' ]alt
+                ] *
                 lit ,{DefaultToken}, = '->'
                 lit ,{DefaultToken}, = '['
-                rhs := ( ,{Expr< [ActuallyBool -> **[Bool Bool]** ] >}, )
-                lit ,{DefaultToken}, = ']'
+                [
+                    rhs := ( ,{Expr< [ActuallyBool -> **[Bool Bool]** ] >}, ) # <-- atom_name : Bool
+                    alt[ lit ,{DefaultToken}, = ']'  lit ,{DefaultToken}, = '|' ]alt
+                ] *
             ] *
             lit ,{DefaultWord}, = 'Start'
             ,{DefaultSeparator},
@@ -36,11 +41,12 @@ extend_syntax
                     # Buffer all writes so that subsequent rules don't "see" each other's effects.
                     # (This is different than how PuzzleScript does it, but it allows cellular-automaton-like behavior)
                     pattern_buffer = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
-                    output = (new_cell "") ; in
+                    output = (new_cell "
+") ; in
 
 
                 -{
-                    for step in (range 0 10) -{
+                    for step in (range 0 25) -{
                         # output:
                         for entry in pattern
                             (assign output (concat (value output)
@@ -48,16 +54,39 @@ extend_syntax
                         # append a newline:
                         (assign output (concat (value output) "
 ")) ;
-
                         for i in (range 0 (len pattern)) -{
+                            # For each rule:
                             ...[ ,lhs, ,rhs, >>
-                            let **[matches ignored]** = (,[lhs], (value (index pattern i))) ; in
-                                (if matches
-                                    let **[ignore output]** = (,[rhs], (value (index pattern i))) ; in
-                                        (assign (index pattern_buffer i) output)
-                                    **[]**)
-                            ]...
-                            ; **[]**
+                                let j = (new_cell 0) ;
+                                    all_match = (new_cell true) ; in -{
+                                # For each cell in the rule:
+                                -{
+                                    ...[ ,lhs, ,rhs, >> -{
+                                        let mod_ij = (modulo (plus i (value j)) (len pattern)) ; in
+                                        let **[matches ignored]** =
+                                            (,[lhs], (value (index pattern mod_ij))) ; in
+                                            (if matches
+                                                **[]**  # do nothing
+                                                (assign all_match false)) ;
+                                        (assign j (plus (value j) 1))
+                                    }- ]... ;
+                                    **[]**
+                                }- ;
+                                (assign j 0) ;
+                                (if (value all_match) -{
+                                    # For each cell in the rule (again, to write results):
+                                    ...[ ,lhs, ,rhs, >> -{
+                                        let mod_ij = (modulo (plus i (value j)) (len pattern)) ; in
+                                        let **[ignored output]**
+                                                = (,[rhs], (value (index pattern_buffer mod_ij))) ; in
+                                            (assign (index pattern_buffer mod_ij) output) ;
+                                        (assign j (plus (value j) 1))
+                                    }- ]... ; **[]** }-
+                                    **[]**  # else, do nothing
+                                )
+                            }- ]...
+                            ;
+                            **[]**
                         }- ;
 
                         # Flip the buffer:
@@ -92,16 +121,23 @@ extend_syntax
                 **[ cell  true ]** ].
         ]'
     }.
+    forall . '{[
+        lit ,{DefaultToken}, = '_'
+    ]}' wildcard -> .{
+        '[Expr |
+            .[ cell : Bool .
+                # pattern: always match / output: no effect
+                **[ true  cell ]** ].
+        ]'
+    }.
     ]alt ;
 in
 Atoms
   cell '#'
 Rules
-  [ cell ] -> [ No cell ]
-  [ No cell ] -> [ cell ]
-  # [ | | ] -> [ | cell | ]                    # By default, cells are on...
-  # [ | No cell | No cell ] -> [ | No cell | ] # Unless they and their rightwards neighbor are off...
-  # [ cell | cell | cell ] -> [ | No cell | ]  # Or they and both neighbors are on.
+  [ _ | _ | _ ] -> [ _ | cell | _ ]                 # By default, cells are on...
+  [ _ | No cell | No cell ] -> [ _ | No cell | _ ]  # Unless they and their rightwards neighbor are off...
+  [ cell | cell | cell ] -> [ _ | No cell | _ ]     # Or they and both neighbors are on.
 Start
   # The "default wallpaper", with a glider moving to the right:
   [   #  ## #####   ### ###   #  ## #####   #  ## #####   #  ## #####]
