@@ -8,5 +8,5 @@ main = do
     file <- T.readFile "example.pt"
     case parseProgram "example.pt" file of
         Left err -> putStrLn err
-        Right res -> print res
+        Right res -> mapM_ print res
 
