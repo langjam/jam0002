@@ -426,5 +426,5 @@ if __name__ == '__main__':
   ast = yacc.parse(code)
   pprint(ast)
 
-# from irgen import IRGen
-# IRGen(ast)
+from irgen import IRGen
+IRGen(ast)
