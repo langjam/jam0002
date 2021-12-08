@@ -1,3 +1,27 @@
+reserved = {
+  "Meta": "META",
+  "Cell": "CELL",
+  "Selectors": "SELECTORS",
+  "MatchCount": "MATCHCOUNT",
+  "Rules": "RULES",
+  "Aliases": "ALIASES",
+  "bool": "BOOL",
+  "int": "INT",
+  "true": "TRUE",
+  "false": "FALSE",
+  "NW": "NW",
+  "N": "N",
+  "NE": "NE",
+  "W": "W",
+  "E": "E",
+  "SW": "SW",
+  "S": "S",
+  "SE": "SE",
+  "neighbours": "NEIGHBOURS",
+  "row": "ROW",
+  "col": "COL",
+}
+
 tokens = (
   "META",
   "CELL",
@@ -5,14 +29,22 @@ tokens = (
   "MATCHCOUNT",
   "RULES",
   "ALIASES",
+  "BOOL",
+  "INT",
+  "TRUE",
+  "FALSE",
+  "NW", "N", "NE",
+  "W", "E",
+  "SW", "S", "SE",
+  "NEIGHBOURS",
+  "ROW",
+  "COL",
   "LPAREN",
   "RPAREN",
   "LBRACE",
   "RBRACE",
   "LSQBRACE",
   "RSQBRACE",
-  "INT",
-  "BOOL",
   "EQUALS",
   "ASSIGN",
   "NOT",
@@ -28,41 +60,9 @@ tokens = (
   "GREATEREQ",
   "LESSEQ",
   "NUMBER",
-  "TRUE",
-  "FALSE",
-  "NW", "NE", "N", # Put N at the end because we should first match NE or NW
-  "W", "E",
-  "SW", "SE", "S", # Put S at the end because we should first match SE or SW
-  "NEIGHBOURS",
-  "ROW",
-  "COL",
   "COMMA",
   "NAME",
 )
-
-def t_META(t):
-  r"Meta"
-  return t
-
-def t_CELL(t):
-  r"Cell"
-  return t
-
-def t_SELECTORS(t):
-  r"Selectors"
-  return t
-
-def t_MATCHCOUNT(t):
-  r"MatchCount"
-  return t
-
-def t_RULES(t):
-  r"Rules"
-  return t
-
-def t_ALIASES(t):
-  r"Aliases"
-  return t
 
 def t_LPAREN(t):
   r"\("
@@ -86,14 +86,6 @@ def t_LSQBRACE(t):
 
 def t_RSQBRACE(t):
   r"\]"
-  return t
-
-def t_INT(t):
-  r"int"
-  return t
-
-def t_BOOL(t):
-  r"bool"
   return t
 
 def t_EQUALS(t):
@@ -152,50 +144,6 @@ def t_LESSEQ(t):
   r"\<="
   return t
 
-def t_NW(t):
-  r"NW"
-  return t
-
-def t_NE(t):
-  r"NE"
-  return t
-
-def t_N(t):
-  r"N"
-  return t
-
-def t_W(t):
-  r"W"
-  return t
-
-def t_E(t):
-  r"E"
-  return t
-
-def t_SW(t):
-  r"SW"
-  return t
-
-def t_SE(t):
-  r"SE"
-  return t
-
-def t_S(t):
-  r"S"
-  return t
-
-def t_NEIGHBOURS(t):
-  r"neighbours"
-  return t
-
-def t_ROW(t):
-  r"row"
-  return t
-
-def t_COL(t):
-  r"col"
-  return t
-
 def t_COMMA(t):
   r","
   return t
@@ -217,6 +165,7 @@ def t_FALSE(t):
 
 def t_NAME(t):
   r"[a-zA-Z_][a-zA-Z0-9_]*"
+  t.type = reserved.get(t.value, "NAME")
   return t
 
 def t_newline(t):

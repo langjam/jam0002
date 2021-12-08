@@ -19,15 +19,15 @@ Selectors {
 }
 
 Rules {
-  HeadToTail (ElectronHead) {
+  HeadToTail (ElectronHead) = {
     type = 2
   }
 
-  TailToConductor (ElectronTail) {
+  TailToConductor (ElectronTail) = {
     type = 3
   }
 
-  ConductorToElectronHead (LiveConductor) {
+  ConductorToElectronHead (LiveConductor) = {
     type = 1
   }
 }
