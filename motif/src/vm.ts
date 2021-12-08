@@ -19,12 +19,14 @@ export class VM {
   private sp: number;
   private stack: Int32Array;
   private sectionStack: Section[];
+  private symbols: string[]
 
   constructor(private program: CompiledProgram, private print: PrintFunc) {
     this.ip = 0;
     this.sp = 0;
     this.stack = new Int32Array(1064);
     this.sectionStack = [ program.mainSection ];
+    this.symbols = Array.from(program.palette.keys());
   }
 
   run() {
@@ -98,6 +100,22 @@ export class VM {
         case Instructions.PRINT_INT:
           this.print(this.pop().toString());
         break;
+
+        case Instructions.PRINT_SYMB: {
+          let color = this.pop();
+          if (color < 0 || color >= this.symbols.length) {
+            throw new RuntimeError(`No symbol is associated to color #${color}`);
+          }
+          this.print(this.symbols[color]);
+          break;
+        }
+
+        case Instructions.PRINT_CHAR:
+          this.print(String.fromCharCode(this.pop() & 0xFF));
+        break;
+
+        case Instructions.HALT:
+          return;
       }
     }
   }

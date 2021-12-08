@@ -1,4 +1,4 @@
-import { Program } from "./parser";
+import { Palette, Program } from "./parser";
 import { Pattern, PatternType, Solid } from "./pattern";
 import { Instructions } from "./vm";
 
@@ -10,6 +10,7 @@ export interface Section {
 export interface CompiledProgram {
   sections: Map<number, Section>;
   mainSection: Section;
+  palette: Palette;
 }
 
 interface EmitterState {
@@ -50,7 +51,7 @@ export function emitBytecodes(program: Program): CompiledProgram {
     }
   }
 
-  return {sections, mainSection}
+  return {sections, mainSection, palette}
 }
 
 function combine(a: PatternType, b: PatternType): number {
@@ -83,6 +84,11 @@ const CombinationTable: {[key in number]: Instructions | EmitFunction } = {
   [combine(PatternType.RAINBOW_IRREGULAR, PatternType.RAINBOW)]      : Instructions.POW,
 
   [combine(PatternType.RAINBOW_IRREGULAR, PatternType.WAVE_IRREGULAR)]    : Instructions.PRINT_INT,
+  [combine(PatternType.WAVE_IRREGULAR, PatternType.RAINBOW_IRREGULAR)]    : Instructions.PRINT_SYMB,
+
+  [combine(PatternType.CHECKER_IRREGULAR, PatternType.WAVE_IRREGULAR)]    : Instructions.PRINT_CHAR,
+  [combine(PatternType.WAVE_IRREGULAR, PatternType.CHECKER_IRREGULAR)]    : Instructions.HALT,
+
 };
 
 function emitPush(state: EmitterState, first: Pattern, second: Pattern) {

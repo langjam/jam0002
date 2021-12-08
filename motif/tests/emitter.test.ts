@@ -71,19 +71,30 @@ describe("Emitter test", () => {
     expect(bytecodes).to.deep.eq(expected);
   });
 
-  it ("Emit print instructions", () => {
+  it ("Emit print & halt instructions", () => {
     const lines = [
       "abcdefgh",
       "aaaaaaaa",
-      // rainbow_irr-wave_irr: add
+      // rainbow_irr-wave_irr: print int
       "aabbbbbb",
       "abccccba",
+      // wave_irr-rainbow_irr: print symbol
+      "abddddba",
+      "aabbbbbb",
+
+      // checker_irr-wave_irr: print char
+      "aabbbaab",
+      "abccccba",
+
+      // wave_irr-checker_irr: halt
+      "abddddba",
+      "aabbbaab",
     ].join("\n");
 
     let program = runParseEmit(lines);
 
     let bytecodes = program.mainSection.bytecodes;
-    let expected = [Instructions.PRINT_INT];
+    let expected = [Instructions.PRINT_INT, Instructions.PRINT_SYMB, Instructions.PRINT_CHAR, Instructions.HALT];
 
     expect(bytecodes).to.have.length(expected.length);
     expect(bytecodes).to.deep.eq(expected);
