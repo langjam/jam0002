@@ -82,6 +82,9 @@ const CombinationTable: {[key in number]: Instructions | EmitFunction } = {
   [combine(PatternType.RAINBOW, PatternType.RAINBOW_IRREGULAR)]      : Instructions.MOD,
   [combine(PatternType.RAINBOW_IRREGULAR, PatternType.RAINBOW)]      : Instructions.POW,
 
+  [combine(PatternType.RAINBOW, PatternType.CHECKER_IRREGULAR)]      : Instructions.LOAD,
+  [combine(PatternType.CHECKER_IRREGULAR, PatternType.RAINBOW)]      : Instructions.STORE,
+
   [combine(PatternType.CHECKER, PatternType.CHECKER_IRREGULAR)]      : Instructions.GREATER,
   [combine(PatternType.CHECKER_IRREGULAR, PatternType.CHECKER)]      : Instructions.LESS,
   [combine(PatternType.CHECKER, PatternType.RAINBOW_IRREGULAR)]      : Instructions.EQUAL,

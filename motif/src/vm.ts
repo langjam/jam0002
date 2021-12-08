@@ -14,17 +14,22 @@ export const enum Instructions {
 export class RuntimeError extends Error {}
 export type PrintFunc = (str: string) => void;
 
+const STACK_SIZE = 1024;
+const MEMORY_SIZE = 65536;
+
 export class VM {
   private ip: number;
   private sp: number;
   private stack: Int32Array;
+  private memory: Int32Array;
   private sectionStack: Section[];
   private symbols: string[]
 
   constructor(private program: CompiledProgram, private print: PrintFunc) {
     this.ip = 0;
     this.sp = 0;
-    this.stack = new Int32Array(1064);
+    this.stack = new Int32Array(STACK_SIZE);
+    this.memory = new Int32Array(MEMORY_SIZE)
     this.sectionStack = [ program.mainSection ];
     this.symbols = Array.from(program.palette.keys());
   }
@@ -39,6 +44,8 @@ export class VM {
       let instr = this.currentSection().bytecodes[this.ip++] as Instructions;
 
       switch(instr) {
+        /* STACK OPERATIONS */
+
         case Instructions.PUSH:
           this.push(bytecodes[this.ip++]);
         break;
@@ -137,6 +144,27 @@ export class VM {
           let b = this.pop();
           let a = this.pop();
           this.push(a || b ? 1 : 0);
+          break;
+        }
+
+        /* MEMORY OPERATIONS */
+        case Instructions.LOAD: {
+          let addr = this.pop();
+          if (addr < 0 || addr >= this.memory.length) {
+            throw new RuntimeError("Memory out of bound");
+          }
+
+          this.push(this.memory[addr]);
+          break;
+        }
+
+        case Instructions.STORE: {
+          let addr = this.pop();
+          if (addr < 0 || addr >= this.memory.length) {
+            throw new RuntimeError("Memory out of bound");
+          }
+
+          this.memory[addr] = this.pop();
           break;
         }
 

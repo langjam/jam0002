@@ -21,6 +21,31 @@ function singleSectionProgram(bytecodes: number[], palette?: Palette): CompiledP
 }
 
 describe("VM test", () => {
+  it('Run stack & memory instructions', () => {
+    let program = singleSectionProgram([
+      Instructions.PUSH, 2,
+      Instructions.DUP,
+      Instructions.PRINT_INT,
+      Instructions.PRINT_INT,
+      Instructions.PUSH, 3,
+      Instructions.PUSH, 5,
+      Instructions.SWAP,
+      Instructions.PRINT_INT,
+      Instructions.PRINT_INT,
+      Instructions.PUSH, 8,
+      Instructions.PUSH, 1,
+      Instructions.STORE,
+      Instructions.PUSH, 1,
+      Instructions.LOAD,
+      Instructions.PRINT_INT,
+    ]);
+
+    let [print, results] = createPrint();
+    new VM(program, print).run();
+
+    expect(joinPrintResult(results)).to.eq("22358");
+  });
+
   it('Run arithmetic instructions', () => {
     let program = singleSectionProgram([
       Instructions.PUSH, 2,
@@ -47,21 +72,12 @@ describe("VM test", () => {
       Instructions.PUSH, 2,
       Instructions.POW,
       Instructions.PRINT_INT,
-      Instructions.PUSH, 2,
-      Instructions.DUP,
-      Instructions.PRINT_INT,
-      Instructions.PRINT_INT,
-      Instructions.PUSH, 3,
-      Instructions.PUSH, 5,
-      Instructions.SWAP,
-      Instructions.PRINT_INT,
-      Instructions.PRINT_INT,
     ]);
 
     let [print, results] = createPrint();
     new VM(program, print).run();
 
-    expect(joinPrintResult(results)).to.eq("5163292235");
+    expect(joinPrintResult(results)).to.eq("516329");
   });
 
   it('Run logic & comparison instructions', () => {

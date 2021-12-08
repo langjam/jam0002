@@ -10,7 +10,7 @@ function runParseEmit(text: string) {
 }
 
 describe("Emitter test", () => {
-  it ("Emit stack instructions", () => {
+  it ("Emit stack & memory instructions", () => {
     const lines = [
       "abcdefgh",
       "aaaaaaaa",
@@ -26,12 +26,19 @@ describe("Emitter test", () => {
       // wave_irreg-rainbow: swap
       "abccccba",
       "aaaabbbb",
+      // rainbow-checker_irreg: load
+      "bbbbaaaa",
+      "abbabbab",
+      // checker_irreg-rainbow: store
+      "abbbabbb",
+      "aaaabbbb",
     ].join("\n");
 
     let program = runParseEmit(lines);
 
     let bytecodes = program.mainSection.bytecodes;
-    let expected = [Instructions.PUSH, 2, Instructions.POP, Instructions.DUP, Instructions.SWAP];
+    let expected = [Instructions.PUSH, 2, Instructions.POP, Instructions.DUP, Instructions.SWAP,
+      Instructions.LOAD, Instructions.STORE];
 
     expect(bytecodes).to.have.length(expected.length);
     expect(bytecodes).to.deep.eq(expected);
