@@ -10,6 +10,12 @@ import Data.Text (Text)
 import Logic.Unify
 import SyntaxTree
 
+runInstantiateRule ::
+  Monad m =>
+  Rule Text ->
+  UnifyT (Term UVar) m (Rule UVar)
+runInstantiateRule = flip evalStateT mempty . instantiateRule
+
 -- | Instantiate the LHS and the RHS of a rule
 instantiateRule ::
   Monad m =>

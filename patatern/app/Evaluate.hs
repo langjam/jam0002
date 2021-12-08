@@ -11,27 +11,23 @@ import Data.Text (Text)
 import Instantiate
 import Logic.Unify
 import SyntaxTree
-import Utils
 
-eval :: IORef (Seq (Rule Text)) -> Term Text -> UnifyT (Term UVar) IO ()
-eval rulesRef query = do
-  rules <- liftIO $ readIORef rulesRef
-  let maybeRHS = firstMatchingRuleRHS rules query
-  -- TODO Continue
+eval :: Seq (Rule Text) -> Term UVar -> UnifyT (Term UVar) IO ()
+eval rules query = do
+  maybeRule <- firstMatchingRule rules query
+  case maybeRule of
+    Just rule -> traverse_ (eval rules) (rhs rule)
+    Nothing -> undefined -- evalBuiltin query
   pure ()
 
-firstMatchingRuleRHS ::
+firstMatchingRule ::
   Seq (Rule Text) ->
-  Term Text ->
-  UnifyT (Term UVar) IO (Maybe [Term Text])
-firstMatchingRuleRHS Empty _ = pure Nothing
-firstMatchingRuleRHS (rule :<| rules) query = do
-  res <- tryRule
+  Term UVar ->
+  UnifyT (Term UVar) IO (Maybe (Rule UVar))
+firstMatchingRule Empty _ = pure Nothing
+firstMatchingRule (rule :<| rules) query = do
+  ruleI <- runInstantiateRule rule
+  res <- unifyOrUndo_ query (lhs ruleI)
   if res
-    then pure $ Just (rhs rule)
-    else firstMatchingRuleRHS rules query
-  where
-    tryRule = flip evalStateT mempty $ do
-      queryI <- instantiateTerm query
-      lhsI <- instantiateTerm (lhs rule)
-      lift $ unifyOrUndo_ queryI lhsI
+    then pure $ Just ruleI
+    else firstMatchingRule rules query
