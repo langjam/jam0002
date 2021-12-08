@@ -20,6 +20,7 @@ tokens = (
   "MINUS",
   "MULTIPLY",
   "DIVIDE",
+  "MODULO",
   "AND",
   "OR",
   "GREATER",
@@ -121,6 +122,10 @@ def t_MULTIPLY(t):
 
 def t_DIVIDE(t):
   r"\/"
+  return t
+
+def t_MODULO(t):
+  r"%"
   return t
 
 def t_AND(t):
@@ -230,14 +235,16 @@ from nodes import *
 
 lex.lex()
 
+# Same as Java precedence: https://docs.oracle.com/javase/tutorial/java/nutsandbolts/operators.html
+# PLY wants these defined in reverse order for some reason: http://www.dabeaz.com/ply/ply.html#ply_nn27
 precedence = (
-  ("left", "PLUS", "MINUS"),
-  ("left", "MULTIPLY", "DIVIDE"),
-  ("left", "UMINUS"),
-  ("left", "EQUALS", "GREATER", "LESS", "GREATEREQ", "LESSEQ"),
   ("left", "OR"),
   ("left", "AND"),
-  ("left", "NOT"),
+  ("left", "EQUALS"),
+  ("left", "GREATER", "LESS", "GREATEREQ", "LESSEQ"),
+  ("left", "PLUS", "MINUS"),
+  ("left", "MULTIPLY", "DIVIDE", "MODULO"),
+  ("left", "UMINUS", "NOT"),
 )
 
 def _epsilon_or_list(p):
@@ -361,6 +368,7 @@ def p_binop(p):
         | expression MINUS expression
         | expression MULTIPLY expression
         | expression DIVIDE expression
+        | expression MODULO expression
         | expression GREATER expression
         | expression LESS expression
         | expression GREATEREQ expression

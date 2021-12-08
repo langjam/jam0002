@@ -1,0 +1,47 @@
+Meta {
+  rows = 7
+  cols = 16
+}
+
+Cell {
+  bool active = false
+  int channel = 0
+  int note = 0
+  int octave = 4
+  int velocity = 63
+}
+
+Aliases {
+  C = { note = 0 }
+  c = { note = 1 }
+  D = { note = 2 }
+  d = { note = 3 }
+  E = { note = 4 }
+  F = { note = 5 }
+  f = { note = 6 }
+  G = { note = 7 }
+  g = { note = 8 }
+  A = { note = 9 }
+  a = { note = 10 }
+  B = { note = 11 }
+}
+
+Selectors {
+  Any = (true)
+  ActiveCell = (active == true)
+  ToActivate = !ActiveCell & MatchCount([W], ActiveCell) == 1
+}
+
+Rules {
+  Initialize (Any) = {
+    octave = row % 7 + 1
+  }
+
+  Deactivate (ActiveCell) = {
+    active = false
+  }
+
+  Activate (ToActivate) = {
+    active = true
+  }
+}
