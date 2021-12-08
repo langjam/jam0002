@@ -71,6 +71,40 @@ describe("Emitter test", () => {
     expect(bytecodes).to.deep.eq(expected);
   });
 
+  it ("Emit logic & comparison instructions", () => {
+    const lines = [
+      "abcdefgh",
+      "aaaaaaaa",
+      // checker-checker_irreg: greater
+      "abababab",
+      "abbbabbb",
+      // checker-checker_irreg: less
+      "cbbbcbbb",
+      "abababab",
+      // checker-rainbow_irreg: equal
+      "acacacac",
+      "aaaaaabb",
+      // rainbow_irreg-checker: not
+      "aaaaaacc",
+      "abababab",
+      // wave-rainbow_irreg: and
+      "abcbabcb",
+      "aaaaaacc",
+      // rainbow_irreg-wave: or
+      "aaaaaabb",
+      "abcbabcb",
+    ].join("\n");
+
+    let program = runParseEmit(lines);
+
+    let bytecodes = program.mainSection.bytecodes;
+    let expected = [Instructions.GREATER, Instructions.LESS, Instructions.EQUAL, Instructions.NOT,
+      Instructions.AND, Instructions.OR];
+
+    expect(bytecodes).to.have.length(expected.length);
+    expect(bytecodes).to.deep.eq(expected);
+  });
+
   it ("Emit print & halt instructions", () => {
     const lines = [
       "abcdefgh",

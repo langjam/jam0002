@@ -75,17 +75,22 @@ const CombinationTable: {[key in number]: Instructions | EmitFunction } = {
   [combine(PatternType.RAINBOW, PatternType.WAVE_IRREGULAR)]    : Instructions.DUP,
   [combine(PatternType.WAVE_IRREGULAR, PatternType.RAINBOW)]    : Instructions.SWAP,
 
-  [combine(PatternType.RAINBOW, PatternType.WAVE)]      : Instructions.ADD,
-  [combine(PatternType.WAVE, PatternType.RAINBOW)]      : Instructions.SUB,
-  [combine(PatternType.CHECKER, PatternType.WAVE)]      : Instructions.MUL,
-  [combine(PatternType.WAVE, PatternType.CHECKER)]      : Instructions.DIV,
-
+  [combine(PatternType.RAINBOW, PatternType.WAVE)]                   : Instructions.ADD,
+  [combine(PatternType.WAVE, PatternType.RAINBOW)]                   : Instructions.SUB,
+  [combine(PatternType.CHECKER, PatternType.WAVE)]                   : Instructions.MUL,
+  [combine(PatternType.WAVE, PatternType.CHECKER)]                   : Instructions.DIV,
   [combine(PatternType.RAINBOW, PatternType.RAINBOW_IRREGULAR)]      : Instructions.MOD,
   [combine(PatternType.RAINBOW_IRREGULAR, PatternType.RAINBOW)]      : Instructions.POW,
 
+  [combine(PatternType.CHECKER, PatternType.CHECKER_IRREGULAR)]      : Instructions.GREATER,
+  [combine(PatternType.CHECKER_IRREGULAR, PatternType.CHECKER)]      : Instructions.LESS,
+  [combine(PatternType.CHECKER, PatternType.RAINBOW_IRREGULAR)]      : Instructions.EQUAL,
+  [combine(PatternType.RAINBOW_IRREGULAR, PatternType.CHECKER)]      : Instructions.NOT,
+  [combine(PatternType.WAVE, PatternType.RAINBOW_IRREGULAR)]         : Instructions.AND,
+  [combine(PatternType.RAINBOW_IRREGULAR, PatternType.WAVE)]         : Instructions.OR,
+
   [combine(PatternType.RAINBOW_IRREGULAR, PatternType.WAVE_IRREGULAR)]    : Instructions.PRINT_INT,
   [combine(PatternType.WAVE_IRREGULAR, PatternType.RAINBOW_IRREGULAR)]    : Instructions.PRINT_SYMB,
-
   [combine(PatternType.CHECKER_IRREGULAR, PatternType.WAVE_IRREGULAR)]    : Instructions.PRINT_CHAR,
   [combine(PatternType.WAVE_IRREGULAR, PatternType.CHECKER_IRREGULAR)]    : Instructions.HALT,
 

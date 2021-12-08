@@ -62,7 +62,46 @@ describe("VM test", () => {
     new VM(program, print).run();
 
     expect(joinPrintResult(results)).to.eq("5163292235");
-  })
+  });
+
+  it('Run logic & comparison instructions', () => {
+    let program = singleSectionProgram([
+      Instructions.PUSH, 2,
+      Instructions.PUSH, 1,
+      Instructions.GREATER,
+      Instructions.PRINT_INT,
+
+      Instructions.PUSH, 2,
+      Instructions.PUSH, 1,
+      Instructions.LESS,
+      Instructions.PRINT_INT,
+
+      Instructions.PUSH, 3,
+      Instructions.PUSH, 3,
+      Instructions.EQUAL,
+      Instructions.PRINT_INT,
+
+      Instructions.PUSH, 3,
+      Instructions.NOT,
+      Instructions.PRINT_INT,
+
+      Instructions.PUSH, 2,
+      Instructions.PUSH, 0,
+      Instructions.AND,
+      Instructions.PRINT_INT,
+
+
+      Instructions.PUSH, 2,
+      Instructions.PUSH, 0,
+      Instructions.OR,
+      Instructions.PRINT_INT,
+    ]);
+
+    let [print, results] = createPrint();
+    new VM(program, print).run();
+
+    expect(joinPrintResult(results)).to.eq("101001");
+  });
 
   it('Run print & halt instructions', () => {
     let palette: Palette = new Map([["a", 0], ["b", 1]]);
@@ -84,5 +123,5 @@ describe("VM test", () => {
     new VM(program, print).run();
 
     expect(joinPrintResult(results)).to.eq("2abA");
-  })
+  });
 })

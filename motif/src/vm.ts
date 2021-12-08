@@ -57,6 +57,8 @@ export class VM {
           break;
         }
 
+        /* ARITHMETICS */
+
         case Instructions.ADD:
           this.push(this.pop() + this.pop());
         break;
@@ -96,6 +98,49 @@ export class VM {
           this.push(a ** b);
           break;
         }
+
+        /* LOGIC & COMPARISON */
+        case Instructions.GREATER: {
+          let b = this.pop();
+          let a = this.pop();
+          this.push(a > b ? 1 : 0);
+          break;
+        }
+
+        case Instructions.LESS: {
+          let b = this.pop();
+          let a = this.pop();
+          this.push(a < b ? 1 : 0);
+          break;
+        }
+
+        case Instructions.EQUAL: {
+          let b = this.pop();
+          let a = this.pop();
+          this.push(a === b ? 1 : 0);
+          break;
+        }
+
+        case Instructions.NOT: {
+          this.push((!this.pop()) ? 1 : 0);
+          break;
+        }
+
+        case Instructions.AND: {
+          let b = this.pop();
+          let a = this.pop();
+          this.push(a && b ? 1 : 0);
+          break;
+        }
+
+        case Instructions.OR: {
+          let b = this.pop();
+          let a = this.pop();
+          this.push(a || b ? 1 : 0);
+          break;
+        }
+
+        /* PRINTS */
 
         case Instructions.PRINT_INT:
           this.print(this.pop().toString());
