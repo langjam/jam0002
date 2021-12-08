@@ -2,7 +2,12 @@ import { Checker, CheckerIrregular, Pattern, PatternType, Rainbow, RainbowIrregu
 
 export type Palette = Map<string, number>;
 export type Program = {palette: Palette, patterns: Pattern[]};
-export class ParseError extends Error {}
+
+export class ParseError extends Error {
+  constructor(public line: number, public message: string) {
+    super(message);
+  }
+}
 
 export function parseText(text: string): Program | null {
   const lines = text.split(/\r?\n/g);
@@ -19,7 +24,7 @@ export function parseText(text: string): Program | null {
     const chars = line.split("");
     if (width > 0 && chars.length !== width) continue;
 
-    const match = matchPattern(chars);
+    const match = matchPattern(startIdx, chars);
     if (match && !isMatchEqual(lastMatch, match)) {
       width = chars.length;
       lastMatch = match;
@@ -33,7 +38,7 @@ export function parseText(text: string): Program | null {
   } while(startIdx < lines.length)
 
   if (!lastMatch || lastMatch.type !== PatternType.SOLID) return null;
-  if (palette.size === 0) throw new ParseError("Palette is empty");
+  if (palette.size === 0) throw new ParseError(lastMatch.line, "Palette is empty");
 
   // parse the rest of program
   let patterns: Pattern[] = [ buildPattern(palette, lastMatch) ];
@@ -42,7 +47,7 @@ export function parseText(text: string): Program | null {
     const chars = line.split("");
     if (chars.length !== width) continue;
 
-    const match = matchPattern(chars);
+    const match = matchPattern(i+1, chars);
     if (match && !isMatchEqual(lastMatch, match)) {
       patterns.push(buildPattern(palette, match));
       lastMatch = match;
@@ -53,7 +58,11 @@ export function parseText(text: string): Program | null {
 }
 
 function buildPattern(palette: Palette, match: MatchResult): Pattern {
-  const colors = match.symbols.map((symbol) => getColor(palette, symbol));
+  const colors = match.symbols.map((symbol) => {
+    let color = palette.get(symbol);
+    if (color == null) throw new ParseError(match.line, `Symbol is not declared in palette: ${symbol}`);
+    return color;
+  });
 
   switch (match.type) {
     case PatternType.SOLID:
@@ -75,24 +84,19 @@ function buildPattern(palette: Palette, match: MatchResult): Pattern {
 
 function addToPalette(palette: Palette, match: MatchResult) {
   for (let symbol of match.symbols) {
-    if (palette.has(symbol)) throw new ParseError(`Symbol is already declared in palette: ${symbol}`)
+    if (palette.has(symbol)) throw new ParseError(match.line, `Symbol is already declared in palette: ${symbol}`)
     palette.set(symbol, palette.size);
   }
 }
 
-function getColor(palette: Palette, symbol: string): number {
-  let color = palette.get(symbol);
-  if (color == null) throw new ParseError(`Symbol is not declared in palette: ${symbol}`);
-  return color;
-}
-
 interface MatchResult {
+  line: number;
   type: PatternType;
   symbols: string[];
   sizes: number[];
 }
 
-function matchPattern(chars: string[]): MatchResult | null {
+function matchPattern(line: number, chars: string[]): MatchResult | null {
   if (chars.length === 0) return null;
 
   let symbolIds = new Map<string, number>();
@@ -120,7 +124,7 @@ function matchPattern(chars: string[]): MatchResult | null {
   const symbols = Array.from(symbolIds.keys());
 
   if (symbols.length === 1) {
-    return {type: PatternType.SOLID, symbols, sizes};
+    return {line, type: PatternType.SOLID, symbols, sizes};
   }
 
   const uniform = (new Set(sizes)).size === 1;
@@ -128,15 +132,15 @@ function matchPattern(chars: string[]): MatchResult | null {
   const increasingPattern = matchIncreasingPattern(occurences, symbols.length);
   if (increasingPattern === 1) {
     let type = uniform ? PatternType.RAINBOW : PatternType.RAINBOW_IRREGULAR;
-    return {type, symbols, sizes};
+    return {line, type, symbols, sizes};
   } else if (increasingPattern > 1) {
     let type = uniform ? PatternType.CHECKER : PatternType.CHECKER_IRREGULAR;
-    return {type, symbols, sizes};
+    return {line, type, symbols, sizes};
   }
 
   if (matchWavePattern(occurences, symbols.length)) {
     let type = uniform ? PatternType.WAVE : PatternType.WAVE_IRREGULAR;
-    return {type, symbols, sizes};
+    return {line, type, symbols, sizes};
   }
 
   return null;
