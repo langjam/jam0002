@@ -44,7 +44,7 @@ instance IsString (Term v) where
 instance ShowVar v => Show (Term v) where
   showsPrec _ (Symbol t) = showString (T.unpack t)
   showsPrec _ (Int n) = shows n
-  showsPrec _ (Var v) = showString "#" . showVarS v
+  showsPrec _ (Var v) = showVarS v
   -- Pairs are left associative, therefore if the left
   -- child if a pair is itself a pair we must insert parentheses.
   -- we use the prec parameter to gracefully handle this.
@@ -86,15 +86,18 @@ data Rule v = Rule
   deriving (Eq)
 
 instance ShowVar v => Show (Rule v) where
-  show (Rule lhs rhs) = show lhs ++ ":\n" ++ rhs' ++ "."
+  show (Rule lhs rhs) = show lhs ++ rhs' ++ "."
     where
-      rhs' = intercalate ",\n" $ map (\t -> "  " ++ show t) rhs
+      rhs' = case rhs of
+        [] -> ""
+        _ -> ":\n" ++ rhs''
+      rhs'' = intercalate ",\n" $ map (\t -> "  " ++ show t) rhs
 
 class ShowVar v where
   showVarS :: v -> ShowS
 
 instance ShowVar Text where
-  showVarS = shows
+  showVarS = showString . T.unpack
 
 instance ShowVar UVar where
-  showVarS (UVar i) = shows i
+  showVarS (UVar i) = showString "#" . shows i
