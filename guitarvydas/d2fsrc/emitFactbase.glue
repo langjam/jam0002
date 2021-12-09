@@ -1,0 +1,63 @@
+Diagrams [@ds] = [[${ds}]]
+Diagram [k @a k2 graphmodel k3] =
+  {{scopeAdd ('diagramid', ''); }}
+  [[${a}${graphmodel}]]
+Attribute [a] = [[${a}]]
+NameAttribute [an k s] = [[name(${support.getDiagramID(_scope)}, ${s}).\n]]
+
+DiagramIDAttribute [an k s] = [[${support.pushDiagramID (s, _scope)}diagram(${support.getDiagramID(_scope)}, "").\n]]
+
+OtherAttribute [@an k s] = [[\ ${an}${k}${s}]]
+string [q1 @cs q2] = [[${q1}${cs}${q2}]]
+unqstring [q1 @cs q2] = [[${cs}]]
+notDQ [c] = [[${c}]]
+attributeValue [x] = [[${x}]]
+number [n] = [[${n}]]
+
+GraphModel [k1 @as k2 root k3] = [[${root}]]
+
+Root [k1 @cells k2] = [[${cells}]]
+
+Cell [c] =
+  {{scopeAdd ('cellid', '');}}
+  [[cell(${support.getCellID(_scope)},"").\ndiagramContains(${support.getDiagramID(_scope)}, ${support.getCellID(_scope)}).\n${c}]]
+
+CellWithoutContent [k1 @as k2] = [[${as}]]
+
+CellWithContent [k1 @as k2 @geometry k3] = [[${as}${geometry}]]
+
+Geometry [g] = [[${g}]]
+
+GeometryWithoutContent [k1 @as k2] = [[${as}]]
+
+GeometryWithContent [k1 @as k2 @ignore k3] = [[${as}]]
+
+CellAttribute [a] = [[${a}]]
+
+
+IDAttribute [id eq s] = [[${support.pushCellID (s, _scope)}]]
+
+
+EllipseAttribute [kind eq q1 s q2] = [[ellipse(${support.getCellID(_scope)}, "").\n]]
+TextAttribute [kind eq q1 s q2] = [[text(${support.getCellID(_scope)}, "").\n]]
+KindAttribute [kind eq s] = [[kind(${support.getCellID(_scope)}, ${s}).\n]]
+ValueAttribute [v eq s] = [[value(${support.getCellID (_scope)}, ${support.swiplEsc (s)}).\n]]
+SourceAttribute [v eq s] = [[source(${support.getCellID (_scope)}, ${support.refCellID (s)}).\n]]
+TargetAttribute [v eq s] = [[target(${support.getCellID (_scope)}, ${support.refCellID (s)}).\n]]
+EdgeAttribute [v eq q1 s q2] = [[edge(${support.getCellID(_scope)}, "").\n]]
+VertexAttribute [v eq q1 s q2] = [[vertex(${support.getCellID(_scope)}, "").\n]]
+GreenAttribute [id k q1 s q2] = [[fillColor(${support.getCellID(_scope)}, "green").\n]]
+YellowAttribute [id k q1 s q2] = [[fillColor(${support.getCellID(_scope)}, "yellow").\n]]
+RedAttribute [id k q1 s q2] = [[fillColor(${support.getCellID(_scope)}, "red").\n]]
+OtherCellAttribute [@an k s] = [[]]
+
+GAttribute [a] = [[${a}]]
+ASGAttribute [kas k s] = [[]]
+RelativeGAttribute [r k s] = [[]]
+xGAttribute [an k s] = [[${an}(${support.getCellID(_scope)}, ${s}).\n]]
+yGAttribute [an k s] = [[${an}(${support.getCellID(_scope)}, ${s}).\n]]
+widthGAttribute [an k s] = [[${an}(${support.getCellID(_scope)}, ${s}).\n]]
+heightGAttribute [an k s] = [[${an}(${support.getCellID(_scope)}, ${s}).\n]]
+OtherGAttribute [@an k s] = [[${an}(${support.getCellID(_scope)}, ${s}).\n]]
+
+quote [c] = [[${c}]]

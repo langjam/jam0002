@@ -283,7 +283,7 @@ var fs = require ('fs');
 function execTranspiler (source, grammar, semantics, errorMessage) {
     // first pass - transpile glue code to javascript
     try {
-	let generatedSCNSemantics = transpiler (semantics, glueGrammar, "_glue", glueSemantics, "in action (glue) specification " + errorMessage);
+	let generatedSCNSemantics = transpiler (semantics, glueGrammar, "_glue", glueSemantics, "in glue specification " + errorMessage);
     _ruleInit();
 	try {
 	    if (viewGeneratedCode) {
@@ -339,7 +339,7 @@ function main () {
     var args = process.argv;
     var sourceFileName = args[2];
     var grammarFileName = args[3];
-    var actionFileName = args[4];
+    var glueFileName = args[4];
     if (args.length >= 6) {
 	var supportFileName = args[5];
 	support = require (supportFileName);
@@ -351,7 +351,7 @@ function main () {
 	    traceDepth = 0;
 	}
     }
-    var result = ftranspile (sourceFileName, grammarFileName, actionFileName, 'parse');
+    var result = ftranspile (sourceFileName, grammarFileName, glueFileName, 'parse');
     console.log (result);
 }
 

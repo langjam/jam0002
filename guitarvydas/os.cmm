@@ -46,7 +46,7 @@ void RunComponentOnce (Component c) {
 }
 
 void DistributeOutputsToReceivers () {
-  List componentList = $beginWalkingComponentList;
+  List componentList = $beginWalkingComponentList; ------- needs params?
   while ($walkMore (componentList)) {
       c = $nextComponentInList (componentList);
       DispatchMaybe (c);

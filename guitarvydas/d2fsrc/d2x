@@ -1,0 +1,4 @@
+# #!/bin/bash
+# # convert a .drawio diagram into a factbase
+d2fdir=${HOME}/app/d2f
+pfr $1.drawio $d2fdir/drawio.ohm $d2fdir/drawio.glue $d2fdir/support.js
