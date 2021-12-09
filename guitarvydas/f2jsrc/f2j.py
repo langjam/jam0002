@@ -12,10 +12,9 @@ for line in sys.stdin:
     if ("\"" in obj):
         obj = eval (obj)
     else:
+        obj = obj.strip ()
         if (obj.isdecimal ()):
             obj = int (obj)
-        else:
-            obj = obj.strip ()
     fact = { 'relation' : rel, 'subject' : subj, 'object' : obj }
     fb.append (fact)
 json.dump (fb, sys.stdout)
