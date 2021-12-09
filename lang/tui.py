@@ -44,7 +44,7 @@ class Tui:
                 # console_h, console_w = getmaxyx(0)
                 # self._resize_simulation_window(console_h, console_w)
                 pass
-            elif c == 8: # backspace
+            elif c == KEY_BACKSPACE or c == 8: # backspace
                 self.simulation.remove(y - 1, x - 1)
             elif c == KEY_UP:
                 if y > 1: y -=1
