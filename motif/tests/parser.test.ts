@@ -68,6 +68,25 @@ describe("Parser test", () => {
     expect(patterns[7]).to.deep.eq(new WaveIrregular(26, [d, e, f], [1, 1, 2, 1, 1]));
   });
 
+  it("Parses text with UTF-8 characters", () => {
+    let source = [
+      "aa猫猫😋😋👍🏿👍🏿👍🏻👍🏻",
+      "aaaaaaaaaa",
+      "aa猫猫aa猫猫aa",
+      "😋👍🏿👍🏻👍🏿😋👍🏿👍🏻👍🏿😋👍🏿"
+    ].join("\n");
+
+    let program = parseText(source) as Program;
+    expect(program).to.not.null;
+    expect(program.palette.size).to.eq(5);
+
+    const patterns = program.patterns;
+    expect(patterns.length).to.eq(3);
+    expect(patterns[0]).to.deep.eq(new Solid(2, 0));
+    expect(patterns[1]).to.deep.eq(new Checker(3, [0, 1], 2));
+    expect(patterns[2]).to.deep.eq(new Wave(4, [2, 3, 4], 1));
+  });
+
   it ("Report palette errors", () => {
     let source = "aaaaaa\nbbccbb\nccbbaa";
     expect(parseText.bind(null, source)).to.throw(/Palette is empty/);

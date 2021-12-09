@@ -1,4 +1,7 @@
 import { Checker, CheckerIrregular, Pattern, PatternType, Rainbow, RainbowIrregular, Solid, Wave, WaveIrregular } from "./pattern";
+import GraphemeSplitter from "grapheme-splitter";
+
+const splitter = new GraphemeSplitter();
 
 export type Palette = Map<string, number>;
 export type Program = {palette: Palette, patterns: Pattern[]};
@@ -21,7 +24,7 @@ export function parseText(text: string): Program | null {
 
   do {
     const line = lines[startIdx++];
-    const chars = line.split("");
+    const chars = splitter.splitGraphemes(line);
     if (width > 0 && chars.length !== width) continue;
 
     const match = matchPattern(startIdx, chars);
@@ -44,7 +47,7 @@ export function parseText(text: string): Program | null {
   let patterns: Pattern[] = [ buildPattern(palette, lastMatch) ];
   for (let i = startIdx; i < lines.length; i++) {
     const line = lines[i];
-    const chars = line.split("");
+    const chars = splitter.splitGraphemes(line);
     if (chars.length !== width) continue;
 
     const match = matchPattern(i+1, chars);
