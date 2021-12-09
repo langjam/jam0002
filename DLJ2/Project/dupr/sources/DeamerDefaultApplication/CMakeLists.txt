@@ -5,6 +5,6 @@
 # If you want to contribute to Deamer.
 # Please visit: https://github.com/Deruago/theDeamerProject 
 #
-# This file is part of the directory: sources
+# This file is part of the directory: DeamerDefaultApplication
 
-add_subdirectory(DeamerDefaultApplication)
+add_subdirectory(Deamer)
