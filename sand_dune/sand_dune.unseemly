@@ -34,70 +34,70 @@ extend_syntax
             ,{DefaultSeparator},
             start_pattern := ( /\[([^\]]*)\]/ )
         ]}' top_level -> .{
-            '[Expr|
-                let string_pattern = ,[(prefab (string_to_sequence (ident_to_string start_pattern)))], ; in
-                    # Inconveniently, `cell` is also Unseemly's word for a mutable container.
-                let pattern = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
-                    # Buffer all writes so that subsequent rules don't "see" each other's effects.
-                    # (This is different than how PuzzleScript does it, but it allows cellular-automaton-like behavior)
-                    pattern_buffer = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
-                    output = (new_cell "
+'[Expr|
+    let string_pattern = ,[(prefab (string_to_sequence (ident_to_string start_pattern)))], ; in
+        # Inconveniently, `cell` is also Unseemly's word for a mutable container.
+    let pattern = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
+        # Buffer all writes so that subsequent rules don't "see" each other's effects.
+        # (This is different than how PuzzleScript does it, but it allows cellular-automaton-like behavior)
+        pattern_buffer = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
+        output = (new_cell "
 ") ; in
-                -{
-                    for step in (range 0 25) -{
-                        # output:
-                        for entry in pattern
-                            (assign output (concat (value output)
-                                (if (value entry) "#" " "))) ;
-                        # append a newline:
-                        (assign output (concat (value output) "
+    -{
+        for step in (range 0 25) -{
+            # output:
+            for entry in pattern
+                (assign output (concat (value output)
+                    (if (value entry) "#" " "))) ;
+            # append a newline:
+            (assign output (concat (value output) "
 ")) ;
+            -{
+                # For each rule:
+                ...[ ,lhs, ,rhs, >>
+                    for i in (range 0 (len pattern))
+                        let j = (new_cell 0) ;
+                            all_match = (new_cell true) ; in -{
+                        # For each cell in the rule:
                         -{
-                            # For each rule:
-                            ...[ ,lhs, ,rhs, >>
-                                for i in (range 0 (len pattern))
-                                    let j = (new_cell 0) ;
-                                        all_match = (new_cell true) ; in -{
-                                # For each cell in the rule:
-                                -{
-                                    ...[ ,lhs, ,rhs, >> -{
-                                        let mod_ij = (modulo (plus i (value j)) (len pattern)) ; in
-                                        let **[matches ignored]** =
-                                            (,[lhs], (value (index pattern mod_ij))) ; in
-                                            (if matches
-                                                **[]**  # do nothing
-                                                (assign all_match false)) ;
-                                        (assign j (plus (value j) 1))
-                                    }- ]... ;
-                                    **[]**
-                                }- ;
-                                (assign j 0) ;
-                                (if (value all_match) -{
-                                    # For each cell in the rule (again, to write results):
-                                    ...[ ,lhs, ,rhs, >> -{
-                                        let mod_ij = (modulo (plus i (value j)) (len pattern)) ; in
-                                        let **[ignored output]**
-                                                = (,[rhs], (value (index pattern_buffer mod_ij))) ; in
-                                            (assign (index pattern_buffer mod_ij) output) ;
-                                        (assign j (plus (value j) 1))
-                                    }- ]... ; **[]** }-
-                                    **[]**  # else, do nothing
-                                )
-                            }- ]...
-                            ;
+                            ...[ ,lhs, ,rhs, >> -{
+                                let mod_ij = (modulo (plus i (value j)) (len pattern)) ; in
+                                let **[matches ignored]** =
+                                    (,[lhs], (value (index pattern mod_ij))) ; in
+                                    (if matches
+                                        **[]**  # do nothing
+                                        (assign all_match false)) ;
+                                (assign j (plus (value j) 1))
+                            }- ]... ;
                             **[]**
                         }- ;
+                        (assign j 0) ;
+                        (if (value all_match) -{
+                            # For each cell in the rule (again, to write results):
+                            ...[ ,lhs, ,rhs, >> -{
+                                let mod_ij = (modulo (plus i (value j)) (len pattern)) ; in
+                                let **[ignored output]**
+                                        = (,[rhs], (value (index pattern_buffer mod_ij))) ; in
+                                    (assign (index pattern_buffer mod_ij) output) ;
+                                (assign j (plus (value j) 1))
+                            }- ]... ; **[]** }-
+                            **[]**  # else, do nothing
+                        )
+                }- ]...
+                ;
+                **[]**
+            }- ;
 
-                        # Flip the buffer:
-                        for i in (range 0 (len pattern)) -{
-                            (assign (index pattern i) (value (index pattern_buffer i)))
-                        }-
+            # Flip the buffer:
+            for i in (range 0 (len pattern)) -{
+                (assign (index pattern i) (value (index pattern_buffer i)))
+            }-
 
 
-                    }- ;
-                    (value output)
-                }-
-            ]'
+        }- ;
+        (value output)
+    }-
+]'
         }.
     forall . '{[
         lit ,{DefaultWord}, = 'No'
