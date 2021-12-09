@@ -1,21 +1,15 @@
 ; This is a comment
-X and Y makes Z:
-  X + Y = Z.
 
-ciao test Prova:
-  come va, tanto, lo sai.
+; These are facts
+john is 23 years old.
 
-ciao Test Prova:
-  ci, provo,
-  ma, non, riesco, 123.
+mary lives in london.
 
-(ciao test) Prova? (quale):
-  sto, cantando, ma non so come.
+; These are rules
+hello:
+  print (hello world).
 
-240 + 13:
-  X.
+say X twice:
+  print (X X).
 
-; Odd statements
-odd 0 1.
 
-odd N R: N1 + 1 = N, odd N1 R1, R1 + 2 = R.
