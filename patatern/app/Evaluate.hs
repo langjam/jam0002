@@ -28,9 +28,13 @@ firstMatchingRule ::
 firstMatchingRule [] _ = pure Nothing
 firstMatchingRule (rule : rules) query = do
   ruleI <- runInstantiateRule rule
-  res <- unifyOrUndo_ query (lhs ruleI)
-  if res
-    then pure $ Just ruleI
+  valid <- subsumes_ (lhs ruleI) query
+  if valid
+    then do
+      unifies <- unifyOrUndo_ (lhs ruleI) query
+      if unifies
+        then pure $ Just ruleI
+        else firstMatchingRule rules query
     else firstMatchingRule rules query
 
 applyBindingsOrDie ::
