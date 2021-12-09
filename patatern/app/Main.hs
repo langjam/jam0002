@@ -1,4 +1,5 @@
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Main where
 
@@ -14,6 +15,7 @@ import SyntaxTree
 import System.Console.Haskeline
 import System.Directory (XdgDirectory (..), getXdgDirectory)
 import System.FilePath ((</>))
+import System.Process (spawnCommand,waitForProcess)
 
 main :: IO ()
 main = do
@@ -32,19 +34,26 @@ main = do
         Nothing -> pure ()
         Just "quit" -> pure ()
         Just "exit" -> pure ()
-        Just ('l' : 'o' : 'a' : 'd' : ' ' : files) ->
-          catchAll (liftIO (handleLoadCmd ref files) >> loop ref) $ \e ->
-            liftIO (print e) >> loop ref
+        Just (':' : cmd) -> try $
+          case cmd of
+            ('!':rest)                -> handleShellCmd rest
+            (words -> ("load":files)) -> handleLoadCmd ref files
         Just query ->
           finally (withInterrupt $ liftIO (runQuery ref (T.pack query))) (loop ref)
+      where
+        try handler =
+          catchAll (liftIO handler) (liftIO . print) >> loop ref
 
 getHistoryFilePath :: IO FilePath
 getHistoryFilePath = do
   dir <- getXdgDirectory XdgData "patatern"
   pure (dir </> "history")
 
-handleLoadCmd :: IORef [Rule Text] -> String -> IO ()
-handleLoadCmd ref args = loadFiles ref (words args)
+handleShellCmd :: String -> IO ()
+handleShellCmd xs = spawnCommand xs >>= waitForProcess >> pure ()
+
+handleLoadCmd :: IORef [Rule Text] -> [String] -> IO ()
+handleLoadCmd = loadFiles
 
 patatern :: Text
 patatern =
