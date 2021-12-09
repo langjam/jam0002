@@ -121,6 +121,7 @@
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
 #include "dupr/Ast/Node/DECIMAL.h"
+#include "dupr/Ast/Node/STRING.h"
 #include "dupr/Ast/Node/ESCAPE_CHARS.h"
 
 #include "dupr/Ast/Node/program.h"
@@ -154,7 +155,7 @@ void duprerror(const char* s);
 int duprlex();
 static ::deamer::external::cpp::ast::Tree* outputTree = nullptr;
 
-#line 158 "dupr_parser.tab.c"
+#line 159 "dupr_parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -219,25 +220,26 @@ enum yysymbol_kind_t
   YYSYMBOL_VARNAME = 34,                   /* VARNAME  */
   YYSYMBOL_NUMBER = 35,                    /* NUMBER  */
   YYSYMBOL_DECIMAL = 36,                   /* DECIMAL  */
-  YYSYMBOL_YYACCEPT = 37,                  /* $accept  */
-  YYSYMBOL_program = 38,                   /* program  */
-  YYSYMBOL_deamerreserved_star__stmt__ = 39, /* deamerreserved_star__stmt__  */
-  YYSYMBOL_stmt = 40,                      /* stmt  */
-  YYSYMBOL_pattern_execution = 41,         /* pattern_execution  */
-  YYSYMBOL_pattern_constructor_array = 42, /* pattern_constructor_array  */
-  YYSYMBOL_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____ = 43, /* deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____  */
-  YYSYMBOL_pattern_constructor = 44,       /* pattern_constructor  */
-  YYSYMBOL_pattern_type = 45,              /* pattern_type  */
-  YYSYMBOL_pattern_name = 46,              /* pattern_name  */
-  YYSYMBOL_deamerreserved_arrow__VARNAME__ = 47, /* deamerreserved_arrow__VARNAME__  */
-  YYSYMBOL_deamerreserved_star__GT__VARNAME__ = 48, /* deamerreserved_star__GT__VARNAME__  */
-  YYSYMBOL_pattern_constructor_content = 49, /* pattern_constructor_content  */
-  YYSYMBOL_deamerreserved_star__pattern_constructor_content_stmt__ = 50, /* deamerreserved_star__pattern_constructor_content_stmt__  */
-  YYSYMBOL_pattern_constructor_content_stmt = 51, /* pattern_constructor_content_stmt  */
-  YYSYMBOL_pattern_constructor_operator = 52, /* pattern_constructor_operator  */
-  YYSYMBOL_pattern_constructor_structure = 53, /* pattern_constructor_structure  */
-  YYSYMBOL_pattern_constructor_terminate = 54, /* pattern_constructor_terminate  */
-  YYSYMBOL_pattern_constructor_encapsulation = 55 /* pattern_constructor_encapsulation  */
+  YYSYMBOL_STRING = 37,                    /* STRING  */
+  YYSYMBOL_YYACCEPT = 38,                  /* $accept  */
+  YYSYMBOL_program = 39,                   /* program  */
+  YYSYMBOL_deamerreserved_star__stmt__ = 40, /* deamerreserved_star__stmt__  */
+  YYSYMBOL_stmt = 41,                      /* stmt  */
+  YYSYMBOL_pattern_execution = 42,         /* pattern_execution  */
+  YYSYMBOL_pattern_constructor_array = 43, /* pattern_constructor_array  */
+  YYSYMBOL_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____ = 44, /* deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____  */
+  YYSYMBOL_pattern_constructor = 45,       /* pattern_constructor  */
+  YYSYMBOL_pattern_type = 46,              /* pattern_type  */
+  YYSYMBOL_pattern_name = 47,              /* pattern_name  */
+  YYSYMBOL_deamerreserved_arrow__VARNAME__ = 48, /* deamerreserved_arrow__VARNAME__  */
+  YYSYMBOL_deamerreserved_star__GT__VARNAME__ = 49, /* deamerreserved_star__GT__VARNAME__  */
+  YYSYMBOL_pattern_constructor_content = 50, /* pattern_constructor_content  */
+  YYSYMBOL_deamerreserved_star__pattern_constructor_content_stmt__ = 51, /* deamerreserved_star__pattern_constructor_content_stmt__  */
+  YYSYMBOL_pattern_constructor_content_stmt = 52, /* pattern_constructor_content_stmt  */
+  YYSYMBOL_pattern_constructor_operator = 53, /* pattern_constructor_operator  */
+  YYSYMBOL_pattern_constructor_structure = 54, /* pattern_constructor_structure  */
+  YYSYMBOL_pattern_constructor_terminate = 55, /* pattern_constructor_terminate  */
+  YYSYMBOL_pattern_constructor_encapsulation = 56 /* pattern_constructor_encapsulation  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -565,19 +567,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  13
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   62
+#define YYLAST   63
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  37
+#define YYNTOKENS  38
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  19
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  57
+#define YYNRULES  58
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  78
+#define YYNSTATES  79
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   291
+#define YYMAXUTOK   292
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -620,19 +622,19 @@ static const yytype_int8 yytranslate[] =
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    36
+      35,    36,    37
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   197,   197,   205,   209,   216,   220,   224,   231,   238,
-     245,   249,   253,   257,   264,   271,   278,   285,   292,   296,
-     303,   310,   314,   321,   325,   329,   333,   340,   344,   348,
-     352,   356,   360,   364,   368,   372,   376,   380,   384,   388,
-     392,   396,   400,   407,   411,   415,   419,   423,   427,   431,
-     435,   442,   446,   450,   454,   461,   465,   469
+       0,   200,   200,   208,   212,   219,   223,   227,   234,   241,
+     248,   252,   256,   260,   267,   274,   281,   288,   295,   299,
+     306,   313,   317,   324,   328,   332,   336,   343,   347,   351,
+     355,   359,   363,   367,   371,   375,   379,   383,   387,   391,
+     395,   399,   403,   410,   414,   418,   422,   426,   430,   434,
+     438,   445,   449,   453,   457,   461,   468,   472,   476
 };
 #endif
 
@@ -654,8 +656,9 @@ static const char *const yytname[] =
   "DIVIDE", "LT", "LE", "GT", "GE", "EQ", "EQEQ", "EQEQEQ", "OR", "AND",
   "OROR", "ANDAND", "WILDCARD_OP", "DOT", "COMMA", "COLON", "SEMICOLON",
   "SIGN", "HEKJE", "QUESTION", "EXCLAM", "PATTERN_INSERTION", "VARNAME",
-  "NUMBER", "DECIMAL", "$accept", "program", "deamerreserved_star__stmt__",
-  "stmt", "pattern_execution", "pattern_constructor_array",
+  "NUMBER", "DECIMAL", "STRING", "$accept", "program",
+  "deamerreserved_star__stmt__", "stmt", "pattern_execution",
+  "pattern_constructor_array",
   "deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____",
   "pattern_constructor", "pattern_type", "pattern_name",
   "deamerreserved_arrow__VARNAME__", "deamerreserved_star__GT__VARNAME__",
@@ -687,14 +690,14 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -28,    34,    45,   -29,   -28,   -29,   -29,   -29,    19,    44,
-     -29,    14,   -29,   -29,   -29,    16,     0,    36,    36,     1,
+     -28,    35,    46,   -29,   -28,   -29,   -29,   -29,    20,    45,
+     -29,    15,   -29,   -29,   -29,    17,     0,    37,    37,     1,
        0,     0,     0,   -29,   -29,   -29,   -29,   -29,   -29,   -29,
      -29,   -29,   -29,   -29,   -29,   -29,   -29,   -29,   -29,   -29,
      -29,   -29,   -29,   -29,   -29,   -29,   -29,   -29,   -29,   -29,
-     -29,    48,   -29,     0,   -29,   -29,   -29,   -29,   -29,     0,
-      20,    49,    50,    47,   -29,   -29,    53,   -29,    20,    51,
-      20,   -29,   -29,   -29,   -29,   -29,   -29,   -29
+     -29,   -29,    49,   -29,     0,   -29,   -29,   -29,   -29,   -29,
+       0,    21,    50,    51,    48,   -29,   -29,    54,   -29,    21,
+      52,    21,   -29,   -29,   -29,   -29,   -29,   -29,   -29
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -707,23 +710,23 @@ static const yytype_int8 yydefact[] =
       22,    22,    22,    27,    28,    29,    30,    31,    32,    33,
       34,    35,    38,    39,    37,    36,    40,    41,    42,    43,
       44,    45,    46,    47,    48,    49,    50,    51,    52,    53,
-      54,     0,    20,    22,    23,    26,    24,    25,    18,    22,
-       0,     0,     0,     0,     8,    21,     0,    15,    11,     0,
-      10,    55,    56,    57,    14,    13,     9,    12
+      54,    55,     0,    20,    22,    23,    26,    24,    25,    18,
+      22,     0,     0,     0,     0,     8,    21,     0,    15,    11,
+       0,    10,    56,    57,    58,    14,    13,     9,    12
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -29,   -29,    54,   -29,   -29,    38,   -27,    40,   -29,    46,
-     -29,    43,   -20,     9,   -29,   -29,   -29,   -29,   -29
+     -29,   -29,    55,   -29,   -29,    39,   -27,    41,   -29,    47,
+     -29,    44,   -20,     9,   -29,   -29,   -29,   -29,   -29
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     3,     4,     5,    68,    69,    70,     8,     9,
-      10,    12,    51,    52,    53,    54,    55,    56,    57
+       0,     2,     3,     4,     5,    69,    70,    71,     8,     9,
+      10,    12,    52,    53,    54,    55,    56,    57,    58
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -731,13 +734,13 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      61,    62,    63,    20,    59,    21,     1,    22,    60,    23,
+      62,    63,    64,    20,    60,    21,     1,    22,    61,    23,
       24,    25,    26,    27,    28,    29,    30,    31,    32,    33,
       34,    35,    36,    37,    38,    39,    40,    41,    42,    43,
-      44,    45,    46,    47,    48,    49,    50,   -19,     6,    66,
-       7,    75,     6,    77,     7,    13,    15,    16,    17,    11,
-      18,    11,    64,    71,    67,    73,    72,    74,    14,    76,
-      58,    19,    65
+      44,    45,    46,    47,    48,    49,    50,    51,   -19,     6,
+      67,     7,    76,     6,    78,     7,    13,    15,    16,    17,
+      11,    18,    11,    65,    72,    68,    74,    73,    75,    14,
+      77,    59,    19,    66
 };
 
 static const yytype_int8 yycheck[] =
@@ -745,35 +748,35 @@ static const yytype_int8 yycheck[] =
       20,    21,    22,     3,     3,     5,    34,     7,     7,     9,
       10,    11,    12,    13,    14,    15,    16,    17,    18,    19,
       20,    21,    22,    23,    24,    25,    26,    27,    28,    29,
-      30,    31,    32,    33,    34,    35,    36,     3,     0,    59,
-       0,    68,     4,    70,     4,     0,    27,     3,    34,    15,
-      34,    15,     4,     4,    34,     8,     6,     4,     4,     8,
-      17,    15,    53
+      30,    31,    32,    33,    34,    35,    36,    37,     3,     0,
+      60,     0,    69,     4,    71,     4,     0,    27,     3,    34,
+      15,    34,    15,     4,     4,    34,     8,     6,     4,     4,
+       8,    17,    15,    54
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    34,    38,    39,    40,    41,    42,    44,    45,    46,
-      47,    15,    48,     0,    39,    27,     3,    34,    34,    46,
+       0,    34,    39,    40,    41,    42,    43,    45,    46,    47,
+      48,    15,    49,     0,    40,    27,     3,    34,    34,    47,
        3,     5,     7,     9,    10,    11,    12,    13,    14,    15,
       16,    17,    18,    19,    20,    21,    22,    23,    24,    25,
       26,    27,    28,    29,    30,    31,    32,    33,    34,    35,
-      36,    49,    50,    51,    52,    53,    54,    55,    48,     3,
-       7,    49,    49,    49,     4,    50,    49,    34,    42,    43,
-      44,     4,     6,     8,     4,    43,     8,    43
+      36,    37,    50,    51,    52,    53,    54,    55,    56,    49,
+       3,     7,    50,    50,    50,     4,    51,    50,    34,    43,
+      44,    45,     4,     6,     8,     4,    44,     8,    44
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    37,    38,    39,    39,    40,    40,    40,    41,    42,
-      43,    43,    43,    43,    44,    45,    46,    47,    48,    48,
-      49,    50,    50,    51,    51,    51,    51,    52,    52,    52,
-      52,    52,    52,    52,    52,    52,    52,    52,    52,    52,
-      52,    52,    52,    53,    53,    53,    53,    53,    53,    53,
-      53,    54,    54,    54,    54,    55,    55,    55
+       0,    38,    39,    40,    40,    41,    41,    41,    42,    43,
+      44,    44,    44,    44,    45,    46,    47,    48,    49,    49,
+      50,    51,    51,    52,    52,    52,    52,    53,    53,    53,
+      53,    53,    53,    53,    53,    53,    53,    53,    53,    53,
+      53,    53,    53,    54,    54,    54,    54,    54,    54,    54,
+      54,    55,    55,    55,    55,    55,    56,    56,    56
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -784,7 +787,7 @@ static const yytype_int8 yyr2[] =
        1,     2,     0,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     3,     3,     3
+       1,     1,     1,     1,     1,     1,     3,     3,     3
 };
 
 
@@ -1248,512 +1251,521 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: deamerreserved_star__stmt__  */
-#line 197 "./dupr_parser.y"
+#line 200 "./dupr_parser.y"
                                     {
 		auto* const newNode = new dupr::ast::node::program({::dupr::ast::Type::program, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_deamerreserved_star__stmt__) });
 		(yyval.dupr_program) = newNode;
 		outputTree = new ::deamer::external::cpp::ast::Tree(newNode);
 	}
-#line 1258 "dupr_parser.tab.c"
+#line 1261 "dupr_parser.tab.c"
     break;
 
   case 3: /* deamerreserved_star__stmt__: stmt deamerreserved_star__stmt__  */
-#line 205 "./dupr_parser.y"
+#line 208 "./dupr_parser.y"
                                          {
 		auto* const newNode = new dupr::ast::node::deamerreserved_star__stmt__({::dupr::ast::Type::deamerreserved_star__stmt__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[-1].dupr_stmt), (yyvsp[0].dupr_deamerreserved_star__stmt__) });
 		(yyval.dupr_deamerreserved_star__stmt__) = newNode;
 	}
-#line 1267 "dupr_parser.tab.c"
+#line 1270 "dupr_parser.tab.c"
     break;
 
   case 4: /* deamerreserved_star__stmt__: %empty  */
-#line 209 "./dupr_parser.y"
+#line 212 "./dupr_parser.y"
           {
 		auto* const newNode = new dupr::ast::node::deamerreserved_star__stmt__({::dupr::ast::Type::deamerreserved_star__stmt__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, {  });
 		(yyval.dupr_deamerreserved_star__stmt__) = newNode;
 	}
-#line 1276 "dupr_parser.tab.c"
+#line 1279 "dupr_parser.tab.c"
     break;
 
   case 5: /* stmt: pattern_constructor  */
-#line 216 "./dupr_parser.y"
+#line 219 "./dupr_parser.y"
                             {
 		auto* const newNode = new dupr::ast::node::stmt({::dupr::ast::Type::stmt, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_constructor) });
 		(yyval.dupr_stmt) = newNode;
 	}
-#line 1285 "dupr_parser.tab.c"
+#line 1288 "dupr_parser.tab.c"
     break;
 
   case 6: /* stmt: pattern_constructor_array  */
-#line 220 "./dupr_parser.y"
+#line 223 "./dupr_parser.y"
                                     {
 		auto* const newNode = new dupr::ast::node::stmt({::dupr::ast::Type::stmt, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_constructor_array) });
 		(yyval.dupr_stmt) = newNode;
 	}
-#line 1294 "dupr_parser.tab.c"
+#line 1297 "dupr_parser.tab.c"
     break;
 
   case 7: /* stmt: pattern_execution  */
-#line 224 "./dupr_parser.y"
+#line 227 "./dupr_parser.y"
                             {
 		auto* const newNode = new dupr::ast::node::stmt({::dupr::ast::Type::stmt, ::deamer::external::cpp::ast::NodeValue::nonterminal, {2, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_execution) });
 		(yyval.dupr_stmt) = newNode;
 	}
-#line 1303 "dupr_parser.tab.c"
+#line 1306 "dupr_parser.tab.c"
     break;
 
   case 8: /* pattern_execution: pattern_name LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET  */
-#line 231 "./dupr_parser.y"
+#line 234 "./dupr_parser.y"
                                                                             {
 		auto* const newNode = new dupr::ast::node::pattern_execution({::dupr::ast::Type::pattern_execution, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[-3].dupr_pattern_name), new dupr::ast::node::LEFT_BRACKET({::dupr::ast::Type::LEFT_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-2].Terminal)}), (yyvsp[-1].dupr_pattern_constructor_content), new dupr::ast::node::RIGHT_BRACKET({::dupr::ast::Type::RIGHT_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_execution) = newNode;
 	}
-#line 1312 "dupr_parser.tab.c"
+#line 1315 "dupr_parser.tab.c"
     break;
 
   case 9: /* pattern_constructor_array: pattern_type COLON pattern_name LEFT_SQUARE_BRACKET deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____ RIGHT_SQUARE_BRACKET  */
-#line 238 "./dupr_parser.y"
+#line 241 "./dupr_parser.y"
                                                                                                                                                                             {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_array({::dupr::ast::Type::pattern_constructor_array, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[-5].dupr_pattern_type), new dupr::ast::node::COLON({::dupr::ast::Type::COLON, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-4].Terminal)}), (yyvsp[-3].dupr_pattern_name), new dupr::ast::node::LEFT_SQUARE_BRACKET({::dupr::ast::Type::LEFT_SQUARE_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-2].Terminal)}), (yyvsp[-1].dupr_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____), new dupr::ast::node::RIGHT_SQUARE_BRACKET({::dupr::ast::Type::RIGHT_SQUARE_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_array) = newNode;
 	}
-#line 1321 "dupr_parser.tab.c"
+#line 1324 "dupr_parser.tab.c"
     break;
 
   case 10: /* deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____: pattern_constructor  */
-#line 245 "./dupr_parser.y"
+#line 248 "./dupr_parser.y"
                             {
 		auto* const newNode = new dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____({::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_constructor) });
 		(yyval.dupr_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____) = newNode;
 	}
-#line 1330 "dupr_parser.tab.c"
+#line 1333 "dupr_parser.tab.c"
     break;
 
   case 11: /* deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____: pattern_constructor_array  */
-#line 249 "./dupr_parser.y"
+#line 252 "./dupr_parser.y"
                                     {
 		auto* const newNode = new dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____({::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_constructor_array) });
 		(yyval.dupr_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____) = newNode;
 	}
-#line 1339 "dupr_parser.tab.c"
+#line 1342 "dupr_parser.tab.c"
     break;
 
   case 12: /* deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____: pattern_constructor deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____  */
-#line 253 "./dupr_parser.y"
+#line 256 "./dupr_parser.y"
                                                                                                                          {
 		auto* const newNode = new dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____({::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____, ::deamer::external::cpp::ast::NodeValue::nonterminal, {2, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[-1].dupr_pattern_constructor), (yyvsp[0].dupr_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____) });
 		(yyval.dupr_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____) = newNode;
 	}
-#line 1348 "dupr_parser.tab.c"
+#line 1351 "dupr_parser.tab.c"
     break;
 
   case 13: /* deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____: pattern_constructor_array deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____  */
-#line 257 "./dupr_parser.y"
+#line 260 "./dupr_parser.y"
                                                                                                                                {
 		auto* const newNode = new dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____({::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____, ::deamer::external::cpp::ast::NodeValue::nonterminal, {3, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[-1].dupr_pattern_constructor_array), (yyvsp[0].dupr_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____) });
 		(yyval.dupr_deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____) = newNode;
 	}
-#line 1357 "dupr_parser.tab.c"
+#line 1360 "dupr_parser.tab.c"
     break;
 
   case 14: /* pattern_constructor: pattern_type COLON pattern_name LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET  */
-#line 264 "./dupr_parser.y"
+#line 267 "./dupr_parser.y"
                                                                                                {
 		auto* const newNode = new dupr::ast::node::pattern_constructor({::dupr::ast::Type::pattern_constructor, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[-5].dupr_pattern_type), new dupr::ast::node::COLON({::dupr::ast::Type::COLON, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-4].Terminal)}), (yyvsp[-3].dupr_pattern_name), new dupr::ast::node::LEFT_BRACKET({::dupr::ast::Type::LEFT_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-2].Terminal)}), (yyvsp[-1].dupr_pattern_constructor_content), new dupr::ast::node::RIGHT_BRACKET({::dupr::ast::Type::RIGHT_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor) = newNode;
 	}
-#line 1366 "dupr_parser.tab.c"
+#line 1369 "dupr_parser.tab.c"
     break;
 
   case 15: /* pattern_type: VARNAME  */
-#line 271 "./dupr_parser.y"
+#line 274 "./dupr_parser.y"
                 {
 		auto* const newNode = new dupr::ast::node::pattern_type({::dupr::ast::Type::pattern_type, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::VARNAME({::dupr::ast::Type::VARNAME, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_type) = newNode;
 	}
-#line 1375 "dupr_parser.tab.c"
+#line 1378 "dupr_parser.tab.c"
     break;
 
   case 16: /* pattern_name: deamerreserved_arrow__VARNAME__  */
-#line 278 "./dupr_parser.y"
+#line 281 "./dupr_parser.y"
                                         {
 		auto* const newNode = new dupr::ast::node::pattern_name({::dupr::ast::Type::pattern_name, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_deamerreserved_arrow__VARNAME__) });
 		(yyval.dupr_pattern_name) = newNode;
 	}
-#line 1384 "dupr_parser.tab.c"
+#line 1387 "dupr_parser.tab.c"
     break;
 
   case 17: /* deamerreserved_arrow__VARNAME__: VARNAME deamerreserved_star__GT__VARNAME__  */
-#line 285 "./dupr_parser.y"
+#line 288 "./dupr_parser.y"
                                                    {
 		auto* const newNode = new dupr::ast::node::deamerreserved_arrow__VARNAME__({::dupr::ast::Type::deamerreserved_arrow__VARNAME__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::VARNAME({::dupr::ast::Type::VARNAME, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-1].Terminal)}), (yyvsp[0].dupr_deamerreserved_star__GT__VARNAME__) });
 		(yyval.dupr_deamerreserved_arrow__VARNAME__) = newNode;
 	}
-#line 1393 "dupr_parser.tab.c"
+#line 1396 "dupr_parser.tab.c"
     break;
 
   case 18: /* deamerreserved_star__GT__VARNAME__: GT VARNAME deamerreserved_star__GT__VARNAME__  */
-#line 292 "./dupr_parser.y"
+#line 295 "./dupr_parser.y"
                                                       {
 		auto* const newNode = new dupr::ast::node::deamerreserved_star__GT__VARNAME__({::dupr::ast::Type::deamerreserved_star__GT__VARNAME__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::GT({::dupr::ast::Type::GT, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-2].Terminal)}), new dupr::ast::node::VARNAME({::dupr::ast::Type::VARNAME, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-1].Terminal)}), (yyvsp[0].dupr_deamerreserved_star__GT__VARNAME__) });
 		(yyval.dupr_deamerreserved_star__GT__VARNAME__) = newNode;
 	}
-#line 1402 "dupr_parser.tab.c"
+#line 1405 "dupr_parser.tab.c"
     break;
 
   case 19: /* deamerreserved_star__GT__VARNAME__: %empty  */
-#line 296 "./dupr_parser.y"
+#line 299 "./dupr_parser.y"
           {
 		auto* const newNode = new dupr::ast::node::deamerreserved_star__GT__VARNAME__({::dupr::ast::Type::deamerreserved_star__GT__VARNAME__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, {  });
 		(yyval.dupr_deamerreserved_star__GT__VARNAME__) = newNode;
 	}
-#line 1411 "dupr_parser.tab.c"
+#line 1414 "dupr_parser.tab.c"
     break;
 
   case 20: /* pattern_constructor_content: deamerreserved_star__pattern_constructor_content_stmt__  */
-#line 303 "./dupr_parser.y"
+#line 306 "./dupr_parser.y"
                                                                 {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_content({::dupr::ast::Type::pattern_constructor_content, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_deamerreserved_star__pattern_constructor_content_stmt__) });
 		(yyval.dupr_pattern_constructor_content) = newNode;
 	}
-#line 1420 "dupr_parser.tab.c"
+#line 1423 "dupr_parser.tab.c"
     break;
 
   case 21: /* deamerreserved_star__pattern_constructor_content_stmt__: pattern_constructor_content_stmt deamerreserved_star__pattern_constructor_content_stmt__  */
-#line 310 "./dupr_parser.y"
+#line 313 "./dupr_parser.y"
                                                                                                  {
 		auto* const newNode = new dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__({::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[-1].dupr_pattern_constructor_content_stmt), (yyvsp[0].dupr_deamerreserved_star__pattern_constructor_content_stmt__) });
 		(yyval.dupr_deamerreserved_star__pattern_constructor_content_stmt__) = newNode;
 	}
-#line 1429 "dupr_parser.tab.c"
+#line 1432 "dupr_parser.tab.c"
     break;
 
   case 22: /* deamerreserved_star__pattern_constructor_content_stmt__: %empty  */
-#line 314 "./dupr_parser.y"
+#line 317 "./dupr_parser.y"
           {
 		auto* const newNode = new dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__({::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, {  });
 		(yyval.dupr_deamerreserved_star__pattern_constructor_content_stmt__) = newNode;
 	}
-#line 1438 "dupr_parser.tab.c"
+#line 1441 "dupr_parser.tab.c"
     break;
 
   case 23: /* pattern_constructor_content_stmt: pattern_constructor_operator  */
-#line 321 "./dupr_parser.y"
+#line 324 "./dupr_parser.y"
                                      {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_content_stmt({::dupr::ast::Type::pattern_constructor_content_stmt, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_constructor_operator) });
 		(yyval.dupr_pattern_constructor_content_stmt) = newNode;
 	}
-#line 1447 "dupr_parser.tab.c"
+#line 1450 "dupr_parser.tab.c"
     break;
 
   case 24: /* pattern_constructor_content_stmt: pattern_constructor_terminate  */
-#line 325 "./dupr_parser.y"
+#line 328 "./dupr_parser.y"
                                         {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_content_stmt({::dupr::ast::Type::pattern_constructor_content_stmt, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_constructor_terminate) });
 		(yyval.dupr_pattern_constructor_content_stmt) = newNode;
 	}
-#line 1456 "dupr_parser.tab.c"
+#line 1459 "dupr_parser.tab.c"
     break;
 
   case 25: /* pattern_constructor_content_stmt: pattern_constructor_encapsulation  */
-#line 329 "./dupr_parser.y"
+#line 332 "./dupr_parser.y"
                                             {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_content_stmt({::dupr::ast::Type::pattern_constructor_content_stmt, ::deamer::external::cpp::ast::NodeValue::nonterminal, {2, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_constructor_encapsulation) });
 		(yyval.dupr_pattern_constructor_content_stmt) = newNode;
 	}
-#line 1465 "dupr_parser.tab.c"
+#line 1468 "dupr_parser.tab.c"
     break;
 
   case 26: /* pattern_constructor_content_stmt: pattern_constructor_structure  */
-#line 333 "./dupr_parser.y"
+#line 336 "./dupr_parser.y"
                                         {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_content_stmt({::dupr::ast::Type::pattern_constructor_content_stmt, ::deamer::external::cpp::ast::NodeValue::nonterminal, {3, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { (yyvsp[0].dupr_pattern_constructor_structure) });
 		(yyval.dupr_pattern_constructor_content_stmt) = newNode;
 	}
-#line 1474 "dupr_parser.tab.c"
+#line 1477 "dupr_parser.tab.c"
     break;
 
   case 27: /* pattern_constructor_operator: ADD  */
-#line 340 "./dupr_parser.y"
+#line 343 "./dupr_parser.y"
             {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::ADD({::dupr::ast::Type::ADD, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1483 "dupr_parser.tab.c"
+#line 1486 "dupr_parser.tab.c"
     break;
 
   case 28: /* pattern_constructor_operator: MINUS  */
-#line 344 "./dupr_parser.y"
+#line 347 "./dupr_parser.y"
                 {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::MINUS({::dupr::ast::Type::MINUS, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1492 "dupr_parser.tab.c"
+#line 1495 "dupr_parser.tab.c"
     break;
 
   case 29: /* pattern_constructor_operator: MULTI  */
-#line 348 "./dupr_parser.y"
+#line 351 "./dupr_parser.y"
                 {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {2, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::MULTI({::dupr::ast::Type::MULTI, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1501 "dupr_parser.tab.c"
+#line 1504 "dupr_parser.tab.c"
     break;
 
   case 30: /* pattern_constructor_operator: DIVIDE  */
-#line 352 "./dupr_parser.y"
+#line 355 "./dupr_parser.y"
                  {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {3, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::DIVIDE({::dupr::ast::Type::DIVIDE, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1510 "dupr_parser.tab.c"
+#line 1513 "dupr_parser.tab.c"
     break;
 
   case 31: /* pattern_constructor_operator: LT  */
-#line 356 "./dupr_parser.y"
+#line 359 "./dupr_parser.y"
              {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {4, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::LT({::dupr::ast::Type::LT, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1519 "dupr_parser.tab.c"
+#line 1522 "dupr_parser.tab.c"
     break;
 
   case 32: /* pattern_constructor_operator: LE  */
-#line 360 "./dupr_parser.y"
+#line 363 "./dupr_parser.y"
              {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {5, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::LE({::dupr::ast::Type::LE, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1528 "dupr_parser.tab.c"
+#line 1531 "dupr_parser.tab.c"
     break;
 
   case 33: /* pattern_constructor_operator: GT  */
-#line 364 "./dupr_parser.y"
+#line 367 "./dupr_parser.y"
              {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {6, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::GT({::dupr::ast::Type::GT, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1537 "dupr_parser.tab.c"
+#line 1540 "dupr_parser.tab.c"
     break;
 
   case 34: /* pattern_constructor_operator: GE  */
-#line 368 "./dupr_parser.y"
+#line 371 "./dupr_parser.y"
              {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {7, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::GE({::dupr::ast::Type::GE, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1546 "dupr_parser.tab.c"
+#line 1549 "dupr_parser.tab.c"
     break;
 
   case 35: /* pattern_constructor_operator: EQ  */
-#line 372 "./dupr_parser.y"
+#line 375 "./dupr_parser.y"
              {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {8, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::EQ({::dupr::ast::Type::EQ, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1555 "dupr_parser.tab.c"
+#line 1558 "dupr_parser.tab.c"
     break;
 
   case 36: /* pattern_constructor_operator: AND  */
-#line 376 "./dupr_parser.y"
+#line 379 "./dupr_parser.y"
               {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {9, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::AND({::dupr::ast::Type::AND, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1564 "dupr_parser.tab.c"
+#line 1567 "dupr_parser.tab.c"
     break;
 
   case 37: /* pattern_constructor_operator: OR  */
-#line 380 "./dupr_parser.y"
+#line 383 "./dupr_parser.y"
              {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {10, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::OR({::dupr::ast::Type::OR, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1573 "dupr_parser.tab.c"
+#line 1576 "dupr_parser.tab.c"
     break;
 
   case 38: /* pattern_constructor_operator: EQEQ  */
-#line 384 "./dupr_parser.y"
+#line 387 "./dupr_parser.y"
                {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {11, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::EQEQ({::dupr::ast::Type::EQEQ, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1582 "dupr_parser.tab.c"
+#line 1585 "dupr_parser.tab.c"
     break;
 
   case 39: /* pattern_constructor_operator: EQEQEQ  */
-#line 388 "./dupr_parser.y"
+#line 391 "./dupr_parser.y"
                  {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {12, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::EQEQEQ({::dupr::ast::Type::EQEQEQ, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1591 "dupr_parser.tab.c"
+#line 1594 "dupr_parser.tab.c"
     break;
 
   case 40: /* pattern_constructor_operator: OROR  */
-#line 392 "./dupr_parser.y"
+#line 395 "./dupr_parser.y"
                {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {13, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::OROR({::dupr::ast::Type::OROR, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1600 "dupr_parser.tab.c"
+#line 1603 "dupr_parser.tab.c"
     break;
 
   case 41: /* pattern_constructor_operator: ANDAND  */
-#line 396 "./dupr_parser.y"
+#line 399 "./dupr_parser.y"
                  {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {14, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::ANDAND({::dupr::ast::Type::ANDAND, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1609 "dupr_parser.tab.c"
+#line 1612 "dupr_parser.tab.c"
     break;
 
   case 42: /* pattern_constructor_operator: WILDCARD_OP  */
-#line 400 "./dupr_parser.y"
+#line 403 "./dupr_parser.y"
                       {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {15, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::WILDCARD_OP({::dupr::ast::Type::WILDCARD_OP, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_operator) = newNode;
 	}
-#line 1618 "dupr_parser.tab.c"
+#line 1621 "dupr_parser.tab.c"
     break;
 
   case 43: /* pattern_constructor_structure: DOT  */
-#line 407 "./dupr_parser.y"
+#line 410 "./dupr_parser.y"
             {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_structure({::dupr::ast::Type::pattern_constructor_structure, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::DOT({::dupr::ast::Type::DOT, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_structure) = newNode;
 	}
-#line 1627 "dupr_parser.tab.c"
+#line 1630 "dupr_parser.tab.c"
     break;
 
   case 44: /* pattern_constructor_structure: COMMA  */
-#line 411 "./dupr_parser.y"
+#line 414 "./dupr_parser.y"
                 {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_structure({::dupr::ast::Type::pattern_constructor_structure, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::COMMA({::dupr::ast::Type::COMMA, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_structure) = newNode;
 	}
-#line 1636 "dupr_parser.tab.c"
+#line 1639 "dupr_parser.tab.c"
     break;
 
   case 45: /* pattern_constructor_structure: COLON  */
-#line 415 "./dupr_parser.y"
+#line 418 "./dupr_parser.y"
                 {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_structure({::dupr::ast::Type::pattern_constructor_structure, ::deamer::external::cpp::ast::NodeValue::nonterminal, {2, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::COLON({::dupr::ast::Type::COLON, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_structure) = newNode;
 	}
-#line 1645 "dupr_parser.tab.c"
+#line 1648 "dupr_parser.tab.c"
     break;
 
   case 46: /* pattern_constructor_structure: SEMICOLON  */
-#line 419 "./dupr_parser.y"
+#line 422 "./dupr_parser.y"
                     {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_structure({::dupr::ast::Type::pattern_constructor_structure, ::deamer::external::cpp::ast::NodeValue::nonterminal, {3, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::SEMICOLON({::dupr::ast::Type::SEMICOLON, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_structure) = newNode;
 	}
-#line 1654 "dupr_parser.tab.c"
+#line 1657 "dupr_parser.tab.c"
     break;
 
   case 47: /* pattern_constructor_structure: SIGN  */
-#line 423 "./dupr_parser.y"
+#line 426 "./dupr_parser.y"
                {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_structure({::dupr::ast::Type::pattern_constructor_structure, ::deamer::external::cpp::ast::NodeValue::nonterminal, {4, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::SIGN({::dupr::ast::Type::SIGN, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_structure) = newNode;
 	}
-#line 1663 "dupr_parser.tab.c"
+#line 1666 "dupr_parser.tab.c"
     break;
 
   case 48: /* pattern_constructor_structure: HEKJE  */
-#line 427 "./dupr_parser.y"
+#line 430 "./dupr_parser.y"
                 {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_structure({::dupr::ast::Type::pattern_constructor_structure, ::deamer::external::cpp::ast::NodeValue::nonterminal, {5, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::HEKJE({::dupr::ast::Type::HEKJE, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_structure) = newNode;
 	}
-#line 1672 "dupr_parser.tab.c"
+#line 1675 "dupr_parser.tab.c"
     break;
 
   case 49: /* pattern_constructor_structure: QUESTION  */
-#line 431 "./dupr_parser.y"
+#line 434 "./dupr_parser.y"
                    {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_structure({::dupr::ast::Type::pattern_constructor_structure, ::deamer::external::cpp::ast::NodeValue::nonterminal, {6, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::QUESTION({::dupr::ast::Type::QUESTION, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_structure) = newNode;
 	}
-#line 1681 "dupr_parser.tab.c"
+#line 1684 "dupr_parser.tab.c"
     break;
 
   case 50: /* pattern_constructor_structure: EXCLAM  */
-#line 435 "./dupr_parser.y"
+#line 438 "./dupr_parser.y"
                  {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_structure({::dupr::ast::Type::pattern_constructor_structure, ::deamer::external::cpp::ast::NodeValue::nonterminal, {7, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::EXCLAM({::dupr::ast::Type::EXCLAM, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_structure) = newNode;
 	}
-#line 1690 "dupr_parser.tab.c"
+#line 1693 "dupr_parser.tab.c"
     break;
 
   case 51: /* pattern_constructor_terminate: PATTERN_INSERTION  */
-#line 442 "./dupr_parser.y"
+#line 445 "./dupr_parser.y"
                           {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_terminate({::dupr::ast::Type::pattern_constructor_terminate, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::PATTERN_INSERTION({::dupr::ast::Type::PATTERN_INSERTION, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_terminate) = newNode;
 	}
-#line 1699 "dupr_parser.tab.c"
+#line 1702 "dupr_parser.tab.c"
     break;
 
   case 52: /* pattern_constructor_terminate: VARNAME  */
-#line 446 "./dupr_parser.y"
+#line 449 "./dupr_parser.y"
                   {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_terminate({::dupr::ast::Type::pattern_constructor_terminate, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::VARNAME({::dupr::ast::Type::VARNAME, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_terminate) = newNode;
 	}
-#line 1708 "dupr_parser.tab.c"
+#line 1711 "dupr_parser.tab.c"
     break;
 
   case 53: /* pattern_constructor_terminate: NUMBER  */
-#line 450 "./dupr_parser.y"
+#line 453 "./dupr_parser.y"
                  {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_terminate({::dupr::ast::Type::pattern_constructor_terminate, ::deamer::external::cpp::ast::NodeValue::nonterminal, {2, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::NUMBER({::dupr::ast::Type::NUMBER, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_terminate) = newNode;
 	}
-#line 1717 "dupr_parser.tab.c"
+#line 1720 "dupr_parser.tab.c"
     break;
 
   case 54: /* pattern_constructor_terminate: DECIMAL  */
-#line 454 "./dupr_parser.y"
+#line 457 "./dupr_parser.y"
                   {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_terminate({::dupr::ast::Type::pattern_constructor_terminate, ::deamer::external::cpp::ast::NodeValue::nonterminal, {3, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::DECIMAL({::dupr::ast::Type::DECIMAL, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_terminate) = newNode;
 	}
-#line 1726 "dupr_parser.tab.c"
+#line 1729 "dupr_parser.tab.c"
     break;
 
-  case 55: /* pattern_constructor_encapsulation: LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET  */
+  case 55: /* pattern_constructor_terminate: STRING  */
 #line 461 "./dupr_parser.y"
+                 {
+		auto* const newNode = new dupr::ast::node::pattern_constructor_terminate({::dupr::ast::Type::pattern_constructor_terminate, ::deamer::external::cpp::ast::NodeValue::nonterminal, {4, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::STRING({::dupr::ast::Type::STRING, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
+		(yyval.dupr_pattern_constructor_terminate) = newNode;
+	}
+#line 1738 "dupr_parser.tab.c"
+    break;
+
+  case 56: /* pattern_constructor_encapsulation: LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET  */
+#line 468 "./dupr_parser.y"
                                                                {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_encapsulation({::dupr::ast::Type::pattern_constructor_encapsulation, ::deamer::external::cpp::ast::NodeValue::nonterminal, {0, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::LEFT_BRACKET({::dupr::ast::Type::LEFT_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-2].Terminal)}), (yyvsp[-1].dupr_pattern_constructor_content), new dupr::ast::node::RIGHT_BRACKET({::dupr::ast::Type::RIGHT_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_encapsulation) = newNode;
 	}
-#line 1735 "dupr_parser.tab.c"
+#line 1747 "dupr_parser.tab.c"
     break;
 
-  case 56: /* pattern_constructor_encapsulation: LEFT_PARANTHESIS pattern_constructor_content RIGHT_PARANTHESIS  */
-#line 465 "./dupr_parser.y"
+  case 57: /* pattern_constructor_encapsulation: LEFT_PARANTHESIS pattern_constructor_content RIGHT_PARANTHESIS  */
+#line 472 "./dupr_parser.y"
                                                                          {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_encapsulation({::dupr::ast::Type::pattern_constructor_encapsulation, ::deamer::external::cpp::ast::NodeValue::nonterminal, {1, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::LEFT_PARANTHESIS({::dupr::ast::Type::LEFT_PARANTHESIS, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-2].Terminal)}), (yyvsp[-1].dupr_pattern_constructor_content), new dupr::ast::node::RIGHT_PARANTHESIS({::dupr::ast::Type::RIGHT_PARANTHESIS, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_encapsulation) = newNode;
 	}
-#line 1744 "dupr_parser.tab.c"
+#line 1756 "dupr_parser.tab.c"
     break;
 
-  case 57: /* pattern_constructor_encapsulation: LEFT_SQUARE_BRACKET pattern_constructor_content RIGHT_SQUARE_BRACKET  */
-#line 469 "./dupr_parser.y"
+  case 58: /* pattern_constructor_encapsulation: LEFT_SQUARE_BRACKET pattern_constructor_content RIGHT_SQUARE_BRACKET  */
+#line 476 "./dupr_parser.y"
                                                                                {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_encapsulation({::dupr::ast::Type::pattern_constructor_encapsulation, ::deamer::external::cpp::ast::NodeValue::nonterminal, {2, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::LEFT_SQUARE_BRACKET({::dupr::ast::Type::LEFT_SQUARE_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[-2].Terminal)}), (yyvsp[-1].dupr_pattern_constructor_content), new dupr::ast::node::RIGHT_SQUARE_BRACKET({::dupr::ast::Type::RIGHT_SQUARE_BRACKET, ::deamer::external::cpp::ast::NodeValue::terminal, (yyvsp[0].Terminal)}) });
 		(yyval.dupr_pattern_constructor_encapsulation) = newNode;
 	}
-#line 1753 "dupr_parser.tab.c"
+#line 1765 "dupr_parser.tab.c"
     break;
 
 
-#line 1757 "dupr_parser.tab.c"
+#line 1769 "dupr_parser.tab.c"
 
       default: break;
     }
@@ -1946,7 +1958,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 475 "./dupr_parser.y"
+#line 482 "./dupr_parser.y"
 
 
 void duprerror(const char* s)

@@ -166,6 +166,9 @@ namespace dupr { namespace ast { namespace relation {
 		{ "DECIMAL", ::dupr::ast::Type::DECIMAL },
 	
 
+		{ "STRING", ::dupr::ast::Type::STRING },
+	
+
 		{ "ESCAPE_CHARS", ::dupr::ast::Type::ESCAPE_CHARS },
 	
 

@@ -57,6 +57,7 @@ class PATTERN_INSERTION;
 class VARNAME;
 class NUMBER;
 class DECIMAL;
+class STRING;
 class ESCAPE_CHARS;
 
 }}}
@@ -433,6 +434,13 @@ namespace dupr { namespace ast { namespace relation {
 	{
 		constexpr static auto value = ::dupr::ast::Type::DECIMAL;
 		using type = ::dupr::ast::node::DECIMAL;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::STRING>
+	{
+		constexpr static auto value = ::dupr::ast::Type::STRING;
+		using type = ::dupr::ast::node::STRING;
 	};
 
 	template<>

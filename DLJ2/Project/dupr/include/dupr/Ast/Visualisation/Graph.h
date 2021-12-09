@@ -546,6 +546,16 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"DECIMAL\"];\n";
 		}
 
+		void ListenEntry(const ::dupr::ast::node::STRING* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"STRING\"];\n";
+		}
+
 		void ListenEntry(const ::dupr::ast::node::ESCAPE_CHARS* node) override
 		{
 			for (const auto* child : node->GetNodes())

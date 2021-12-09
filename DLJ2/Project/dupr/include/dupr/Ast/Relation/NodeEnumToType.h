@@ -55,6 +55,7 @@
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
 #include "dupr/Ast/Node/DECIMAL.h"
+#include "dupr/Ast/Node/STRING.h"
 #include "dupr/Ast/Node/ESCAPE_CHARS.h"
 
 
@@ -430,6 +431,13 @@ namespace dupr { namespace ast { namespace relation {
 	{
 		constexpr static auto value = ::dupr::ast::Type::DECIMAL;
 		using type = ::dupr::ast::node::DECIMAL;
+	};
+
+	template<>
+	struct NodeEnumToType<::dupr::ast::Type::STRING>
+	{
+		constexpr static auto value = ::dupr::ast::Type::STRING;
+		using type = ::dupr::ast::node::STRING;
 	};
 
 	template<>

@@ -45,6 +45,7 @@ namespace dupr { namespace ast {
 		VARNAME,
 		NUMBER,
 		DECIMAL,
+		STRING,
 		ESCAPE_CHARS,
 
 

@@ -93,6 +93,7 @@ namespace dupr
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_terminate_VARNAME;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_terminate_NUMBER;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_terminate_DECIMAL;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_terminate_STRING;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_encapsulation_LEFT_BRACKET_pattern_constructor_content_RIGHT_BRACKET;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_encapsulation_LEFT_PARANTHESIS_pattern_constructor_content_RIGHT_PARANTHESIS;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_encapsulation_LEFT_SQUARE_BRACKET_pattern_constructor_content_RIGHT_SQUARE_BRACKET;

@@ -46,6 +46,7 @@
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
 #include "dupr/Ast/Node/DECIMAL.h"
+#include "dupr/Ast/Node/STRING.h"
 #include "dupr/Ast/Node/ESCAPE_CHARS.h"
 
 #include "dupr/Ast/Node/program.h"
@@ -114,6 +115,7 @@ PATTERN_INSERTION	(([\[][\[][a-zA-Z_]+[a-zA-Z_0-9]*[\]][\]])|([\[][\[][a-zA-Z_>]
 VARNAME	([a-zA-Z_]+[a-zA-Z_0-9]*)
 NUMBER	([0-9]+)
 DECIMAL	([0-9]+[.][0-9]+)
+STRING	(["][^"]*["])
 ESCAPE_CHARS	([\n\r\t ]+)
 
 %%
@@ -152,6 +154,7 @@ ESCAPE_CHARS	([\n\r\t ]+)
 {VARNAME}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(32)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(32));;handleColumn(yyval);if (!local_store) return (VARNAME);;}
 {NUMBER}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(33)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(33));;handleColumn(yyval);if (!local_store) return (NUMBER);;}
 {DECIMAL}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(34)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(34));;handleColumn(yyval);if (!local_store) return (DECIMAL);;}
+{STRING}	{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(35)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(35));;handleColumn(yyval);if (!local_store) return (STRING);;}
 {ESCAPE_CHARS}	{handleColumn(yyval);if (!local_store) ;}
 
 %%

@@ -38,6 +38,7 @@
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
 #include "dupr/Ast/Node/DECIMAL.h"
+#include "dupr/Ast/Node/STRING.h"
 #include "dupr/Ast/Node/ESCAPE_CHARS.h"
 
 #include "dupr/Ast/Node/program.h"
@@ -243,6 +244,11 @@ namespace dupr { namespace ast { namespace Visitor {
 				Visit(static_cast<const dupr::ast::node::DECIMAL*>(node));
 				break;
 			}
+			case dupr::ast::Type::STRING:
+			{
+				Visit(static_cast<const dupr::ast::node::STRING*>(node));
+				break;
+			}
 			case dupr::ast::Type::ESCAPE_CHARS:
 			{
 				Visit(static_cast<const dupr::ast::node::ESCAPE_CHARS*>(node));
@@ -441,6 +447,9 @@ namespace dupr { namespace ast { namespace Visitor {
 		{
 		}
 		virtual void Visit(const dupr::ast::node::DECIMAL* node)
+		{
+		}
+		virtual void Visit(const dupr::ast::node::STRING* node)
 		{
 		}
 		virtual void Visit(const dupr::ast::node::ESCAPE_CHARS* node)

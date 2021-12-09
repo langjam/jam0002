@@ -44,6 +44,7 @@
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
 #include "dupr/Ast/Node/DECIMAL.h"
+#include "dupr/Ast/Node/STRING.h"
 #include "dupr/Ast/Node/ESCAPE_CHARS.h"
 
 #include "dupr/Ast/Node/program.h"
@@ -112,6 +113,7 @@ static ::deamer::external::cpp::ast::Tree* outputTree = nullptr;
 %token<Terminal> VARNAME
 %token<Terminal> NUMBER
 %token<Terminal> DECIMAL
+%token<Terminal> STRING
 
 %nterm<dupr_program> program
 %nterm<dupr_deamerreserved_star__stmt__> deamerreserved_star__stmt__
@@ -170,6 +172,7 @@ static ::deamer::external::cpp::ast::Tree* outputTree = nullptr;
 	::dupr::ast::node::VARNAME* dupr_VARNAME;
 	::dupr::ast::node::NUMBER* dupr_NUMBER;
 	::dupr::ast::node::DECIMAL* dupr_DECIMAL;
+	::dupr::ast::node::STRING* dupr_STRING;
 	::dupr::ast::node::ESCAPE_CHARS* dupr_ESCAPE_CHARS;
 	::dupr::ast::node::program* dupr_program;
 	::dupr::ast::node::deamerreserved_star__stmt__* dupr_deamerreserved_star__stmt__;
@@ -453,6 +456,10 @@ pattern_constructor_terminate:
 	}
 	| DECIMAL {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_terminate({::dupr::ast::Type::pattern_constructor_terminate, ::deamer::external::cpp::ast::NodeValue::nonterminal, {3, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::DECIMAL({::dupr::ast::Type::DECIMAL, ::deamer::external::cpp::ast::NodeValue::terminal, $1}) });
+		$$ = newNode;
+	}
+	| STRING {
+		auto* const newNode = new dupr::ast::node::pattern_constructor_terminate({::dupr::ast::Type::pattern_constructor_terminate, ::deamer::external::cpp::ast::NodeValue::nonterminal, {4, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::STRING({::dupr::ast::Type::STRING, ::deamer::external::cpp::ast::NodeValue::terminal, $1}) });
 		$$ = newNode;
 	}
 ;

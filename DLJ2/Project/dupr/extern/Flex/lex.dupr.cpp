@@ -632,8 +632,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 36
-#define YY_END_OF_BUFFER 37
+#define YY_NUM_RULES 37
+#define YY_END_OF_BUFFER 38
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -641,14 +641,15 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[59] =
+static const flex_int16_t yy_accept[62] =
     {   0,
-        0,    0,   37,   36,   35,   30,   28,   27,   19,    3,
-        4,    9,    7,   24,    8,   23,   10,   33,   25,   26,
-       11,   15,   13,   29,   32,    5,    6,    1,   18,    2,
-       35,   21,   22,    0,   33,   12,   16,   14,   32,   32,
-        0,   20,   34,   17,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,   31,    0,    0,    0,    0
+        0,    0,   38,   37,   36,   30,   37,   28,   27,   19,
+        3,    4,    9,    7,   24,    8,   23,   10,   33,   25,
+       26,   11,   15,   13,   29,   32,    5,    6,    1,   18,
+        2,   36,    0,   35,   21,   22,    0,   33,   12,   16,
+       14,   32,   32,    0,   20,   34,   17,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,   31,    0,    0,    0,
+        0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -656,17 +657,17 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1,    1,    1,    1,    2,    2,
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    3,    1,    4,    5,    1,    6,    1,    7,
-        8,    9,   10,   11,   12,   13,   14,   15,   15,   15,
-       15,   15,   15,   15,   15,   15,   15,   16,   17,   18,
-       19,   20,   21,    1,   22,   22,   22,   22,   22,   22,
-       22,   22,   22,   22,   22,   22,   22,   22,   22,   22,
-       22,   22,   22,   22,   22,   22,   22,   22,   22,   22,
-       23,    1,   24,    1,   22,    1,   22,   22,   22,   22,
+        1,    2,    3,    4,    5,    6,    1,    7,    1,    8,
+        9,   10,   11,   12,   13,   14,   15,   16,   16,   16,
+       16,   16,   16,   16,   16,   16,   16,   17,   18,   19,
+       20,   21,   22,    1,   23,   23,   23,   23,   23,   23,
+       23,   23,   23,   23,   23,   23,   23,   23,   23,   23,
+       23,   23,   23,   23,   23,   23,   23,   23,   23,   23,
+       24,    1,   25,    1,   23,    1,   23,   23,   23,   23,
 
-       22,   22,   22,   22,   22,   22,   22,   22,   22,   22,
-       22,   22,   22,   22,   22,   22,   22,   22,   22,   22,
-       22,   22,   25,   26,   27,    1,    1,    1,    1,    1,
+       23,   23,   23,   23,   23,   23,   23,   23,   23,   23,
+       23,   23,   23,   23,   23,   23,   23,   23,   23,   23,
+       23,   23,   26,   27,   28,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -683,74 +684,78 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[28] =
+static const YY_CHAR yy_meta[29] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1
+        1,    1,    1,    1,    1,    1,    1,    1
     } ;
 
-static const flex_int16_t yy_base[59] =
+static const flex_int16_t yy_base[63] =
     {   0,
-        0,    0,  102,  103,   99,  103,  103,  103,   22,  103,
-      103,   94,   93,  103,   92,  103,   91,   20,  103,  103,
-       24,   77,   76,  103,   22,   71,  103,  103,   19,  103,
-       91,   73,   72,   75,   34,   70,   68,   65,   24,   35,
-       31,   63,   66,   45,   39,   47,   50,   38,   58,   36,
-        0,   28,   53,  103,   61,   64,    5,  103
+        0,    0,  106,  107,  103,  107,  100,  107,  107,   22,
+      107,  107,   96,   95,  107,   94,  107,   93,   20,  107,
+      107,   24,   79,   78,  107,   22,   73,  107,  107,   19,
+      107,   94,   91,  107,   74,   73,   76,   34,   71,   70,
+       68,   24,   35,   31,   65,   67,   62,   39,   47,   50,
+       42,   58,   36,    0,   36,   53,  107,   61,   64,   28,
+      107,   29
     } ;
 
-static const flex_int16_t yy_def[59] =
+static const flex_int16_t yy_def[63] =
     {   0,
-       58,    1,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,    9,    9,   58,    9,   58,    9,   58,   58,   58,
-        9,   21,   21,   58,   58,   58,   58,   58,   21,   58,
-       58,   21,   21,   58,   58,   21,   21,   21,   58,   58,
-       58,   21,   58,   21,   58,   58,   58,   58,   58,   46,
-       46,   58,   58,   58,   58,   58,   58,    0
+       61,    1,   61,   61,   61,   61,   62,   61,   61,   61,
+       61,   61,   10,   10,   61,   10,   61,   10,   61,   61,
+       61,   10,   22,   22,   61,   61,   61,   61,   61,   22,
+       61,   61,   62,   61,   22,   22,   61,   61,   22,   22,
+       22,   61,   61,   61,   22,   61,   22,   61,   61,   61,
+       61,   61,   49,   49,   61,   61,   61,   61,   61,   61,
+        0,   61
     } ;
 
-static const flex_int16_t yy_nxt[131] =
+static const flex_int16_t yy_nxt[136] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
        14,   15,   16,   17,   18,   19,   20,   21,   22,   23,
-       24,   25,   26,   27,   28,   29,   30,   32,   54,   33,
-       33,   33,   34,   33,   35,   33,   39,   33,   39,   33,
-       33,   33,   36,   40,   42,   39,   34,   33,   35,   39,
-       45,   54,   46,   47,   48,   47,   40,   50,   49,   53,
-       49,   50,   48,   33,   47,   48,   49,   55,   51,   47,
-       52,   47,   47,   48,   56,   55,   57,   49,   55,   49,
-       43,   33,   55,   33,   57,   56,   44,   57,   33,   43,
-       33,   33,   31,   41,   38,   37,   33,   33,   33,   33,
+       24,   25,   26,   27,   28,   29,   30,   31,   35,   33,
+       36,   36,   36,   37,   36,   38,   36,   42,   36,   42,
+       36,   36,   36,   39,   43,   45,   42,   37,   36,   38,
+       42,   48,   57,   49,   50,   51,   50,   43,   53,   52,
+       57,   52,   53,   51,   56,   50,   51,   52,   58,   54,
+       50,   55,   50,   50,   51,   59,   58,   60,   52,   58,
+       52,   36,   46,   58,   36,   60,   59,   36,   60,   47,
+       36,   46,   36,   36,   34,   32,   44,   41,   40,   36,
 
-       31,   58,    3,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58,   58,   58,   58,   58,   58,   58
+       36,   36,   36,   34,   32,   61,    3,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61
     } ;
 
-static const flex_int16_t yy_chk[131] =
+static const flex_int16_t yy_chk[136] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    9,   57,   21,
-        9,    9,   18,    9,   18,    9,   25,   29,   39,    9,
-        9,    9,   21,   25,   29,   39,   35,    9,   35,   40,
-       41,   52,   41,   45,   45,   50,   40,   50,   45,   48,
-       45,   46,   46,   44,   47,   47,   46,   53,   46,   47,
-       46,   47,   49,   49,   53,   55,   53,   49,   56,   49,
-       43,   42,   55,   38,   55,   56,   37,   56,   36,   34,
-       33,   32,   31,   26,   23,   22,   17,   15,   13,   12,
+        1,    1,    1,    1,    1,    1,    1,    1,   10,   62,
+       22,   10,   10,   19,   10,   19,   10,   26,   30,   42,
+       10,   10,   10,   22,   26,   30,   42,   38,   10,   38,
+       43,   44,   60,   44,   48,   48,   53,   43,   53,   48,
+       55,   48,   49,   49,   51,   50,   50,   49,   56,   49,
+       50,   49,   50,   52,   52,   56,   58,   56,   52,   59,
+       52,   47,   46,   58,   45,   58,   59,   41,   59,   40,
+       39,   37,   36,   35,   33,   32,   27,   24,   23,   18,
 
-        5,    3,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58,   58,   58,   58,   58,   58,   58
+       16,   14,   13,    7,    5,    3,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[37] =
+static const flex_int32_t yy_rule_can_match_eol[38] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,     };
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -811,6 +816,7 @@ char *yytext;
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
 #include "dupr/Ast/Node/DECIMAL.h"
+#include "dupr/Ast/Node/STRING.h"
 #include "dupr/Ast/Node/ESCAPE_CHARS.h"
 
 #include "dupr/Ast/Node/program.h"
@@ -843,8 +849,8 @@ static std::vector<const deamer::external::cpp::lexer::TerminalObject*> local_ob
 #ifndef yyval
 #define yyval yytext
 #endif //yyval
-#line 847 "lex.dupr.c"
-#line 848 "lex.dupr.c"
+#line 853 "lex.dupr.c"
+#line 854 "lex.dupr.c"
 
 #define INITIAL 0
 
@@ -1061,10 +1067,10 @@ YY_DECL
 		}
 
 	{
-#line 119 "./dupr_lexer.l"
+#line 121 "./dupr_lexer.l"
 
 
-#line 1068 "lex.dupr.c"
+#line 1074 "lex.dupr.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1091,13 +1097,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 59 )
+				if ( yy_current_state >= 62 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_current_state != 58 );
+		while ( yy_current_state != 61 );
 		yy_cp = (yy_last_accepting_cpos);
 		yy_current_state = (yy_last_accepting_state);
 
@@ -1129,186 +1135,192 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 121 "./dupr_lexer.l"
+#line 123 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(1)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(1));;handleColumn(yyval);if (!local_store) return (LEFT_BRACKET);;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 122 "./dupr_lexer.l"
+#line 124 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(2)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(2));;handleColumn(yyval);if (!local_store) return (RIGHT_BRACKET);;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 123 "./dupr_lexer.l"
+#line 125 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(3)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(3));;handleColumn(yyval);if (!local_store) return (LEFT_PARANTHESIS);;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 124 "./dupr_lexer.l"
+#line 126 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(4)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(4));;handleColumn(yyval);if (!local_store) return (RIGHT_PARANTHESIS);;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 125 "./dupr_lexer.l"
+#line 127 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(5)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(5));;handleColumn(yyval);if (!local_store) return (LEFT_SQUARE_BRACKET);;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 126 "./dupr_lexer.l"
+#line 128 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(6)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(6));;handleColumn(yyval);if (!local_store) return (RIGHT_SQUARE_BRACKET);;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 127 "./dupr_lexer.l"
+#line 129 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(7)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(7));;handleColumn(yyval);if (!local_store) return (ADD);;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 128 "./dupr_lexer.l"
+#line 130 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(8)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(8));;handleColumn(yyval);if (!local_store) return (MINUS);;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 129 "./dupr_lexer.l"
+#line 131 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(9)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(9));;handleColumn(yyval);if (!local_store) return (MULTI);;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 130 "./dupr_lexer.l"
+#line 132 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(10)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(10));;handleColumn(yyval);if (!local_store) return (DIVIDE);;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 131 "./dupr_lexer.l"
+#line 133 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(11)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(11));;handleColumn(yyval);if (!local_store) return (LT);;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 132 "./dupr_lexer.l"
+#line 134 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(12)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(12));;handleColumn(yyval);if (!local_store) return (LE);;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 133 "./dupr_lexer.l"
+#line 135 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(13)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(13));;handleColumn(yyval);if (!local_store) return (GT);;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 134 "./dupr_lexer.l"
+#line 136 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(14)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(14));;handleColumn(yyval);if (!local_store) return (GE);;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 135 "./dupr_lexer.l"
+#line 137 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(15)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(15));;handleColumn(yyval);if (!local_store) return (EQ);;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 136 "./dupr_lexer.l"
+#line 138 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(16)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(16));;handleColumn(yyval);if (!local_store) return (EQEQ);;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 137 "./dupr_lexer.l"
+#line 139 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(17)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(17));;handleColumn(yyval);if (!local_store) return (EQEQEQ);;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 138 "./dupr_lexer.l"
+#line 140 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(18)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(18));;handleColumn(yyval);if (!local_store) return (OR);;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 139 "./dupr_lexer.l"
+#line 141 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(19)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(19));;handleColumn(yyval);if (!local_store) return (AND);;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 140 "./dupr_lexer.l"
+#line 142 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(20)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(20));;handleColumn(yyval);if (!local_store) return (OROR);;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 141 "./dupr_lexer.l"
+#line 143 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(21)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(21));;handleColumn(yyval);if (!local_store) return (ANDAND);;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 142 "./dupr_lexer.l"
+#line 144 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(22)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(22));;handleColumn(yyval);if (!local_store) return (WILDCARD_OP);;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 143 "./dupr_lexer.l"
+#line 145 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(23)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(23));;handleColumn(yyval);if (!local_store) return (DOT);;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 144 "./dupr_lexer.l"
+#line 146 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(24)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(24));;handleColumn(yyval);if (!local_store) return (COMMA);;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 145 "./dupr_lexer.l"
+#line 147 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(25)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(25));;handleColumn(yyval);if (!local_store) return (COLON);;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 146 "./dupr_lexer.l"
+#line 148 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(26)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(26));;handleColumn(yyval);if (!local_store) return (SEMICOLON);;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 147 "./dupr_lexer.l"
+#line 149 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(27)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(27));;handleColumn(yyval);if (!local_store) return (SIGN);;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 148 "./dupr_lexer.l"
+#line 150 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(28)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(28));;handleColumn(yyval);if (!local_store) return (HEKJE);;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 149 "./dupr_lexer.l"
+#line 151 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(29)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(29));;handleColumn(yyval);if (!local_store) return (QUESTION);;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 150 "./dupr_lexer.l"
+#line 152 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(30)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(30));;handleColumn(yyval);if (!local_store) return (EXCLAM);;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 151 "./dupr_lexer.l"
+#line 153 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(31)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(31));;handleColumn(yyval);if (!local_store) return (PATTERN_INSERTION);;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 152 "./dupr_lexer.l"
+#line 154 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(32)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(32));;handleColumn(yyval);if (!local_store) return (VARNAME);;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 153 "./dupr_lexer.l"
+#line 155 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(33)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(33));;handleColumn(yyval);if (!local_store) return (NUMBER);;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 154 "./dupr_lexer.l"
+#line 156 "./dupr_lexer.l"
 {if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(34)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(34));;handleColumn(yyval);if (!local_store) return (DECIMAL);;}
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 155 "./dupr_lexer.l"
-{handleColumn(yyval);if (!local_store) ;}
+#line 157 "./dupr_lexer.l"
+{if (local_store) store(new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(35)));else duprlval.Terminal = new deamer::external::cpp::lexer::TerminalObject(yyval, yylineno, column, std::size_t(35));;handleColumn(yyval);if (!local_store) return (STRING);;}
 	YY_BREAK
 case 36:
+/* rule 36 can match eol */
 YY_RULE_SETUP
-#line 157 "./dupr_lexer.l"
+#line 158 "./dupr_lexer.l"
+{handleColumn(yyval);if (!local_store) ;}
+	YY_BREAK
+case 37:
+YY_RULE_SETUP
+#line 160 "./dupr_lexer.l"
 ECHO;
 	YY_BREAK
-#line 1312 "lex.dupr.c"
+#line 1324 "lex.dupr.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1606,7 +1618,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 59 )
+			if ( yy_current_state >= 62 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1634,11 +1646,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 59 )
+		if ( yy_current_state >= 62 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 58);
+	yy_is_jam = (yy_current_state == 61);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2326,7 +2338,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 157 "./dupr_lexer.l"
+#line 160 "./dupr_lexer.l"
 
 static void store(const deamer::external::cpp::lexer::TerminalObject* const newObject)
 {

@@ -67,6 +67,7 @@ pattern_constructor_terminate
 	VARNAME
 	NUMBER
 	DECIMAL
+	STRING
 
 pattern_constructor_encapsulation
 	LEFT_BRACKET pattern_constructor_content RIGHT_BRACKET

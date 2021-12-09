@@ -43,6 +43,7 @@ namespace dupr
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Terminal> VARNAME;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Terminal> NUMBER;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Terminal> DECIMAL;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Terminal> STRING;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Terminal> ESCAPE_CHARS;
 
 	
@@ -89,6 +90,7 @@ PATTERN_INSERTION.Set(deamer::language::type::definition::object::main::Terminal
 VARNAME.Set(deamer::language::type::definition::object::main::Terminal("VARNAME", "[a-zA-Z_]+[a-zA-Z_0-9]*", ::deamer::language::type::definition::object::main::SpecialType::Standard));
 NUMBER.Set(deamer::language::type::definition::object::main::Terminal("NUMBER", "[0-9]+", ::deamer::language::type::definition::object::main::SpecialType::Standard));
 DECIMAL.Set(deamer::language::type::definition::object::main::Terminal("DECIMAL", "[0-9]+[.][0-9]+", ::deamer::language::type::definition::object::main::SpecialType::Standard));
+STRING.Set(deamer::language::type::definition::object::main::Terminal("STRING", "[\"][^\"]*[\"]", ::deamer::language::type::definition::object::main::SpecialType::Standard));
 ESCAPE_CHARS.Set(deamer::language::type::definition::object::main::Terminal("ESCAPE_CHARS", "[\\n\\r\\t ]+", ::deamer::language::type::definition::object::main::SpecialType::Delete));
 
 			// Add object calls
@@ -127,6 +129,7 @@ AddObject(PATTERN_INSERTION);
 AddObject(VARNAME);
 AddObject(NUMBER);
 AddObject(DECIMAL);
+AddObject(STRING);
 AddObject(ESCAPE_CHARS);
 
 			// Place higher level operations here.

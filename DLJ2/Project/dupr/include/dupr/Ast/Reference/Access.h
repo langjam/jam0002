@@ -58,6 +58,7 @@
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
 #include "dupr/Ast/Node/DECIMAL.h"
+#include "dupr/Ast/Node/STRING.h"
 #include "dupr/Ast/Node/ESCAPE_CHARS.h"
 
 
@@ -254,6 +255,8 @@ namespace dupr { namespace ast { namespace reference {
 	struct AccessTemplateBase<::dupr::ast::node::NUMBER>;
 	template<>
 	struct AccessTemplateBase<::dupr::ast::node::DECIMAL>;
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::STRING>;
 	template<>
 	struct AccessTemplateBase<::dupr::ast::node::ESCAPE_CHARS>;
 
@@ -2102,6 +2105,7 @@ AccessTemplateBase<::dupr::ast::node::EXCLAM> EXCLAM();
 AccessTemplateBase<::dupr::ast::node::VARNAME> VARNAME();
 AccessTemplateBase<::dupr::ast::node::NUMBER> NUMBER();
 AccessTemplateBase<::dupr::ast::node::DECIMAL> DECIMAL();
+AccessTemplateBase<::dupr::ast::node::STRING> STRING();
 
 
 		template<typename FunctionType>
@@ -5854,6 +5858,112 @@ AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET
 	};
 
 	template<>
+	struct AccessTemplateBase<::dupr::ast::node::STRING> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::STRING*> ts;
+
+	public:
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::STRING*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::STRING& t) : ts({&t})
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::STRING* t) : ts({t})
+		{
+		}
+
+		AccessTemplateBase() = default;
+
+	public:
+		AccessTemplateBase<::dupr::ast::node::STRING>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		AccessTemplateBase<::dupr::ast::node::STRING>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::STRING*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::STRING*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		AccessTemplateBase<::dupr::ast::node::STRING>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
+	};
+
+	template<>
 	struct AccessTemplateBase<::dupr::ast::node::ESCAPE_CHARS> : public AccessBase
 	{
 	protected:
@@ -6559,6 +6669,14 @@ AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET
 
 			// Unoptimized search
 			return AccessTemplateBase<::dupr::ast::node::DECIMAL>(Get<::dupr::ast::Type::DECIMAL>(ts));
+		}
+
+		inline AccessTemplateBase<::dupr::ast::node::STRING> AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>::STRING()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return AccessTemplateBase<::dupr::ast::node::STRING>(Get<::dupr::ast::Type::STRING>(ts));
 		}
 
 		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_content> AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>::pattern_constructor_content()

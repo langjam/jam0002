@@ -178,6 +178,11 @@ namespace dupr { namespace ast { namespace relation {
 			return true;
 		}
 
+		if (t == ::dupr::ast::Type::STRING)
+		{
+			return true;
+		}
+
 		if (t == ::dupr::ast::Type::ESCAPE_CHARS)
 		{
 			return true;

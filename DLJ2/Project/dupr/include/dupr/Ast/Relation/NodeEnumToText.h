@@ -270,6 +270,11 @@ namespace dupr { namespace ast { namespace relation {
 	}
 	
 
+	case ::dupr::ast::Type::STRING: {
+		return "STRING";
+	}
+	
+
 	case ::dupr::ast::Type::ESCAPE_CHARS: {
 		return "ESCAPE_CHARS";
 	}

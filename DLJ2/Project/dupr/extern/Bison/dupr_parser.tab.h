@@ -87,7 +87,8 @@ extern int duprdebug;
     PATTERN_INSERTION = 288,       /* PATTERN_INSERTION  */
     VARNAME = 289,                 /* VARNAME  */
     NUMBER = 290,                  /* NUMBER  */
-    DECIMAL = 291                  /* DECIMAL  */
+    DECIMAL = 291,                 /* DECIMAL  */
+    STRING = 292                   /* STRING  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -96,7 +97,7 @@ extern int duprdebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 137 "./dupr_parser.y"
+#line 139 "./dupr_parser.y"
 
 	::deamer::external::cpp::lexer::TerminalObject* Terminal;
 	::dupr::ast::node::LEFT_BRACKET* dupr_LEFT_BRACKET;
@@ -133,6 +134,7 @@ union YYSTYPE
 	::dupr::ast::node::VARNAME* dupr_VARNAME;
 	::dupr::ast::node::NUMBER* dupr_NUMBER;
 	::dupr::ast::node::DECIMAL* dupr_DECIMAL;
+	::dupr::ast::node::STRING* dupr_STRING;
 	::dupr::ast::node::ESCAPE_CHARS* dupr_ESCAPE_CHARS;
 	::dupr::ast::node::program* dupr_program;
 	::dupr::ast::node::deamerreserved_star__stmt__* dupr_deamerreserved_star__stmt__;
@@ -153,7 +155,7 @@ union YYSTYPE
 	::dupr::ast::node::pattern_constructor_terminate* dupr_pattern_constructor_terminate;
 	::dupr::ast::node::pattern_constructor_encapsulation* dupr_pattern_constructor_encapsulation;
 
-#line 157 "dupr_parser.tab.h"
+#line 159 "dupr_parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

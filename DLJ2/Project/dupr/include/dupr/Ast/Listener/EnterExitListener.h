@@ -38,6 +38,7 @@
 #include "dupr/Ast/Node/VARNAME.h"
 #include "dupr/Ast/Node/NUMBER.h"
 #include "dupr/Ast/Node/DECIMAL.h"
+#include "dupr/Ast/Node/STRING.h"
 #include "dupr/Ast/Node/ESCAPE_CHARS.h"
 
 
@@ -393,6 +394,15 @@ namespace dupr { namespace ast { namespace listener {
 				EnterAnything(node);
 				EnterTerminal(node);
 				ListenEntry(static_cast<const dupr::ast::node::DECIMAL*>(node));
+				break;
+			}
+
+			case dupr::ast::Type::STRING:
+			{
+				// Entry terminal
+				EnterAnything(node);
+				EnterTerminal(node);
+				ListenEntry(static_cast<const dupr::ast::node::STRING*>(node));
 				break;
 			}
 
@@ -886,6 +896,15 @@ namespace dupr { namespace ast { namespace listener {
 				break;
 			}
 
+			case dupr::ast::Type::STRING:
+			{
+				// Exit terminal
+				ListenExit(static_cast<const dupr::ast::node::STRING*>(node));
+				ExitTerminal(node);
+				ExitAnything(node);
+				break;
+			}
+
 			case dupr::ast::Type::ESCAPE_CHARS:
 			{
 				// Exit terminal
@@ -1200,6 +1219,10 @@ namespace dupr { namespace ast { namespace listener {
 		{
 		}
 
+		virtual void ListenEntry(const dupr::ast::node::STRING* node) 
+		{
+		}
+
 		virtual void ListenEntry(const dupr::ast::node::ESCAPE_CHARS* node) 
 		{
 		}
@@ -1338,6 +1361,10 @@ namespace dupr { namespace ast { namespace listener {
 		}
 
 		virtual void ListenExit(const dupr::ast::node::DECIMAL* node) 
+		{
+		}
+
+		virtual void ListenExit(const dupr::ast::node::STRING* node) 
 		{
 		}
 
