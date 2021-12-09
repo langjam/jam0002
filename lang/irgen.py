@@ -59,9 +59,9 @@ class IRGen:
       self.dectabs()
       aliases += self.println("}")
       alias_selectors = self.println("alias_selectors = [")
+      self.inctabs()
       for stmt_group in ast.stmt_groups:
         alias_name = stmt_group.name
-        self.inctabs()
         conditions = []
         for stmt in stmt_group.stmts:
           conditions.append(f"(cell.{stmt.name} == {self.consume(stmt.exp)})")
