@@ -15,12 +15,14 @@ import System.Console.Haskeline
 main :: IO ()
 main = do
   TIO.putStrLn patatern
+  TIO.putStrLn help
+  putStrLn ""
   ref <- newIORef []
   runInputT defaultSettings (loop ref)
   where
     loop :: IORef [Rule Text] -> InputT IO ()
     loop ref = do
-      minput <- getInputLine "patatern> "
+      minput <- getInputLine "?> "
       case minput of
         Nothing -> pure ()
         Just "quit" -> pure ()
@@ -44,4 +46,17 @@ patatern = [untrimming|
 | (      | (   ) |   | |   | (   ) |   | |   | (      | (\ (   | | \   |
 | )      | )   ( |   | |   | )   ( |   | |   | (____/\| ) \ \__| )  \  |
 |/       |/     \|   )_(   |/     \|   )_(   (_______/|/   \__/|/    )_)
+|]
+
+help :: Text
+help = [trimming|
+Welcome to heaven!
+
+This is the interactive interpreter of patatern 0.1.0.0
+
+You can set the active rules with the following command:
+  load FILE1 FILE2...
+
+You can run a query by typing a list of comma-separated terms to match against
+the rules.
 |]
