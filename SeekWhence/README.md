@@ -288,3 +288,11 @@ import strutils from 'strutils'
 print math       ; [namespace math { sqrt, log, sin, cos, tan, asin, acos, atan, atan2, toDeg, toRad, PI, E, TAU, PHI }]
 print strutils   ; [namespace strutils { length, startsWith, endsWith, indexOf, split, toSeq, trim, trimLeft, trimRight }]
 ```
+
+### Interpreter meta variables
+```
+print $file     ; Absolute path of current script
+print $dir      ; Absolute path to directory of current script
+print $stdlib   ; Absolute path to interpreter stdlib directory
+print $main     ; true if this file is the entry point
+```
