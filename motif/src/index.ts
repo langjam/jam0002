@@ -6,7 +6,7 @@ import { RuntimeError, VM } from "./vm";
 async function run() {
   const filepath = process.argv[2];
   if (!filepath) {
-    console.error("Usage: node dist/motif.js [filename]");
+    console.error("Usage: motif [filename]");
     return;
   }
 
