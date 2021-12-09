@@ -43,8 +43,6 @@ extend_syntax
                     pattern_buffer = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
                     output = (new_cell "
 ") ; in
-
-
                 -{
                     for step in (range 0 25) -{
                         # output:
@@ -54,11 +52,12 @@ extend_syntax
                         # append a newline:
                         (assign output (concat (value output) "
 ")) ;
-                        for i in (range 0 (len pattern)) -{
+                        -{
                             # For each rule:
                             ...[ ,lhs, ,rhs, >>
-                                let j = (new_cell 0) ;
-                                    all_match = (new_cell true) ; in -{
+                                for i in (range 0 (len pattern))
+                                    let j = (new_cell 0) ;
+                                        all_match = (new_cell true) ; in -{
                                 # For each cell in the rule:
                                 -{
                                     ...[ ,lhs, ,rhs, >> -{
@@ -135,8 +134,8 @@ in
 Atoms
   cell '#'
 Rules
-  [ _ | _ | _ ] -> [ _ | cell | _ ]                 # By default, cells are on...
-  [ _ | No cell | No cell ] -> [ _ | No cell | _ ]  # Unless they and their rightwards neighbor are off...
+  [ _ ] -> [ cell ]                 # By default, cells are on...
+  [ No cell | No cell ] -> [ No cell | _ ]  # Unless they and their rightwards neighbor are off...
   [ cell | cell | cell ] -> [ _ | No cell | _ ]     # Or they and both neighbors are on.
 Start
   # The "default wallpaper", with a glider moving to the right:
