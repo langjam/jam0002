@@ -15,7 +15,6 @@ import System.Console.Haskeline
 main :: IO ()
 main = do
   TIO.putStrLn patatern
-  putStrLn ""
   ref <- newIORef []
   runInputT defaultSettings (loop ref)
   where
@@ -36,7 +35,7 @@ handleLoadCmd :: IORef [Rule Text] -> String -> IO ()
 handleLoadCmd ref args = loadFiles ref (words args)
 
 patatern :: Text
-patatern = [trimming|
+patatern = [untrimming|
  _______  _______ _________ _______ _________ _______  _______  _       
 (  ____ )(  ___  )\__   __/(  ___  )\__   __/(  ____ \(  ____ )( (    /|
 | (    )|| (   ) |   ) (   | (   ) |   ) (   | (    \/| (    )||  \  ( |
