@@ -17,6 +17,15 @@ namespace dupr::ir
 		}
 
 	public:
+		void Print() override
+		{
+			std::cout << value;
+		}
+
+		std::string GetExpressionText() override
+		{
+			return value;
+		}
 	};
 }
 

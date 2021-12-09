@@ -1,5 +1,5 @@
-#ifndef DUPR_AST_REFERENCE_ACCESS_H
-#define DUPR_AST_REFERENCE_ACCESS_H
+#ifndef DUPR_AST_REFERENCE_ACCESSTEMPLATEBASE_H
+#define DUPR_AST_REFERENCE_ACCESSTEMPLATEBASE_H
 
 #include "dupr/Ast/Relation/NodeEnumToType.h"
 #include "dupr/Ast/Relation/NodeTypeToEnum.h"
@@ -39,8 +39,13 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/EQEQ.h"
+#include "dupr/Ast/Node/EQEQEQ.h"
 #include "dupr/Ast/Node/OR.h"
 #include "dupr/Ast/Node/AND.h"
+#include "dupr/Ast/Node/OROR.h"
+#include "dupr/Ast/Node/ANDAND.h"
+#include "dupr/Ast/Node/WILDCARD_OP.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
@@ -97,139 +102,186 @@ namespace dupr { namespace ast { namespace reference {
 		}
 	};
 
-	/*!	\class Access
+	/*!	\class AccessTemplateBase
 	 *
 	 *	\brief Used to access AST nodes. It contains various helper functions to ease navigation through AST nodes.
+	 *
+	 *	\details This class contains the type dependent implementation of Access<T>.
+	 *	Refrain from using this class, as there is no backwards compatibility
+	 *	guarantee of this implementation class,
+	 *	Use Access<T> instead, this is backwards compatible and offers different benefits.
+	 *
+	 *	\see Access
 	 */
 	template<typename T>
-	struct Access : public AccessBase
+	struct AccessTemplateBase : public AccessBase
 	{
-		Access() = delete;
-		~Access() = delete;
+		AccessTemplateBase() = delete;
+		~AccessTemplateBase() = delete;
+	};
+
+	/*! \class Access
+	 *
+	 *	\brief Used to access AST nodes. It contains various helper functions to ease navigation through AST nodes.
+	 *
+	 *	\details Type dispatcher for logic.
+	 *
+	 *	\see AccessTemplateBase
+	 */
+	template<typename T>
+	struct Access : public AccessTemplateBase<T>
+	{
+		Access(std::vector<const T*> ts_) : AccessTemplateBase<T>(ts_)
+		{
+		}
+
+		Access(const T& t) : AccessTemplateBase<T>(t)
+		{
+		}
+
+		Access(const T* t) : AccessTemplateBase<T>(t)
+		{
+		}
+
+		Access(const AccessTemplateBase<T>& rhs) : AccessTemplateBase<T>(rhs)
+		{
+		}
+
+		Access() = default;
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::program>;
+	struct AccessTemplateBase<::dupr::ast::node::program>;
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_star__stmt__>;
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__>;
 	template<>
-	struct Access<::dupr::ast::node::stmt>;
+	struct AccessTemplateBase<::dupr::ast::node::stmt>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_execution>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_execution>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_array>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>;
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>;
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_type>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_type>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_name>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_name>;
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>;
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__>;
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>;
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_content>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>;
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>;
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_content_stmt>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_operator>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_structure>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_terminate>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>;
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_encapsulation>;
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>;
 	template<>
-	struct Access<::dupr::ast::node::LEFT_BRACKET>;
+	struct AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET>;
 	template<>
-	struct Access<::dupr::ast::node::RIGHT_BRACKET>;
+	struct AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET>;
 	template<>
-	struct Access<::dupr::ast::node::LEFT_PARANTHESIS>;
+	struct AccessTemplateBase<::dupr::ast::node::LEFT_PARANTHESIS>;
 	template<>
-	struct Access<::dupr::ast::node::RIGHT_PARANTHESIS>;
+	struct AccessTemplateBase<::dupr::ast::node::RIGHT_PARANTHESIS>;
 	template<>
-	struct Access<::dupr::ast::node::LEFT_SQUARE_BRACKET>;
+	struct AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET>;
 	template<>
-	struct Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET>;
+	struct AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET>;
 	template<>
-	struct Access<::dupr::ast::node::ADD>;
+	struct AccessTemplateBase<::dupr::ast::node::ADD>;
 	template<>
-	struct Access<::dupr::ast::node::MINUS>;
+	struct AccessTemplateBase<::dupr::ast::node::MINUS>;
 	template<>
-	struct Access<::dupr::ast::node::MULTI>;
+	struct AccessTemplateBase<::dupr::ast::node::MULTI>;
 	template<>
-	struct Access<::dupr::ast::node::DIVIDE>;
+	struct AccessTemplateBase<::dupr::ast::node::DIVIDE>;
 	template<>
-	struct Access<::dupr::ast::node::LT>;
+	struct AccessTemplateBase<::dupr::ast::node::LT>;
 	template<>
-	struct Access<::dupr::ast::node::LE>;
+	struct AccessTemplateBase<::dupr::ast::node::LE>;
 	template<>
-	struct Access<::dupr::ast::node::GT>;
+	struct AccessTemplateBase<::dupr::ast::node::GT>;
 	template<>
-	struct Access<::dupr::ast::node::GE>;
+	struct AccessTemplateBase<::dupr::ast::node::GE>;
 	template<>
-	struct Access<::dupr::ast::node::EQ>;
+	struct AccessTemplateBase<::dupr::ast::node::EQ>;
 	template<>
-	struct Access<::dupr::ast::node::OR>;
+	struct AccessTemplateBase<::dupr::ast::node::EQEQ>;
 	template<>
-	struct Access<::dupr::ast::node::AND>;
+	struct AccessTemplateBase<::dupr::ast::node::EQEQEQ>;
 	template<>
-	struct Access<::dupr::ast::node::DOT>;
+	struct AccessTemplateBase<::dupr::ast::node::OR>;
 	template<>
-	struct Access<::dupr::ast::node::COMMA>;
+	struct AccessTemplateBase<::dupr::ast::node::AND>;
 	template<>
-	struct Access<::dupr::ast::node::COLON>;
+	struct AccessTemplateBase<::dupr::ast::node::OROR>;
 	template<>
-	struct Access<::dupr::ast::node::SEMICOLON>;
+	struct AccessTemplateBase<::dupr::ast::node::ANDAND>;
 	template<>
-	struct Access<::dupr::ast::node::SIGN>;
+	struct AccessTemplateBase<::dupr::ast::node::WILDCARD_OP>;
 	template<>
-	struct Access<::dupr::ast::node::HEKJE>;
+	struct AccessTemplateBase<::dupr::ast::node::DOT>;
 	template<>
-	struct Access<::dupr::ast::node::QUESTION>;
+	struct AccessTemplateBase<::dupr::ast::node::COMMA>;
 	template<>
-	struct Access<::dupr::ast::node::EXCLAM>;
+	struct AccessTemplateBase<::dupr::ast::node::COLON>;
 	template<>
-	struct Access<::dupr::ast::node::PATTERN_INSERTION>;
+	struct AccessTemplateBase<::dupr::ast::node::SEMICOLON>;
 	template<>
-	struct Access<::dupr::ast::node::VARNAME>;
+	struct AccessTemplateBase<::dupr::ast::node::SIGN>;
 	template<>
-	struct Access<::dupr::ast::node::NUMBER>;
+	struct AccessTemplateBase<::dupr::ast::node::HEKJE>;
 	template<>
-	struct Access<::dupr::ast::node::DECIMAL>;
+	struct AccessTemplateBase<::dupr::ast::node::QUESTION>;
 	template<>
-	struct Access<::dupr::ast::node::ESCAPE_CHARS>;
+	struct AccessTemplateBase<::dupr::ast::node::EXCLAM>;
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::PATTERN_INSERTION>;
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::VARNAME>;
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::NUMBER>;
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::DECIMAL>;
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::ESCAPE_CHARS>;
 
 
 	
 	template<>
-	struct Access<::dupr::ast::node::program> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::program> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::program*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::program*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::program*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::program& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::program& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::program* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::program* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::program>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::program>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -245,7 +297,7 @@ namespace dupr { namespace ast { namespace reference {
 			return *this;
 		}
 
-		Access<::dupr::ast::node::program>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::program>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -279,12 +331,12 @@ namespace dupr { namespace ast { namespace reference {
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__stmt__> deamerreserved_star__stmt__();
-Access<::dupr::ast::node::stmt> stmt();
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__> deamerreserved_star__stmt__();
+AccessTemplateBase<::dupr::ast::node::stmt> stmt();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::program>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::program>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -293,31 +345,51 @@ Access<::dupr::ast::node::stmt> stmt();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_star__stmt__> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::deamerreserved_star__stmt__*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::deamerreserved_star__stmt__*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::deamerreserved_star__stmt__*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_star__stmt__& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_star__stmt__& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_star__stmt__* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_star__stmt__* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__stmt__>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -333,7 +405,7 @@ Access<::dupr::ast::node::stmt> stmt();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::deamerreserved_star__stmt__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -367,12 +439,12 @@ Access<::dupr::ast::node::stmt> stmt();
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__stmt__> deamerreserved_star__stmt__();
-Access<::dupr::ast::node::stmt> stmt();
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__> deamerreserved_star__stmt__();
+AccessTemplateBase<::dupr::ast::node::stmt> stmt();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::deamerreserved_star__stmt__>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -381,31 +453,51 @@ Access<::dupr::ast::node::stmt> stmt();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::stmt> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::stmt> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::stmt*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::stmt*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::stmt*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::stmt& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::stmt& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::stmt* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::stmt* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::stmt>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::stmt>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -421,7 +513,7 @@ Access<::dupr::ast::node::stmt> stmt();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::stmt>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::stmt>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -455,13 +547,13 @@ Access<::dupr::ast::node::stmt> stmt();
 		}
 
 	public:
-		Access<::dupr::ast::node::pattern_execution> pattern_execution();
-Access<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
-Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
+		AccessTemplateBase<::dupr::ast::node::pattern_execution> pattern_execution();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor> pattern_constructor();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::stmt>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::stmt>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -470,31 +562,51 @@ Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_execution> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_execution> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_execution*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_execution*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_execution*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_execution& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_execution& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_execution* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_execution* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_execution>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_execution>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -510,7 +622,7 @@ Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_execution>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_execution>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -544,14 +656,14 @@ Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 		}
 
 	public:
-		Access<::dupr::ast::node::pattern_name> pattern_name();
-Access<::dupr::ast::node::pattern_constructor_content> pattern_constructor_content();
-Access<::dupr::ast::node::LEFT_BRACKET> LEFT_BRACKET();
-Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
+		AccessTemplateBase<::dupr::ast::node::pattern_name> pattern_name();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor_content> pattern_constructor_content();
+AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET> LEFT_BRACKET();
+AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_execution>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_execution>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -560,31 +672,51 @@ Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_array> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_array> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_constructor_array*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_constructor_array*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_constructor_array*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_array& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_array& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_array* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_array* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_array>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -600,7 +732,7 @@ Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_constructor_array>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -634,18 +766,18 @@ Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
 		}
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
-Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____();
-Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
-Access<::dupr::ast::node::pattern_type> pattern_type();
-Access<::dupr::ast::node::pattern_name> pattern_name();
-Access<::dupr::ast::node::LEFT_SQUARE_BRACKET> LEFT_SQUARE_BRACKET();
-Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
-Access<::dupr::ast::node::COLON> COLON();
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
+AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor> pattern_constructor();
+AccessTemplateBase<::dupr::ast::node::pattern_type> pattern_type();
+AccessTemplateBase<::dupr::ast::node::pattern_name> pattern_name();
+AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET> LEFT_SQUARE_BRACKET();
+AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
+AccessTemplateBase<::dupr::ast::node::COLON> COLON();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_constructor_array>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -654,31 +786,51 @@ Access<::dupr::ast::node::COLON> COLON();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -694,7 +846,7 @@ Access<::dupr::ast::node::COLON> COLON();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -728,13 +880,13 @@ Access<::dupr::ast::node::COLON> COLON();
 		}
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
-Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____();
-Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_array> pattern_constructor_array();
+AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor> pattern_constructor();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -743,31 +895,51 @@ Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_constructor*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_constructor*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_constructor*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -783,7 +955,7 @@ Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_constructor>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -817,16 +989,16 @@ Access<::dupr::ast::node::pattern_constructor> pattern_constructor();
 		}
 
 	public:
-		Access<::dupr::ast::node::pattern_type> pattern_type();
-Access<::dupr::ast::node::pattern_name> pattern_name();
-Access<::dupr::ast::node::pattern_constructor_content> pattern_constructor_content();
-Access<::dupr::ast::node::LEFT_BRACKET> LEFT_BRACKET();
-Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
-Access<::dupr::ast::node::COLON> COLON();
+		AccessTemplateBase<::dupr::ast::node::pattern_type> pattern_type();
+AccessTemplateBase<::dupr::ast::node::pattern_name> pattern_name();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor_content> pattern_constructor_content();
+AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET> LEFT_BRACKET();
+AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
+AccessTemplateBase<::dupr::ast::node::COLON> COLON();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_constructor>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -835,31 +1007,51 @@ Access<::dupr::ast::node::COLON> COLON();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_type> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_type> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_type*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_type*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_type*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_type& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_type& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_type* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_type* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_type>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_type>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -875,7 +1067,7 @@ Access<::dupr::ast::node::COLON> COLON();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_type>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_type>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -909,11 +1101,11 @@ Access<::dupr::ast::node::COLON> COLON();
 		}
 
 	public:
-		Access<::dupr::ast::node::VARNAME> VARNAME();
+		AccessTemplateBase<::dupr::ast::node::VARNAME> VARNAME();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_type>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_type>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -922,31 +1114,51 @@ Access<::dupr::ast::node::COLON> COLON();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_name> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_name> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_name*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_name*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_name*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_name& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_name& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_name* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_name* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_name>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_name>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -962,7 +1174,7 @@ Access<::dupr::ast::node::COLON> COLON();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_name>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_name>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -996,14 +1208,14 @@ Access<::dupr::ast::node::COLON> COLON();
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__> deamerreserved_arrow__VARNAME__();
-Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
-Access<::dupr::ast::node::GT> GT();
-Access<::dupr::ast::node::VARNAME> VARNAME();
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__> deamerreserved_arrow__VARNAME__();
+AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
+AccessTemplateBase<::dupr::ast::node::GT> GT();
+AccessTemplateBase<::dupr::ast::node::VARNAME> VARNAME();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_name>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_name>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1012,31 +1224,51 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::deamerreserved_arrow__VARNAME__*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::deamerreserved_arrow__VARNAME__*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::deamerreserved_arrow__VARNAME__*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_arrow__VARNAME__& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_arrow__VARNAME__& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_arrow__VARNAME__* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_arrow__VARNAME__* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1052,7 +1284,7 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1086,13 +1318,13 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
-Access<::dupr::ast::node::GT> GT();
-Access<::dupr::ast::node::VARNAME> VARNAME();
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
+AccessTemplateBase<::dupr::ast::node::GT> GT();
+AccessTemplateBase<::dupr::ast::node::VARNAME> VARNAME();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1101,31 +1333,51 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_star__GT__VARNAME__* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1141,7 +1393,7 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1175,13 +1427,13 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
-Access<::dupr::ast::node::GT> GT();
-Access<::dupr::ast::node::VARNAME> VARNAME();
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> deamerreserved_star__GT__VARNAME__();
+AccessTemplateBase<::dupr::ast::node::GT> GT();
+AccessTemplateBase<::dupr::ast::node::VARNAME> VARNAME();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1190,31 +1442,51 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_content> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_content> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_constructor_content*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_constructor_content*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_constructor_content*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_content& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_content& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_content* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_content* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_content>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1230,7 +1502,7 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_constructor_content>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1264,12 +1536,12 @@ Access<::dupr::ast::node::VARNAME> VARNAME();
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> deamerreserved_star__pattern_constructor_content_stmt__();
-Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_content_stmt();
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> deamerreserved_star__pattern_constructor_content_stmt__();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_content_stmt();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_constructor_content>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1278,31 +1550,51 @@ Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1318,7 +1610,7 @@ Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_
 			return *this;
 		}
 
-		Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1352,12 +1644,12 @@ Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_
 		}
 
 	public:
-		Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> deamerreserved_star__pattern_constructor_content_stmt__();
-Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_content_stmt();
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> deamerreserved_star__pattern_constructor_content_stmt__();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_content_stmt();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1366,31 +1658,51 @@ Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_content_stmt> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_constructor_content_stmt*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_constructor_content_stmt*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_constructor_content_stmt*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_content_stmt& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_content_stmt& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_content_stmt* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_content_stmt* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_content_stmt>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1406,7 +1718,7 @@ Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_constructor_content_stmt>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1440,14 +1752,14 @@ Access<::dupr::ast::node::pattern_constructor_content_stmt> pattern_constructor_
 		}
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_operator> pattern_constructor_operator();
-Access<::dupr::ast::node::pattern_constructor_structure> pattern_constructor_structure();
-Access<::dupr::ast::node::pattern_constructor_terminate> pattern_constructor_terminate();
-Access<::dupr::ast::node::pattern_constructor_encapsulation> pattern_constructor_encapsulation();
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator> pattern_constructor_operator();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure> pattern_constructor_structure();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate> pattern_constructor_terminate();
+AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation> pattern_constructor_encapsulation();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_constructor_content_stmt>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1456,31 +1768,51 @@ Access<::dupr::ast::node::pattern_constructor_encapsulation> pattern_constructor
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_operator> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_constructor_operator*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_constructor_operator*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_constructor_operator*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_operator& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_operator& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_operator* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_operator* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_operator>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1496,7 +1828,7 @@ Access<::dupr::ast::node::pattern_constructor_encapsulation> pattern_constructor
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_constructor_operator>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1530,21 +1862,26 @@ Access<::dupr::ast::node::pattern_constructor_encapsulation> pattern_constructor
 		}
 
 	public:
-		Access<::dupr::ast::node::ADD> ADD();
-Access<::dupr::ast::node::MINUS> MINUS();
-Access<::dupr::ast::node::MULTI> MULTI();
-Access<::dupr::ast::node::DIVIDE> DIVIDE();
-Access<::dupr::ast::node::LT> LT();
-Access<::dupr::ast::node::LE> LE();
-Access<::dupr::ast::node::GT> GT();
-Access<::dupr::ast::node::GE> GE();
-Access<::dupr::ast::node::EQ> EQ();
-Access<::dupr::ast::node::OR> OR();
-Access<::dupr::ast::node::AND> AND();
+		AccessTemplateBase<::dupr::ast::node::ADD> ADD();
+AccessTemplateBase<::dupr::ast::node::MINUS> MINUS();
+AccessTemplateBase<::dupr::ast::node::MULTI> MULTI();
+AccessTemplateBase<::dupr::ast::node::DIVIDE> DIVIDE();
+AccessTemplateBase<::dupr::ast::node::LT> LT();
+AccessTemplateBase<::dupr::ast::node::LE> LE();
+AccessTemplateBase<::dupr::ast::node::GT> GT();
+AccessTemplateBase<::dupr::ast::node::GE> GE();
+AccessTemplateBase<::dupr::ast::node::EQ> EQ();
+AccessTemplateBase<::dupr::ast::node::EQEQ> EQEQ();
+AccessTemplateBase<::dupr::ast::node::EQEQEQ> EQEQEQ();
+AccessTemplateBase<::dupr::ast::node::OR> OR();
+AccessTemplateBase<::dupr::ast::node::AND> AND();
+AccessTemplateBase<::dupr::ast::node::OROR> OROR();
+AccessTemplateBase<::dupr::ast::node::ANDAND> ANDAND();
+AccessTemplateBase<::dupr::ast::node::WILDCARD_OP> WILDCARD_OP();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_constructor_operator>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1553,31 +1890,51 @@ Access<::dupr::ast::node::AND> AND();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_structure> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_constructor_structure*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_constructor_structure*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_constructor_structure*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_structure& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_structure& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_structure* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_structure* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_structure>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1593,7 +1950,7 @@ Access<::dupr::ast::node::AND> AND();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_constructor_structure>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1627,18 +1984,18 @@ Access<::dupr::ast::node::AND> AND();
 		}
 
 	public:
-		Access<::dupr::ast::node::DOT> DOT();
-Access<::dupr::ast::node::COMMA> COMMA();
-Access<::dupr::ast::node::COLON> COLON();
-Access<::dupr::ast::node::SEMICOLON> SEMICOLON();
-Access<::dupr::ast::node::SIGN> SIGN();
-Access<::dupr::ast::node::HEKJE> HEKJE();
-Access<::dupr::ast::node::QUESTION> QUESTION();
-Access<::dupr::ast::node::EXCLAM> EXCLAM();
+		AccessTemplateBase<::dupr::ast::node::DOT> DOT();
+AccessTemplateBase<::dupr::ast::node::COMMA> COMMA();
+AccessTemplateBase<::dupr::ast::node::COLON> COLON();
+AccessTemplateBase<::dupr::ast::node::SEMICOLON> SEMICOLON();
+AccessTemplateBase<::dupr::ast::node::SIGN> SIGN();
+AccessTemplateBase<::dupr::ast::node::HEKJE> HEKJE();
+AccessTemplateBase<::dupr::ast::node::QUESTION> QUESTION();
+AccessTemplateBase<::dupr::ast::node::EXCLAM> EXCLAM();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_constructor_structure>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1647,31 +2004,51 @@ Access<::dupr::ast::node::EXCLAM> EXCLAM();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_terminate> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_constructor_terminate*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_constructor_terminate*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_constructor_terminate*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_terminate& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_terminate& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_terminate* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_terminate* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_terminate>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1687,7 +2064,7 @@ Access<::dupr::ast::node::EXCLAM> EXCLAM();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_constructor_terminate>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1721,14 +2098,14 @@ Access<::dupr::ast::node::EXCLAM> EXCLAM();
 		}
 
 	public:
-		Access<::dupr::ast::node::PATTERN_INSERTION> PATTERN_INSERTION();
-Access<::dupr::ast::node::VARNAME> VARNAME();
-Access<::dupr::ast::node::NUMBER> NUMBER();
-Access<::dupr::ast::node::DECIMAL> DECIMAL();
+		AccessTemplateBase<::dupr::ast::node::PATTERN_INSERTION> PATTERN_INSERTION();
+AccessTemplateBase<::dupr::ast::node::VARNAME> VARNAME();
+AccessTemplateBase<::dupr::ast::node::NUMBER> NUMBER();
+AccessTemplateBase<::dupr::ast::node::DECIMAL> DECIMAL();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_constructor_terminate>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1737,31 +2114,51 @@ Access<::dupr::ast::node::DECIMAL> DECIMAL();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::pattern_constructor_encapsulation> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::pattern_constructor_encapsulation*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::pattern_constructor_encapsulation*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::pattern_constructor_encapsulation*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_encapsulation& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_encapsulation& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::pattern_constructor_encapsulation* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::pattern_constructor_encapsulation* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_encapsulation>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1777,7 +2174,7 @@ Access<::dupr::ast::node::DECIMAL> DECIMAL();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::pattern_constructor_encapsulation>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1811,17 +2208,17 @@ Access<::dupr::ast::node::DECIMAL> DECIMAL();
 		}
 
 	public:
-		Access<::dupr::ast::node::pattern_constructor_content> pattern_constructor_content();
-Access<::dupr::ast::node::LEFT_BRACKET> LEFT_BRACKET();
-Access<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
-Access<::dupr::ast::node::LEFT_PARANTHESIS> LEFT_PARANTHESIS();
-Access<::dupr::ast::node::RIGHT_PARANTHESIS> RIGHT_PARANTHESIS();
-Access<::dupr::ast::node::LEFT_SQUARE_BRACKET> LEFT_SQUARE_BRACKET();
-Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_content> pattern_constructor_content();
+AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET> LEFT_BRACKET();
+AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET> RIGHT_BRACKET();
+AccessTemplateBase<::dupr::ast::node::LEFT_PARANTHESIS> LEFT_PARANTHESIS();
+AccessTemplateBase<::dupr::ast::node::RIGHT_PARANTHESIS> RIGHT_PARANTHESIS();
+AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET> LEFT_SQUARE_BRACKET();
+AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::pattern_constructor_encapsulation>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1830,31 +2227,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::LEFT_BRACKET> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::LEFT_BRACKET*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::LEFT_BRACKET*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::LEFT_BRACKET*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::LEFT_BRACKET& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::LEFT_BRACKET& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::LEFT_BRACKET* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::LEFT_BRACKET* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::LEFT_BRACKET>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1870,7 +2287,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::LEFT_BRACKET>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1907,7 +2324,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::LEFT_BRACKET>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -1916,31 +2333,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::RIGHT_BRACKET> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::RIGHT_BRACKET*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::RIGHT_BRACKET*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::RIGHT_BRACKET*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::RIGHT_BRACKET& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::RIGHT_BRACKET& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::RIGHT_BRACKET* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::RIGHT_BRACKET* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::RIGHT_BRACKET>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -1956,7 +2393,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::RIGHT_BRACKET>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -1993,7 +2430,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::RIGHT_BRACKET>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2002,31 +2439,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::LEFT_PARANTHESIS> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::LEFT_PARANTHESIS> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::LEFT_PARANTHESIS*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::LEFT_PARANTHESIS*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::LEFT_PARANTHESIS*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::LEFT_PARANTHESIS& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::LEFT_PARANTHESIS& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::LEFT_PARANTHESIS* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::LEFT_PARANTHESIS* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::LEFT_PARANTHESIS>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::LEFT_PARANTHESIS>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2042,7 +2499,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::LEFT_PARANTHESIS>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::LEFT_PARANTHESIS>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2079,7 +2536,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::LEFT_PARANTHESIS>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::LEFT_PARANTHESIS>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2088,31 +2545,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::RIGHT_PARANTHESIS> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::RIGHT_PARANTHESIS> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::RIGHT_PARANTHESIS*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::RIGHT_PARANTHESIS*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::RIGHT_PARANTHESIS*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::RIGHT_PARANTHESIS& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::RIGHT_PARANTHESIS& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::RIGHT_PARANTHESIS* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::RIGHT_PARANTHESIS* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::RIGHT_PARANTHESIS>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_PARANTHESIS>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2128,7 +2605,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::RIGHT_PARANTHESIS>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_PARANTHESIS>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2165,7 +2642,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::RIGHT_PARANTHESIS>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_PARANTHESIS>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2174,31 +2651,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::LEFT_SQUARE_BRACKET> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::LEFT_SQUARE_BRACKET*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::LEFT_SQUARE_BRACKET*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::LEFT_SQUARE_BRACKET*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::LEFT_SQUARE_BRACKET& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::LEFT_SQUARE_BRACKET& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::LEFT_SQUARE_BRACKET* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::LEFT_SQUARE_BRACKET* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::LEFT_SQUARE_BRACKET>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2214,7 +2711,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::LEFT_SQUARE_BRACKET>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2251,7 +2748,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::LEFT_SQUARE_BRACKET>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2260,31 +2757,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::RIGHT_SQUARE_BRACKET*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::RIGHT_SQUARE_BRACKET*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::RIGHT_SQUARE_BRACKET*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::RIGHT_SQUARE_BRACKET& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::RIGHT_SQUARE_BRACKET& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::RIGHT_SQUARE_BRACKET* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::RIGHT_SQUARE_BRACKET* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2300,7 +2817,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2337,7 +2854,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2346,31 +2863,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::ADD> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::ADD> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::ADD*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::ADD*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::ADD*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::ADD& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::ADD& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::ADD* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::ADD* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::ADD>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::ADD>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2386,7 +2923,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::ADD>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::ADD>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2423,7 +2960,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::ADD>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::ADD>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2432,31 +2969,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::MINUS> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::MINUS> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::MINUS*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::MINUS*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::MINUS*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::MINUS& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::MINUS& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::MINUS* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::MINUS* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::MINUS>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::MINUS>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2472,7 +3029,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::MINUS>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::MINUS>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2509,7 +3066,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::MINUS>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::MINUS>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2518,31 +3075,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::MULTI> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::MULTI> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::MULTI*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::MULTI*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::MULTI*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::MULTI& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::MULTI& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::MULTI* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::MULTI* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::MULTI>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::MULTI>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2558,7 +3135,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::MULTI>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::MULTI>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2595,7 +3172,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::MULTI>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::MULTI>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2604,31 +3181,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::DIVIDE> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::DIVIDE> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::DIVIDE*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::DIVIDE*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::DIVIDE*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::DIVIDE& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::DIVIDE& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::DIVIDE* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::DIVIDE* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::DIVIDE>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::DIVIDE>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2644,7 +3241,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::DIVIDE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::DIVIDE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2681,7 +3278,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::DIVIDE>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::DIVIDE>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2690,31 +3287,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::LT> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::LT> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::LT*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::LT*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::LT*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::LT& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::LT& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::LT* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::LT* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::LT>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::LT>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2730,7 +3347,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::LT>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::LT>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2767,7 +3384,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::LT>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::LT>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2776,31 +3393,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::LE> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::LE> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::LE*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::LE*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::LE*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::LE& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::LE& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::LE* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::LE* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::LE>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::LE>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2816,7 +3453,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::LE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::LE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2853,7 +3490,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::LE>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::LE>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2862,31 +3499,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::GT> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::GT> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::GT*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::GT*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::GT*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::GT& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::GT& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::GT* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::GT* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::GT>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::GT>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2902,7 +3559,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::GT>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::GT>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -2939,7 +3596,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::GT>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::GT>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -2948,31 +3605,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::GE> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::GE> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::GE*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::GE*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::GE*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::GE& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::GE& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::GE* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::GE* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::GE>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::GE>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -2988,7 +3665,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::GE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::GE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3025,7 +3702,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::GE>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::GE>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3034,31 +3711,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::EQ> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::EQ> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::EQ*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::EQ*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::EQ*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::EQ& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::EQ& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::EQ* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::EQ* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::EQ>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::EQ>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3074,7 +3771,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::EQ>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::EQ>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3111,7 +3808,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::EQ>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::EQ>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3120,31 +3817,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::OR> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::EQEQ> : public AccessBase
 	{
 	protected:
-		std::vector<const ::dupr::ast::node::OR*> ts;
+		std::vector<const ::dupr::ast::node::EQEQ*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::OR*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::EQEQ*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::OR& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::EQEQ& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::OR* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::EQEQ* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::OR>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::EQEQ>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3160,7 +3877,219 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::OR>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::EQEQ>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::EQEQ*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::EQEQ*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		AccessTemplateBase<::dupr::ast::node::EQEQ>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
+	};
+
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::EQEQEQ> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::EQEQEQ*> ts;
+
+	public:
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::EQEQEQ*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::EQEQEQ& t) : ts({&t})
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::EQEQEQ* t) : ts({t})
+		{
+		}
+
+		AccessTemplateBase() = default;
+
+	public:
+		AccessTemplateBase<::dupr::ast::node::EQEQEQ>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		AccessTemplateBase<::dupr::ast::node::EQEQEQ>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::EQEQEQ*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::EQEQEQ*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		AccessTemplateBase<::dupr::ast::node::EQEQEQ>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
+	};
+
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::OR> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::OR*> ts;
+
+	public:
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::OR*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::OR& t) : ts({&t})
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::OR* t) : ts({t})
+		{
+		}
+
+		AccessTemplateBase() = default;
+
+	public:
+		AccessTemplateBase<::dupr::ast::node::OR>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		AccessTemplateBase<::dupr::ast::node::OR>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3197,7 +4126,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::OR>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::OR>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3206,31 +4135,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::AND> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::AND> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::AND*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::AND*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::AND*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::AND& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::AND& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::AND* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::AND* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::AND>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::AND>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3246,7 +4195,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::AND>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::AND>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3283,7 +4232,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::AND>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::AND>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3292,31 +4241,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::DOT> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::OROR> : public AccessBase
 	{
 	protected:
-		std::vector<const ::dupr::ast::node::DOT*> ts;
+		std::vector<const ::dupr::ast::node::OROR*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::DOT*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::OROR*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::DOT& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::OROR& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::DOT* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::OROR* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::DOT>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::OROR>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3332,7 +4301,325 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::DOT>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::OROR>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::OROR*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::OROR*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		AccessTemplateBase<::dupr::ast::node::OROR>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
+	};
+
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::ANDAND> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::ANDAND*> ts;
+
+	public:
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::ANDAND*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::ANDAND& t) : ts({&t})
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::ANDAND* t) : ts({t})
+		{
+		}
+
+		AccessTemplateBase() = default;
+
+	public:
+		AccessTemplateBase<::dupr::ast::node::ANDAND>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		AccessTemplateBase<::dupr::ast::node::ANDAND>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::ANDAND*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::ANDAND*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		AccessTemplateBase<::dupr::ast::node::ANDAND>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
+	};
+
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::WILDCARD_OP> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::WILDCARD_OP*> ts;
+
+	public:
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::WILDCARD_OP*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::WILDCARD_OP& t) : ts({&t})
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::WILDCARD_OP* t) : ts({t})
+		{
+		}
+
+		AccessTemplateBase() = default;
+
+	public:
+		AccessTemplateBase<::dupr::ast::node::WILDCARD_OP>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		AccessTemplateBase<::dupr::ast::node::WILDCARD_OP>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		{
+			// swap if the other is larger
+			if (indexBegin > indexEnd)
+			{
+				const auto tmp = indexBegin;
+				indexBegin = indexEnd;
+				indexEnd = tmp;
+			}
+
+			if (indexBegin >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				std::vector<const ::dupr::ast::node::WILDCARD_OP*> temporaries;
+				for (auto i = indexBegin; i < ts.size() && i <= indexEnd; i++)
+				{
+					temporaries.push_back(ts[i]);
+				}
+				ts.clear();
+				ts = temporaries;
+			}
+
+			return *this;
+		}
+
+		std::vector<const ::dupr::ast::node::WILDCARD_OP*> GetContent()
+		{
+			return ts;
+		}
+
+	public:
+		
+
+		template<typename FunctionType>
+		AccessTemplateBase<::dupr::ast::node::WILDCARD_OP>& for_all(FunctionType function)
+		{
+			for (const auto* const t : ts)
+			{
+				function(t);
+			}
+
+			return *this;
+		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
+	};
+
+	template<>
+	struct AccessTemplateBase<::dupr::ast::node::DOT> : public AccessBase
+	{
+	protected:
+		std::vector<const ::dupr::ast::node::DOT*> ts;
+
+	public:
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::DOT*> ts_) : ts(std::move(ts_))
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::DOT& t) : ts({&t})
+		{
+		}
+
+		AccessTemplateBase(const ::dupr::ast::node::DOT* t) : ts({t})
+		{
+		}
+
+		AccessTemplateBase() = default;
+
+	public:
+		AccessTemplateBase<::dupr::ast::node::DOT>& operator[](::std::size_t index)
+		{
+			if (index >= ts.size())
+			{
+				ts.clear();
+			}
+			else
+			{
+				const auto* const copy = ts[index];
+				ts.clear();
+				ts.push_back(copy);
+			}
+
+			return *this;
+		}
+
+		AccessTemplateBase<::dupr::ast::node::DOT>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3369,7 +4656,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::DOT>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::DOT>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3378,31 +4665,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::COMMA> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::COMMA> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::COMMA*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::COMMA*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::COMMA*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::COMMA& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::COMMA& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::COMMA* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::COMMA* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::COMMA>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::COMMA>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3418,7 +4725,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::COMMA>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::COMMA>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3455,7 +4762,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::COMMA>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::COMMA>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3464,31 +4771,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::COLON> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::COLON> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::COLON*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::COLON*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::COLON*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::COLON& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::COLON& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::COLON* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::COLON* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::COLON>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::COLON>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3504,7 +4831,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::COLON>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::COLON>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3541,7 +4868,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::COLON>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::COLON>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3550,31 +4877,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::SEMICOLON> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::SEMICOLON> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::SEMICOLON*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::SEMICOLON*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::SEMICOLON*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::SEMICOLON& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::SEMICOLON& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::SEMICOLON* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::SEMICOLON* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::SEMICOLON>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::SEMICOLON>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3590,7 +4937,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::SEMICOLON>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::SEMICOLON>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3627,7 +4974,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::SEMICOLON>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::SEMICOLON>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3636,31 +4983,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::SIGN> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::SIGN> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::SIGN*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::SIGN*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::SIGN*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::SIGN& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::SIGN& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::SIGN* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::SIGN* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::SIGN>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::SIGN>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3676,7 +5043,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::SIGN>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::SIGN>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3713,7 +5080,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::SIGN>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::SIGN>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3722,31 +5089,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::HEKJE> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::HEKJE> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::HEKJE*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::HEKJE*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::HEKJE*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::HEKJE& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::HEKJE& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::HEKJE* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::HEKJE* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::HEKJE>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::HEKJE>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3762,7 +5149,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::HEKJE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::HEKJE>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3799,7 +5186,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::HEKJE>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::HEKJE>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3808,31 +5195,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::QUESTION> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::QUESTION> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::QUESTION*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::QUESTION*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::QUESTION*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::QUESTION& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::QUESTION& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::QUESTION* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::QUESTION* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::QUESTION>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::QUESTION>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3848,7 +5255,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::QUESTION>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::QUESTION>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3885,7 +5292,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::QUESTION>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::QUESTION>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3894,31 +5301,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::EXCLAM> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::EXCLAM> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::EXCLAM*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::EXCLAM*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::EXCLAM*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::EXCLAM& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::EXCLAM& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::EXCLAM* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::EXCLAM* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::EXCLAM>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::EXCLAM>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -3934,7 +5361,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::EXCLAM>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::EXCLAM>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -3971,7 +5398,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::EXCLAM>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::EXCLAM>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -3980,31 +5407,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::PATTERN_INSERTION> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::PATTERN_INSERTION> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::PATTERN_INSERTION*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::PATTERN_INSERTION*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::PATTERN_INSERTION*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::PATTERN_INSERTION& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::PATTERN_INSERTION& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::PATTERN_INSERTION* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::PATTERN_INSERTION* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::PATTERN_INSERTION>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::PATTERN_INSERTION>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -4020,7 +5467,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::PATTERN_INSERTION>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::PATTERN_INSERTION>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -4057,7 +5504,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::PATTERN_INSERTION>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::PATTERN_INSERTION>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -4066,31 +5513,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::VARNAME> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::VARNAME> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::VARNAME*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::VARNAME*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::VARNAME*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::VARNAME& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::VARNAME& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::VARNAME* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::VARNAME* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::VARNAME>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::VARNAME>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -4106,7 +5573,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::VARNAME>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::VARNAME>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -4143,7 +5610,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::VARNAME>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::VARNAME>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -4152,31 +5619,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::NUMBER> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::NUMBER> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::NUMBER*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::NUMBER*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::NUMBER*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::NUMBER& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::NUMBER& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::NUMBER* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::NUMBER* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::NUMBER>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::NUMBER>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -4192,7 +5679,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::NUMBER>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::NUMBER>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -4229,7 +5716,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::NUMBER>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::NUMBER>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -4238,31 +5725,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::DECIMAL> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::DECIMAL> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::DECIMAL*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::DECIMAL*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::DECIMAL*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::DECIMAL& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::DECIMAL& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::DECIMAL* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::DECIMAL* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::DECIMAL>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::DECIMAL>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -4278,7 +5785,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::DECIMAL>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::DECIMAL>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -4315,7 +5822,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::DECIMAL>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::DECIMAL>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -4324,31 +5831,51 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 	template<>
-	struct Access<::dupr::ast::node::ESCAPE_CHARS> : public AccessBase
+	struct AccessTemplateBase<::dupr::ast::node::ESCAPE_CHARS> : public AccessBase
 	{
 	protected:
 		std::vector<const ::dupr::ast::node::ESCAPE_CHARS*> ts;
 
 	public:
-		Access(std::vector<const ::dupr::ast::node::ESCAPE_CHARS*> ts_) : ts(std::move(ts_))
+		AccessTemplateBase(std::vector<const ::dupr::ast::node::ESCAPE_CHARS*> ts_) : ts(std::move(ts_))
 		{
 		}
 
-		Access(const ::dupr::ast::node::ESCAPE_CHARS& t) : ts({&t})
+		AccessTemplateBase(const ::dupr::ast::node::ESCAPE_CHARS& t) : ts({&t})
 		{
 		}
 
-		Access(const ::dupr::ast::node::ESCAPE_CHARS* t) : ts({t})
+		AccessTemplateBase(const ::dupr::ast::node::ESCAPE_CHARS* t) : ts({t})
 		{
 		}
 
-		Access() = default;
+		AccessTemplateBase() = default;
 
 	public:
-		Access<::dupr::ast::node::ESCAPE_CHARS>& operator[](::std::size_t index)
+		AccessTemplateBase<::dupr::ast::node::ESCAPE_CHARS>& operator[](::std::size_t index)
 		{
 			if (index >= ts.size())
 			{
@@ -4364,7 +5891,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 			return *this;
 		}
 
-		Access<::dupr::ast::node::ESCAPE_CHARS>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
+		AccessTemplateBase<::dupr::ast::node::ESCAPE_CHARS>& operator()(::std::size_t indexBegin, ::std::size_t indexEnd)
 		{
 			// swap if the other is larger
 			if (indexBegin > indexEnd)
@@ -4401,7 +5928,7 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 		
 
 		template<typename FunctionType>
-		Access<::dupr::ast::node::ESCAPE_CHARS>& for_all(FunctionType function)
+		AccessTemplateBase<::dupr::ast::node::ESCAPE_CHARS>& for_all(FunctionType function)
 		{
 			for (const auto* const t : ts)
 			{
@@ -4410,624 +5937,684 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 			return *this;
 		}
+
+	public:
+		auto begin()
+		{
+			return ts.begin();
+		}
+		auto cbegin()
+		{
+			return ts.cbegin();
+		}
+		
+		auto end()
+		{
+			return ts.end();
+		}
+		
+		auto cend()
+		{
+			return ts.cend();
+		}
 	};
 
 
 	
-		inline Access<::dupr::ast::node::deamerreserved_star__stmt__> Access<::dupr::ast::node::program>::deamerreserved_star__stmt__()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__> AccessTemplateBase<::dupr::ast::node::program>::deamerreserved_star__stmt__()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_star__stmt__>(Get<::dupr::ast::Type::deamerreserved_star__stmt__>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__>(Get<::dupr::ast::Type::deamerreserved_star__stmt__>(ts));
 		}
 
-		inline Access<::dupr::ast::node::stmt> Access<::dupr::ast::node::program>::stmt()
+		inline AccessTemplateBase<::dupr::ast::node::stmt> AccessTemplateBase<::dupr::ast::node::program>::stmt()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::stmt>(Get<::dupr::ast::Type::stmt>(ts));
+			return AccessTemplateBase<::dupr::ast::node::stmt>(Get<::dupr::ast::Type::stmt>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_star__stmt__> Access<::dupr::ast::node::deamerreserved_star__stmt__>::deamerreserved_star__stmt__()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__> AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__>::deamerreserved_star__stmt__()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_star__stmt__>(Get<::dupr::ast::Type::deamerreserved_star__stmt__>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__>(Get<::dupr::ast::Type::deamerreserved_star__stmt__>(ts));
 		}
 
-		inline Access<::dupr::ast::node::stmt> Access<::dupr::ast::node::deamerreserved_star__stmt__>::stmt()
+		inline AccessTemplateBase<::dupr::ast::node::stmt> AccessTemplateBase<::dupr::ast::node::deamerreserved_star__stmt__>::stmt()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::stmt>(Get<::dupr::ast::Type::stmt>(ts));
+			return AccessTemplateBase<::dupr::ast::node::stmt>(Get<::dupr::ast::Type::stmt>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_execution> Access<::dupr::ast::node::stmt>::pattern_execution()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_execution> AccessTemplateBase<::dupr::ast::node::stmt>::pattern_execution()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_execution>(Get<::dupr::ast::Type::pattern_execution>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_execution>(Get<::dupr::ast::Type::pattern_execution>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_array> Access<::dupr::ast::node::stmt>::pattern_constructor_array()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_array> AccessTemplateBase<::dupr::ast::node::stmt>::pattern_constructor_array()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor> Access<::dupr::ast::node::stmt>::pattern_constructor()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor> AccessTemplateBase<::dupr::ast::node::stmt>::pattern_constructor()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_name> Access<::dupr::ast::node::pattern_execution>::pattern_name()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_name> AccessTemplateBase<::dupr::ast::node::pattern_execution>::pattern_name()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_name>(Get<::dupr::ast::Type::pattern_name>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_name>(Get<::dupr::ast::Type::pattern_name>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_content> Access<::dupr::ast::node::pattern_execution>::pattern_constructor_content()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_content> AccessTemplateBase<::dupr::ast::node::pattern_execution>::pattern_constructor_content()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_content>(Get<::dupr::ast::Type::pattern_constructor_content>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>(Get<::dupr::ast::Type::pattern_constructor_content>(ts));
 		}
 
-		inline Access<::dupr::ast::node::LEFT_BRACKET> Access<::dupr::ast::node::pattern_execution>::LEFT_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_execution>::LEFT_BRACKET()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::LEFT_BRACKET>(Get<::dupr::ast::Type::LEFT_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET>(Get<::dupr::ast::Type::LEFT_BRACKET>(ts));
 		}
 
-		inline Access<::dupr::ast::node::RIGHT_BRACKET> Access<::dupr::ast::node::pattern_execution>::RIGHT_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_execution>::RIGHT_BRACKET()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::RIGHT_BRACKET>(Get<::dupr::ast::Type::RIGHT_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET>(Get<::dupr::ast::Type::RIGHT_BRACKET>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_array> Access<::dupr::ast::node::pattern_constructor_array>::pattern_constructor_array()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_array> AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>::pattern_constructor_array()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> Access<::dupr::ast::node::pattern_constructor_array>::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(Get<::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(Get<::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor> Access<::dupr::ast::node::pattern_constructor_array>::pattern_constructor()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor> AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>::pattern_constructor()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_type> Access<::dupr::ast::node::pattern_constructor_array>::pattern_type()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_type> AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>::pattern_type()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_type>(Get<::dupr::ast::Type::pattern_type>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_type>(Get<::dupr::ast::Type::pattern_type>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_name> Access<::dupr::ast::node::pattern_constructor_array>::pattern_name()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_name> AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>::pattern_name()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_name>(Get<::dupr::ast::Type::pattern_name>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_name>(Get<::dupr::ast::Type::pattern_name>(ts));
 		}
 
-		inline Access<::dupr::ast::node::LEFT_SQUARE_BRACKET> Access<::dupr::ast::node::pattern_constructor_array>::LEFT_SQUARE_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>::LEFT_SQUARE_BRACKET()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::LEFT_SQUARE_BRACKET>(Get<::dupr::ast::Type::LEFT_SQUARE_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET>(Get<::dupr::ast::Type::LEFT_SQUARE_BRACKET>(ts));
 		}
 
-		inline Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> Access<::dupr::ast::node::pattern_constructor_array>::RIGHT_SQUARE_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>::RIGHT_SQUARE_BRACKET()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET>(Get<::dupr::ast::Type::RIGHT_SQUARE_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET>(Get<::dupr::ast::Type::RIGHT_SQUARE_BRACKET>(ts));
 		}
 
-		inline Access<::dupr::ast::node::COLON> Access<::dupr::ast::node::pattern_constructor_array>::COLON()
+		inline AccessTemplateBase<::dupr::ast::node::COLON> AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>::COLON()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::COLON>(Get<::dupr::ast::Type::COLON>(ts));
+			return AccessTemplateBase<::dupr::ast::node::COLON>(Get<::dupr::ast::Type::COLON>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_array> Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::pattern_constructor_array()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_array> AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::pattern_constructor_array()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_array>(Get<::dupr::ast::Type::pattern_constructor_array>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____> AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(Get<::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(Get<::dupr::ast::Type::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor> Access<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::pattern_constructor()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor> AccessTemplateBase<::dupr::ast::node::deamerreserved_plus__deamerreserved_or__pattern_constructor__pattern_constructor_array____>::pattern_constructor()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor>(Get<::dupr::ast::Type::pattern_constructor>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_type> Access<::dupr::ast::node::pattern_constructor>::pattern_type()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_type> AccessTemplateBase<::dupr::ast::node::pattern_constructor>::pattern_type()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_type>(Get<::dupr::ast::Type::pattern_type>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_type>(Get<::dupr::ast::Type::pattern_type>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_name> Access<::dupr::ast::node::pattern_constructor>::pattern_name()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_name> AccessTemplateBase<::dupr::ast::node::pattern_constructor>::pattern_name()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_name>(Get<::dupr::ast::Type::pattern_name>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_name>(Get<::dupr::ast::Type::pattern_name>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_content> Access<::dupr::ast::node::pattern_constructor>::pattern_constructor_content()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_content> AccessTemplateBase<::dupr::ast::node::pattern_constructor>::pattern_constructor_content()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_content>(Get<::dupr::ast::Type::pattern_constructor_content>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>(Get<::dupr::ast::Type::pattern_constructor_content>(ts));
 		}
 
-		inline Access<::dupr::ast::node::LEFT_BRACKET> Access<::dupr::ast::node::pattern_constructor>::LEFT_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_constructor>::LEFT_BRACKET()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::LEFT_BRACKET>(Get<::dupr::ast::Type::LEFT_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET>(Get<::dupr::ast::Type::LEFT_BRACKET>(ts));
 		}
 
-		inline Access<::dupr::ast::node::RIGHT_BRACKET> Access<::dupr::ast::node::pattern_constructor>::RIGHT_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_constructor>::RIGHT_BRACKET()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::RIGHT_BRACKET>(Get<::dupr::ast::Type::RIGHT_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET>(Get<::dupr::ast::Type::RIGHT_BRACKET>(ts));
 		}
 
-		inline Access<::dupr::ast::node::COLON> Access<::dupr::ast::node::pattern_constructor>::COLON()
+		inline AccessTemplateBase<::dupr::ast::node::COLON> AccessTemplateBase<::dupr::ast::node::pattern_constructor>::COLON()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::COLON>(Get<::dupr::ast::Type::COLON>(ts));
+			return AccessTemplateBase<::dupr::ast::node::COLON>(Get<::dupr::ast::Type::COLON>(ts));
 		}
 
-		inline Access<::dupr::ast::node::VARNAME> Access<::dupr::ast::node::pattern_type>::VARNAME()
+		inline AccessTemplateBase<::dupr::ast::node::VARNAME> AccessTemplateBase<::dupr::ast::node::pattern_type>::VARNAME()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
+			return AccessTemplateBase<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__> Access<::dupr::ast::node::pattern_name>::deamerreserved_arrow__VARNAME__()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__> AccessTemplateBase<::dupr::ast::node::pattern_name>::deamerreserved_arrow__VARNAME__()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_arrow__VARNAME__>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_arrow__VARNAME__>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> Access<::dupr::ast::node::pattern_name>::deamerreserved_star__GT__VARNAME__()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> AccessTemplateBase<::dupr::ast::node::pattern_name>::deamerreserved_star__GT__VARNAME__()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
 		}
 
-		inline Access<::dupr::ast::node::GT> Access<::dupr::ast::node::pattern_name>::GT()
+		inline AccessTemplateBase<::dupr::ast::node::GT> AccessTemplateBase<::dupr::ast::node::pattern_name>::GT()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
+			return AccessTemplateBase<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
 		}
 
-		inline Access<::dupr::ast::node::VARNAME> Access<::dupr::ast::node::pattern_name>::VARNAME()
+		inline AccessTemplateBase<::dupr::ast::node::VARNAME> AccessTemplateBase<::dupr::ast::node::pattern_name>::VARNAME()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
+			return AccessTemplateBase<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::deamerreserved_star__GT__VARNAME__()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::deamerreserved_star__GT__VARNAME__()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
 		}
 
-		inline Access<::dupr::ast::node::GT> Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::GT()
+		inline AccessTemplateBase<::dupr::ast::node::GT> AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::GT()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
+			return AccessTemplateBase<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
 		}
 
-		inline Access<::dupr::ast::node::VARNAME> Access<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::VARNAME()
+		inline AccessTemplateBase<::dupr::ast::node::VARNAME> AccessTemplateBase<::dupr::ast::node::deamerreserved_arrow__VARNAME__>::VARNAME()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
+			return AccessTemplateBase<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::deamerreserved_star__GT__VARNAME__()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__> AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::deamerreserved_star__GT__VARNAME__()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>(Get<::dupr::ast::Type::deamerreserved_star__GT__VARNAME__>(ts));
 		}
 
-		inline Access<::dupr::ast::node::GT> Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::GT()
+		inline AccessTemplateBase<::dupr::ast::node::GT> AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::GT()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
+			return AccessTemplateBase<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
 		}
 
-		inline Access<::dupr::ast::node::VARNAME> Access<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::VARNAME()
+		inline AccessTemplateBase<::dupr::ast::node::VARNAME> AccessTemplateBase<::dupr::ast::node::deamerreserved_star__GT__VARNAME__>::VARNAME()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
+			return AccessTemplateBase<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> Access<::dupr::ast::node::pattern_constructor_content>::deamerreserved_star__pattern_constructor_content_stmt__()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>::deamerreserved_star__pattern_constructor_content_stmt__()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>(Get<::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>(Get<::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_content_stmt> Access<::dupr::ast::node::pattern_constructor_content>::pattern_constructor_content_stmt()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt> AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>::pattern_constructor_content_stmt()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_content_stmt>(Get<::dupr::ast::Type::pattern_constructor_content_stmt>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>(Get<::dupr::ast::Type::pattern_constructor_content_stmt>(ts));
 		}
 
-		inline Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>::deamerreserved_star__pattern_constructor_content_stmt__()
+		inline AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__> AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>::deamerreserved_star__pattern_constructor_content_stmt__()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>(Get<::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__>(ts));
+			return AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>(Get<::dupr::ast::Type::deamerreserved_star__pattern_constructor_content_stmt__>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_content_stmt> Access<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>::pattern_constructor_content_stmt()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt> AccessTemplateBase<::dupr::ast::node::deamerreserved_star__pattern_constructor_content_stmt__>::pattern_constructor_content_stmt()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_content_stmt>(Get<::dupr::ast::Type::pattern_constructor_content_stmt>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>(Get<::dupr::ast::Type::pattern_constructor_content_stmt>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_operator> Access<::dupr::ast::node::pattern_constructor_content_stmt>::pattern_constructor_operator()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator> AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>::pattern_constructor_operator()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_operator>(Get<::dupr::ast::Type::pattern_constructor_operator>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>(Get<::dupr::ast::Type::pattern_constructor_operator>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_structure> Access<::dupr::ast::node::pattern_constructor_content_stmt>::pattern_constructor_structure()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure> AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>::pattern_constructor_structure()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_structure>(Get<::dupr::ast::Type::pattern_constructor_structure>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>(Get<::dupr::ast::Type::pattern_constructor_structure>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_terminate> Access<::dupr::ast::node::pattern_constructor_content_stmt>::pattern_constructor_terminate()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate> AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>::pattern_constructor_terminate()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_terminate>(Get<::dupr::ast::Type::pattern_constructor_terminate>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>(Get<::dupr::ast::Type::pattern_constructor_terminate>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_encapsulation> Access<::dupr::ast::node::pattern_constructor_content_stmt>::pattern_constructor_encapsulation()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation> AccessTemplateBase<::dupr::ast::node::pattern_constructor_content_stmt>::pattern_constructor_encapsulation()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_encapsulation>(Get<::dupr::ast::Type::pattern_constructor_encapsulation>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>(Get<::dupr::ast::Type::pattern_constructor_encapsulation>(ts));
 		}
 
-		inline Access<::dupr::ast::node::ADD> Access<::dupr::ast::node::pattern_constructor_operator>::ADD()
+		inline AccessTemplateBase<::dupr::ast::node::ADD> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::ADD()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::ADD>(Get<::dupr::ast::Type::ADD>(ts));
+			return AccessTemplateBase<::dupr::ast::node::ADD>(Get<::dupr::ast::Type::ADD>(ts));
 		}
 
-		inline Access<::dupr::ast::node::MINUS> Access<::dupr::ast::node::pattern_constructor_operator>::MINUS()
+		inline AccessTemplateBase<::dupr::ast::node::MINUS> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::MINUS()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::MINUS>(Get<::dupr::ast::Type::MINUS>(ts));
+			return AccessTemplateBase<::dupr::ast::node::MINUS>(Get<::dupr::ast::Type::MINUS>(ts));
 		}
 
-		inline Access<::dupr::ast::node::MULTI> Access<::dupr::ast::node::pattern_constructor_operator>::MULTI()
+		inline AccessTemplateBase<::dupr::ast::node::MULTI> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::MULTI()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::MULTI>(Get<::dupr::ast::Type::MULTI>(ts));
+			return AccessTemplateBase<::dupr::ast::node::MULTI>(Get<::dupr::ast::Type::MULTI>(ts));
 		}
 
-		inline Access<::dupr::ast::node::DIVIDE> Access<::dupr::ast::node::pattern_constructor_operator>::DIVIDE()
+		inline AccessTemplateBase<::dupr::ast::node::DIVIDE> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::DIVIDE()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::DIVIDE>(Get<::dupr::ast::Type::DIVIDE>(ts));
+			return AccessTemplateBase<::dupr::ast::node::DIVIDE>(Get<::dupr::ast::Type::DIVIDE>(ts));
 		}
 
-		inline Access<::dupr::ast::node::LT> Access<::dupr::ast::node::pattern_constructor_operator>::LT()
+		inline AccessTemplateBase<::dupr::ast::node::LT> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::LT()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::LT>(Get<::dupr::ast::Type::LT>(ts));
+			return AccessTemplateBase<::dupr::ast::node::LT>(Get<::dupr::ast::Type::LT>(ts));
 		}
 
-		inline Access<::dupr::ast::node::LE> Access<::dupr::ast::node::pattern_constructor_operator>::LE()
+		inline AccessTemplateBase<::dupr::ast::node::LE> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::LE()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::LE>(Get<::dupr::ast::Type::LE>(ts));
+			return AccessTemplateBase<::dupr::ast::node::LE>(Get<::dupr::ast::Type::LE>(ts));
 		}
 
-		inline Access<::dupr::ast::node::GT> Access<::dupr::ast::node::pattern_constructor_operator>::GT()
+		inline AccessTemplateBase<::dupr::ast::node::GT> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::GT()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
+			return AccessTemplateBase<::dupr::ast::node::GT>(Get<::dupr::ast::Type::GT>(ts));
 		}
 
-		inline Access<::dupr::ast::node::GE> Access<::dupr::ast::node::pattern_constructor_operator>::GE()
+		inline AccessTemplateBase<::dupr::ast::node::GE> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::GE()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::GE>(Get<::dupr::ast::Type::GE>(ts));
+			return AccessTemplateBase<::dupr::ast::node::GE>(Get<::dupr::ast::Type::GE>(ts));
 		}
 
-		inline Access<::dupr::ast::node::EQ> Access<::dupr::ast::node::pattern_constructor_operator>::EQ()
+		inline AccessTemplateBase<::dupr::ast::node::EQ> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::EQ()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::EQ>(Get<::dupr::ast::Type::EQ>(ts));
+			return AccessTemplateBase<::dupr::ast::node::EQ>(Get<::dupr::ast::Type::EQ>(ts));
 		}
 
-		inline Access<::dupr::ast::node::OR> Access<::dupr::ast::node::pattern_constructor_operator>::OR()
+		inline AccessTemplateBase<::dupr::ast::node::EQEQ> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::EQEQ()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::OR>(Get<::dupr::ast::Type::OR>(ts));
+			return AccessTemplateBase<::dupr::ast::node::EQEQ>(Get<::dupr::ast::Type::EQEQ>(ts));
 		}
 
-		inline Access<::dupr::ast::node::AND> Access<::dupr::ast::node::pattern_constructor_operator>::AND()
+		inline AccessTemplateBase<::dupr::ast::node::EQEQEQ> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::EQEQEQ()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::AND>(Get<::dupr::ast::Type::AND>(ts));
+			return AccessTemplateBase<::dupr::ast::node::EQEQEQ>(Get<::dupr::ast::Type::EQEQEQ>(ts));
 		}
 
-		inline Access<::dupr::ast::node::DOT> Access<::dupr::ast::node::pattern_constructor_structure>::DOT()
+		inline AccessTemplateBase<::dupr::ast::node::OR> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::OR()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::DOT>(Get<::dupr::ast::Type::DOT>(ts));
+			return AccessTemplateBase<::dupr::ast::node::OR>(Get<::dupr::ast::Type::OR>(ts));
 		}
 
-		inline Access<::dupr::ast::node::COMMA> Access<::dupr::ast::node::pattern_constructor_structure>::COMMA()
+		inline AccessTemplateBase<::dupr::ast::node::AND> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::AND()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::COMMA>(Get<::dupr::ast::Type::COMMA>(ts));
+			return AccessTemplateBase<::dupr::ast::node::AND>(Get<::dupr::ast::Type::AND>(ts));
 		}
 
-		inline Access<::dupr::ast::node::COLON> Access<::dupr::ast::node::pattern_constructor_structure>::COLON()
+		inline AccessTemplateBase<::dupr::ast::node::OROR> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::OROR()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::COLON>(Get<::dupr::ast::Type::COLON>(ts));
+			return AccessTemplateBase<::dupr::ast::node::OROR>(Get<::dupr::ast::Type::OROR>(ts));
 		}
 
-		inline Access<::dupr::ast::node::SEMICOLON> Access<::dupr::ast::node::pattern_constructor_structure>::SEMICOLON()
+		inline AccessTemplateBase<::dupr::ast::node::ANDAND> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::ANDAND()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::SEMICOLON>(Get<::dupr::ast::Type::SEMICOLON>(ts));
+			return AccessTemplateBase<::dupr::ast::node::ANDAND>(Get<::dupr::ast::Type::ANDAND>(ts));
 		}
 
-		inline Access<::dupr::ast::node::SIGN> Access<::dupr::ast::node::pattern_constructor_structure>::SIGN()
+		inline AccessTemplateBase<::dupr::ast::node::WILDCARD_OP> AccessTemplateBase<::dupr::ast::node::pattern_constructor_operator>::WILDCARD_OP()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::SIGN>(Get<::dupr::ast::Type::SIGN>(ts));
+			return AccessTemplateBase<::dupr::ast::node::WILDCARD_OP>(Get<::dupr::ast::Type::WILDCARD_OP>(ts));
 		}
 
-		inline Access<::dupr::ast::node::HEKJE> Access<::dupr::ast::node::pattern_constructor_structure>::HEKJE()
+		inline AccessTemplateBase<::dupr::ast::node::DOT> AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>::DOT()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::HEKJE>(Get<::dupr::ast::Type::HEKJE>(ts));
+			return AccessTemplateBase<::dupr::ast::node::DOT>(Get<::dupr::ast::Type::DOT>(ts));
 		}
 
-		inline Access<::dupr::ast::node::QUESTION> Access<::dupr::ast::node::pattern_constructor_structure>::QUESTION()
+		inline AccessTemplateBase<::dupr::ast::node::COMMA> AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>::COMMA()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::QUESTION>(Get<::dupr::ast::Type::QUESTION>(ts));
+			return AccessTemplateBase<::dupr::ast::node::COMMA>(Get<::dupr::ast::Type::COMMA>(ts));
 		}
 
-		inline Access<::dupr::ast::node::EXCLAM> Access<::dupr::ast::node::pattern_constructor_structure>::EXCLAM()
+		inline AccessTemplateBase<::dupr::ast::node::COLON> AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>::COLON()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::EXCLAM>(Get<::dupr::ast::Type::EXCLAM>(ts));
+			return AccessTemplateBase<::dupr::ast::node::COLON>(Get<::dupr::ast::Type::COLON>(ts));
 		}
 
-		inline Access<::dupr::ast::node::PATTERN_INSERTION> Access<::dupr::ast::node::pattern_constructor_terminate>::PATTERN_INSERTION()
+		inline AccessTemplateBase<::dupr::ast::node::SEMICOLON> AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>::SEMICOLON()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::PATTERN_INSERTION>(Get<::dupr::ast::Type::PATTERN_INSERTION>(ts));
+			return AccessTemplateBase<::dupr::ast::node::SEMICOLON>(Get<::dupr::ast::Type::SEMICOLON>(ts));
 		}
 
-		inline Access<::dupr::ast::node::VARNAME> Access<::dupr::ast::node::pattern_constructor_terminate>::VARNAME()
+		inline AccessTemplateBase<::dupr::ast::node::SIGN> AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>::SIGN()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
+			return AccessTemplateBase<::dupr::ast::node::SIGN>(Get<::dupr::ast::Type::SIGN>(ts));
 		}
 
-		inline Access<::dupr::ast::node::NUMBER> Access<::dupr::ast::node::pattern_constructor_terminate>::NUMBER()
+		inline AccessTemplateBase<::dupr::ast::node::HEKJE> AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>::HEKJE()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::NUMBER>(Get<::dupr::ast::Type::NUMBER>(ts));
+			return AccessTemplateBase<::dupr::ast::node::HEKJE>(Get<::dupr::ast::Type::HEKJE>(ts));
 		}
 
-		inline Access<::dupr::ast::node::DECIMAL> Access<::dupr::ast::node::pattern_constructor_terminate>::DECIMAL()
+		inline AccessTemplateBase<::dupr::ast::node::QUESTION> AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>::QUESTION()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::DECIMAL>(Get<::dupr::ast::Type::DECIMAL>(ts));
+			return AccessTemplateBase<::dupr::ast::node::QUESTION>(Get<::dupr::ast::Type::QUESTION>(ts));
 		}
 
-		inline Access<::dupr::ast::node::pattern_constructor_content> Access<::dupr::ast::node::pattern_constructor_encapsulation>::pattern_constructor_content()
+		inline AccessTemplateBase<::dupr::ast::node::EXCLAM> AccessTemplateBase<::dupr::ast::node::pattern_constructor_structure>::EXCLAM()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::pattern_constructor_content>(Get<::dupr::ast::Type::pattern_constructor_content>(ts));
+			return AccessTemplateBase<::dupr::ast::node::EXCLAM>(Get<::dupr::ast::Type::EXCLAM>(ts));
 		}
 
-		inline Access<::dupr::ast::node::LEFT_BRACKET> Access<::dupr::ast::node::pattern_constructor_encapsulation>::LEFT_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::PATTERN_INSERTION> AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>::PATTERN_INSERTION()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::LEFT_BRACKET>(Get<::dupr::ast::Type::LEFT_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::PATTERN_INSERTION>(Get<::dupr::ast::Type::PATTERN_INSERTION>(ts));
 		}
 
-		inline Access<::dupr::ast::node::RIGHT_BRACKET> Access<::dupr::ast::node::pattern_constructor_encapsulation>::RIGHT_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::VARNAME> AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>::VARNAME()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::RIGHT_BRACKET>(Get<::dupr::ast::Type::RIGHT_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::VARNAME>(Get<::dupr::ast::Type::VARNAME>(ts));
 		}
 
-		inline Access<::dupr::ast::node::LEFT_PARANTHESIS> Access<::dupr::ast::node::pattern_constructor_encapsulation>::LEFT_PARANTHESIS()
+		inline AccessTemplateBase<::dupr::ast::node::NUMBER> AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>::NUMBER()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::LEFT_PARANTHESIS>(Get<::dupr::ast::Type::LEFT_PARANTHESIS>(ts));
+			return AccessTemplateBase<::dupr::ast::node::NUMBER>(Get<::dupr::ast::Type::NUMBER>(ts));
 		}
 
-		inline Access<::dupr::ast::node::RIGHT_PARANTHESIS> Access<::dupr::ast::node::pattern_constructor_encapsulation>::RIGHT_PARANTHESIS()
+		inline AccessTemplateBase<::dupr::ast::node::DECIMAL> AccessTemplateBase<::dupr::ast::node::pattern_constructor_terminate>::DECIMAL()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::RIGHT_PARANTHESIS>(Get<::dupr::ast::Type::RIGHT_PARANTHESIS>(ts));
+			return AccessTemplateBase<::dupr::ast::node::DECIMAL>(Get<::dupr::ast::Type::DECIMAL>(ts));
 		}
 
-		inline Access<::dupr::ast::node::LEFT_SQUARE_BRACKET> Access<::dupr::ast::node::pattern_constructor_encapsulation>::LEFT_SQUARE_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::pattern_constructor_content> AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>::pattern_constructor_content()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::LEFT_SQUARE_BRACKET>(Get<::dupr::ast::Type::LEFT_SQUARE_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::pattern_constructor_content>(Get<::dupr::ast::Type::pattern_constructor_content>(ts));
 		}
 
-		inline Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> Access<::dupr::ast::node::pattern_constructor_encapsulation>::RIGHT_SQUARE_BRACKET()
+		inline AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>::LEFT_BRACKET()
 		{
 			// Optimized search, if it fails continue using unoptimized search.
 
 			// Unoptimized search
-			return Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET>(Get<::dupr::ast::Type::RIGHT_SQUARE_BRACKET>(ts));
+			return AccessTemplateBase<::dupr::ast::node::LEFT_BRACKET>(Get<::dupr::ast::Type::LEFT_BRACKET>(ts));
+		}
+
+		inline AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>::RIGHT_BRACKET()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return AccessTemplateBase<::dupr::ast::node::RIGHT_BRACKET>(Get<::dupr::ast::Type::RIGHT_BRACKET>(ts));
+		}
+
+		inline AccessTemplateBase<::dupr::ast::node::LEFT_PARANTHESIS> AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>::LEFT_PARANTHESIS()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return AccessTemplateBase<::dupr::ast::node::LEFT_PARANTHESIS>(Get<::dupr::ast::Type::LEFT_PARANTHESIS>(ts));
+		}
+
+		inline AccessTemplateBase<::dupr::ast::node::RIGHT_PARANTHESIS> AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>::RIGHT_PARANTHESIS()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return AccessTemplateBase<::dupr::ast::node::RIGHT_PARANTHESIS>(Get<::dupr::ast::Type::RIGHT_PARANTHESIS>(ts));
+		}
+
+		inline AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>::LEFT_SQUARE_BRACKET()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return AccessTemplateBase<::dupr::ast::node::LEFT_SQUARE_BRACKET>(Get<::dupr::ast::Type::LEFT_SQUARE_BRACKET>(ts));
+		}
+
+		inline AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET> AccessTemplateBase<::dupr::ast::node::pattern_constructor_encapsulation>::RIGHT_SQUARE_BRACKET()
+		{
+			// Optimized search, if it fails continue using unoptimized search.
+
+			// Unoptimized search
+			return AccessTemplateBase<::dupr::ast::node::RIGHT_SQUARE_BRACKET>(Get<::dupr::ast::Type::RIGHT_SQUARE_BRACKET>(ts));
 		}
 
 
@@ -5054,4 +6641,4 @@ Access<::dupr::ast::node::RIGHT_SQUARE_BRACKET> RIGHT_SQUARE_BRACKET();
 
 }}}
 
-#endif // DUPR_AST_REFERENCE_ACCESS_H
+#endif // DUPR_AST_REFERENCE_ACCESSTEMPLATEBASE_H

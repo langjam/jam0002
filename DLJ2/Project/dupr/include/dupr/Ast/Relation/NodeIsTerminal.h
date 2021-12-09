@@ -83,12 +83,37 @@ namespace dupr { namespace ast { namespace relation {
 			return true;
 		}
 
+		if (t == ::dupr::ast::Type::EQEQ)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::EQEQEQ)
+		{
+			return true;
+		}
+
 		if (t == ::dupr::ast::Type::OR)
 		{
 			return true;
 		}
 
 		if (t == ::dupr::ast::Type::AND)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::OROR)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::ANDAND)
+		{
+			return true;
+		}
+
+		if (t == ::dupr::ast::Type::WILDCARD_OP)
 		{
 			return true;
 		}

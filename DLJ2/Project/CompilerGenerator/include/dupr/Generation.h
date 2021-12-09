@@ -20,6 +20,7 @@ namespace dupr
 		::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Generate> generate_DeamerAST;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Generate> generate_Flex;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Generate> generate_Bison;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Generate> generate_DeamerDefaultApplication;
 
 		::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Integrate> integrate_FlexAndBison;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::Integrate> integrate_FlexAndDeamerAST;
@@ -42,6 +43,7 @@ namespace dupr
 			generate_DeamerAST.Set(::deamer::language::type::definition::object::main::Generate(::deamer::tool::type::Tool::DeamerAST));
 generate_Flex.Set(::deamer::language::type::definition::object::main::Generate(::deamer::tool::type::Tool::Flex));
 generate_Bison.Set(::deamer::language::type::definition::object::main::Generate(::deamer::tool::type::Tool::Bison));
+generate_DeamerDefaultApplication.Set(::deamer::language::type::definition::object::main::Generate(::deamer::tool::type::Tool::DeamerDefaultApplication));
 
 			integrate_FlexAndBison.Set(::deamer::language::type::definition::object::main::Integrate(::deamer::tool::type::Tool::Flex, ::deamer::tool::type::Tool::Bison));
 integrate_FlexAndDeamerAST.Set(::deamer::language::type::definition::object::main::Integrate(::deamer::tool::type::Tool::Flex, ::deamer::tool::type::Tool::DeamerAST));
@@ -57,6 +59,7 @@ argument_Bison_Declare_deleted_terminals.Set(::deamer::language::type::definitio
 			AddObject(generate_DeamerAST);
 AddObject(generate_Flex);
 AddObject(generate_Bison);
+AddObject(generate_DeamerDefaultApplication);
 
 			AddObject(integrate_FlexAndBison);
 AddObject(integrate_FlexAndDeamerAST);

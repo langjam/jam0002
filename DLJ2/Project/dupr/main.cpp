@@ -2,6 +2,7 @@
 #include "dupr/Ast/Visualisation/Graph.h"
 #include "dupr/Bison/Parser.h"
 #include "dupr/Flex/Lexer.h"
+#include "dupr/Generation/CPP/Generator.h"
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -62,6 +63,8 @@ int main(int argc, const char* argv[])
 			function->Print();
 		}
 
+		auto generator = dupr::generation::cpp::Generator(table.get());
+		std::cout << generator.Generate() << "\n";
 		if (false)
 		{
 			auto graph = dupr::ast::listener::deamer::visualisation::Graph();

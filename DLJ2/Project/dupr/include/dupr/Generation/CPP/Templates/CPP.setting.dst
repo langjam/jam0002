@@ -1,0 +1,17 @@
+{{file.target_language}} = @<C++>@
+{{file.file_name}} = @<CPP>@
+{{file.namespace}} = @<dupr::generation::cpp::templates>@
+{{file.extension}} = @<h>@
+
+{{function}} = @<
+	{{return_type}} {{function_name}}({{argument.Variable_Field}})
+	{
+		{{statement.Variable_Field}}
+	}
+>@
+
+{{function_prototype}} = @<{{return_type}} {{function_name}}({{argument.Variable_Field}});>@
+
+{{argument}} = @<{{argument_type}} {{argument_name}}>@
+
+{{statement}} = @<>@

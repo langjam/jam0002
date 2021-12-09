@@ -36,6 +36,11 @@ namespace dupr::ir
 			  type(type_)
 		{
 		}
+
+		virtual std::string GetExpressionText()
+		{
+			return lhs->GetExpressionText() + " " + operation + " " + rhs->GetExpressionText();
+		}
 	};
 }
 

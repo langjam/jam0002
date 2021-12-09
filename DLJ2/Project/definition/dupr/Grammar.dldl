@@ -46,6 +46,11 @@ pattern_constructor_operator
 	EQ
 	AND
 	OR
+	EQEQ
+	EQEQEQ
+	OROR
+	ANDAND
+	WILDCARD_OP
 
 pattern_constructor_structure
 	DOT

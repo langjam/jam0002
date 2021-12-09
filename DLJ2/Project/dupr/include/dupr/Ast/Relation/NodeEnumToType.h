@@ -36,8 +36,13 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/EQEQ.h"
+#include "dupr/Ast/Node/EQEQEQ.h"
 #include "dupr/Ast/Node/OR.h"
 #include "dupr/Ast/Node/AND.h"
+#include "dupr/Ast/Node/OROR.h"
+#include "dupr/Ast/Node/ANDAND.h"
+#include "dupr/Ast/Node/WILDCARD_OP.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
@@ -295,6 +300,20 @@ namespace dupr { namespace ast { namespace relation {
 	};
 
 	template<>
+	struct NodeEnumToType<::dupr::ast::Type::EQEQ>
+	{
+		constexpr static auto value = ::dupr::ast::Type::EQEQ;
+		using type = ::dupr::ast::node::EQEQ;
+	};
+
+	template<>
+	struct NodeEnumToType<::dupr::ast::Type::EQEQEQ>
+	{
+		constexpr static auto value = ::dupr::ast::Type::EQEQEQ;
+		using type = ::dupr::ast::node::EQEQEQ;
+	};
+
+	template<>
 	struct NodeEnumToType<::dupr::ast::Type::OR>
 	{
 		constexpr static auto value = ::dupr::ast::Type::OR;
@@ -306,6 +325,27 @@ namespace dupr { namespace ast { namespace relation {
 	{
 		constexpr static auto value = ::dupr::ast::Type::AND;
 		using type = ::dupr::ast::node::AND;
+	};
+
+	template<>
+	struct NodeEnumToType<::dupr::ast::Type::OROR>
+	{
+		constexpr static auto value = ::dupr::ast::Type::OROR;
+		using type = ::dupr::ast::node::OROR;
+	};
+
+	template<>
+	struct NodeEnumToType<::dupr::ast::Type::ANDAND>
+	{
+		constexpr static auto value = ::dupr::ast::Type::ANDAND;
+		using type = ::dupr::ast::node::ANDAND;
+	};
+
+	template<>
+	struct NodeEnumToType<::dupr::ast::Type::WILDCARD_OP>
+	{
+		constexpr static auto value = ::dupr::ast::Type::WILDCARD_OP;
+		using type = ::dupr::ast::node::WILDCARD_OP;
 	};
 
 	template<>

@@ -15,17 +15,38 @@ namespace dupr::ir
 		std::string return_type;
 		std::string name;
 		std::vector<Argument> arguments;
-		std::vector<Statement> block;
+		std::vector<Statement*> block;
 
 	public:
 		Function(const std::string& return_type_, const std::string& name_,
-				 const std::vector<Argument>& arguments_, const std::vector<Statement>& block_)
+				 const std::vector<Argument>& arguments_, const std::vector<Statement*>& block_)
 			: ProgramOrder(OrderType::Function),
 			  return_type(return_type_),
 			  name(name_),
 			  arguments(arguments_),
 			  block(block_)
 		{
+		}
+
+	public:
+		std::string GetReturnType() const
+		{
+			return return_type;
+		}
+
+		std::string GetFunctionName() const
+		{
+			return name;
+		}
+
+		std::vector<Argument> GetFunctionArguments() const
+		{
+			return arguments;
+		}
+
+		std::vector<Statement*> GetStatements() const
+		{
+			return block;
 		}
 
 	public:
@@ -42,7 +63,11 @@ namespace dupr::ir
 				std::cout << "\n";
 			}
 
-			std::cout << "\tStatements: -\n";
+			std::cout << "\tStatements:\n";
+			for (auto statement : block)
+			{
+				statement->Print();
+			}
 		}
 	};
 }

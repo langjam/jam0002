@@ -18,8 +18,14 @@ Terminal: LE  [<][=]
 Terminal: GT  [>]
 Terminal: GE  [>][=]
 Terminal: EQ  [=]
-Terminal: OR  [|]
-Terminal: AND [&]
+Terminal: EQEQ		[=][=]
+Terminal: EQEQEQ	[=][=][=]
+Terminal: OR  		[|]
+Terminal: AND 		[&]
+Terminal: OROR  	[|][|]
+Terminal: ANDAND 	[&][&]
+
+Terminal: WILDCARD_OP ([+]|[-]|[*]|[/]|[<]|[=]|[>]|[|]|[&])+
 
 / Structure symbols
 Terminal: DOT       [.]

@@ -19,8 +19,13 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/EQEQ.h"
+#include "dupr/Ast/Node/EQEQEQ.h"
 #include "dupr/Ast/Node/OR.h"
 #include "dupr/Ast/Node/AND.h"
+#include "dupr/Ast/Node/OROR.h"
+#include "dupr/Ast/Node/ANDAND.h"
+#include "dupr/Ast/Node/WILDCARD_OP.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
@@ -220,6 +225,24 @@ namespace dupr { namespace ast { namespace listener {
 				break;
 			}
 
+			case dupr::ast::Type::EQEQ:
+			{
+				// Entry terminal
+				EnterAnything(node);
+				EnterTerminal(node);
+				ListenEntry(static_cast<const dupr::ast::node::EQEQ*>(node));
+				break;
+			}
+
+			case dupr::ast::Type::EQEQEQ:
+			{
+				// Entry terminal
+				EnterAnything(node);
+				EnterTerminal(node);
+				ListenEntry(static_cast<const dupr::ast::node::EQEQEQ*>(node));
+				break;
+			}
+
 			case dupr::ast::Type::OR:
 			{
 				// Entry terminal
@@ -235,6 +258,33 @@ namespace dupr { namespace ast { namespace listener {
 				EnterAnything(node);
 				EnterTerminal(node);
 				ListenEntry(static_cast<const dupr::ast::node::AND*>(node));
+				break;
+			}
+
+			case dupr::ast::Type::OROR:
+			{
+				// Entry terminal
+				EnterAnything(node);
+				EnterTerminal(node);
+				ListenEntry(static_cast<const dupr::ast::node::OROR*>(node));
+				break;
+			}
+
+			case dupr::ast::Type::ANDAND:
+			{
+				// Entry terminal
+				EnterAnything(node);
+				EnterTerminal(node);
+				ListenEntry(static_cast<const dupr::ast::node::ANDAND*>(node));
+				break;
+			}
+
+			case dupr::ast::Type::WILDCARD_OP:
+			{
+				// Entry terminal
+				EnterAnything(node);
+				EnterTerminal(node);
+				ListenEntry(static_cast<const dupr::ast::node::WILDCARD_OP*>(node));
 				break;
 			}
 
@@ -665,6 +715,24 @@ namespace dupr { namespace ast { namespace listener {
 				break;
 			}
 
+			case dupr::ast::Type::EQEQ:
+			{
+				// Exit terminal
+				ListenExit(static_cast<const dupr::ast::node::EQEQ*>(node));
+				ExitTerminal(node);
+				ExitAnything(node);
+				break;
+			}
+
+			case dupr::ast::Type::EQEQEQ:
+			{
+				// Exit terminal
+				ListenExit(static_cast<const dupr::ast::node::EQEQEQ*>(node));
+				ExitTerminal(node);
+				ExitAnything(node);
+				break;
+			}
+
 			case dupr::ast::Type::OR:
 			{
 				// Exit terminal
@@ -678,6 +746,33 @@ namespace dupr { namespace ast { namespace listener {
 			{
 				// Exit terminal
 				ListenExit(static_cast<const dupr::ast::node::AND*>(node));
+				ExitTerminal(node);
+				ExitAnything(node);
+				break;
+			}
+
+			case dupr::ast::Type::OROR:
+			{
+				// Exit terminal
+				ListenExit(static_cast<const dupr::ast::node::OROR*>(node));
+				ExitTerminal(node);
+				ExitAnything(node);
+				break;
+			}
+
+			case dupr::ast::Type::ANDAND:
+			{
+				// Exit terminal
+				ListenExit(static_cast<const dupr::ast::node::ANDAND*>(node));
+				ExitTerminal(node);
+				ExitAnything(node);
+				break;
+			}
+
+			case dupr::ast::Type::WILDCARD_OP:
+			{
+				// Exit terminal
+				ListenExit(static_cast<const dupr::ast::node::WILDCARD_OP*>(node));
 				ExitTerminal(node);
 				ExitAnything(node);
 				break;
@@ -1029,11 +1124,31 @@ namespace dupr { namespace ast { namespace listener {
 		{
 		}
 
+		virtual void ListenEntry(const dupr::ast::node::EQEQ* node) 
+		{
+		}
+
+		virtual void ListenEntry(const dupr::ast::node::EQEQEQ* node) 
+		{
+		}
+
 		virtual void ListenEntry(const dupr::ast::node::OR* node) 
 		{
 		}
 
 		virtual void ListenEntry(const dupr::ast::node::AND* node) 
+		{
+		}
+
+		virtual void ListenEntry(const dupr::ast::node::OROR* node) 
+		{
+		}
+
+		virtual void ListenEntry(const dupr::ast::node::ANDAND* node) 
+		{
+		}
+
+		virtual void ListenEntry(const dupr::ast::node::WILDCARD_OP* node) 
 		{
 		}
 
@@ -1150,11 +1265,31 @@ namespace dupr { namespace ast { namespace listener {
 		{
 		}
 
+		virtual void ListenExit(const dupr::ast::node::EQEQ* node) 
+		{
+		}
+
+		virtual void ListenExit(const dupr::ast::node::EQEQEQ* node) 
+		{
+		}
+
 		virtual void ListenExit(const dupr::ast::node::OR* node) 
 		{
 		}
 
 		virtual void ListenExit(const dupr::ast::node::AND* node) 
+		{
+		}
+
+		virtual void ListenExit(const dupr::ast::node::OROR* node) 
+		{
+		}
+
+		virtual void ListenExit(const dupr::ast::node::ANDAND* node) 
+		{
+		}
+
+		virtual void ListenExit(const dupr::ast::node::WILDCARD_OP* node) 
 		{
 		}
 

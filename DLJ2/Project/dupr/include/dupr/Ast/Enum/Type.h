@@ -1,14 +1,16 @@
-#ifndef dupr_AST_ENUM_TYPE_H
-#define dupr_AST_ENUM_TYPE_H
+#ifndef DUPR_AST_ENUM_TYPE_H
+#define DUPR_AST_ENUM_TYPE_H
 
-namespace dupr { namespace ast {
+#include <cstddef>
 
-	enum class Type
+namespace dupr { namespace ast { 
+
+	enum class Type : std::size_t
 	{
 		// Reserved
 		deamerreserved_unknown,
 
-		// Terminals
+		// Terminal
 		LEFT_BRACKET,
 		RIGHT_BRACKET,
 		LEFT_PARANTHESIS,
@@ -24,8 +26,13 @@ namespace dupr { namespace ast {
 		GT,
 		GE,
 		EQ,
+		EQEQ,
+		EQEQEQ,
 		OR,
 		AND,
+		OROR,
+		ANDAND,
+		WILDCARD_OP,
 		DOT,
 		COMMA,
 		COLON,
@@ -40,7 +47,8 @@ namespace dupr { namespace ast {
 		DECIMAL,
 		ESCAPE_CHARS,
 
-		// Non-Terminals
+
+		// NonTerminal
 		program,
 		deamerreserved_star__stmt__,
 		stmt,
@@ -59,8 +67,28 @@ namespace dupr { namespace ast {
 		pattern_constructor_structure,
 		pattern_constructor_terminate,
 		pattern_constructor_encapsulation,
+
 	};
 
+	static inline bool operator==(std::size_t lhs, ::dupr::ast::Type rhs)
+	{
+		return lhs == static_cast<std::size_t>(rhs);
+	}
+
+	static inline bool operator==(::dupr::ast::Type lhs, std::size_t rhs)
+	{
+		return static_cast<std::size_t>(lhs) == rhs;
+	}
+
+	static inline bool operator==(int lhs, ::dupr::ast::Type rhs)
+	{
+		return lhs == static_cast<std::size_t>(rhs);
+	}
+
+	static inline bool operator==(::dupr::ast::Type lhs, int rhs)
+	{
+		return static_cast<std::size_t>(lhs) == rhs;
+	}
 }}
 
-#endif // dupr_AST_ENUM_TYPE_H
+#endif // DUPR_AST_ENUM_TYPE_H

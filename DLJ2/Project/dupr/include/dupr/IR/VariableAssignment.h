@@ -22,6 +22,24 @@ namespace dupr::ir
 		}
 
 	public:
+		void Print() override
+		{
+			std::cout << "\t\tVariable Assignment:\n";
+			std::cout << "\t\t\tName: " + name + "\n";
+			std::cout << "\t\t\tValue: ";
+			value->Print();
+			std::cout << "\n";
+		}
+
+		std::string GetVariableName() const
+		{
+			return name;
+		}
+
+		ir::Expression* GetExpression() const
+		{
+			return value;
+		}
 	};
 }
 

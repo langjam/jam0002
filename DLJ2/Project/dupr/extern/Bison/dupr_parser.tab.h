@@ -69,20 +69,25 @@ extern int duprdebug;
     GT = 270,                      /* GT  */
     GE = 271,                      /* GE  */
     EQ = 272,                      /* EQ  */
-    OR = 273,                      /* OR  */
-    AND = 274,                     /* AND  */
-    DOT = 275,                     /* DOT  */
-    COMMA = 276,                   /* COMMA  */
-    COLON = 277,                   /* COLON  */
-    SEMICOLON = 278,               /* SEMICOLON  */
-    SIGN = 279,                    /* SIGN  */
-    HEKJE = 280,                   /* HEKJE  */
-    QUESTION = 281,                /* QUESTION  */
-    EXCLAM = 282,                  /* EXCLAM  */
-    PATTERN_INSERTION = 283,       /* PATTERN_INSERTION  */
-    VARNAME = 284,                 /* VARNAME  */
-    NUMBER = 285,                  /* NUMBER  */
-    DECIMAL = 286                  /* DECIMAL  */
+    EQEQ = 273,                    /* EQEQ  */
+    EQEQEQ = 274,                  /* EQEQEQ  */
+    OR = 275,                      /* OR  */
+    AND = 276,                     /* AND  */
+    OROR = 277,                    /* OROR  */
+    ANDAND = 278,                  /* ANDAND  */
+    WILDCARD_OP = 279,             /* WILDCARD_OP  */
+    DOT = 280,                     /* DOT  */
+    COMMA = 281,                   /* COMMA  */
+    COLON = 282,                   /* COLON  */
+    SEMICOLON = 283,               /* SEMICOLON  */
+    SIGN = 284,                    /* SIGN  */
+    HEKJE = 285,                   /* HEKJE  */
+    QUESTION = 286,                /* QUESTION  */
+    EXCLAM = 287,                  /* EXCLAM  */
+    PATTERN_INSERTION = 288,       /* PATTERN_INSERTION  */
+    VARNAME = 289,                 /* VARNAME  */
+    NUMBER = 290,                  /* NUMBER  */
+    DECIMAL = 291                  /* DECIMAL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -91,7 +96,7 @@ extern int duprdebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 127 "./dupr_parser.y"
+#line 137 "./dupr_parser.y"
 
 	::deamer::external::cpp::lexer::TerminalObject* Terminal;
 	::dupr::ast::node::LEFT_BRACKET* dupr_LEFT_BRACKET;
@@ -109,8 +114,13 @@ union YYSTYPE
 	::dupr::ast::node::GT* dupr_GT;
 	::dupr::ast::node::GE* dupr_GE;
 	::dupr::ast::node::EQ* dupr_EQ;
+	::dupr::ast::node::EQEQ* dupr_EQEQ;
+	::dupr::ast::node::EQEQEQ* dupr_EQEQEQ;
 	::dupr::ast::node::OR* dupr_OR;
 	::dupr::ast::node::AND* dupr_AND;
+	::dupr::ast::node::OROR* dupr_OROR;
+	::dupr::ast::node::ANDAND* dupr_ANDAND;
+	::dupr::ast::node::WILDCARD_OP* dupr_WILDCARD_OP;
 	::dupr::ast::node::DOT* dupr_DOT;
 	::dupr::ast::node::COMMA* dupr_COMMA;
 	::dupr::ast::node::COLON* dupr_COLON;
@@ -143,7 +153,7 @@ union YYSTYPE
 	::dupr::ast::node::pattern_constructor_terminate* dupr_pattern_constructor_terminate;
 	::dupr::ast::node::pattern_constructor_encapsulation* dupr_pattern_constructor_encapsulation;
 
-#line 147 "dupr_parser.tab.h"
+#line 157 "dupr_parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

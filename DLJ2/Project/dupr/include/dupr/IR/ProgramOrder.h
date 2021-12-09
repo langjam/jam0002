@@ -9,6 +9,9 @@ namespace dupr::ir
 		Function,
 		Statement,
 		Expression,
+		ConditionalIf,
+		ConditionalElseIf,
+		ConditionalElse,
 	};
 
 	class ProgramOrder

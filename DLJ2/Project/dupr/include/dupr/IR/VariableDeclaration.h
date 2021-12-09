@@ -21,6 +21,23 @@ namespace dupr::ir
 		}
 
 	public:
+		std::string GetVariableName() const
+		{
+			return name;
+		}
+
+		std::string GetVariableType() const
+		{
+			return type;
+		}
+
+	public:
+		void Print() override
+		{
+			std::cout << "\t\tVariable Declaration:\n";
+			std::cout << "\t\t\tType: " + type + "\n";
+			std::cout << "\t\t\tName: " + name + "\n";
+		}
 	};
 }
 

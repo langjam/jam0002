@@ -25,8 +25,13 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/EQEQ.h"
+#include "dupr/Ast/Node/EQEQEQ.h"
 #include "dupr/Ast/Node/OR.h"
 #include "dupr/Ast/Node/AND.h"
+#include "dupr/Ast/Node/OROR.h"
+#include "dupr/Ast/Node/ANDAND.h"
+#include "dupr/Ast/Node/WILDCARD_OP.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
@@ -88,8 +93,13 @@ static ::deamer::external::cpp::ast::Tree* outputTree = nullptr;
 %token<Terminal> GT
 %token<Terminal> GE
 %token<Terminal> EQ
+%token<Terminal> EQEQ
+%token<Terminal> EQEQEQ
 %token<Terminal> OR
 %token<Terminal> AND
+%token<Terminal> OROR
+%token<Terminal> ANDAND
+%token<Terminal> WILDCARD_OP
 %token<Terminal> DOT
 %token<Terminal> COMMA
 %token<Terminal> COLON
@@ -141,8 +151,13 @@ static ::deamer::external::cpp::ast::Tree* outputTree = nullptr;
 	::dupr::ast::node::GT* dupr_GT;
 	::dupr::ast::node::GE* dupr_GE;
 	::dupr::ast::node::EQ* dupr_EQ;
+	::dupr::ast::node::EQEQ* dupr_EQEQ;
+	::dupr::ast::node::EQEQEQ* dupr_EQEQEQ;
 	::dupr::ast::node::OR* dupr_OR;
 	::dupr::ast::node::AND* dupr_AND;
+	::dupr::ast::node::OROR* dupr_OROR;
+	::dupr::ast::node::ANDAND* dupr_ANDAND;
+	::dupr::ast::node::WILDCARD_OP* dupr_WILDCARD_OP;
 	::dupr::ast::node::DOT* dupr_DOT;
 	::dupr::ast::node::COMMA* dupr_COMMA;
 	::dupr::ast::node::COLON* dupr_COLON;
@@ -364,6 +379,26 @@ pattern_constructor_operator:
 	}
 	| OR {
 		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {10, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::OR({::dupr::ast::Type::OR, ::deamer::external::cpp::ast::NodeValue::terminal, $1}) });
+		$$ = newNode;
+	}
+	| EQEQ {
+		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {11, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::EQEQ({::dupr::ast::Type::EQEQ, ::deamer::external::cpp::ast::NodeValue::terminal, $1}) });
+		$$ = newNode;
+	}
+	| EQEQEQ {
+		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {12, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::EQEQEQ({::dupr::ast::Type::EQEQEQ, ::deamer::external::cpp::ast::NodeValue::terminal, $1}) });
+		$$ = newNode;
+	}
+	| OROR {
+		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {13, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::OROR({::dupr::ast::Type::OROR, ::deamer::external::cpp::ast::NodeValue::terminal, $1}) });
+		$$ = newNode;
+	}
+	| ANDAND {
+		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {14, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::ANDAND({::dupr::ast::Type::ANDAND, ::deamer::external::cpp::ast::NodeValue::terminal, $1}) });
+		$$ = newNode;
+	}
+	| WILDCARD_OP {
+		auto* const newNode = new dupr::ast::node::pattern_constructor_operator({::dupr::ast::Type::pattern_constructor_operator, ::deamer::external::cpp::ast::NodeValue::nonterminal, {15, ::deamer::external::cpp::ast::ProductionRuleType::user}}, { new dupr::ast::node::WILDCARD_OP({::dupr::ast::Type::WILDCARD_OP, ::deamer::external::cpp::ast::NodeValue::terminal, $1}) });
 		$$ = newNode;
 	}
 ;

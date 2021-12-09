@@ -6,8 +6,15 @@
 #include "dupr/Ast/Listener/User/IRTranslatorFunctionStatements.h"
 #include "dupr/Ast/Listener/User/TerminalOrder.h"
 #include "dupr/Ast/Reference/Access.h"
+#include "dupr/IR/ConditionalElse.h"
+#include "dupr/IR/ConditionalElseIf.h"
+#include "dupr/IR/ConditionalIf.h"
 #include "dupr/IR/Function.h"
+#include "dupr/IR/ReturnStatement.h"
 #include "dupr/IR/Table.h"
+#include "dupr/IR/Value.h"
+#include "dupr/IR/VariableAssignment.h"
+#include "dupr/IR/VariableDeclaration.h"
 #include <optional>
 #include <string>
 
@@ -188,7 +195,7 @@ namespace dupr::ast::listener::user
 			}
 
 			const auto extension =
-				GetAccessor(node).pattern_name().GetContent()[0]->GetText() + ">";
+				reference::Access(node).pattern_name().GetContent()[0]->GetText() + ">";
 			directionDepth.push_back(extension);
 			std::string newDirection;
 			for (auto dirDepth : directionDepth)
@@ -213,7 +220,7 @@ namespace dupr::ast::listener::user
 		}
 
 		std::vector<ir::Argument> functionArguments;
-		std::vector<ir::Statement> functionStatements;
+		std::vector<std::vector<ir::Statement*>> functionStatements;
 		void
 		ListenEntry(const dupr::ast::node::pattern_constructor* node_pattern_constructor) override
 		{
@@ -477,7 +484,7 @@ namespace dupr::ast::listener::user
 				}
 			}
 
-			std::vector<ir::Statement> statements_parsed;
+			std::vector<ir::Statement*> statements_parsed;
 
 			for (auto statement : statements)
 			{
@@ -486,10 +493,11 @@ namespace dupr::ast::listener::user
 					std::cout << "\tParsing statements failed, aborting function construction\n";
 					return;
 				}
-				for (auto functionStatement : functionStatements)
+				for (auto functionStatement : functionStatements[0])
 				{
 					statements_parsed.push_back(functionStatement);
 				}
+				functionStatements.pop_back();
 			}
 
 			irTable->Add(new dupr::ir::Function(return_type[0]->GetNode()[0]->GetText(),
@@ -500,36 +508,186 @@ namespace dupr::ast::listener::user
 		void ConstructVariableAssignment(PatternStateMachine* stateMachine)
 		{
 			std::cout << "Constructing a variable assignment:\n";
+			auto nameState = stateMachine->GetPatternInsertionWithName("name");
+			if (nameState.size() != 1)
+			{
+				return;
+			}
+			std::string name = nameState[0]->GetNode()[0]->GetText();
+
+			auto expressionState = stateMachine->GetPatternInsertionWithName("expression");
+			std::string expressionValue;
+			if (expressionState.empty() || expressionState.size() > 1)
+			{
+				throw std::logic_error("Multiple expressions in pattern\n");
+			}
+			for (auto node : expressionState[0]->GetNode())
+			{
+				expressionValue += node->GetText() + " ";
+			}
+			ir::Expression* expression = new ir::Value(expressionValue);
+			auto newStatement = new ir::VariableAssignment(name, expression);
+			functionStatements[functionStatements.size() - 1].push_back(newStatement);
 		}
 
 		void ConstructVariableDeclaration(PatternStateMachine* stateMachine)
 		{
 			std::cout << "Constructing a variable declaration:\n";
+			auto nameState = stateMachine->GetPatternInsertionWithName("name");
+			if (nameState.size() != 1)
+			{
+				return;
+			}
+			std::string name = nameState[0]->GetNode()[0]->GetText();
+			auto typeState = stateMachine->GetPatternInsertionWithName("type");
+			if (typeState.size() != 1)
+			{
+				return;
+			}
+			std::string type = typeState[0]->GetNode()[0]->GetText();
+
+			auto newStatement = new ir::VariableDeclaration(type, name);
+			functionStatements[functionStatements.size() - 1].push_back(newStatement);
 		}
 
+		// For simplicity semantic sugar for variable declaration and assignment.
 		void ConstructVariableIntialization(PatternStateMachine* stateMachine)
 		{
 			std::cout << "Constructing a variable initialization:\n";
+			std::cout << "Constructing a variable declaration:\n";
+			auto nameState = stateMachine->GetPatternInsertionWithName("name");
+			if (nameState.size() != 1)
+			{
+				return;
+			}
+			std::string name = nameState[0]->GetNode()[0]->GetText();
+			auto typeState = stateMachine->GetPatternInsertionWithName("type");
+			if (typeState.size() != 1)
+			{
+				return;
+			}
+			std::string type = typeState[0]->GetNode()[0]->GetText();
+
+			auto newStatement1 = new ir::VariableDeclaration(type, name);
+			functionStatements[functionStatements.size() - 1].push_back(newStatement1);
+
+			auto expressionState = stateMachine->GetPatternInsertionWithName("expression");
+			std::string expressionValue;
+			if (expressionState.empty() || expressionState.size() > 1)
+			{
+				throw std::logic_error("Multiple expressions in pattern\n");
+			}
+			for (auto node : expressionState[0]->GetNode())
+			{
+				expressionValue += node->GetText() + " ";
+			}
+
+			ir::Expression* expression = new ir::Value(expressionValue);
+			auto newStatement2 = new ir::VariableAssignment(name, expression);
+			functionStatements[functionStatements.size() - 1].push_back(newStatement2);
 		}
 
 		void ConstructReturnStatement(PatternStateMachine* stateMachine)
 		{
 			std::cout << "Constructing a Return statement:\n";
+			auto expressionState = stateMachine->GetPatternInsertionWithName("expression");
+			std::string expressionValue;
+			if (expressionState.empty() || expressionState.size() > 1)
+			{
+				throw std::logic_error("Multiple expressions in pattern\n");
+			}
+			for (auto node : expressionState[0]->GetNode())
+			{
+				expressionValue += node->GetText() + " ";
+			}
+
+			ir::Expression* expression = new ir::Value(expressionValue);
+			auto newStatement = new ir::ReturnStatement(expression);
+			functionStatements[functionStatements.size() - 1].push_back(newStatement);
 		}
 
 		void ConstructConditionalIf(PatternStateMachine* stateMachine)
 		{
 			std::cout << "Constructing a conditional if:\n";
+			auto statementStates = stateMachine->GetPatternInsertionWithName("statements");
+			if (statementStates.empty())
+			{
+				std::cout << "\tThere are no statement states!\n";
+			}
+			for (auto statementState : statementStates)
+			{
+				bool succes = ParseStatements(statementState);
+				auto statements = functionStatements[functionStatements.size() - 1];
+				functionStatements.pop_back();
+
+				auto expressionState = stateMachine->GetPatternInsertionWithName("expression");
+				std::string expressionValue;
+				if (expressionState.empty() || expressionState.size() > 1)
+				{
+					throw std::logic_error("Multiple expressions in pattern\n");
+				}
+				for (auto node : expressionState[0]->GetNode())
+				{
+					expressionValue += node->GetText() + " ";
+				}
+				ir::Expression* expression = new ir::Value(expressionValue);
+				auto newConditionalStatement = new ir::ConditionalIf(expression, statements);
+				functionStatements[functionStatements.size() - 1].push_back(
+					newConditionalStatement);
+			}
 		}
 
 		void ConstructConditionalElseIf(PatternStateMachine* stateMachine)
 		{
 			std::cout << "Constructing a conditional else if:\n";
+			auto statementStates = stateMachine->GetPatternInsertionWithName("statements");
+			if (statementStates.empty())
+			{
+				std::cout << "\tThere are no statement states!\n";
+			}
+			for (auto statementState : statementStates)
+			{
+				bool succes = ParseStatements(statementState);
+				auto statements = functionStatements[functionStatements.size() - 1];
+				functionStatements.pop_back();
+
+				// Expressions are just the result of expression tree, but with spaces between nodes
+				// i.e. we let the back-end generator sort this stuff out
+				auto expressionState = stateMachine->GetPatternInsertionWithName("expression");
+				std::string expressionValue;
+				if (expressionState.empty() || expressionState.size() > 1)
+				{
+					throw std::logic_error("Multiple expressions in pattern\n");
+				}
+				for (auto node : expressionState[0]->GetNode())
+				{
+					expressionValue += node->GetText() + " ";
+				}
+				ir::Expression* expression = new ir::Value(expressionValue);
+				auto newConditionalStatement = new ir::ConditionalElseIf(expression, statements);
+				functionStatements[functionStatements.size() - 1].push_back(
+					newConditionalStatement);
+			}
 		}
 
 		void ConstructConditionalElse(PatternStateMachine* stateMachine)
 		{
 			std::cout << "Constructing a conditional else if:\n";
+			auto statementStates = stateMachine->GetPatternInsertionWithName("statements");
+			if (statementStates.empty())
+			{
+				std::cout << "\tThere are no statement states!\n";
+			}
+			for (auto statementState : statementStates)
+			{
+				bool succes = ParseStatements(statementState);
+				auto statements = functionStatements[functionStatements.size() - 1];
+				functionStatements.pop_back();
+
+				auto newConditionalStatement = new ir::ConditionalElse(statements);
+				functionStatements[functionStatements.size() - 1].push_back(
+					newConditionalStatement);
+			}
 		}
 
 		void ConstructUnknown(PatternStateMachine* stateMachine)
@@ -606,9 +764,10 @@ namespace dupr::ast::listener::user
 			return success;
 		}
 
+		// pop back functionStatements, when you processed the current statements
 		bool ParseStatements(PatternStateMachine::State* statements)
 		{
-			functionStatements.clear();
+			functionStatements.emplace_back();
 
 			std::cout << "\tRetrieving Statements using pattern:\n";
 			std::cout << "\t\tPattern direction: "
@@ -616,9 +775,9 @@ namespace dupr::ast::listener::user
 			std::cout << "\t\tPattern insertion: "
 					  << GetPatternInsertion(statements->GetPredefinedFormat().value()) << "\n";
 
-			auto functionStatements = IRTranslatorFunctionStatements(
+			auto functionStatementsTranslator = IRTranslatorFunctionStatements(
 				this, GetPatternDirection(statements->GetPredefinedFormat().value()));
-			bool success = functionStatements.GetStatements(statements->GetNode());
+			bool success = functionStatementsTranslator.GetStatements(statements->GetNode());
 
 			return success;
 		}

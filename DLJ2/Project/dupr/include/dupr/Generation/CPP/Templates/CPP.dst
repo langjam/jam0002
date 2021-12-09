@@ -1,0 +1,13 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <set>
+#include <array>
+#include <algorithm>
+#include <type_traits>
+#include <string>
+#include <memory>
+
+{{function_prototype.Variable_Field}}
+
+{{function.Variable_Field}}

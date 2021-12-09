@@ -19,8 +19,13 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/EQEQ.h"
+#include "dupr/Ast/Node/EQEQEQ.h"
 #include "dupr/Ast/Node/OR.h"
 #include "dupr/Ast/Node/AND.h"
+#include "dupr/Ast/Node/OROR.h"
+#include "dupr/Ast/Node/ANDAND.h"
+#include "dupr/Ast/Node/WILDCARD_OP.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
@@ -143,6 +148,16 @@ namespace dupr { namespace ast { namespace Visitor {
 				Visit(static_cast<const dupr::ast::node::EQ*>(node));
 				break;
 			}
+			case dupr::ast::Type::EQEQ:
+			{
+				Visit(static_cast<const dupr::ast::node::EQEQ*>(node));
+				break;
+			}
+			case dupr::ast::Type::EQEQEQ:
+			{
+				Visit(static_cast<const dupr::ast::node::EQEQEQ*>(node));
+				break;
+			}
 			case dupr::ast::Type::OR:
 			{
 				Visit(static_cast<const dupr::ast::node::OR*>(node));
@@ -151,6 +166,21 @@ namespace dupr { namespace ast { namespace Visitor {
 			case dupr::ast::Type::AND:
 			{
 				Visit(static_cast<const dupr::ast::node::AND*>(node));
+				break;
+			}
+			case dupr::ast::Type::OROR:
+			{
+				Visit(static_cast<const dupr::ast::node::OROR*>(node));
+				break;
+			}
+			case dupr::ast::Type::ANDAND:
+			{
+				Visit(static_cast<const dupr::ast::node::ANDAND*>(node));
+				break;
+			}
+			case dupr::ast::Type::WILDCARD_OP:
+			{
+				Visit(static_cast<const dupr::ast::node::WILDCARD_OP*>(node));
 				break;
 			}
 			case dupr::ast::Type::DOT:
@@ -356,10 +386,25 @@ namespace dupr { namespace ast { namespace Visitor {
 		virtual void Visit(const dupr::ast::node::EQ* node)
 		{
 		}
+		virtual void Visit(const dupr::ast::node::EQEQ* node)
+		{
+		}
+		virtual void Visit(const dupr::ast::node::EQEQEQ* node)
+		{
+		}
 		virtual void Visit(const dupr::ast::node::OR* node)
 		{
 		}
 		virtual void Visit(const dupr::ast::node::AND* node)
+		{
+		}
+		virtual void Visit(const dupr::ast::node::OROR* node)
+		{
+		}
+		virtual void Visit(const dupr::ast::node::ANDAND* node)
+		{
+		}
+		virtual void Visit(const dupr::ast::node::WILDCARD_OP* node)
 		{
 		}
 		virtual void Visit(const dupr::ast::node::DOT* node)

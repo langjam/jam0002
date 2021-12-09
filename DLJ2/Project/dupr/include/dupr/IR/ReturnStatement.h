@@ -20,6 +20,17 @@ namespace dupr::ir
 		}
 
 	public:
+		void Print() override
+		{
+			std::cout << "\t\tReturn statement: ";
+			expression->Print();
+			std::cout << "\n";
+		}
+
+		ir::Expression* GetExpression()
+		{
+			return expression;
+		}
 	};
 }
 

@@ -9,6 +9,7 @@
 #include "Deamer/Ast/Generation/CPP/CPP.h"
 #include "Deamer/Lexer/Generator/Flex/Flex.h"
 #include "Deamer/Parser/Generator/Bison/Bison.h"
+#include "Deamer/Tool/Type/DeamerDefaultApplication/DeamerDefaultApplication.h"
 
 
 namespace dupr
@@ -46,12 +47,14 @@ namespace dupr
 			::deamer::ast::generation::cpp::CPP CPP(::deamer::compiler::generator::Compiler<::dupr::Language>::GetLanguageDefinition());
 ::deamer::lexer::generator::flex::Flex Flex(::deamer::compiler::generator::Compiler<::dupr::Language>::GetLanguageDefinition());
 ::deamer::parser::generator::bison::Bison Bison(::deamer::compiler::generator::Compiler<::dupr::Language>::GetLanguageDefinition());
+::deamer::tool::type::deamerdefaultapplication::DeamerDefaultApplication DeamerDefaultApplication(::deamer::compiler::generator::Compiler<::dupr::Language>::GetLanguageDefinition());
 
 
 			// The language generation targets
 			output.AddLanguageToolOutput(CPP.Generate());
 output.AddLanguageToolOutput(Flex.Generate());
 output.AddLanguageToolOutput(Bison.Generate());
+output.AddLanguageToolOutput(DeamerDefaultApplication.Generate());
 
 
 			return output;

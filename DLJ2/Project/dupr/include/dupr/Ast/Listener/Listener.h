@@ -19,8 +19,13 @@
 #include "dupr/Ast/Node/GT.h"
 #include "dupr/Ast/Node/GE.h"
 #include "dupr/Ast/Node/EQ.h"
+#include "dupr/Ast/Node/EQEQ.h"
+#include "dupr/Ast/Node/EQEQEQ.h"
 #include "dupr/Ast/Node/OR.h"
 #include "dupr/Ast/Node/AND.h"
+#include "dupr/Ast/Node/OROR.h"
+#include "dupr/Ast/Node/ANDAND.h"
+#include "dupr/Ast/Node/WILDCARD_OP.h"
 #include "dupr/Ast/Node/DOT.h"
 #include "dupr/Ast/Node/COMMA.h"
 #include "dupr/Ast/Node/COLON.h"
@@ -143,6 +148,16 @@ namespace dupr { namespace ast { namespace listener {
 				Listen(static_cast<const dupr::ast::node::EQ*>(node));
 				break;
 			}
+			case dupr::ast::Type::EQEQ:
+			{
+				Listen(static_cast<const dupr::ast::node::EQEQ*>(node));
+				break;
+			}
+			case dupr::ast::Type::EQEQEQ:
+			{
+				Listen(static_cast<const dupr::ast::node::EQEQEQ*>(node));
+				break;
+			}
 			case dupr::ast::Type::OR:
 			{
 				Listen(static_cast<const dupr::ast::node::OR*>(node));
@@ -151,6 +166,21 @@ namespace dupr { namespace ast { namespace listener {
 			case dupr::ast::Type::AND:
 			{
 				Listen(static_cast<const dupr::ast::node::AND*>(node));
+				break;
+			}
+			case dupr::ast::Type::OROR:
+			{
+				Listen(static_cast<const dupr::ast::node::OROR*>(node));
+				break;
+			}
+			case dupr::ast::Type::ANDAND:
+			{
+				Listen(static_cast<const dupr::ast::node::ANDAND*>(node));
+				break;
+			}
+			case dupr::ast::Type::WILDCARD_OP:
+			{
+				Listen(static_cast<const dupr::ast::node::WILDCARD_OP*>(node));
 				break;
 			}
 			case dupr::ast::Type::DOT:
@@ -374,10 +404,25 @@ namespace dupr { namespace ast { namespace listener {
 		virtual void Listen(const dupr::ast::node::EQ* node)
 		{
 		}
+		virtual void Listen(const dupr::ast::node::EQEQ* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::EQEQEQ* node)
+		{
+		}
 		virtual void Listen(const dupr::ast::node::OR* node)
 		{
 		}
 		virtual void Listen(const dupr::ast::node::AND* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::OROR* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::ANDAND* node)
+		{
+		}
+		virtual void Listen(const dupr::ast::node::WILDCARD_OP* node)
 		{
 		}
 		virtual void Listen(const dupr::ast::node::DOT* node)

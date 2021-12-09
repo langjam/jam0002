@@ -38,8 +38,13 @@ class LE;
 class GT;
 class GE;
 class EQ;
+class EQEQ;
+class EQEQEQ;
 class OR;
 class AND;
+class OROR;
+class ANDAND;
+class WILDCARD_OP;
 class DOT;
 class COMMA;
 class COLON;
@@ -298,6 +303,20 @@ namespace dupr { namespace ast { namespace relation {
 	};
 
 	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::EQEQ>
+	{
+		constexpr static auto value = ::dupr::ast::Type::EQEQ;
+		using type = ::dupr::ast::node::EQEQ;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::EQEQEQ>
+	{
+		constexpr static auto value = ::dupr::ast::Type::EQEQEQ;
+		using type = ::dupr::ast::node::EQEQEQ;
+	};
+
+	template<>
 	struct NodeTypeToEnum<::dupr::ast::node::OR>
 	{
 		constexpr static auto value = ::dupr::ast::Type::OR;
@@ -309,6 +328,27 @@ namespace dupr { namespace ast { namespace relation {
 	{
 		constexpr static auto value = ::dupr::ast::Type::AND;
 		using type = ::dupr::ast::node::AND;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::OROR>
+	{
+		constexpr static auto value = ::dupr::ast::Type::OROR;
+		using type = ::dupr::ast::node::OROR;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::ANDAND>
+	{
+		constexpr static auto value = ::dupr::ast::Type::ANDAND;
+		using type = ::dupr::ast::node::ANDAND;
+	};
+
+	template<>
+	struct NodeTypeToEnum<::dupr::ast::node::WILDCARD_OP>
+	{
+		constexpr static auto value = ::dupr::ast::Type::WILDCARD_OP;
+		using type = ::dupr::ast::node::WILDCARD_OP;
 	};
 
 	template<>

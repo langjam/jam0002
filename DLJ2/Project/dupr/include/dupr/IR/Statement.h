@@ -1,6 +1,7 @@
 #ifndef DUPR_IR_STATEMENT_H
 #define DUPR_IR_STATEMENT_H
 
+#include "dupr/Generation/CPP/Templates/StatementTemplate.h"
 #include "dupr/IR/ProgramOrder.h"
 #include <string>
 
@@ -14,6 +15,10 @@ namespace dupr::ir
 			ReturnStatement,
 			VariableDeclaration,
 			VariableAssignment,
+			VariableInitialization,
+			ConditionalIf,
+			ConditionalElseIf,
+			ConditionalElse,
 		};
 
 	private:

@@ -76,6 +76,11 @@ namespace dupr
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_operator_EQ;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_operator_AND;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_operator_OR;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_operator_EQEQ;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_operator_EQEQEQ;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_operator_OROR;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_operator_ANDAND;
+::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_operator_WILDCARD_OP;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_structure_DOT;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_structure_COMMA;
 ::deamer::type::SafeReserve<::deamer::language::type::definition::object::main::ProductionRule> pattern_constructor_structure_COLON;

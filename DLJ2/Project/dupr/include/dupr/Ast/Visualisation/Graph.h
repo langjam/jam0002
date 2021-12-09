@@ -356,6 +356,26 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"EQ\"];\n";
 		}
 
+		void ListenEntry(const ::dupr::ast::node::EQEQ* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"EQEQ\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::EQEQEQ* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"EQEQEQ\"];\n";
+		}
+
 		void ListenEntry(const ::dupr::ast::node::OR* node) override
 		{
 			for (const auto* child : node->GetNodes())
@@ -374,6 +394,36 @@ namespace dupr { namespace ast { namespace listener { namespace deamer { namespa
 			}
 
 			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"AND\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::OROR* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"OROR\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::ANDAND* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"ANDAND\"];\n";
+		}
+
+		void ListenEntry(const ::dupr::ast::node::WILDCARD_OP* node) override
+		{
+			for (const auto* child : node->GetNodes())
+			{
+				AddConnection(node, child);
+			}
+
+			output += "\t" + std::to_string(::std::size_t(node)) + " [label=\"WILDCARD_OP\"];\n";
 		}
 
 		void ListenEntry(const ::dupr::ast::node::DOT* node) override
