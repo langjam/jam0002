@@ -90,4 +90,7 @@ class Tui:
         wrefresh(self.window)
 
 if __name__ == '__main__':
-    Tui(sim).run()
+    try:
+        Tui(sim).run()
+    finally:
+        endwin()

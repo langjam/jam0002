@@ -13,7 +13,7 @@ class Simulation:
       row_diff, col_diff = direction_offsets[deer]
       row = cell.row + row_diff
       col = cell.col + col_diff
-      if 0 <= row <= self.rows and 0 <= col <= self.cols:
+      if 0 <= row < self.rows and 0 <= col < self.cols:
         comp_cell = self.grid[row][col]
         if selector(self.selectors, comp_cell, self.builtins):
           count += 1
@@ -82,7 +82,7 @@ class Simulation:
     except KeyError:
       raise InvalidAliasException(f"Unknown alias {alias}")
 
-    new_cell = self.cell._replace(**props)
+    new_cell = self.cell._replace(row=row, col=col, **props)
     self.grid[row][col] = new_cell
     return self.get_frame()
 
