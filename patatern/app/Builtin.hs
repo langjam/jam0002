@@ -8,7 +8,7 @@ import Data.List (partition)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Logic.Unify
-import SyntaxTree
+import SyntaxTree hiding (lhs, rhs)
 import Text.Read (readMaybe)
 
 evalBuiltin :: Term UVar -> UnifyT (Term UVar) IO ()
@@ -24,34 +24,56 @@ evalBuiltin ("getInt" :> Var r) = do
     Nothing -> do
       liftIO $ putStrLn "Not an integer"
       error "Not an integer"
-evalBuiltin t@(Int x :> "+" :> Int y :> "=" :> Int r) =
-  if x + y == r
-    then pure ()
-    else do
-      liftIO $ putStrLn ("Wrong addition: " <> show t)
-      error "Wrong addition"
-evalBuiltin (Int x :> "+" :> Int y :> "=" :> Var r) =
-  void $ unify (Var r) (Int (x + y))
-evalBuiltin (Int x :> "+" :> Var y :> "=" :> Int r) =
-  void $ unify (Var y) (Int (r - x))
-evalBuiltin (Var x :> "+" :> Int y :> "=" :> Int r) =
-  evalBuiltin (Int y :> "+" :> Var x :> Symbol "=" :> Int r)
-evalBuiltin (x :> "+" :> y :> "=" :> r) = pure ()
-evalBuiltin (r :> "=" :> x :> "+" :> y) =
-  evalBuiltin (x :> "+" :> y :> "=" :> r)
+evalBuiltin t@(_ :> "+" :> _ :> "=" :> _) = evalAddition t
+evalBuiltin t@(_ :> "-" :> _ :> "=" :> _) = evalAddition t
+evalBuiltin t@(_ :> "+" :> _) = evalAddition t
+evalBuiltin t@(_ :> "-" :> _) = evalAddition t
 evalBuiltin t = liftIO $ putStrLn ("Unmatched pattern: " <> show t)
 
-evalAdditionTerms :: [Term UVar] -> Term UVar -> UnifyT (Term UVar) IO ()
-evalAdditionTerms addends result = do
+evalAddition :: Term UVar -> UnifyT (Term UVar) IO ()
+evalAddition t = case getAdditionTerms [] [] (Right t) of
+  (x : xs, y : ys) -> evalAdditionTerms (x : xs) (y : ys)
+  (_, _) -> pure ()
+
+getAdditionTerms :: [Term UVar]
+                 -> [Term UVar]
+                 -> Either (Term UVar) (Term UVar)
+                 -> ([Term UVar], [Term UVar])
+getAdditionTerms lhs rhs (Left (Int i :> "+" :> x)) = (Int i : x : lhs, rhs)
+getAdditionTerms lhs rhs (Left (Int i :> "-" :> x)) = (Int i : lhs, x : rhs)
+getAdditionTerms lhs rhs (Left (Var v :> "+" :> x)) = (Var v : x : lhs, rhs)
+getAdditionTerms lhs rhs (Left (Var v :> "-" :> x)) = (Var v : lhs, x : rhs)
+getAdditionTerms lhs rhs (Right (xs :> "+" :> x)) =
+  getAdditionTerms lhs (x : rhs) (Right xs)
+getAdditionTerms lhs rhs (Right (xs :> "-" :> x)) =
+  getAdditionTerms (x : lhs) rhs (Right xs)
+getAdditionTerms lhs rhs (Right (xs :> "=" :> x)) =
+  getAdditionTerms lhs (x : rhs) (Left xs)
+getAdditionTerms lhs rhs (Left (xs :> "+" :> x)) =
+  getAdditionTerms (x : lhs) rhs (Left xs)
+getAdditionTerms lhs rhs (Left (xs :> "-" :> x)) =
+  getAdditionTerms lhs (x : rhs) (Left xs)
+getAdditionTerms _ _ _ = ([], [])
+
+evalAdditionTerms :: [Term UVar] -> [Term UVar] -> UnifyT (Term UVar) IO ()
+evalAdditionTerms lhs rhs = do
   let isVar Var{} = True
       isVar _ = False
       getInt (Int i) = Just i
       getInt _ = Nothing
-      (vars, others) = partition isVar addends
-      maybeInts = traverse getInt others
-  case (vars, maybeInts, result) of
-        ([var], Just ints, Int r) ->
-          void $ unify var (Int (sum (r : map negate ints)))
-        ([], Just ints, Var r) ->
-          void $ unify (Var r) (Int (sum ints))
+      (varsL, othersL) = partition isVar lhs
+      (varsR, othersR) = partition isVar rhs
+      maybeIntsL = traverse getInt othersL
+      maybeIntsR = traverse getInt othersR
+  case (varsL, maybeIntsL, varsR, maybeIntsR) of
+        ([var], Just intsL, [], Just intsR) ->
+          void $ unify var (Int (negate (sum intsL) + sum intsR))
+        ([], Just intsL, [var], Just intsR) ->
+          void $ unify var (Int (sum intsL + negate (sum intsR)))
+        ([], Just intsL, [], Just intsR) ->
+          if sum (intsL) == sum intsR
+            then pure ()
+            else do
+              liftIO $ putStrLn "Go back to school!"
+              error "Go back to school!"
         _ -> pure ()
