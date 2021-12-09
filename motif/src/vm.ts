@@ -18,7 +18,6 @@ const STACK_SIZE = 1024;
 const MEMORY_SIZE = 65536;
 
 export class VM {
-  private ip: number;
   private sp: number;
   private stack: Int32Array;
   private memory: Int32Array;
@@ -27,7 +26,6 @@ export class VM {
   private symbols: string[]
 
   constructor(private program: CompiledProgram, private print: PrintFunc) {
-    this.ip = 0;
     this.sp = 0;
     this.stack = new Int32Array(STACK_SIZE);
     this.memory = new Int32Array(MEMORY_SIZE)
@@ -37,24 +35,24 @@ export class VM {
   }
 
   run() {
-    this.ip = 0;
+    let ip = 0;
     for(;;) {
       const bytecodes = this.currentSection().bytecodes;
 
-      if (this.ip < 0 || this.ip >= bytecodes.length) {
+      if (ip < 0 || ip >= bytecodes.length) {
         this.sectionStack.pop();
         if (this.sectionStack.length === 0) return;
-        this.ip = this.returnStack.pop() as number;
+        ip = this.returnStack.pop() as number;
         continue;
       }
 
-      let instr = bytecodes[this.ip++] as Instructions;
+      let instr = bytecodes[ip++] as Instructions;
 
       switch(instr) {
         /* STACK OPERATIONS */
 
         case Instructions.PUSH:
-          this.push(bytecodes[this.ip++]);
+          this.push(bytecodes[ip++]);
         break;
         case Instructions.POP:
           this.pop();
@@ -178,28 +176,28 @@ export class VM {
         /* CONTROL FLOW */
 
         case Instructions.JUMP: {
-          let next = bytecodes[this.ip++];
-          this.ip = next;
+          let next = bytecodes[ip++];
+          ip = next;
           break;
         }
 
         case Instructions.JUMP_IF: {
-          let next = bytecodes[this.ip++];
+          let next = bytecodes[ip++];
           let condition = this.pop();
 
           if (!!condition) {
-            this.ip = next;
+            ip = next;
           }
 
           break;
         }
 
         case Instructions.RETURN:
-          this.ip = -1;
+          ip = -1;
         break;
 
         case Instructions.CALL: {
-          let sectionColor = bytecodes[this.ip++];
+          let sectionColor = bytecodes[ip++];
           let section = this.program.sections.get(sectionColor);
           if (!section) throw new RuntimeError(`Section with color #${sectionColor} doesn't exists`);
 
@@ -208,8 +206,8 @@ export class VM {
           }
 
           this.sectionStack.push(section);
-          this.returnStack.push(this.ip);
-          this.ip = 0;
+          this.returnStack.push(ip);
+          ip = 0;
 
           break;
         }
