@@ -39,6 +39,7 @@ see doc/Plan.md
 I find it "easier to reason about programs" if I can see diagrams. 
 In the vein of "graphic novels", I want a "graphic spec". 
 see doc/Diagrams.md
+obsidian://open?vault=doc&file=Diagrams
 ## Factbase
 A Factbase is a set of triples.
 
@@ -53,6 +54,8 @@ npm install ohm-js@next
 npm install atob
 ### pako
 npm install pako
+## Obsidian
+for documentation
 ### Blogs / Articles / Youtube
 I leaned on previous work (see blog below).
 
@@ -203,3 +206,31 @@ https://guitarvydas.github.io
 
 ## Dataless Languages
 https://guitarvydas.github.io/2021/03/02/Dataless-Programming-Language.html
+
+## Future
+obsidian://open?vault=doc&file=Future
+## Glue
+https://guitarvydas.github.io/2021/04/11/Glue-Tool.html
+https://guitarvydas.github.io/2021/09/15/ABC-Glue.html
+https://guitarvydas.github.io/2021/03/24/Glue-Manual.html
+## Obsidian
+https://obsidian.md
+## Programming
+obsidian://open?vault=doc&file=Programming
+## Normalization
+obsidian://open?vault=doc&file=Normalization
+## Macros vs. DSLs
+obsidian://open?vault=doc&file=Macros%20vs.%20DSLs
+## Gotchas
+obsidian://open?vault=doc&file=Gotchas
+## Pattern Matching
+obsidian://open?vault=doc&file=Pattern%20Matching
+## Relation to Projectional Editing
+obsidian://open?vault=doc&file=Related%20-%20Projectional%20Editing
+## Relation to Software Architecture
+obsidian://open?vault=doc&file=Software%20Architecture
+https://guitarvydas.github.io/assets/2021-04-11-DI/index.html#15
+## Programming Languages Are Patterns
+obsidian://open?vault=doc&file=Programming%20Languages%20Are%20Patterns
+## Functional Programming vs. Pattern Matching
+obsidian://open?vault=doc&file=Functional%20Programming%20vs.%20Pattern%20Matching
