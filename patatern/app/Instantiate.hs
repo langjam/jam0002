@@ -19,8 +19,8 @@ runInstantiateRule = flip evalStateT mempty . instantiateRule
 runInstantiateTerms ::
   Monad m =>
   [Term Text] ->
-  UnifyT (Term UVar) m [Term UVar]
-runInstantiateTerms = flip evalStateT mempty . traverse instantiateTerm
+  UnifyT (Term UVar) m ([Term UVar], Map Text UVar)
+runInstantiateTerms = flip runStateT mempty . traverse instantiateTerm
 
 -- | Instantiate the LHS and the RHS of a rule
 instantiateRule ::
