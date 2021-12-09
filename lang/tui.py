@@ -89,8 +89,11 @@ class Tui:
         wmove(self.window, orig_y, orig_x)
         wrefresh(self.window)
 
-if __name__ == '__main__':
+def run_tui():
     try:
         Tui(sim).run()
     finally:
         endwin()
+
+if __name__ == '__main__':
+    run_tui()

@@ -6,7 +6,6 @@ class IRGen:
     self.out = ""
     self.cell_props = set()
     self.consume(ast)
-    print(self.out)
 
   def println(self, text):
     tabs = "  " * self.tabs
@@ -145,5 +144,4 @@ class IRGen:
       else:
         return f"selectors[\"{ast.name}\"](selectors, cell, builtins)"
     else:
-      print(ast)
       raise ValueError(f"Unexpected node type {type(ast)}")

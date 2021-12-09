@@ -417,17 +417,18 @@ yacc.yacc()
 ### Entry point
 ### Usage: python lang.py <inputFileName>
 import sys
-from pprint import pprint
 if __name__ == '__main__':
   fileName = sys.argv[1]
   with open(fileName, "r") as f:
     code = f.read()
 
   ast = yacc.parse(code)
-  pprint(ast)
 
 from irgen import IRGen
 ir = IRGen(ast)
 
 with open("./ir.py", "w") as f:
   f.write(ir.out)
+
+from tui import run_tui
+run_tui()
