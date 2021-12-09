@@ -111,7 +111,14 @@ namespace dupr::generation::cpp
 				return;
 			}
 			case ir::Statement::Type::VariableInitialization: {
-				std::cout << "VariableInitialization is unsupported\n";
+				statementTemplate->var_name_->Set(
+					static_cast<ir::VariableInitialization*>(value)->GetVariableName());
+				statementTemplate->var_type_->Set(
+					static_cast<ir::VariableInitialization*>(value)->GetVariableType());
+				statementTemplate->expression_->Set(static_cast<ir::VariableInitialization*>(value)
+														->GetExpression()
+														->GetExpressionText());
+				statementTemplate->statement_->Set(statementTemplate->variable_initialization_);
 				return;
 			}
 			case ir::Statement::Type::ConditionalIf: {

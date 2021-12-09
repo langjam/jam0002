@@ -8,6 +8,7 @@
 {{return_statement}} = <return {{expression}};>
 
 {{variable_declaration}} = <{{var_type}} {{var_name}};>
+{{variable_initialization}} = <{{var_type}} {{var_name}} = {{expression}};>
 {{variable_assignment}} = <{{var_name}} = {{expression}};>
 
 {{conditional_if}} = <if({{expression}})

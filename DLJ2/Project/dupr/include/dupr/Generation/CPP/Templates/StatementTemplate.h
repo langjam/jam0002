@@ -42,6 +42,7 @@ var_name_,
 var_type_,
 variable_assignment_,
 variable_declaration_,
+variable_initialization_,
 
 
 };
@@ -163,6 +164,11 @@ case ::dupr::generation::cpp::templates::StatementTemplate::Type::variable_assig
 case ::dupr::generation::cpp::templates::StatementTemplate::Type::variable_declaration_:
 {
 	return "variable_declaration";
+}
+
+case ::dupr::generation::cpp::templates::StatementTemplate::Type::variable_initialization_:
+{
+	return "variable_initialization";
 }
 
 
@@ -1399,6 +1405,45 @@ Variable_variable_declaration_& operator=(const Variable_variable_declaration_& 
 
 };
 
+struct Variable_variable_initialization_ : public VariableScopes
+{
+
+static constexpr auto name = "variable_initialization_";
+
+
+
+Variable_variable_initialization_() : VariableScopes()
+{
+	type = ::dupr::generation::cpp::templates::StatementTemplate::Type::variable_initialization_;
+}
+
+virtual ~Variable_variable_initialization_() override = default;
+
+Variable_variable_initialization_(StatementTemplate* statementtemplate_, const std::vector<VariableBase*>& variables) : VariableScopes(variables)
+{
+type = ::dupr::generation::cpp::templates::StatementTemplate::Type::variable_initialization_;
+
+}
+
+
+
+Variable_variable_initialization_& operator=(const Variable_variable_initialization_& variable)
+{
+	if (&variable == this)
+	{
+		return *this;
+	}
+
+	value = variable.value;
+	isString = variable.isString;
+
+	
+
+	return *this;
+}
+
+};
+
 
 	public:
 		inline static std::vector<VariableBase*> variables_to_delete = std::vector<VariableBase*>();
@@ -1427,6 +1472,7 @@ Variable_var_name_* var_name_ = new Variable_var_name_();
 Variable_var_type_* var_type_ = new Variable_var_type_();
 Variable_variable_assignment_* variable_assignment_ = new Variable_variable_assignment_();
 Variable_variable_declaration_* variable_declaration_ = new Variable_variable_declaration_();
+Variable_variable_initialization_* variable_initialization_ = new Variable_variable_initialization_();
 
 
 	public:
@@ -1450,6 +1496,7 @@ Variable_variable_declaration_* variable_declaration_ = new Variable_variable_de
 *var_type_ = Variable_var_type_(this, std::vector<VariableBase*>({  }));
 *variable_assignment_ = Variable_variable_assignment_(this, std::vector<VariableBase*>({ GenerateVariable(var_name_->This()), GenerateVariable(" = "), GenerateVariable(expression_->This()), GenerateVariable(";") }));
 *variable_declaration_ = Variable_variable_declaration_(this, std::vector<VariableBase*>({ GenerateVariable(var_type_->This()), GenerateVariable(" "), GenerateVariable(var_name_->This()), GenerateVariable(";") }));
+*variable_initialization_ = Variable_variable_initialization_(this, std::vector<VariableBase*>({ GenerateVariable(var_type_->This()), GenerateVariable(" "), GenerateVariable(var_name_->This()), GenerateVariable(" = "), GenerateVariable(expression_->This()), GenerateVariable(";") }));
 
 
 			variables_.emplace_back(conditional_else_);
@@ -1470,6 +1517,7 @@ variables_.emplace_back(var_name_);
 variables_.emplace_back(var_type_);
 variables_.emplace_back(variable_assignment_);
 variables_.emplace_back(variable_declaration_);
+variables_.emplace_back(variable_initialization_);
 
 		}
 

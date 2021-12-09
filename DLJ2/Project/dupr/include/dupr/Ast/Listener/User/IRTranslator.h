@@ -15,6 +15,7 @@
 #include "dupr/IR/Value.h"
 #include "dupr/IR/VariableAssignment.h"
 #include "dupr/IR/VariableDeclaration.h"
+#include "dupr/IR/VariableInitialization.h"
 #include <optional>
 #include <string>
 
@@ -568,9 +569,6 @@ namespace dupr::ast::listener::user
 			}
 			std::string type = typeState[0]->GetNode()[0]->GetText();
 
-			auto newStatement1 = new ir::VariableDeclaration(type, name);
-			functionStatements[functionStatements.size() - 1].push_back(newStatement1);
-
 			auto expressionState = stateMachine->GetPatternInsertionWithName("expression");
 			std::string expressionValue;
 			if (expressionState.empty() || expressionState.size() > 1)
@@ -583,8 +581,8 @@ namespace dupr::ast::listener::user
 			}
 
 			ir::Expression* expression = new ir::Value(expressionValue);
-			auto newStatement2 = new ir::VariableAssignment(name, expression);
-			functionStatements[functionStatements.size() - 1].push_back(newStatement2);
+			auto newStatement = new ir::VariableInitialization(name, type, expression);
+			functionStatements[functionStatements.size() - 1].push_back(newStatement);
 		}
 
 		void ConstructReturnStatement(PatternStateMachine* stateMachine)
