@@ -3,6 +3,9 @@ from direction_help import direction_offsets
 from ir import meta, cell as cell_def, aliases, alias_selectors, selectors, rules
 from time import sleep
 
+DEFAULT_ROWS = 20
+DEFAULT_COLS = 80
+
 class InvalidAliasException(Exception):
   pass
 
@@ -41,8 +44,8 @@ class Simulation:
     }
 
   def __init__(self):
-    self.rows = meta["Rows"]
-    self.cols = meta["Cols"]
+    self.rows = meta.get("Rows", DEFAULT_ROWS)
+    self.cols = meta.get("Cols", DEFAULT_COLS)
     cell_def.update({"row": 0, "col": 0})
     cell_template = namedtuple("Cell", cell_def)
     self.cell = cell_template(**cell_def)
@@ -75,6 +78,10 @@ class Simulation:
         frame_row.append(alias)
     return frame
 
+  def remove(self, row, col):
+    new_cell = self.cell._replace(row=row, col=col)
+    self.grid[row][col] = new_cell
+
   def update(self, row, col, alias):
     try:
       props = self.aliases[alias]
@@ -83,7 +90,6 @@ class Simulation:
 
     new_cell = self.cell._replace(row=row, col=col, **props)
     self.grid[row][col] = new_cell
-    return self.get_frame()
 
   def pprint(self):
     for row in self.get_frame():
@@ -109,6 +115,5 @@ class Simulation:
           next_cell = cell._replace()
         self.next_grid[cell.row][cell.col] = next_cell
     self.grid = self.next_grid
-    return self.get_frame()
 
 sim = Simulation()

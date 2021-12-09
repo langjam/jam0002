@@ -417,6 +417,7 @@ yacc.yacc()
 ### Entry point
 ### Usage: python lang.py <inputFileName>
 import sys
+import os
 if __name__ == '__main__':
   fileName = sys.argv[1]
   with open(fileName, "r") as f:
@@ -431,4 +432,4 @@ with open("./ir.py", "w") as f:
   f.write(ir.out)
 
 from tui import run_tui
-run_tui()
+run_tui(os.path.basename(fileName))
