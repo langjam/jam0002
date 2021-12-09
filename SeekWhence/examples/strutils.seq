@@ -1,0 +1,25 @@
+; String utility functions
+
+import strutils from 'strutils'
+
+set str = 'Hello, world!'
+
+print [strutils~length str]
+
+print [strutils~startsWith str, 'Hello']
+print [strutils~startsWith str, 'Greetings']
+
+print [strutils~endsWith str, 'world!']
+print [strutils~endsWith str, 'peasants.']
+
+print [strutils~indexOf str, ',']
+
+; [split] and [toSeq] follow the convention of implementing arrays as slices,
+;   with a none hidden under the fold to signify the end of the array.
+
+print [strutils~split str, ','], [unslice [strutils~split str, ',']]
+print [strutils~toSeq str], [unslice [strutils~toSeq str]]
+
+print [strutils~trim '  test  '] == 'test'
+print [strutils~trimLeft '  test  '] == 'test  '
+print [strutils~trimRight '  test  '] == '  test'

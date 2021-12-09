@@ -30,7 +30,7 @@ if __name__ == '__main__':
     else:  print(f'{failMark} Test failed: {testname}\n{indent(msg)}')
     return True, True
 
-  for filename in os.listdir(testdir):
+  for filename in sorted(os.listdir(testdir)):
     if not filename.endswith('.yaml'): continue
     
     testname = os.path.splitext(os.path.basename(f'{testdir}/{filename}'))[0]
