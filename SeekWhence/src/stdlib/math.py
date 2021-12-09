@@ -12,6 +12,7 @@ SEQ_EXPORTS = {
   'atan2': lambda _,x,y: math.atan2(y,x),
   'toDeg': lambda _,x: math.degrees(x),
   'toRad': lambda _,x: math.radians(x),
+  
   'PI':    math.pi,
   'E':     math.e,
   'TAU':   math.tau,

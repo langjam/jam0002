@@ -23,12 +23,12 @@ Dec 6:
 	Other refactoring
 
 Dec 7:
-	4h code, 30m docs
+	4.5h code, 0h docs
 	Unary negation operator
 	Expanded expression simplification to partial operation folding
 
 Dec 8:
-	4h code, 0h docs
+	6h code, 0h docs
 	Float literals
 	Typechecking functions
 	More math functions and constants
@@ -36,3 +36,4 @@ Dec 8:
 	Script meta info variables ($file, $dir, $stdlib, $main)
 	Function closures
 	Proper scope nesting (previously copy and update)
+	Reduce risk of recursion depth errors from sequence access
