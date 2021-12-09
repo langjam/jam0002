@@ -14,3 +14,8 @@ ciao Test Prova:
 
 240 + 13:
   X.
+
+; Odd statements
+odd 0 1.
+
+odd N R: N = N1 + 1, odd N1 R1, R = R1 + 2.

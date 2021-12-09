@@ -60,8 +60,9 @@ term = do
 rule :: Parser (Rule Text)
 rule = do
     lhs <- term
-    keyword ":"
-    rhs <- sepBy term (keyword ",")
+    rhs <- option [] $ do
+      keyword ":"
+      sepBy term (keyword ",")
     keyword "."
     return $ Rule lhs rhs
 
