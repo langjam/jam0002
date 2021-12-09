@@ -44,9 +44,15 @@ variable = T.pack <$> lexeme chars
 int :: Parser Integer
 int = lexeme L.decimal
 
+list :: Parser (Term Text)
+list = do
+    ts <- many atom
+    return $ foldr (:>) (Symbol "fin") ts
+
 atom :: Parser (Term Text)
 atom = choice
   [ between (keyword "(") (keyword ")") term
+  , between (keyword "[") (keyword "]") list
   , Symbol <$> symbol
   , Int <$> int
   , Var <$> variable
