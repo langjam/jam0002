@@ -10,9 +10,11 @@ void kernelStart () { systemRunning = 1; }
 void kernelStop () { systemRunning = 0; }
 
 void Dispatch ();
-void TransferOutputsToReceivers ();
-
----
+void DistributeOutputsToReceivers ();
+void DispatchMaybe (Component);
+void DistributeOutputsFrom (Component);
+void DeliverMessageToReceiver (Component, Message);
+void RunComponentOnce (Component);
 
 void Dispatcher () {
   while (systemRunning) {
@@ -23,7 +25,7 @@ void Dispatcher () {
 
 void Dispatch () {
   List componentList;
-  $beingWalkingComponentList (componentList);
+componentList = runQueue;
   while ((componentList != NULL){
       c = componentList->data.component;
       DispatchMaybe (c);
@@ -44,8 +46,8 @@ componentCallReaction (c, m);
 }
 
 void DistributeOutputsToReceivers () {
-  List componentList = $beingWalkingComponentList;
-  while ((componentList != NULL){
+  List componentList = $beginWalkingComponentList;
+  while ((componentList != NULL)) {
       c = componentList->data.component;
       DispatchMaybe (c);
 componentList = (componentList != NULL) ? {support.getParam1 ()}->next : NULL;
