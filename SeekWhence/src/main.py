@@ -50,8 +50,22 @@ class Sequence(SequenceLike):
     if self.baseCases is not None and n < len(self.baseCases):
       self.__cache[n] = exec_expr(self.baseCases[n], ctx)
     else:
-      if prev is None and find_in_expr(self.exprs[n % len(self.exprs)], 'x', 'S'): prev = self.value_at(n-1, ctx)
-      self.__cache[n] = exec_expr(self.exprs[n % len(self.exprs)], { **ctx, 'x': prev, 'n': n, 'S': self })
+      expr = self.exprs[n % len(self.exprs)]
+
+      if prev is None:
+        if n <= 0: prev = 0
+        elif n-1 in self.__cache: prev = self.__cache[n-1]
+
+        # Load previous values into the cache in a flat loop, instead of deep recursion
+        # This is only needed when the previous value isn't passed or already cached,
+        #   and when x or S are actually found in the expression.
+        elif find_in_expr(expr, 'x', 'S'):
+          maxi = max(i for i in [*self.__cache.keys(),0])
+          prev = self.value_at(maxi, ctx)
+          for cn in range(maxi,n):
+            self.__cache[cn] = prev = self.value_at(cn, ctx, prev)
+
+      self.__cache[n] = exec_expr(expr, { **ctx, 'x': prev, 'n': n, 'S': self })
 
     return self.__cache[n]
 
