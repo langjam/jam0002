@@ -38,3 +38,8 @@ Dec 8:
 	Proper scope nesting (previously copy and update)
 	Reduce risk of recursion depth errors from sequence access
 	Broke interpreter into multiple files
+
+Dec 9:
+	0h code, 2h docs
+	Basic docs
+	Launch scripts

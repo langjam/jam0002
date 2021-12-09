@@ -2,12 +2,10 @@
 
 import sys
 
-from core.sequence import *
-from core.parser import *
-from core.runtime import *
+from core.runtime import exec_file
 
 def usage():
-  print(f'Usage: {sys.argv[0]} [script_path]')
+  print('Usage: seekwhence [script path]')
   sys.exit()
 
 if __name__ == "__main__":

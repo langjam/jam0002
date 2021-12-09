@@ -8,8 +8,8 @@ print test~factorial, test~closedVar
 test~closure
 
 namespace test {
-	sequence factorial from 1 = n
-	set closedVar = 20
+  sequence factorial from 1 = n
+  set closedVar = 20
 }
 
 print test~factorial, test~closedVar

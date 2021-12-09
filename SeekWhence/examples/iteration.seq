@@ -3,16 +3,16 @@
 ; Their values are lazily generated and cached for speed
 
 sequence iterate = x+1, x+2  ; In a sequence, x is the previous element, n is the index, and S is the sequence itself
-print iterate     					 ; Print a debug view of the sequence definition
-print iterate:4							 ; Sequence access syntax - gets a specific index in the sequence
+print iterate                ; Print a debug view of the sequence definition
+print iterate:4              ; Sequence access syntax - gets a specific index in the sequence
 
 ; Iterate through the first 20 elements of the sequence
 for 20 of iterate as step do {
-	print step, (step*2)%5, step * iterate:step
+  print step, (step*2)%5, step * iterate:step
 }
 
 ; Iterate through the sequence indefinitely, or until a `break` is hit
 for :inf of iterate as step do {
-	print step
-	if step > 10 then break
+  print step
+  if step > 10 then break
 }

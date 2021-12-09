@@ -1,0 +1,12 @@
+; 99 Bottles with nested sequences
+
+sequence bottles  from 99 = x-1
+sequence numberOf from "No more bottles", "1 bottle" = n + " bottles"
+ 
+sequence lyrics =
+  numberOf:(bottles:[floor n/4])+" of beer on the wall,",
+  numberOf:(bottles:[floor n/4])+" of beer,",
+  "Take one down, pass it around,",
+  numberOf:(bottles:[ceil n/4])+" of beer on the wall!\n"
+ 
+for 99*4 of lyrics as line do print line

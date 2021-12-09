@@ -1,11 +1,11 @@
 ; Custom namespaces
 
 namespace test {
-	function testFunc print "Hello, world!"
-	set testVar = 10 + 15
+  function testFunc print "Hello, world!"
+  set testVar = 10 + 15
 
-	testFunc
-	print testVar
+  testFunc
+  print testVar
 }
 
 test~testFunc
@@ -14,7 +14,7 @@ print test~testVar
 ; You can reopen namespaces later on to edit them
 
 namespace test {
-	set testVar = -42
+  set testVar = -42
 }
 
 test~testFunc
@@ -23,9 +23,9 @@ print test~testVar
 ; Or even nest namespaces
 
 namespace outer {
-	namespace inner {
-		set var = 1999
-	}
+  namespace inner {
+    set var = 1999
+  }
 }
 
 print outer~inner~var

@@ -108,6 +108,8 @@ class Sequence(SequenceLike):
   __pow__     = lambda s,o: s.__wrap_op('^', o); __rpow__     = lambda s,o: s.__wrap_op('^', o, True)
 
   def __eq__(self, other):
+    from .expr import expr_equal
+
     if not isinstance(other, SequenceLike): return False
     basec = all(expr_equal(a,b) for a,b in zip(self.baseCases or [], other.baseCases or []))
     exprs = all(expr_equal(a,b) for a,b in zip(self.exprs or [], other.exprs or []))

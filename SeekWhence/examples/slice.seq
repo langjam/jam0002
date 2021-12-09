@@ -20,8 +20,8 @@ for 10 of slice as i do print i
 
 ; Slice scope
 function sliceScope {
-	sequence outOfScope = n
-	return outOfScope::100
+  sequence outOfScope = n
+  return outOfScope::100
 }
 
 for 10 of [sliceScope] as i do print i

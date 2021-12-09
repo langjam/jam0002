@@ -9,7 +9,7 @@ from .utils import *
 
 operators = {
   # Arithmetic
-  '+': lambda _,x,y: x+y,
+  '+': lambda _,x,y: str(x)+str(y) if isinstance(x,str) or isinstance(y,str) else x+y,
   '-': lambda _,x,y: x-y,
   '*': lambda _,x,y: x*y,
   '/': lambda _,x,y: x/y if y != 0 else None,
