@@ -36,7 +36,9 @@ executable patatern
     -- other-extensions:
     build-depends:    base ^>=4.14.0.0
                     , containers
+                    , directory
                     , exceptions
+                    , filepath
                     , haskeline
                     , lens
                     , megaparsec
