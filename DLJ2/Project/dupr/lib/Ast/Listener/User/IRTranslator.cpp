@@ -378,6 +378,27 @@ bool dupr::ast::listener::user::PatternStateMachine::Check(
 	// However we need to know where the top part ends in the states, allowing us to go
 	// deeper if needed.
 	bool valid = true;
+	// If true continue till expected next symbol
+	// As the sequence is guaranteed to be mapped by expression tree,
+	//
+	// HOWEVER: if the next token is the start of this encapsulation,
+	// The expressiontree is empty, as this is not where we start,
+	// More look ahead is required to properly deduce if it is part of expression_tree.
+	const bool CoreIsExpressionTree =
+		(GetCurrentState(index)->GetType() == StateType::expression_tree) &&
+		!(GetNextState(index).has_value() &&
+		  GetNextState(index).value()->GetType() == StateType::predefined_formatter &&
+		  GetNextState(index).value()->GetPredefinedFormat() ==
+			  currentNode->GetIndex(0)->GetText());
+
+	if (CoreIsExpressionTree)
+	{
+		if (execute)
+		{
+			GetCurrentState(index)->AddNode(currentNode);
+		}
+		return true;
+	}
 
 	using StateStart = State;
 	using StateEnd = State;
@@ -387,7 +408,10 @@ bool dupr::ast::listener::user::PatternStateMachine::Check(
 		  GetCurrentState(index)->GetPredefinedFormat().value() ==
 			  currentNode->GetIndex(0)->GetText()))
 	{
-		return false;
+		if (!CoreIsExpressionTree)
+		{
+			return false;
+		}
 	}
 	std::size_t difference = 0;
 	std::size_t state_index = index;
