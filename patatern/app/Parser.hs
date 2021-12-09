@@ -55,7 +55,7 @@ atom = choice
 term :: Parser (Term Text)
 term = do
     ts <- some atom
-    return $ foldr1 (:<) ts
+    return $ foldl1 (:>) ts
 
 rule :: Parser (Rule Text)
 rule = do

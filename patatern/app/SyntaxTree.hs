@@ -18,10 +18,10 @@ data Term v
   = Symbol Text
   | Int Integer
   | Var v
-  | (:<) (Term v) (Term v)
+  | (:>) (Term v) (Term v)
   deriving (Eq, Data)
 
-infixr 5 :<
+infixl 5 :>
 
 deriving instance Show (Term Text)
 
@@ -34,11 +34,11 @@ instance Show (Term UVar) where
   -- we use the prec parameter to gracefully handle this.
   -- showParen adds a pair of additional parentheses when
   -- the condition is true
-  showsPrec prec ((:<) l r) =
+  showsPrec prec ((:>) l r) =
     showParen (pair_prec < prec) $
-      showsPrec (pair_prec + 1) l
+      showsPrec pair_prec l
         . showChar ' '
-        . showsPrec pair_prec r
+        . showsPrec (pair_prec + 1) r
     where
       pair_prec = 1
 

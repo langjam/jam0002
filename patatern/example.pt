@@ -18,4 +18,4 @@ ciao Test Prova:
 ; Odd statements
 odd 0 1.
 
-odd N R: N = N1 + 1, odd N1 R1, R = R1 + 2.
+odd N R: N1 + 1 = N, odd N1 R1, R1 + 2 = R.

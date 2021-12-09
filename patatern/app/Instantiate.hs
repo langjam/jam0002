@@ -45,4 +45,4 @@ instantiateTerm (Var name) = do
       pure $ Var v
 instantiateTerm (Symbol s) = pure $ Symbol s
 instantiateTerm (Int i) = pure $ Int i
-instantiateTerm (t1 :< t2) = (:<) <$> instantiateTerm t1 <*> instantiateTerm t2
+instantiateTerm (t1 :> t2) = (:>) <$> instantiateTerm t1 <*> instantiateTerm t2

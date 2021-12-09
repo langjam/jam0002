@@ -11,32 +11,32 @@ import SyntaxTree
 import Text.Read (readMaybe)
 
 evalBuiltin :: Term UVar -> UnifyT (Term UVar) IO ()
-evalBuiltin (Symbol "write" :< Symbol s) = liftIO $ TIO.putStr s
-evalBuiltin (Symbol "print" :< ts) = liftIO $ putStrLn (unwords (map show (termList ts)))
-evalBuiltin (Symbol "getLine" :< Var r) = do
+evalBuiltin (Symbol "write" :> Symbol s) = liftIO $ TIO.putStr s
+evalBuiltin (Symbol "print" :> t) = liftIO $ print t
+evalBuiltin (Symbol "getLine" :> Var r) = do
   line <- liftIO TIO.getLine
   void $ unify (Var r) (Symbol line)
-evalBuiltin (Symbol "getInt" :< Var r) = do
+evalBuiltin (Symbol "getInt" :> Var r) = do
   maybeI <- liftIO $ readMaybe . T.unpack <$> TIO.getLine
   case maybeI of
     Just i -> void $ unify (Var r) (Int i)
     Nothing -> do
       liftIO $ putStrLn "Not an integer"
       error "Not an integer"
-evalBuiltin t@(Int x :< Symbol "+" :< Int y :< Symbol "=" :< Int r) =
+evalBuiltin t@(Int x :> Symbol "+" :> Int y :> Symbol "=" :> Int r) =
   if x + y == r
     then pure ()
     else do
       liftIO $ putStrLn ("Wrong addition: " <> show t)
       error "Wrong addition"
-evalBuiltin (Int x :< Symbol "+" :< Int y :< Symbol "=" :< Var r) =
+evalBuiltin (Int x :> Symbol "+" :> Int y :> Symbol "=" :> Var r) =
   void $ unify (Var r) (Int (x + y))
-evalBuiltin (Int x :< Symbol "+" :< Var y :< Symbol "=" :< Int r) =
+evalBuiltin (Int x :> Symbol "+" :> Var y :> Symbol "=" :> Int r) =
   void $ unify (Var y) (Int (r - x))
-evalBuiltin (Var x :< Symbol "+" :< Int y :< Symbol "=" :< Int r) =
+evalBuiltin (Var x :> Symbol "+" :> Int y :> Symbol "=" :> Int r) =
   void $ unify (Var x) (Int (r - y))
 evalBuiltin t = liftIO $ putStrLn ("Unmatched pattern: " <> show t)
 
 termList :: Term v -> [Term v]
-termList (x :< y) = x : termList y
+termList (x :> y) = x : termList y
 termList x = [x]
