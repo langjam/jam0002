@@ -1,4 +1,7 @@
-Meta{}
+Meta {
+  Rows = 20
+  Cols = 80
+}
 Cell {
   int type = 0
 }

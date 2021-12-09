@@ -43,7 +43,6 @@ class Simulation:
   def __init__(self):
     self.rows = meta["Rows"]
     self.cols = meta["Cols"]
-    self.fps = meta["MaxFPS"]
     cell_def.update({"row": 0, "col": 0})
     cell_template = namedtuple("Cell", cell_def)
     self.cell = cell_template(**cell_def)
