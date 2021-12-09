@@ -41,6 +41,7 @@ executable patatern
                     , lens
                     , megaparsec
                     , mtl
+                    , neat-interpolation
                     , text
                     , unify
     hs-source-dirs:   app

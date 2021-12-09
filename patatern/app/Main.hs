@@ -1,3 +1,4 @@
+{-# LANGUAGE QuasiQuotes #-}
 module Main where
 
 import Control.Monad.Catch
@@ -5,12 +6,16 @@ import Control.Monad.IO.Class
 import Data.IORef
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import NeatInterpolation
 import Interpret
 import SyntaxTree
 import System.Console.Haskeline
 
 main :: IO ()
 main = do
+  TIO.putStrLn patatern
+  putStrLn ""
   ref <- newIORef []
   runInputT defaultSettings (loop ref)
   where
@@ -29,3 +34,15 @@ main = do
 
 handleLoadCmd :: IORef [Rule Text] -> String -> IO ()
 handleLoadCmd ref args = loadFiles ref (words args)
+
+patatern :: Text
+patatern = [trimming|
+ _______  _______ _________ _______ _________ _______  _______  _       
+(  ____ )(  ___  )\__   __/(  ___  )\__   __/(  ____ \(  ____ )( (    /|
+| (    )|| (   ) |   ) (   | (   ) |   ) (   | (    \/| (    )||  \  ( |
+| (____)|| (___) |   | |   | (___) |   | |   | (__    | (____)||   \ | |
+|  _____)|  ___  |   | |   |  ___  |   | |   |  __)   |     __)| (\ \) |
+| (      | (   ) |   | |   | (   ) |   | |   | (      | (\ (   | | \   |
+| )      | )   ( |   | |   | )   ( |   | |   | (____/\| ) \ \__| )  \  |
+|/       |/     \|   )_(   |/     \|   )_(   (_______/|/   \__/|/    )_)
+|]
