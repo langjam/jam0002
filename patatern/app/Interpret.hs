@@ -5,6 +5,7 @@ import Control.Monad (unless)
 import Data.Either (lefts, rights)
 import Data.Foldable (traverse_)
 import Data.IORef
+import Data.List (intercalate)
 import Data.Text (Text)
 import qualified Data.Text.IO as T
 import Evaluate
@@ -30,4 +31,6 @@ runQuery ref input = do
     Right terms -> evalUnifyT $ do
       rules <- liftIO $ readIORef ref
       termsI <- runInstantiateTerms terms
-      evalMany rules termsI
+      evalMany termsI rules termsI
+      responseTerms <- traverse applyBindingsOrDie termsI
+      liftIO $ putStrLn $ intercalate ",\n" (map show responseTerms)

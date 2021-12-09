@@ -20,7 +20,15 @@ evalBuiltin (Symbol "getInt" :< Var r) = do
   maybeI <- liftIO $ readMaybe . T.unpack <$> TIO.getLine
   case maybeI of
     Just i -> void $ unify (Var r) (Int i)
-    Nothing -> liftIO $ putStrLn "Not an integer"
+    Nothing -> do
+      liftIO $ putStrLn "Not an integer"
+      error "Not an integer"
+evalBuiltin t@(Int x :< Symbol "+" :< Int y :< Symbol "=" :< Int r) =
+  if x + y == r
+    then pure ()
+    else do
+      liftIO $ putStrLn ("Wrong addition: " <> show t)
+      error "Wrong addition"
 evalBuiltin (Int x :< Symbol "+" :< Int y :< Symbol "=" :< Var r) =
   void $ unify (Var r) (Int (x + y))
 evalBuiltin (Int x :< Symbol "+" :< Var y :< Symbol "=" :< Int r) =

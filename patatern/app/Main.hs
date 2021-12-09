@@ -36,7 +36,7 @@ main = do
           catchAll (liftIO (handleLoadCmd ref files) >> loop ref) $ \e ->
             liftIO (print e) >> loop ref
         Just query ->
-          finally (liftIO (runQuery ref (T.pack query))) (loop ref)
+          finally (withInterrupt $ liftIO (runQuery ref (T.pack query))) (loop ref)
 
 getHistoryFilePath :: IO FilePath
 getHistoryFilePath = do

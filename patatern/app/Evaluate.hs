@@ -10,15 +10,15 @@ import Instantiate
 import Logic.Unify
 import SyntaxTree
 
-evalMany :: [Rule Text] -> [Term UVar] -> UnifyT (Term UVar) IO ()
-evalMany rules = traverse_ (eval rules)
+evalMany :: [Term UVar] -> [Rule Text] -> [Term UVar] -> UnifyT (Term UVar) IO ()
+evalMany query1 rules = traverse_ (eval query1 rules)
 
-eval :: [Rule Text] -> Term UVar -> UnifyT (Term UVar) IO ()
-eval rules query = do
+eval :: [Term UVar] -> [Rule Text] -> Term UVar -> UnifyT (Term UVar) IO ()
+eval query1 rules query = do
   query' <- applyBindingsOrDie query
   maybeRule <- firstMatchingRule rules query'
   case maybeRule of
-    Just rule -> evalMany rules (rhs rule)
+    Just rule -> evalMany query1 rules (rhs rule)
     Nothing -> evalBuiltin =<< applyBindingsOrDie query'
 
 firstMatchingRule ::
