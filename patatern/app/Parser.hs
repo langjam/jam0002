@@ -39,7 +39,7 @@ variable = T.pack <$> lexeme chars
   where
     chars = (:) <$> symbolStart <*> symbolCont
     symbolStart = upperChar
-    symbolCont = many alphaNumChar
+    symbolCont = many $ satisfy (\c -> isAlphaNum c || isOperator c)
 
 int :: Parser Integer
 int = lexeme L.decimal
