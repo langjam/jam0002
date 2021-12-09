@@ -46,7 +46,7 @@ componentCallReaction (c, m);
 }
 
 void DistributeOutputsToReceivers () {
-  List componentList = $beginWalkingComponentList;
+  List componentList = $beginWalkingComponentList; ------- needs params?
   while ((componentList != NULL)) {
       c = componentList->data.component;
       DispatchMaybe (c);
@@ -63,7 +63,7 @@ void DistributeMaybe (Component c) {
 
 void DistributeOutputsFrom (Component c) {
   List outputs;
-outputs = componentGetOutputsAsSent (c;
+outputs = componentGetOutputsAsSent (c);
   while ((outputs != NULL)) {
     Message m = outputs->data.message;
     DeliverMessageToReceiver (c, m);

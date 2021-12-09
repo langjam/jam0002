@@ -1,0 +1,31 @@
+# #!/bin/bash
+# # convert a .drawio diagram into a factbase
+
+# set -e
+# trap 'catch' ERR
+
+# catch () {
+#     echo '*** FATAL ERROR in transpile.bash ***' 1>&2
+#     exit 1
+# }
+
+# #!/bin/bash
+# temp=`which pfrs`
+# appdir=`dirname ${temp}`/d2fapp
+# cd ${appdir}
+# pfrs $1 drawio.ohm  drawio.glue  d2fsupport.js \
+#      | pfrs - diagram.ohm diagram.glue  d2fsupport.js \
+#      | pfrs - styleexpander.ohm styleexpander.glue  d2fsupport.js \
+#      | pfrs - factbase.ohm factbase.glue  d2fsupport.js \
+#      | sed -E -e 's/</\n</g' \
+#      | sort \
+#      | sed -E -e '/^[ \t]*$/d'
+
+
+d2fpfrs.bash helloworld.drawio drawio.ohm drawio.glue d2fsupport.js \
+	     | d2fpfrs.bash - diagram.ohm diagram.glue  d2fsupport.js \
+	     | d2fpfrs.bash - styleexpander.ohm styleexpander.glue  d2fsupport.js \
+	     | d2fpfrs.bash - factbase.ohm factbase.glue  d2fsupport.js \
+	     | sed -E -e 's/</\n</g'
+
+
