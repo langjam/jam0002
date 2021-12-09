@@ -7,6 +7,7 @@ module SyntaxTree where
 import Control.Lens (Plated, children, transformM)
 import Data.Data (Data)
 import Data.List (intercalate)
+import Data.String (IsString(..))
 import Data.Text (Text)
 import qualified Data.Text as T
 import Logic.Unify
@@ -23,12 +24,13 @@ data Term v
 
 infixl 5 :>
 
-deriving instance Show (Term Text)
+instance IsString (Term v) where
+  fromString = Symbol . T.pack
 
-instance Show (Term UVar) where
+instance ShowVar v => Show (Term v) where
   showsPrec _ (Symbol t) = showString (T.unpack t)
   showsPrec _ (Int n) = shows n
-  showsPrec _ (Var (UVar n)) = showString "#" . shows n
+  showsPrec _ (Var v) = showString "#" . showVarS v
   -- Pairs are right associative, therefore if the left
   -- child if a pair is itself a pair we must insert parentheses.
   -- we use the prec parameter to gracefully handle this.
@@ -63,3 +65,12 @@ instance Show (Rule UVar) where
   show (Rule lhs rhs) = show lhs ++ ":\n" ++ rhs' ++ "."
     where
       rhs' = intercalate ",\n" $ map (\t -> "  " ++ show t) rhs
+
+class ShowVar v where
+  showVarS :: v -> ShowS
+
+instance ShowVar Text where
+  showVarS = shows
+
+instance ShowVar UVar where
+  showVarS (UVar i) = shows i
