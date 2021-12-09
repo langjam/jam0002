@@ -15,7 +15,19 @@ export class ParseError extends Error {
 
 export function parseText(text: string): Program | null {
   const lines = text.split(/\r?\n/g);
+  return parse(lines.length, (i) => splitter.splitGraphemes(lines[i]));
+}
 
+export function parseImage(width: number, height: number, pixels: Uint32Array): Program | null {
+  return parse(height, (lineIdx: number) => {
+    let start = lineIdx * width;
+    return Array.from(pixels.slice(start, start + width));
+  })
+}
+
+type GetLineFunc = (index: number) => Glyph[];
+
+function parse(numLines: number, getLine: GetLineFunc): Program | null {
   // parse color palette & width until first section marker
   let startIdx = 0;
   let width = 0;
@@ -24,13 +36,12 @@ export function parseText(text: string): Program | null {
   const palette: Palette = new Map();
 
   do {
-    const line = lines[startIdx++];
-    const chars = splitter.splitGraphemes(line);
-    if (width > 0 && chars.length !== width) continue;
+    const glyphs = getLine(startIdx++);
+    if (width > 0 && glyphs.length !== width) continue;
 
-    const match = matchPattern(startIdx, chars);
+    const match = matchPattern(startIdx, glyphs);
     if (match && !isMatchEqual(lastMatch, match)) {
-      width = chars.length;
+      width = glyphs.length;
       lastMatch = match;
 
       if (match.type === PatternType.SOLID) {
@@ -39,19 +50,18 @@ export function parseText(text: string): Program | null {
 
       addToPalette(palette, match);
     }
-  } while(startIdx < lines.length)
+  } while(startIdx < numLines)
 
   if (!lastMatch || lastMatch.type !== PatternType.SOLID) return null;
   if (palette.size === 0) throw new ParseError(lastMatch.line, "Palette is empty");
 
   // parse the rest of program
   let patterns: Pattern[] = [ buildPattern(palette, lastMatch) ];
-  for (let i = startIdx; i < lines.length; i++) {
-    const line = lines[i];
-    const chars = splitter.splitGraphemes(line);
-    if (chars.length !== width) continue;
+  for (let i = startIdx; i < numLines; i++) {
+    const glyphs = getLine(i);
+    if (glyphs.length !== width) continue;
 
-    const match = matchPattern(i+1, chars);
+    const match = matchPattern(i+1, glyphs);
     if (match && !isMatchEqual(lastMatch, match)) {
       patterns.push(buildPattern(palette, match));
       lastMatch = match;

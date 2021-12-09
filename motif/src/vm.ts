@@ -1,4 +1,3 @@
-import { isStringObject } from "util/types";
 import { CompiledProgram, Section } from "./emitter";
 import { Glyph, stringifyGlyph } from "./parser";
 

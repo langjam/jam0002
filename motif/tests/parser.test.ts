@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { parseText, Program } from "../src/parser";
+import { parseImage, parseText, Program } from "../src/parser";
 import { Checker, CheckerIrregular, PatternType, Rainbow, RainbowIrregular, Solid, Wave, WaveIrregular } from "../src/pattern";
 
 describe("Parser test", () => {
@@ -66,6 +66,32 @@ describe("Parser test", () => {
     expect(patterns[5]).to.deep.eq(new RainbowIrregular(23, [a, b, c], [3, 1, 2]));
     expect(patterns[6]).to.deep.eq(new CheckerIrregular(25, [d, e], [1, 2, 1, 1, 1]));
     expect(patterns[7]).to.deep.eq(new WaveIrregular(26, [d, e, f], [1, 1, 2, 1, 1]));
+  });
+
+  it ("Parses image data", () => {
+    let a = 0xff0000ff;
+    let b = 0xff00ff00;
+    let c = 0xffff0000;
+
+    let width = 6;
+    let imgdata = new Uint32Array([
+      a,b,c,a,b,c,
+      a,a,a,a,a,a,
+      a,a,b,b,a,a,
+      b,a,c,a,b,a
+    ])
+
+    let height = imgdata.length / width;
+
+    let program = parseImage(width, height, imgdata) as Program;
+    expect(program).to.not.null;
+    expect(program.palette.size).to.eq(3);
+
+    const patterns = program.patterns;
+    expect(patterns.length).to.eq(3);
+    expect(patterns[0]).to.deep.eq(new Solid(2, 0));
+    expect(patterns[1]).to.deep.eq(new Checker(3, [0, 1], 2));
+    expect(patterns[2]).to.deep.eq(new Wave(4, [1, 0, 2], 1));
   });
 
   it("Parses text with UTF-8 characters", () => {
