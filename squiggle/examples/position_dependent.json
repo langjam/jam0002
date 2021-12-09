@@ -1,0 +1,10 @@
+{
+    "width": 256,
+    "height": 256,
+    "blendingMode": "ADDITIVE",
+    "squiggles": [
+        {
+            "code": "[y x add y x set]"
+        }
+    ]
+}

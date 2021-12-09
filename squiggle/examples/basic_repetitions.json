@@ -1,0 +1,10 @@
+{
+    "width": 256,
+    "height": 256,
+    "blendingMode": "ADDITIVE",
+    "squiggles": [
+        {
+            "code": "[0 0 1 set] [0 0 1 +]1023 [0 1 0 set] [0 1 0 +]1023 [1 0 0 set] [1 0 0 +]1023"
+        }
+    ]
+}
