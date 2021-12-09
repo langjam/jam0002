@@ -21,3 +21,11 @@ fib N is R:
   fib N1 is R1,
   fib N2 is R2,
   R = R1 + R2.
+
+; Lists are just syntactic sugar for right-associative pairs
+; ending with the symbol 'fin'
+; Rules for list ranges
+[X] goes from X to X.
+[X Xs] goes from X to Y:
+  X1 = X + 1,
+  Xs goes from X1 to Y.
