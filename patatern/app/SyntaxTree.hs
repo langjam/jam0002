@@ -59,9 +59,7 @@ data Rule v = Rule
   }
   deriving (Eq)
 
-deriving instance Show (Rule Text)
-
-instance Show (Rule UVar) where
+instance ShowVar v => Show (Rule v) where
   show (Rule lhs rhs) = show lhs ++ ":\n" ++ rhs' ++ "."
     where
       rhs' = intercalate ",\n" $ map (\t -> "  " ++ show t) rhs
