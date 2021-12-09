@@ -1,5 +1,7 @@
 # Patatern
 
+_A match made in heaven._
+
 ## Overwiew
 
 Patatern is a minimalistic logic language.
