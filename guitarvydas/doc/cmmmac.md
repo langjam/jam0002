@@ -1,3 +1,5 @@
+idea(s) for possible cmm spec file (incomplete):
+
 ```
 // mechanism List
 $first" 1 -

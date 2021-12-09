@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "README.md",
+            "file": "cmmmac.md",
             "mode": "source"
           }
         }
@@ -68,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "README.md",
+                "file": "cmmmac.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -88,13 +88,13 @@
   },
   "active": "e8e30749ec6771d0",
   "lastOpenFiles": [
+    "cmmmac.md",
+    "Future.md",
     "README.md",
     "Diagrams.md",
     "Plan.md",
     "Pattern Matching.md",
     "Gotchas.md",
-    "cmmmac.md",
-    "Future.md",
     "Resources.md",
     "ideas.md",
     "Macros vs. DSLs.md"
