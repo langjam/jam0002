@@ -12,9 +12,9 @@ import SyntaxTree hiding (lhs, rhs)
 import Text.Read (readMaybe)
 
 evalBuiltin :: Term UVar -> UnifyT (Term UVar) IO ()
-evalBuiltin ("write" :> Symbol s) = liftIO $ TIO.putStr s
+evalBuiltin ("write" :> t) = liftIO $ putStr (show t)
 evalBuiltin ("print" :> t) = liftIO $ print t
-evalBuiltin ("getLine" :> Var r) = do
+evalBuiltin ("getSymbol" :> Var r) = do
   line <- liftIO TIO.getLine
   void $ unify (Var r) (Symbol line)
 evalBuiltin ("getInt" :> Var r) = do
