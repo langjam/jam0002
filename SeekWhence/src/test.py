@@ -60,7 +60,7 @@ if __name__ == '__main__':
           failed, current_failed = fail(testname, f'Expected stderr:\n{indent(testinfd.stderr)}\nActual stderr:\n{indent(testproc.stderr)}', current_failed)
 
         if not current_failed:
-          name = testname.ljust(10,' ')
+          name = testname.ljust(20,' ')
           print(f'{succMark} Test passed: {name}\t(in %.4f ms)' % testtime)
     except Exception as e:
       failed, current_failed = fail(testname, e.message if 'message' in e.__dict__ else str(e), current_failed)

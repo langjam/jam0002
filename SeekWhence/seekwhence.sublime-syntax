@@ -18,7 +18,7 @@ contexts:
       
     - match: \b(true|false|none)\b
       scope: constant.language.boolean.seekwhence
-    - match: \b\d+?\b
+    - match: \b\d+(\.\d+)?\b
       scope: constant.numeric.seekwhence
 
   stringSingle:

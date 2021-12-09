@@ -1,4 +1,4 @@
-source: ../examples/strutils.seq
+source: ../examples/functions-strutils.seq
 status: 0
 stdout: |
   13
