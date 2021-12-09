@@ -9,6 +9,7 @@ import Data.IORef
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
+import qualified Data.List as L
 import Interpret
 import NeatInterpolation
 import SyntaxTree
@@ -34,10 +35,11 @@ main = do
         Nothing -> pure ()
         Just "quit" -> pure ()
         Just "exit" -> pure ()
+        Just (':' : '!' : cmd) -> try (handleShellCmd cmd)
         Just (':' : cmd) -> try $
-          case cmd of
-            ('!':rest)                -> handleShellCmd rest
-            (words -> ("load":files)) -> handleLoadCmd ref files
+          case words cmd of
+            ("load":files) -> handleLoadCmd ref files
+            ("rules":_   ) -> handleRulesCmd ref
         Just query ->
           finally (withInterrupt $ liftIO (runQuery ref (T.pack query))) (loop ref)
       where
@@ -54,6 +56,9 @@ handleShellCmd xs = spawnCommand xs >>= waitForProcess >> pure ()
 
 handleLoadCmd :: IORef [Rule Text] -> [String] -> IO ()
 handleLoadCmd = loadFiles
+
+handleRulesCmd :: IORef [Rule Text] -> IO ()
+handleRulesCmd ref = readIORef ref >>= putStrLn . L.intercalate "\n\n" . map show
 
 patatern :: Text
 patatern =
@@ -73,10 +78,13 @@ help =
   [trimming|
 Welcome to heaven!
 
-This is the interactive interpreter of patatern 0.1.0.0
+This is the interactive interpreter for patatern version 0.1.0.0
 
-You can set the active rules with the following command:
-  load FILE1 FILE2...
+Commands available from the prompt:
 
-Or you can run a query directly.
+  <query>                 run a query
+  :load <file> ...        set the active rules
+  :rules                  show the active rules
+  :!<cmd> [<args>]        launch a shell command
+
 |]
