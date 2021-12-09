@@ -10,6 +10,7 @@ from collections import namedtuple
 from codecs import escape_decode
 from time import time as systime
 from abc import ABC, abstractmethod
+from importlib import import_module
 
 # Datatypes
 
@@ -161,6 +162,8 @@ FuncDefn     = namedtuple('func',    ['ident', 'argNames', 'body'])
 FuncCall     = namedtuple('call',    ['name', 'args'])
 VarDef       = namedtuple('setv',    ['ident', 'expr'])
 ReturnStmt   = namedtuple('_return', ['value'])
+NamespaceDef = namedtuple('namespc', ['ident', 'body'])
+ImportStmt   = namedtuple('_import', ['ident', 'path'])
 BoolOp       = namedtuple('boolop',  ['op', 'lho', 'rho'])
 BreakStmt    = namedtuple('_break',  [])()
 InfiniteLoop = namedtuple('_inflp',  [])()
@@ -183,11 +186,13 @@ def decomment(file):
 
 def create_parser():
   # Basic elements
-  padding    = whitespace.optional()
-  newline    = regex(r'\s*(\n\s*)+').desc('newline')
-  validident = regex(r'[a-zA-Z_]\w*').desc('valid identifier')
-  identifier = validident.map(Identifier)
-  integer    = regex(r'-?\d+').map(int).desc('integer')
+  padding     = whitespace.optional()
+  newline     = regex(r'\s*(\n\s*)+').desc('newline')
+  wsnonewline = regex(r'[\r\t\f\v  ]+')
+  validident  = regex(r'[a-zA-Z_]\w*').desc('valid identifier')
+  identifier  = seq(string('$').optional(), validident.sep_by(string('~'),min=1).map('~'.join)).map(lambda x: x[0]+x[1] if x[0] else x[1]).map(Identifier).desc('valid identifier')
+  integer_lit = regex(r'-?\d+').map(int).desc('integer literal')
+  float_lit   = regex(r'-?\d*\.\d+').map(float).desc('float literal')
 
   # Strings
   string_lit_double = regex(r'"(?:[^"\\]|\\.)*"').desc('string literal')
@@ -199,7 +204,7 @@ def create_parser():
   expressionInline = string('(') >> padding >> expression.optional() << padding << string(')')
   funcCall         = forward_declaration()
   funcCallInline   = string('[') >> padding >> funcCall << padding << string(']')
-  operand          = identifier | integer | string_lit | funcCallInline | expressionInline
+  operand          = identifier | float_lit | integer_lit | string_lit | funcCallInline | expressionInline
 
   def collapse_preop(op, rho):
     if len(op) < 1: return rho
@@ -244,7 +249,7 @@ def create_parser():
   sequenceDef = seq(
     _1        = string('sequence') << whitespace,
     ident     = validident,
-    sliceIndx = (string('::') >> integer).optional(),
+    sliceIndx = (string('::') >> integer_lit).optional(),
     baseCases = (whitespace >> string('from') >> whitespace >> operand.sep_by(padding >> string(',') << padding, min=1)).optional(),
     _2        = whitespace >> string('=') << whitespace,
     exprs     = expression.sep_by(padding >> string(',') << padding, min=1)
@@ -259,8 +264,8 @@ def create_parser():
   ).combine_dict(FuncDefn)
 
   funcCall.become(seq(
-    name = validident,
-    args = (whitespace >> expression.sep_by(padding >> string(',') << padding, min=1)).optional()
+    name = identifier.map(lambda i: i.name),
+    args = (wsnonewline >> expression.sep_by(padding >> string(',') << padding, min=1)).optional()
   ).combine_dict(FuncCall))
 
   # Variable definitions
@@ -300,8 +305,22 @@ def create_parser():
     elseBlock = (whitespace >> string('else') >> whitespace >> block).optional()
   ).combine_dict(CondStmt)
 
+  # Namespace definitions and imports
+  namespaceDef = seq(
+    _     = string('namespace') << whitespace,
+    ident = validident << whitespace,
+    body  = block
+  ).combine_dict(NamespaceDef)
+
+  importStmt = seq(
+    _1    = string('import') << whitespace,
+    ident = validident << whitespace,
+    _2    = string('from') << whitespace,
+    path  = string_lit
+  ).combine_dict(ImportStmt)
+
   block.become((string('{') >> statements << string('}')) | statement.map(lambda s: [s]))
-  statement.become(sequenceDef | loopStmt | breakStmt | returnStmt | condStmt | varDef | funcDef | funcCall)
+  statement.become(sequenceDef | loopStmt | breakStmt | returnStmt | condStmt | namespaceDef | importStmt | varDef | funcDef | funcCall)
 
   return statements
 
@@ -309,20 +328,32 @@ def create_parser():
 # Runtime
 
 default_ctx = {
-  'print': lambda _,*s: print(*[(str(x).lower() if x in [True,False,None] else x) for x in s]),
-  'input': lambda _,p=None: (input() if p is None else input(p)) if sys.stdin.isatty() else sys.stdin.readline().rstrip('\n'),
+  'print':   lambda _,*s: print(*[printable(x) for x in s]),
+  'input':   lambda _,p=None: (input() if p is None else input(p)) if sys.stdin.isatty() else sys.stdin.readline().rstrip('\n'),
   'systime': lambda _: math.floor(systime()*1000),
 
   'floor': lambda _,x: math.floor(x),
-  'ceil': lambda _,x: math.ceil(x),
-  'round': lambda _,x: math.round(x),
+  'ceil':  lambda _,x: math.ceil(x),
+  'round': lambda _,x: round(x),
+  'abs':   lambda _,x: abs(x),
+  'sign':  lambda _,x: 1 if x > 0 else -1 if x < 0 else 0,
 
-  'unslice': lambda _,x: x.sequence if isinstance(x,SequenceSlice) else x if isinstance(x,Sequence) else None,
+  'unslice': lambda _,x: x.sequence if isinstance(x, SequenceSlice) else x,
 
-  'true': True,
+  'isSequence': lambda _,x: isinstance(x, SequenceLike),
+  'isSlice':    lambda _,x: isinstance(x, SequenceSlice),
+  'isNumber':   lambda _,x: isnumber(x),
+  'isString':   lambda _,x: isinstance(x, str),
+  'isBoolean':  lambda _,x: isinstance(x, bool),
+  'isNone':     lambda _,x: x is None,
+
+  'true':  True,
   'false': False,
-  'none': None,
-  'not': lambda _,x: not x
+  'none':  None,
+  'not':   lambda _,x: not x,
+
+  'INF': math.inf,
+  'NaN': math.nan
 }
 
 operators = {
@@ -355,16 +386,34 @@ operators = {
   '::': lambda _,x,y: SequenceSlice(x,math.floor(y)) if isinstance(x,SequenceLike) and isnumber(y) else None,
 }
 
-def exec_expr(expr, ctx={}):
+def find_ident(ident, ctx):
+  if ctx is None: return None
+  default = default_ctx if ctx is not default_ctx else None
+
+  parts = ident.split('~')
+  debug = []
+
+  for part in parts[:-1]:
+    ctx = ctx[part] if part in ctx else find_ident(part, ctx.get('$$parent', default))
+    debug.append(part)
+    if ctx is None: 
+      raise Exception(f"Can't get value from undefined namespace {'~'.join(debug)}")
+    if not isinstance(ctx, dict):
+      raise Exception(f"Can't get value of variable {'~'.join(debug)}; {part} is not a namespace")
+
+  if parts[-1] in ctx: return ctx[parts[-1]]
+  return find_ident(parts[-1], ctx.get('$$parent', default))
+
+def exec_expr(expr, ctx):
   '''Execute a parsed expression.'''
 
   if isinstance(expr, Identifier): 
-    return ctx[expr.name] if expr.name in ctx else None
+    return find_ident(expr.name, ctx)
 
   if isinstance(expr, FuncCall):
-    if expr.name not in ctx or not callable(ctx[expr.name]):
-      raise Exception(f"Can't call undefined function {expr.name}")
-    return ctx[expr.name](ctx, *[exec_expr(a, ctx) for a in expr.args or []])
+    func = find_ident(expr.name, ctx)
+    if not callable(func): raise Exception(f"Can't call undefined function {expr.name}")
+    return func(ctx, *[exec_expr(a, ctx) for a in expr.args or []])
 
   if isinstance(expr, BoolOp):
     lhr = exec_expr(expr.lho, ctx)
@@ -523,8 +572,9 @@ def simplify_expr(expr):
 
   return expr
 
-def execute(program, ctx=dict(default_ctx), in_loop=False, in_func=False):
+def execute(program, ctx=None, in_loop=False, in_func=False):
   '''Execute a list of parsed statements'''
+  if ctx is None: ctx = mkctx(None)
 
   for statement in program:
     # Sequence definitions
@@ -532,15 +582,48 @@ def execute(program, ctx=dict(default_ctx), in_loop=False, in_func=False):
       ctx[statement.ident] = statement
       continue
 
+    # Namespace definitions
+    if isinstance(statement, NamespaceDef):
+      existing = find_ident(statement.ident, ctx)
+      existing = existing if existing is not None else {}
+
+      if not isinstance(existing, dict):
+        raise Exception(f"Can't define namespace {statement.ident}; that name is already in use by a non-namespace")
+
+      inner_ctx = mkctx(ctx, { **existing, '$$namespace_ident': statement.ident })
+      execute(statement.body, inner_ctx)
+      ctx[statement.ident] = inner_ctx
+      continue
+
+    # Imports
+    if isinstance(statement, ImportStmt):
+      existing = find_ident(statement.ident, ctx)
+      if existing is not None:
+        raise Exception(f"Can't import namespace {statement.ident}; that name is already in use")
+
+      def _do_import(path, ctx):
+        local_path  = os.path.realpath(find_ident('$dir', ctx)+'/'+path)
+        stdlib_path = os.path.realpath(find_ident('$stdlib', ctx)+'/'+path)
+
+        if os.path.exists(local_path+'.seq'):  return exec_file(local_path+'.seq', False)
+        # if os.path.exists(local_path+'.py'):   return import_module(local_path).SEQ_EXPORTS    # Local .py imports are currently unsupported
+        if os.path.exists(stdlib_path+'.seq'): return exec_file(stdlib_path+'.seq', False)
+        if os.path.exists(stdlib_path+'.py'):  return import_module('stdlib.'+path).SEQ_EXPORTS
+
+        raise Exception(f"Can't import file {path}; file not found")
+
+      ctx[statement.ident] = _do_import(statement.path, ctx)
+      ctx[statement.ident]['$$namespace_ident'] = statement.ident
+      continue
+
     # If/else statements
     if isinstance(statement, CondStmt):
       cond = exec_expr(statement.cond, ctx)
-      if cond:
-        value = execute(statement.body, ctx, in_loop, in_func)
+      body = statement.body if cond else statement.elseBlock
+      if body is not None:
+        value = execute(body, ctx, in_loop, in_func)
         if value is BreakStmt: return BreakStmt
-      elif statement.elseBlock is not None:
-        value = execute(statement.elseBlock, ctx, in_loop, in_func)
-        if value is BreakStmt: return BreakStmt
+      continue
 
     # For loops
     if isinstance(statement, LoopStmt):
@@ -549,32 +632,28 @@ def execute(program, ctx=dict(default_ctx), in_loop=False, in_func=False):
       if not srcseq or not isinstance(srcseq, SequenceLike):
         raise Exception(f"Can't iterate over undefined sequence {statement.srcseq}")
 
-      if statement.amount is InfiniteLoop:
-        for value in srcseq.generator(ctx):
-          value = execute(statement.body, { **ctx, statement.ident: value }, True, in_func)
-          if value is BreakStmt: break
-      else:
-        maxiters, numiters = exec_expr(statement.amount, ctx), 0
-        if not isinstance(maxiters, int):
-          raise Exception(f"Amount expression of for loop must evaluate to an integer")
+      maxiters, numiters = None if statement.amount is InfiniteLoop else exec_expr(statement.amount, ctx), 0
+      if maxiters is not None and not isinstance(maxiters, int):
+        raise Exception(f"Amount expression of for loop must evaluate to an integer")
 
-        for value in srcseq.generator(ctx):
-          value = execute(statement.body, { **ctx, statement.ident: value }, True, in_func)
-          if value is BreakStmt: break
-          numiters += 1
-          if numiters >= maxiters: break
+      for value in srcseq.generator(ctx):
+        value = execute(statement.body, { **ctx, statement.ident: value }, True, in_func)
+        if value is BreakStmt: break
+        numiters += 1
+        if maxiters is not None and numiters >= maxiters: break
 
       continue
 
     # Function definitions and calls
     if isinstance(statement, FuncDefn):
-      def create_user_func(fdef):
-        def exec_user_func(ctx, *args):
+      def create_user_func(fdef, def_ctx):
+        def exec_user_func(call_ctx, *args):
           arity = len(fdef.argNames) if fdef.argNames is not None else 0
           if len(args) != arity: raise Exception(f"Function {fdef.ident} expects {arity} arguments, got {len(args)}")
-          return execute(fdef.body, { **ctx, **{ fdef.argNames[i]: v for i,v in enumerate(args) } }, False, True)
+          return execute(fdef.body, { **def_ctx, **{ fdef.argNames[i]: v for i,v in enumerate(args) } }, False, True)
         return exec_user_func
-      ctx[statement.ident] = create_user_func(statement)
+      ctx[statement.ident] = create_user_func(statement, ctx)
+      continue
 
     if isinstance(statement, FuncCall):
       exec_expr(statement, ctx)
@@ -609,6 +688,19 @@ def isnamedtuple(x):
 def mktuple(*xs):
   return tuple(xs)
 
+def mkctx(parent, add_vars={}):
+  return {'$$parent':parent, **add_vars} if parent is not None else dict(add_vars)
+
+def printable(x):
+  if x in [True,False,None]: return str(x).lower()
+  if x in [math.inf,-math.inf]: return str(x).upper()
+  if x in [math.nan]: return 'NaN'
+
+  if isinstance(x, dict): 
+    return f"[namespace {x['$$namespace_ident']} {{ {', '.join(n for n in list(x) if not n.startswith('$'))} }}]"
+
+  return str(x)
+
 
 # CLI
 
@@ -616,10 +708,21 @@ def usage():
   print(f'Usage: {sys.argv[0]} [script_path]')
   sys.exit()
 
-if __name__ == "__main__":
-  if len(sys.argv) < 2: usage()
-
-  with open(sys.argv[1], 'r') as file:  
+def exec_file(path, is_main=False, parent_ctx=None):
+  with open(path, 'r') as file:  
     strin = decomment(file.read())
     parser = create_parser()
-    execute(parser.parse(strin))
+
+    ctx = mkctx(parent_ctx, {
+      '$file':   os.path.realpath(path),
+      '$dir':    os.path.dirname(os.path.realpath(path)),
+      '$stdlib': os.path.realpath(os.path.dirname(os.path.realpath(__file__))+'/stdlib'),
+      '$main':   is_main
+    })
+
+    execute(parser.parse(strin), ctx)
+    return ctx
+
+if __name__ == "__main__":
+  if len(sys.argv) < 2: usage()
+  exec_file(sys.argv[1], True)

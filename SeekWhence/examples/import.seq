@@ -1,0 +1,19 @@
+; Import statements
+; The imported file for this example can be found in the same folder as this one
+
+import test from 'import-imported'
+print test
+
+print test~factorial, test~closedVar
+test~closure
+
+namespace test {
+	sequence factorial from 1 = n
+	set closedVar = 20
+}
+
+print test~factorial, test~closedVar
+test~closure
+
+; Meta variables are closed over as well
+test~metaClosure $file

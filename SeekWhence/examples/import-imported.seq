@@ -1,0 +1,12 @@
+; Imported file for import.seq
+
+sequence factorial from 1 = x*n
+set closedVar = 10
+
+function closure {
+	print factorial, closedVar
+}
+
+function metaClosure with outside_file {
+	print $file == outside_file
+}

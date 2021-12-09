@@ -8,7 +8,7 @@ contexts:
   main:
     - match: ;.*
       scope: comment.line.seekwhence
-    - match: \b(sequence|from|at|for|of|as|do|if|then|else|set|function|with|return|and|or|not)\b
+    - match: \b(sequence|from|at|for|of|as|do|if|then|else|set|function|with|return|namespace|import|and|or|not)\b
       scope: keyword.control.seekwhence
 
     - match: "'"
