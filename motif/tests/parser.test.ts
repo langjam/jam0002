@@ -58,14 +58,14 @@ describe("Parser test", () => {
 
     const patterns = program.patterns;
     expect(patterns.length).to.eq(8);
-    expect(patterns[0]).to.deep.eq(new Solid(a));
-    expect(patterns[1]).to.deep.eq(new Solid(c));
-    expect(patterns[2]).to.deep.eq(new Rainbow([c, b, a], 2));
-    expect(patterns[3]).to.deep.eq(new Checker([b, c], 2));
-    expect(patterns[4]).to.deep.eq(new Wave([a, b, c], 1));
-    expect(patterns[5]).to.deep.eq(new RainbowIrregular([a, b, c], [3, 1, 2]));
-    expect(patterns[6]).to.deep.eq(new CheckerIrregular([d, e], [1, 2, 1, 1, 1]));
-    expect(patterns[7]).to.deep.eq(new WaveIrregular([d, e, f], [1, 1, 2, 1, 1]));
+    expect(patterns[0]).to.deep.eq(new Solid(7, a));
+    expect(patterns[1]).to.deep.eq(new Solid(12, c));
+    expect(patterns[2]).to.deep.eq(new Rainbow(15, [c, b, a], 2));
+    expect(patterns[3]).to.deep.eq(new Checker(17, [b, c], 2));
+    expect(patterns[4]).to.deep.eq(new Wave(22, [a, b, c], 1));
+    expect(patterns[5]).to.deep.eq(new RainbowIrregular(23, [a, b, c], [3, 1, 2]));
+    expect(patterns[6]).to.deep.eq(new CheckerIrregular(25, [d, e], [1, 2, 1, 1, 1]));
+    expect(patterns[7]).to.deep.eq(new WaveIrregular(26, [d, e, f], [1, 1, 2, 1, 1]));
   });
 
   it ("Report palette errors", () => {

@@ -66,19 +66,19 @@ function buildPattern(palette: Palette, match: MatchResult): Pattern {
 
   switch (match.type) {
     case PatternType.SOLID:
-      return new Solid(colors[0]);
+      return new Solid(match.line, colors[0]);
     case PatternType.RAINBOW:
-      return new Rainbow(colors, match.sizes[0]);
+      return new Rainbow(match.line, colors, match.sizes[0]);
     case PatternType.CHECKER:
-      return new Checker(colors, match.sizes[0]);
+      return new Checker(match.line, colors, match.sizes[0]);
     case PatternType.WAVE:
-      return new Wave(colors, match.sizes[0]);
+      return new Wave(match.line, colors, match.sizes[0]);
     case PatternType.RAINBOW_IRREGULAR:
-      return new RainbowIrregular(colors, match.sizes);
+      return new RainbowIrregular(match.line, colors, match.sizes);
     case PatternType.CHECKER_IRREGULAR:
-      return new CheckerIrregular(colors, match.sizes);
+      return new CheckerIrregular(match.line, colors, match.sizes);
     case PatternType.WAVE_IRREGULAR:
-      return new WaveIrregular(colors, match.sizes);
+      return new WaveIrregular(match.line, colors, match.sizes);
   }
 }
 

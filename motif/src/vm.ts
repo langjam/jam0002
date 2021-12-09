@@ -1,13 +1,12 @@
 import { CompiledProgram, Section } from "./emitter";
 
-export const enum Instructions {
+export enum Instructions {
   NOP,
   PUSH, POP, DUP, SWAP,
   ADD, SUB, MUL, DIV, MOD, POW,
   LOAD, STORE, GREATER, LESS,
   EQUAL, NOT, OR, AND,
-  FWD, BACK, FWD_IF, BACK_IF,
-  CALL, RETURN, HALT,
+  JUMP, JUMP_IF, CALL, RETURN, HALT,
   PRINT_INT, PRINT_CHAR, PRINT_SYMB,
 };
 
@@ -168,6 +167,25 @@ export class VM {
           break;
         }
 
+        /* CONTROL FLOW */
+
+        case Instructions.JUMP: {
+          let next = bytecodes[this.ip++];
+          this.ip = next;
+          break;
+        }
+
+        case Instructions.JUMP_IF: {
+          let next = bytecodes[this.ip++];
+          let condition = this.pop();
+
+          if (!!condition) {
+            this.ip = next;
+          }
+
+          break;
+        }
+
         /* PRINTS */
 
         case Instructions.PRINT_INT:
@@ -221,4 +239,30 @@ export class VM {
 
     return this.stack[pos];
   }
+}
+
+function debugBytecodes(section: Section) {
+  const bytecodes = section.bytecodes;
+  const result: string[] = [];
+
+  let i = 0;
+  while (i < bytecodes.length) {
+    const instr = bytecodes[i++];
+    let str;
+
+    switch(instr) {
+      case Instructions.PUSH:
+      case Instructions.JUMP:
+      case Instructions.JUMP_IF:
+      case Instructions.CALL:
+        str = `${i} ${Instructions[instr]} ${bytecodes[i++]}`;
+      break;
+      default:
+        str = `${i} ${Instructions[instr]}`;
+    }
+
+    result.push(str);
+  }
+
+  console.log(result.join("\n"));
 }

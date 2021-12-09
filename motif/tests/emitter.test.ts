@@ -112,6 +112,97 @@ describe("Emitter test", () => {
     expect(bytecodes).to.deep.eq(expected);
   });
 
+  it ("Emit control flow instructions", () => {
+    const lines = [
+      "abcdefgh",
+      "aaaaaaaa",
+      // rainbow_irr-wave_irr: print int
+      "gghhhhhh",
+      "fhgggghf",
+
+      // wave-wave_irreg: block 1
+      "abcbabcb",
+      "abbccbba",
+
+      // rainbow_irr-wave_irr: print int
+      "gghhhhhh",
+      "fhgggghf",
+
+      // checker_i-wave: back
+      "abbcabbc",
+      "bacabaca",
+
+      // wave-checker_i: fwd
+      "abcbabcb",
+      "abccabcc",
+
+      // wave-wave_irreg: block 2
+      "abcbabcb",
+      "abbccbba",
+
+      // rainbow_irr-wave_irr: print int
+      "gghhhhhh",
+      "fhgggghf",
+
+      // checker_i-wave: back
+      "abbcabbc",
+      "badabada",
+
+      // wave-checker_i: fwd
+      "abcbabcb",
+      "abddabdd",
+
+      // wave_irreg-checker: back if
+      "abcccbaa",
+      "abcabcab",
+
+      // checker-wave_irreg: fwd if
+      "aabbccaa",
+      "abddbbba",
+
+      // wave_irreg-wave: end block 2
+      "abbccbba",
+      "abcbabcb",
+
+      // rainbow_irr-wave_irr: print int
+      "gghhhhhh",
+      "fhgggghf",
+
+      // wave_irreg-wave: end block 1
+      "abbccbba",
+      "abcbabcb",
+
+      // rainbow_irr-wave_irr: print int
+      "gghhhhhh",
+      "fhgggghf",
+
+    ].join("\n");
+
+    let program = runParseEmit(lines);
+
+    let bytecodes = program.mainSection.bytecodes;
+    let expected = [
+      Instructions.PRINT_INT,
+      // block 1
+      Instructions.PRINT_INT,
+      Instructions.JUMP, 1,
+      Instructions.JUMP, 16,
+      // block 2
+      Instructions.PRINT_INT,
+      Instructions.JUMP, 1,
+      Instructions.JUMP, 16,
+      Instructions.JUMP_IF, 6,
+      Instructions.JUMP_IF, 16,
+      // end block 2
+      Instructions.PRINT_INT,
+      // end block 1
+      Instructions.PRINT_INT,
+    ];
+
+    expect(bytecodes).to.have.length(expected.length);
+    expect(bytecodes).to.deep.eq(expected);
+  });
+
   it ("Emit print & halt instructions", () => {
     const lines = [
       "abcdefgh",

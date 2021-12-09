@@ -1,0 +1,152 @@
+fibonacci program
+this will print fib(0) to fib(21)
+
+abcdefghijkl
+aaaaaaaaaaaa
+
+m[0]=21
+push 3
+aaaaaabbbbbb
+abdabdabdabd
+push 7
+aaaaaabbbbbb
+abhabhabhabh
+mul
+abababababab
+abcbabcbabcb
+push 0
+aaaaaabbbbbb
+abababababab
+store
+abbabbabbabb
+aaaaaabbbbbb
+
+m[1]=0
+push 0
+bbbbbbaaaaaa
+abababababab
+push 1
+aaaaaabbbbbb
+acacacacacac
+store
+abbabbabbabb
+bbbbbbaaaaaa
+
+m[2]=1
+push 1
+aaaaaabbbbbb
+acacacacacac
+push 2
+aaaaaabbbbbb
+adadadadadad
+store
+abbabbabbabb
+bbbbbbaaaaaa
+
+block
+abcbabcbabcb
+abccbabccbab
+
+ld m[0]
+push 0
+aaaaaabbbbbb
+abababababab
+load
+aaaaaabbbbbb
+abbabbabbabb
+
+dup
+aaaaaabbbbbb
+abccbabccbab
+
+not
+aaaaaaaaabbb
+aabbaabbaabb
+
+fwd_if
+abcabcabcabc
+abccbabccbab
+
+push 1
+aaaaaabbbbbb
+acacacacacac
+
+sub
+abcbabcbabcb
+aaaaaabbbbbb
+
+st m[0]
+push 0
+bbbbbbaaaaaa
+abababababab
+store
+abbabbabbabb
+aaaaaabbbbbb
+
+ld m[1]
+push 1
+bbbbbbaaaaaa
+acacacacacac
+load
+aaaaaabbbbbb
+abbabbabbabb
+
+dup
+aaaaaabbbbbb
+abccbabccbab
+
+printint
+aaaaaaaaabbb
+abbcbbaabbcb
+
+push 10
+aaaaaabbbbbb
+abkabkabkabk
+
+printch
+abbabbabbabb
+abbcbbaabbcb
+
+ld m[2]
+push 2
+bbbbbbaaaaaa
+adadadadadad
+load
+aaaaaabbbbbb
+abbabbabbabb
+
+add
+aaaaaabbbbbb
+abcbabcbabcb
+
+ld m[2]
+push 2
+bbbbbbaaaaaa
+adadadadadad
+load
+aaaaaabbbbbb
+abbabbabbabb
+
+st m[1]
+push 1
+bbbbbbaaaaaa
+acacacacacac
+store
+abbabbabbabb
+aaaaaabbbbbb
+
+st m[2]
+push 2
+bbbbbbaaaaaa
+adadadadadad
+store
+abbabbabbabb
+aaaaaabbbbbb
+
+back
+abbcabbcabbc
+abcbabcbabcb
+
+endblock
+abccbabccbab
+abcbabcbabcb

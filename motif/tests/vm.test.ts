@@ -119,6 +119,31 @@ describe("VM test", () => {
     expect(joinPrintResult(results)).to.eq("101001");
   });
 
+  it('Run control flow instructions', () => {
+    let bytecodes = [
+      Instructions.PUSH, 5,
+
+      // block
+      Instructions.DUP,
+      Instructions.NOT,
+      Instructions.JUMP_IF, 13,
+      Instructions.DUP,
+      Instructions.PRINT_INT,
+      Instructions.PUSH, 1,
+      Instructions.SUB,
+
+      Instructions.JUMP, 2
+      // end block
+    ];
+
+    let program = singleSectionProgram(bytecodes);
+
+    let [print, results] = createPrint();
+    new VM(program, print).run();
+
+    expect(joinPrintResult(results)).to.eq("54321");
+  });
+
   it('Run print & halt instructions', () => {
     let palette: Palette = new Map([["a", 0], ["b", 1]]);
     let program = singleSectionProgram([
