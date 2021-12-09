@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { emitBytecodes } from "../src/emitter";
+import { emitBytecodes, Section } from "../src/emitter";
 import { parseText, Program } from "../src/parser"
 import { Instructions } from "../src/vm";
 
@@ -201,6 +201,59 @@ describe("Emitter test", () => {
 
     expect(bytecodes).to.have.length(expected.length);
     expect(bytecodes).to.deep.eq(expected);
+  });
+
+  it ("Emit sections, call and return instructions", () => {
+    const lines = [
+      "abcdefgh",
+      // section 0
+      "aaaaaaaa",
+
+      // rain i - check i: call (1)
+      "aadddddd",
+      "abddabdd",
+      // check i - rain i : return
+      "abbdabbd",
+      "aadddddd",
+
+      // section 2
+      "cccccccc",
+      // rain i - check i: call (0)
+      "aadddddd",
+      "adddaddd",
+
+      // section 1
+      "bbbbbbbb",
+      // rain i - check i: call (2)
+      "aadddddd",
+      "acddacdd",
+
+      // section 3
+      "dddddddd",
+    ].join("\n");
+
+    let program = runParseEmit(lines);
+
+    expect(program.sections.size).to.eq(4);
+    expect(program.sections).to.have.keys([0, 1, 2, 3]);
+
+    let bytecodes = (program.sections.get(0) as Section).bytecodes;
+    let expected = [Instructions.CALL, 1, Instructions.RETURN];
+    expect(bytecodes).to.have.length(expected.length);
+    expect(bytecodes).to.deep.eq(expected);
+
+    bytecodes = (program.sections.get(1) as Section).bytecodes;
+    expected = [Instructions.CALL, 2];
+    expect(bytecodes).to.have.length(expected.length);
+    expect(bytecodes).to.deep.eq(expected);
+
+    bytecodes = (program.sections.get(2) as Section).bytecodes;
+    expected = [Instructions.CALL, 0];
+    expect(bytecodes).to.have.length(expected.length);
+    expect(bytecodes).to.deep.eq(expected);
+
+    bytecodes = (program.sections.get(3) as Section).bytecodes;
+    expect(bytecodes).to.have.length(0);
   });
 
   it ("Emit print & halt instructions", () => {

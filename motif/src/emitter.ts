@@ -20,7 +20,9 @@ interface BlockData {
 
 interface EmitterState {
   currentSection: Section;
-  blocks: BlockData[]
+  sections: Map<number, Section>;
+  blocks: BlockData[];
+  palette: Palette
 }
 
 export function emitBytecodes(program: Program): CompiledProgram {
@@ -31,21 +33,40 @@ export function emitBytecodes(program: Program): CompiledProgram {
     throw new Error("Unreachable: invalid first section");
   }
 
-  const mainSection = {color: firstPattern.color, bytecodes: []};
-
   const sections = new Map<number, Section>();
-  sections.set(mainSection.color, mainSection);
+  const addSection = (pattern: Solid) => {
+    if (sections.has(pattern.color)) {
+      throw new ParseError(pattern.line, `Section with color #${pattern.color} already exists!`);
+    }
+    let section = {color: pattern.color, bytecodes: []};
+    sections.set(pattern.color, section);
 
+    return section;
+  }
+
+  const mainSection = addSection(firstPattern);
   let state: EmitterState = {
     currentSection: mainSection,
-    blocks: []
+    sections,
+    blocks: [],
+    palette
   };
 
-  for (let i = 1; i < patterns.length; i += 2) {
-    // TODO: handle solid pattern
-    let first = patterns[i];
-    let second = patterns[i + 1];
-    if (second == null) break;
+  let i = 1;
+  while (i < patterns.length) {
+    let first = patterns[i++];
+    if (first.type === PatternType.SOLID) {
+      state.currentSection = addSection(first);
+      continue;
+    }
+
+    let second = patterns[i++];
+    if (second == null) {
+      break;
+    } else if (second.type === PatternType.SOLID) {
+      state.currentSection = addSection(second);
+      continue;
+    }
 
     if (first.type === second.type) continue;
 
@@ -109,6 +130,8 @@ const CombinationTable: {[key in number]: Instructions | EmitFunction } = {
   [combine(PatternType.CHECKER, PatternType.WAVE_IRREGULAR)]         : emitFwdIf,
   [combine(PatternType.WAVE_IRREGULAR, PatternType.CHECKER)]         : emitBackIf,
 
+  [combine(PatternType.RAINBOW_IRREGULAR, PatternType.CHECKER_IRREGULAR)] : emitCall,
+  [combine(PatternType.CHECKER_IRREGULAR, PatternType.RAINBOW_IRREGULAR)] : Instructions.RETURN,
 
   [combine(PatternType.WAVE_IRREGULAR, PatternType.RAINBOW_IRREGULAR)]    : Instructions.HALT,
   [combine(PatternType.RAINBOW_IRREGULAR, PatternType.WAVE_IRREGULAR)]    : Instructions.PRINT_INT,
@@ -121,6 +144,19 @@ function emitPush(state: EmitterState, first: Pattern, second: Pattern) {
   state.currentSection.bytecodes.push(
     Instructions.PUSH,
     colorDifference(first, second)
+  );
+}
+
+function emitCall(state: EmitterState, first: Pattern, second: Pattern) {
+  let sectionColor = colorDifference(first, second);
+
+  if (sectionColor < 0 || sectionColor >= state.palette.size) {
+    throw new ParseError(first.line, `Invalid color ${sectionColor} in section call.`);
+  }
+
+  state.currentSection.bytecodes.push(
+    Instructions.CALL,
+    sectionColor
   );
 }
 

@@ -13,6 +13,7 @@ export enum Instructions {
 export class RuntimeError extends Error {}
 export type PrintFunc = (str: string) => void;
 
+const MAX_CALL_STACK = 512;
 const STACK_SIZE = 1024;
 const MEMORY_SIZE = 65536;
 
@@ -22,6 +23,7 @@ export class VM {
   private stack: Int32Array;
   private memory: Int32Array;
   private sectionStack: Section[];
+  private returnStack: number[];
   private symbols: string[]
 
   constructor(private program: CompiledProgram, private print: PrintFunc) {
@@ -30,17 +32,23 @@ export class VM {
     this.stack = new Int32Array(STACK_SIZE);
     this.memory = new Int32Array(MEMORY_SIZE)
     this.sectionStack = [ program.mainSection ];
+    this.returnStack = [];
     this.symbols = Array.from(program.palette.keys());
   }
 
   run() {
     this.ip = 0;
     for(;;) {
-      let bytecodes = this.currentSection().bytecodes;
+      const bytecodes = this.currentSection().bytecodes;
 
-      if (this.ip < 0 || this.ip >= this.currentSection().bytecodes.length) return;
+      if (this.ip < 0 || this.ip >= bytecodes.length) {
+        this.sectionStack.pop();
+        if (this.sectionStack.length === 0) return;
+        this.ip = this.returnStack.pop() as number;
+        continue;
+      }
 
-      let instr = this.currentSection().bytecodes[this.ip++] as Instructions;
+      let instr = bytecodes[this.ip++] as Instructions;
 
       switch(instr) {
         /* STACK OPERATIONS */
@@ -182,6 +190,26 @@ export class VM {
           if (!!condition) {
             this.ip = next;
           }
+
+          break;
+        }
+
+        case Instructions.RETURN:
+          this.ip = -1;
+        break;
+
+        case Instructions.CALL: {
+          let sectionColor = bytecodes[this.ip++];
+          let section = this.program.sections.get(sectionColor);
+          if (!section) throw new RuntimeError(`Section with color #${sectionColor} doesn't exists`);
+
+          if (this.sectionStack.length === MAX_CALL_STACK) {
+            throw new RuntimeError("Stack overflow");
+          }
+
+          this.sectionStack.push(section);
+          this.returnStack.push(this.ip);
+          this.ip = 0;
 
           break;
         }

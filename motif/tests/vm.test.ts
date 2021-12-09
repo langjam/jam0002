@@ -120,6 +120,55 @@ describe("VM test", () => {
   });
 
   it('Run control flow instructions', () => {
+    let sections = new Map<number, Section>();
+
+    sections.set(0, {
+      color: 0,
+      bytecodes: [
+        Instructions.CALL, 1,
+        Instructions.CALL, 1,
+        Instructions.PUSH, 5,
+        Instructions.CALL, 2,
+      ]
+    });
+
+    sections.set(1, {
+      color: 1,
+      bytecodes: [
+        Instructions.PUSH, 1,
+        Instructions.PRINT_INT
+      ]
+    });
+
+    sections.set(2, {
+      color: 2,
+      bytecodes: [
+        Instructions.DUP,
+        Instructions.JUMP_IF, 5,
+        Instructions.POP,
+        Instructions.RETURN,
+
+        Instructions.DUP,
+        Instructions.PRINT_INT,
+        Instructions.PUSH, 1,
+        Instructions.SUB,
+        Instructions.CALL, 2
+      ]
+    });
+
+    let program: CompiledProgram = {
+      sections,
+      mainSection: sections.get(0) as Section,
+      palette: new Map()
+    };
+
+    let [print, results] = createPrint();
+    new VM(program, print).run();
+
+    expect(joinPrintResult(results)).to.eq("1154321");
+  });
+
+  it('Run call to & return from sections', () => {
     let bytecodes = [
       Instructions.PUSH, 5,
 
