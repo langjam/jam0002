@@ -1,9 +1,13 @@
 clear
 
 lj2=`pwd`
-d2f=${lj2}/d2f.bash
 pfr=${lj2}/pfr.bash
+d2f=${lj2}/d2f.bash
+f2j=${lj2}/f2j.bash
+
+pfrdir=${lj2}/pfrsrc
 d2fdir=${lj2}/d2fsrc
+f2jdir=${lj2}/f2jsrc
 
 ${pfr} ${lj2} producer.cmm cmm.ohm cmm.glue ${lj2}/support.js >producer.c
 ${pfr} ${lj2} consumer.cmm cmm.ohm cmm.glue ${lj2}/support.js >consumer.c
@@ -31,4 +35,5 @@ echo main.cmm '->' main.c
 ${d2f} ${lj2} DaisyChain >fb.pl
 echo DaisyChain.drawio '->' fb.pl
 
-
+${f2j} ${f2jdir} <fb.pl >fb.json
+echo fb.pl '->' fb.json '(i.e. DaisyChain.drawio -> fb.json)'
