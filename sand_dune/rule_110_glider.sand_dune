@@ -1,0 +1,7 @@
+Rules
+  [ _ ] -> [ cell ]                               # By default, cells are on...
+  [ No cell | No cell ] -> [ No cell | _ ]        # Unless they and their rightwards neighbor are off...
+  [ cell | cell | cell ] -> [ _ | No cell | _ ]   # Or they and both neighbors are on.
+Start
+  # The "default wallpaper", with a glider moving to the right:
+  [   #  ## #####   ### ###   #  ## #####   #  ## #####   #  ## #####]

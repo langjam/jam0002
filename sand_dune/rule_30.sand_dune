@@ -1,0 +1,7 @@
+Rules
+  [ _ ] -> [ No cell ]
+  [ cell | No cell] -> [ cell | _ ]
+  [ cell | No cell | No cell] -> [ _ | cell | _ ]
+  [ No cell | No cell | cell] -> [ _ | cell | _ ]
+Start
+  [               #               ]
