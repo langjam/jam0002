@@ -11,7 +11,8 @@ class Tui:
     - when paused, user can manually intervene in the simulation
     """
 
-    def __init__(self, simulation):
+    def __init__(self, simulation, programName):
+        self.programName = programName
         self.simulation = simulation
 
         stdscr = initscr()
@@ -43,6 +44,8 @@ class Tui:
                 # console_h, console_w = getmaxyx(0)
                 # self._resize_simulation_window(console_h, console_w)
                 pass
+            elif c == 8: # backspace
+                self.simulation.remove(y - 1, x - 1)
             elif c == KEY_UP:
                 if y > 1: y -=1
             elif c == KEY_DOWN:
@@ -78,7 +81,7 @@ class Tui:
         orig_y, orig_x = getyx(self.window)
         wclear(self.window)
         wborder(self.window)
-        mvwaddstr(self.window, 0, 2, "[Simulation]")
+        mvwaddstr(self.window, 0, 2, f"[Simulating {self.programName}]")
         frame = self.simulation.get_frame()
         for j in range(self.max_y):
             for i in range(self.max_x):
@@ -89,9 +92,9 @@ class Tui:
         wmove(self.window, orig_y, orig_x)
         wrefresh(self.window)
 
-def run_tui():
+def run_tui(programName):
     try:
-        Tui(sim).run()
+        Tui(sim, programName).run()
     finally:
         endwin()
 

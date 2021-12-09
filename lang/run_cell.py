@@ -78,6 +78,7 @@ class Simulation:
         frame_row.append(alias)
     return frame
 
+  # TODO this is actually really tricky, maybe removing should only be allowed before starting the simulation
   def remove(self, row, col):
     new_cell = self.cell._replace(row=row, col=col)
     self.grid[row][col] = new_cell
