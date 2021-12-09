@@ -37,6 +37,10 @@ In this project, a FB (factbase) is a set of triples in the syntax of PROLOG[^1]
 ## This Project Uses Existing Technologies
 ### Ohm-JS
 npm install ohm-js@next
+### atob
+npm install atob
+### pako
+npm install pako
 
 # C-- 
  C (and most languages, including C++, Haskell, Python, etc.) are dual purpose[^3]:
