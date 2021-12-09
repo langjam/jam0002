@@ -3,7 +3,8 @@ import GraphemeSplitter from "grapheme-splitter";
 
 const splitter = new GraphemeSplitter();
 
-export type Palette = Map<string, number>;
+export type Glyph = number | string;
+export type Palette = Map<Glyph, number>;
 export type Program = {palette: Palette, patterns: Pattern[]};
 
 export class ParseError extends Error {
@@ -63,7 +64,7 @@ export function parseText(text: string): Program | null {
 function buildPattern(palette: Palette, match: MatchResult): Pattern {
   const colors = match.symbols.map((symbol) => {
     let color = palette.get(symbol);
-    if (color == null) throw new ParseError(match.line, `Symbol is not declared in palette: ${symbol}`);
+    if (color == null) throw new ParseError(match.line, `Symbol is not declared in palette: ${stringifyGlyph(symbol)}`);
     return color;
   });
 
@@ -87,7 +88,7 @@ function buildPattern(palette: Palette, match: MatchResult): Pattern {
 
 function addToPalette(palette: Palette, match: MatchResult) {
   for (let symbol of match.symbols) {
-    if (palette.has(symbol)) throw new ParseError(match.line, `Symbol is already declared in palette: ${symbol}`)
+    if (palette.has(symbol)) throw new ParseError(match.line, `Symbol is already declared in palette: ${stringifyGlyph(symbol)}`)
     palette.set(symbol, palette.size);
   }
 }
@@ -95,23 +96,30 @@ function addToPalette(palette: Palette, match: MatchResult) {
 interface MatchResult {
   line: number;
   type: PatternType;
-  symbols: string[];
+  symbols: Glyph[];
   sizes: number[];
 }
 
-function matchPattern(line: number, chars: string[]): MatchResult | null {
-  if (chars.length === 0) return null;
+export function stringifyGlyph(glyph: Glyph): string {
+  if (typeof glyph === "string")
+    return glyph;
 
-  let symbolIds = new Map<string, number>();
+  return glyph.toString(16);
+}
+
+function matchPattern(line: number, glyphs: Glyph[]): MatchResult | null {
+  if (glyphs.length === 0) return null;
+
+  let symbolIds = new Map<Glyph, number>();
   let previous: number = -1;
   let occurences: number[] = [];
   let sizes: number[] = [];
 
-  for (let char of chars) {
-    let id = symbolIds.get(char);
+  for (let glyph of glyphs) {
+    let id = symbolIds.get(glyph);
     if (id == null) {
       id = symbolIds.size;
-      symbolIds.set(char, id);
+      symbolIds.set(glyph, id);
     }
 
     if (previous === id) {

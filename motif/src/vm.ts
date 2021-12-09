@@ -1,4 +1,6 @@
+import { isStringObject } from "util/types";
 import { CompiledProgram, Section } from "./emitter";
+import { Glyph, stringifyGlyph } from "./parser";
 
 export enum Instructions {
   NOP,
@@ -23,7 +25,7 @@ export class VM {
   private memory: Int32Array;
   private sectionStack: Section[];
   private returnStack: number[];
-  private symbols: string[]
+  private symbols: Glyph[]
 
   constructor(private program: CompiledProgram, private print: PrintFunc) {
     this.sp = 0;
@@ -223,7 +225,7 @@ export class VM {
           if (color < 0 || color >= this.symbols.length) {
             throw new RuntimeError(`No symbol is associated to color #${color}`);
           }
-          this.print(this.symbols[color]);
+          this.print(stringifyGlyph(this.symbols[color]));
           break;
         }
 
