@@ -1,29 +1,32 @@
 {
   "main": {
-    "id": "90fc38c8cb3c2f51",
+    "id": "6fcd880132439b79",
     "type": "split",
     "children": [
       {
-        "id": "e8e30749ec6771d0",
+        "id": "743d234f0082a4c9",
         "type": "leaf",
         "state": {
-          "type": "empty",
-          "state": {}
+          "type": "markdown",
+          "state": {
+            "file": "README.md",
+            "mode": "source"
+          }
         }
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "dd8ae0e82e3392fd",
+    "id": "0d5a813f1e306da8",
     "type": "split",
     "children": [
       {
-        "id": "28feadb16fbf1d85",
+        "id": "7f53ca0c94d7cbfa",
         "type": "tabs",
         "children": [
           {
-            "id": "722aa9409ac56ef0",
+            "id": "b264c13bb84ac080",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -31,7 +34,7 @@
             }
           },
           {
-            "id": "39f5254f6ac6ad25",
+            "id": "ffcc52da19687de6",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -52,19 +55,20 @@
     "width": 300
   },
   "right": {
-    "id": "9300abb7a271eb30",
+    "id": "e295565d7f028530",
     "type": "split",
     "children": [
       {
-        "id": "d08bb5ab28399a49",
+        "id": "98f002e727e94c33",
         "type": "tabs",
         "children": [
           {
-            "id": "0cf453813c1e8846",
+            "id": "2fc219638e485cc0",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -82,17 +86,8 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "e8e30749ec6771d0",
+  "active": "743d234f0082a4c9",
   "lastOpenFiles": [
-    "Doc.md",
-    "Functional Programming vs. Pattern Matching.md",
-    "Programming Languages Are Patterns.md",
-    "Software Architecture.md",
-    "Related - Projectional Editing.md",
-    "Triples - PROLOG, miniKanren.md",
-    "Resources.md",
-    "Pattern Matching.md",
-    "Gotchas.md",
-    "Macros vs. DSLs.md"
+    "README.md"
   ]
 }
