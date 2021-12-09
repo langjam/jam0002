@@ -14,7 +14,7 @@ import Interpret
 import NeatInterpolation
 import SyntaxTree
 import System.Console.Haskeline
-import System.Directory (XdgDirectory (..), getXdgDirectory)
+import System.Directory (XdgDirectory (..), getXdgDirectory, createDirectoryIfMissing)
 import System.FilePath ((</>))
 import System.Process (spawnCommand,waitForProcess)
 
@@ -25,7 +25,9 @@ main = do
   putStrLn ""
   ref <- newIORef []
   historyPath <- getHistoryFilePath
-  let settings = defaultSettings {historyFile = Just historyPath}
+  let settings = setComplete completeKeyword $
+                   defaultSettings { historyFile    = Just historyPath
+                                   , autoAddHistory = True }
   runInputT settings (loop ref)
   where
     loop :: IORef [Rule Text] -> InputT IO ()
@@ -49,6 +51,7 @@ main = do
 getHistoryFilePath :: IO FilePath
 getHistoryFilePath = do
   dir <- getXdgDirectory XdgData "patatern"
+  createDirectoryIfMissing True dir
   pure (dir </> "history")
 
 handleShellCmd :: String -> IO ()
@@ -59,6 +62,16 @@ handleLoadCmd = loadFiles
 
 handleRulesCmd :: IORef [Rule Text] -> IO ()
 handleRulesCmd ref = readIORef ref >>= putStrLn . L.intercalate "\n\n" . map show
+
+completeKeyword = completeWord Nothing " \t:" action
+  where
+    action :: String -> IO [Completion]
+    action xs =
+      do files <- listFiles xs
+         pure (map simpleCompletion (find xs keywords) ++ files)
+
+    find xs = filter (xs `L.isPrefixOf`)
+    keywords = ["load","rules"]
 
 patatern :: Text
 patatern =
