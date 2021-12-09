@@ -33,7 +33,9 @@ evalBuiltin t = liftIO $ putStrLn ("Unmatched pattern: " <> show t)
 evalAddition :: Term UVar -> UnifyT (Term UVar) IO ()
 evalAddition t = case getAdditionTerms [] [] (Right t) of
   (x : xs, y : ys) -> evalAdditionTerms (x : xs) (y : ys)
-  (_, _) -> pure ()
+  (_, _) -> do
+    liftIO $ putStrLn ("Invalid operation: " <> show t)
+    error "Invalid operation"
 
 getAdditionTerms :: [Term UVar]
                  -> [Term UVar]
@@ -41,8 +43,10 @@ getAdditionTerms :: [Term UVar]
                  -> ([Term UVar], [Term UVar])
 getAdditionTerms lhs rhs (Left (Int i :> "+" :> x)) = (Int i : x : lhs, rhs)
 getAdditionTerms lhs rhs (Left (Int i :> "-" :> x)) = (Int i : lhs, x : rhs)
+getAdditionTerms lhs rhs (Right (Int i :> "=" :> x)) = (Int i : lhs, x : rhs)
 getAdditionTerms lhs rhs (Left (Var v :> "+" :> x)) = (Var v : x : lhs, rhs)
 getAdditionTerms lhs rhs (Left (Var v :> "-" :> x)) = (Var v : lhs, x : rhs)
+getAdditionTerms lhs rhs (Right (Var v :> "=" :> x)) = (Var v : lhs, x : rhs)
 getAdditionTerms lhs rhs (Right (xs :> "+" :> x)) =
   getAdditionTerms lhs (x : rhs) (Right xs)
 getAdditionTerms lhs rhs (Right (xs :> "-" :> x)) =

@@ -12,4 +12,12 @@ hello:
 say X twice:
   print (X X).
 
-
+; Fibonacci
+fib 0 is 0.
+fib 1 is 1.
+fib N is R:
+  N1 = N - 1,
+  N2 = N - 2,
+  fib N1 is R1,
+  fib N2 is R2,
+  R = R1 + R2.
