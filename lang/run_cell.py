@@ -9,13 +9,14 @@ class InvalidAliasException(Exception):
 class Simulation:
   def matchcount(self, dirs, selector, cell): 
     count = 0
-    row = cell.row
-    col = cell.col
     for deer in dirs:
       row_diff, col_diff = direction_offsets[deer]
-      comp_cell = self.grid[(cell.row + row_diff) % self.rows][(cell.col + col_diff) % self.cols]
-      if selector(self.selectors, comp_cell, self.builtins):
-        count += 1
+      row = cell.row + row_diff
+      col = cell.col + col_diff
+      if 0 <= row <= self.rows and 0 <= col <= self.cols:
+        comp_cell = self.grid[row][col]
+        if selector(self.selectors, comp_cell, self.builtins):
+          count += 1
     return count
 
   def build_grid(self):
