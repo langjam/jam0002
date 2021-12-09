@@ -1,5 +1,5 @@
 Meta {
-  Rows = 80
+  Rows = 20
   Cols = 80
   MaxFPS = 1
 }

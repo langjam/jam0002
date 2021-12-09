@@ -1,4 +1,5 @@
 from unicurses import *
+from run_cell import sim
 
 class Tui:
     """
@@ -88,28 +89,5 @@ class Tui:
         wmove(self.window, orig_y, orig_x)
         wrefresh(self.window)
 
-# Dummy simulation class for testing
-from random import random
-def _gen_frame(pct, rows, cols):
-    return [['L' if random() > pct else None for x in range(cols)] for y in range(rows)]
-class Simulation:
-    rows = 20
-    cols = 80
-    pct = 0.9
-    cur_frame = _gen_frame(pct, rows, cols)
-
-    def get_meta(self):
-        return {'rows': self.rows, 'cols': self.cols}
-
-    def get_frame(self):
-        return self.cur_frame
-
-    def step(self):
-        self.cur_frame = _gen_frame(self.pct, self.rows, self.cols)
-        return self.cur_frame
-
-    def update(self, y, x, alias):
-        if alias != 'L':
-            raise Exception(f"Bad alias {alias}")
-        self.cur_frame[y][x] = alias
-        return self.cur_frame
+if __name__ == '__main__':
+    Tui(sim).run()
