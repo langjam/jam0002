@@ -22,6 +22,7 @@ class IRGen:
     if isinstance(ast, ProgramNode):
       preamble = self.println("from collections import namedtuple")
       preamble += self.println("Rule = namedtuple(\"Rule\", [\"name\", \"selector\", \"func\"])")
+      preamble += self.println("AliasSelector = namedtuple(\"AliasSelector\", [\"name\", \"func\"])")
       meta = self.consume(ast.meta)
       cell = self.consume(ast.cell)
       aliases = self.consume(ast.aliases)
@@ -57,7 +58,19 @@ class IRGen:
         aliases += self.println("},")
       self.dectabs()
       aliases += self.println("}")
-      return aliases
+      alias_selectors = self.println("alias_selectors = [")
+      for stmt_group in ast.stmt_groups:
+        alias_name = stmt_group.name
+        self.inctabs()
+        conditions = []
+        for stmt in stmt_group.stmts:
+          conditions.append(f"(cell.{stmt.name} == {self.consume(stmt.exp)})")
+        func_body = " and ".join(conditions)
+        func = f"lambda cell: {func_body},"
+        alias_selectors += self.println(f"AliasSelector(name=\"{alias_name}\", func={func}),")
+      self.dectabs()
+      alias_selectors += self.println("]")
+      return aliases + alias_selectors
     elif isinstance(ast, SelectorsNode):
       selectors = self.println("selectors = {")
       self.inctabs()

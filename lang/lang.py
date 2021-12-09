@@ -431,6 +431,3 @@ ir = IRGen(ast)
 
 with open("./ir.py", "w") as f:
   f.write(ir.out)
-
-from run_cell import Simulation
-# sim = Simulation()
