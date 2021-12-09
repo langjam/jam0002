@@ -1,15 +1,13 @@
 struct s_Component;
-union u_Message;
+struct u_Message;
 struct s_Connection;
 struct s_List;
 
 union u_Datum {
   char c;
-  int i;
   struct s_Component* component;
   union u_Message* message;
   struct s_Connection* connection;
-  void* p;
 };
  
 struct s_Component {
@@ -19,7 +17,7 @@ struct s_Component {
   void (*initialize) (struct s_Component* self);
 };
 
-union u_Message {
+struct u_Message {
   union u_Datum d;
 };
 
