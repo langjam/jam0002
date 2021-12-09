@@ -1,7 +1,12 @@
 # Theme
 Patterns
 # Goals of This Project
-Draw diagrams of some common concurrency patterns.  Transpile the diagrams to running C code.
+Draw diagrams of some common concurrency patterns.  
+
+Transpile the diagrams to running C code.
+
+Write a multitasking kernel in C, for event-driven components.
+
 # How to Run This Project
 On Mac/Linux:
 
@@ -16,6 +21,7 @@ On Mac/Linux:
 6. POC .cmm code
 7. README.md, doc/\*.md
 8. DaisyChain.drawio - single diagram to be compiled (from diagrams above)
+9. os.cmm - multitasking kernel (alpha, POC) for event-driven C components
 # Status
 - Plan written (doc/plan.md)
 - Concurrency Pattern Diagrams drawn in draw.io (See below: Diagrams - Discussion) and exported as .SVG
@@ -23,7 +29,7 @@ On Mac/Linux:
 -  Code for very, very simple example written as 4 source files: 
 	-  producer.cmm
 	-  consumer.cmm
-	-  os.cmm (Alpha, suspect, not compiled yet)
+	-  os.cmm (Alpha, suspect, not finished compiling yet)
 	-  main.cmm (Alpha, suspect, not compiled yet)
 	-  types.h
 	-  cos.h (Component O/S)
