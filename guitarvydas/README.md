@@ -32,6 +32,7 @@ On Mac/Linux:
 - D2F tool - "Diagram to Factbase" (built before JAM)
 - F2J tool - "Factbase to JSON" (built during JAM)
 - shell scripts to run the above tools (built during JAM)
+- README.md and doc/\* (written during JAM)
 
 ## Plan
 see doc/Plan.md
