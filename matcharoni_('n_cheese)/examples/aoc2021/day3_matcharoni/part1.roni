@@ -1,0 +1,30 @@
+pat bin { '0' => 0, '1' => 1 }
+pat reading bins@[bin]{1+} ~ '\n' => bins
+pat readings lines@[reading] => lines
+pat expand (x@Int, n@Int) => [x <- 0..n]
+pat sum ns@[Int] => {
+  acc = 0
+  for ns { acc = acc + *ns }
+  acc
+}
+pat bin_le_to_int bits@[Int] => {
+  sum [*bits << (#bits - (%bits + 1)) <- bits]
+}
+pat calc_most_commons sums@[Int] => [*sums >= (#readings / 2) <- sums]
+pat calc_least_commons sums@[Int] => [*sums < (#readings / 2) <- sums]
+
+input = read_to_string("./input")
+readings = readings(input)
+sums = expand(0, #(readings(0)))
+
+for readings {
+  bits = *readings
+  for bits {
+    sums(%bits) = sums(%bits) + *bits
+  }
+}
+
+gamma = calc_most_commons(sums)
+epsilon = calc_least_commons(sums)
+
+dbg(bin_le_to_int(gamma) * bin_le_to_int(epsilon))
