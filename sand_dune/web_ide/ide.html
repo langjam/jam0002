@@ -55,7 +55,8 @@
         <div class="column prose">
             <div id="output"></div>
             <div id="working" style="display: none">working...</div>
-            <i> While cursor is in the editor: Use Ctrl-E to execute. Use Ctrl-, to open settings. Use Ctrl-D to
+            <i> While cursor is in the editor: Use Ctrl-E to execute. Use Ctrl-, to open settings.
+                Use Ctrl-D to
                 multi-select.</i>
             <hr>
             <p><b>Sand Dune</b> is a language with a visual pattern-matching system (inspired by
@@ -63,16 +64,22 @@
                     href="https://www.puzzlescript.net/Documentation/rules101.html">PuzzleScript</a>).
             </p>
 
-            <p>I didn't have much time, so it's pretty basic. Mainly, it can express 1D cellular
-                automata, though with arbitrarily-large neighborhoods and a nice notation.
-                It wouldn't be hard to add a more powerful model (like PuzzleScript's powerful
-                bag-of-atoms-with-directions model) in place of the simple cell-or-no-cell booleans.
+            <p>I didn't have much time (I spent about six hours on coding), so it's pretty basic.
+                Mainly, it can express 1D cellular automata, though with arbitrarily-large
+                neighborhoods and a nice notation. So in addition to using spacial pattern-matching,
+                its primary purpose is to make pretty patterns!
+            </p>
+
+            <p>The LHS of each rule is a pattern (underscore means "don't care"),
+                and the RHS of each rule is an action (underscore means "don't do anything").
+                Rules are applied in sequence, with later rules taking precedence over earlier
+                rules, but (unlike in PuzzleScript!) the rules always look at the initial state
+                (i.e., they can't see each others' effects).
             </p>
 
             <p>To the left is the famously Turing-complete Rule 110, with a pattern with a
                 right-moving glider. Press Ctrl-E to run it, but note that the client-side
-                evaluation is
-                <em>slooow</em>.
+                evaluation is <em>slooow</em>.
             </p>
 
             <p>Sand Dune is implemented in <a
