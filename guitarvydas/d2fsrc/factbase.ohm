@@ -1,0 +1,27 @@
+diagram {
+  Diagrams = Diagram+
+  Diagram = "<diagram" Attribute+ ">" DiagramContent "</diagram>"
+   DiagramContent = "<mxGraphModel" Attribute+ ">" RootContent "</mxGraphModel>"
+    RootContent = "<root>" Cell+ "</root>"
+     Cell = "<mxCell" Attribute+ ">" CellContent+ "</mxCell>" -- withContent
+            | "<mxCell" Attribute+ "/>"                       -- withoutContent
+      CellContent =   "<mxGeometry" Attribute+ ">" GraphicDetails+ "</mxGeometry>" -- withContent
+                    | "<mxGeometry" Attribute+ "/>"                                -- withoutContent
+        Attribute =   "id" "=" string        -- id
+	            | "parent" "=" string    -- parent
+	            | "source" "=" string    -- source
+	            | "target" "=" string    -- target
+                    | name "=" attributeValue  -- other
+        GraphicDetails = ~"</mxGeometry>" any
+
+  name = firstChar restChar*
+  firstChar = letter
+  restChar = "_" | alnum  
+  string= quote notDQ* quote
+  notDQ = ~quote any
+  attributeValue = number | string
+  number =   quote numeric quote -- qouted
+           |       numeric       -- raw 
+  quote = "\""
+  numeric = digit+ ("." digit+)?
+}

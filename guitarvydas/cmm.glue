@@ -1,0 +1,80 @@
+main [@findMacros] = [[${findMacros}]]
+
+findMacro_macro [wsnl x] = [[${wsnl}${x}]]
+findMacro_default [x] = [[${x}]]
+
+Macro_datumMessage [k Param] = [[${support.getParam1 ()}->datum.message]]
+Macro_datumpComponent [k Param] = [[${support.getParam1 ()}->datum.pcomponent]]
+Macro_datumpConnection [k Param] = [[${support.getParam1 ()}->datum.pconnection]]
+Macro_newListCellComponent [k Param] = [[listNewCellComponent (${support.getParam1 ()})]]
+Macro_append [k TwoParams] = [[append (${support.getParam1 ()}, ${support.getParam2 ()})]]
+
+Macro_newComponent [k TwoParams] 
+  = [[ componentNew (${support.getParam1 ()}, ${support.getParam2 ()}) ]]
+Macro_hasInputs [k Param] = [[${support.getParam1 ()}->inputQueue]]
+Macro_hasOutputs [k Param] = [[${support.getParam1 ()}->outputQueue]]
+Macro_isReady [k Param] = [[${support.getParam1 ()}->inputQueue]]
+Macro_callReaction [k TwoParams] = [[componentCallReaction (${support.getParam1 ()}, ${support.getParam2 ()})]]
+Macro_enqueueMessage [k TwoParams] = [[componentAppendInput (${support.getParam1 ()}, ${support.getParam2 ()})]]
+Macro_enqueueOutput [k TwoParams] = [[componentAppendOutput (${support.getParam1 ()}, ${support.getParam2 ()})]]
+Macro_popInput [k Param] = [[componentPopInput (${support.getParam1 ()})]]
+
+Macro_beginWalkingComponentList [k Param] = [[${support.getParam1 ()} = runQueue]]
+Macro_endWalkingComponentList [k Params] = [[]]
+Macro_walkingMoreComponents [k Param] = [[(${support.getParam1 ()} != NULL)]]
+Macro_nextComponentInList [k Param] = [[${support.getParam1 ()}->datum.pcomponent]]
+Macro_advance [k Param] = [[${support.getParam1 ()} = (${support.getParam1 ()} != NULL) ? ${support.getParam1 ()}->next : (List*)NULL]]
+
+Macro_beginWalkingOutputsAsSent [k TwoParams] = [[${support.getParam1 ()} = componentGetOutputsAsSent (${support.getParam2 ()})]]
+Macro_endWalkingOutputsAsSent [k TwoParams] = [[]]
+Macro_walkMoreOutputs [k Param] = [[(${support.getParam1 ()} != NULL)]]
+Macro_nextOutput [k Param] = [[${support.getParam1 ()}->datum.message]]
+Macro_advanceOutputs [k Param] = [[${support.getParam1 ()} = (${support.getParam1 ()} != NULL) ? outputListAdvanceAndGC (${support.getParam1 ()}) : (List*)NULL]]
+
+Macro_connectedTo [k Param] = [[connectionsConnectedTo (${support.getParam1 ()})]]
+Macro_connect [k TwoParams] = [[connectionsConnect (${support.getParam1 ()}, ${support.getParam2 ()})]]
+
+
+Macro_withLock [k Block] = [[\{${Block}\}\n]]
+Macro_sendc [k TwoParams] = [[kernelSendc (${support.getParam1 ()}, ${support.getParam2 ()})]]
+Macro_panic [k Param] = [[kernelPanic (${support.getParam1 ()})]]
+Macro_start [k] = [[kernelStart ()]]
+Macro_quit [k] = [[kernelStop ()]]
+
+Macro_initializeCounter [m] = [[counter = 0]]
+Macro_decCounter [m] = [[counter -= 1]]
+Macro_counterIsGreaterThanZero [m] = [[counter > 0]]
+
+Param [klp Expr krp] = [[${support.pushParam1 (Expr)}]]
+TwoParams [klp Expr1 kcomma Expr2 krp] = [[${support.pushParam1 (Expr1)}${support.pushParam2 (Expr2)}]]
+
+
+Expr_funccall [expr klp @Arglist krp] = [[${expr}(${Arglist})]]
+
+Expr_cast [klp expr1 krp expr2] = [[${klp}${expr1}${krp}${expr2}]]
+Expr_nested [klp expr krp] = [[${klp}${expr}${krp}]]
+Expr_flat [c] = [[${c}]]
+Expr_atom [a] = [[${a}]]
+
+Arglist [@ArgComma] = [[${ArgComma}]]
+ArgComma [expr kcomma] = [[${expr},]]
+
+block_nested [klbrace @Block krbrace] = [[${Block}]]
+block_raw [notBrace] = [[${notBrace}]]
+
+notBrace [c] = [[${c}]]
+
+space [c] = [[${c}]]
+
+comment [kss @notNL nl] = [[${kss}${notNL}${nl}]]
+
+nl [c] = [[${c}]]
+notNL [c] = [[${c}]]
+
+dollar [c] = [[${c}]]
+
+ws [c] = [[${c}]]
+
+atom [@cs] = [[${cs}]]
+atomchar [c] = [[${c}]]
+

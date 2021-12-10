@@ -1,0 +1,64 @@
+  Diagrams [@diagrams] = [[${diagrams}]]
+  Diagram [kopen @as kgt diagramcontent kclose] = 
+          {{ support.pushGensymContext ("diagram_"); }}
+          [[
+diagram_fact(diagram, ${support.getID ()}, "").
+${support.generateAttributes ()}
+${diagramcontent}
+${support.popContext ()}
+           ]]
+
+   DiagramContent[kopen @as kgt rootcontent kclose] =
+           {{ support.pushGensymContext ("mxGraphModel_"); }}
+	   [[
+diagram_fact(mxGraphModel, ${support.getID ()}, ${support.getID ()}).
+${rootcontent}
+${support.popContext ()}
+           ]]
+
+    RootContent [kopen @cells kclose] =
+           {{ support.pushGensymContext ("root_"); }}
+	   [[
+diagram_fact(root, ${support.getID ()}, ${support.getID ()}).
+${cells}
+${support.popContext ()}
+           ]]
+
+     Cell_withContent [kopen @as kgt @cellcontent kclose] =
+              {{ support.pushGensymContext ("cell_"); }}
+              [[
+diagram_fact(cell, ${support.getID ()}, "").
+${support.generateAttributes ()}
+${cellcontent}
+${support.generateSynonym ()}
+${support.popContext ()}
+               ]]
+
+     Cell_withoutContent [kopen @as kclose] =
+              {{ support.pushGensymContext ("cell_"); }}
+              [[
+diagram_fact(cell, ${support.getID ()}, "").
+${support.generateAttributes ()}
+${support.generateSynonym ()}
+${support.popContext ()}
+               ]]
+
+      CellContent_withContent [kopen @as kgt @graphicDetails kclose] = [[]]
+      CellContent_withoutContent [kopen @as kclose] = [[]]
+        Attribute_id    [kid keq s] = [[${support.setID (s)}]]
+        Attribute_parent    [kid keq s] = [[${support.appendIDAttribute ('parent', s)}]]
+        Attribute_source    [kid keq s] = [[${support.appendIDAttribute ('source', s)}]]
+        Attribute_target    [kid keq s] = [[${support.appendIDAttribute ('target', s)}]]
+        Attribute_other [ id keq a] = [[${support.appendAttribute (id, a)}]]
+        GraphicDetails [c] = [[${c}]]
+
+  name [c @cs] = [[${c}${cs}]]
+  firstChar [c] = [[${c}]]
+  restChar [c] = [[${c}]]
+  string [q1 @cs q2] = [[${q1}${cs}${q2}]]
+  notDQ [c] = [[${c}]]
+  attributeValue [ns] = [[${ns}]]
+  number_qouted [q1 n q2] = [[${n}]]
+  number_raw [n] = [[${n}]]
+  quote [c] = [[${c}]]
+  numeric [@whole kdot @fractional] = [[${whole}${kdot}${fractional}]]

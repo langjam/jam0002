@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "mpos.h"
+#include "kernel.h"
+
+void DispatchTransferOutputs ();
+List* runQueue;
+int systemRunning = 1;
+
+void kernelStart () { systemRunning = 1; }
+void kernelStop () { systemRunning = 0; }
+
+void Dispatch ();
+void DistributeOutputsToReceivers ();
+void DispatchMaybe (Component*);
+void DistributeOutputsFrom (Component*);
+void DeliverMessageToReceiver (Component*, Message);
+void RunComponentOnce (Component*);
+void DistributeMaybe (Component*);
+void DistributeOutputsFrom (Component*);
+
+void Dispatcher () {
+  while (systemRunning) {
+    Dispatch ();
+    DistributeOutputsToReceivers ();
+  }
+}
+
+void Dispatch () {
+  List* componentList;
+  $beginWalkingComponentList (componentList);
+  while ($walkMoreComponents (componentList)) {
+      Component* c = $nextComponentInList (componentList);
+      DispatchMaybe (c);
+      $advance (componentList);
+    }
+    $endWalkingComponentList (componentList);
+}
+
+void DispatchMaybe (Component* c) {
+  if ($isReady (c)) {
+    RunComponentOnce (c);
+  }
+}
+
+void RunComponentOnce (Component* c) {
+  List* cell = $popInput (c);
+  Message msg = $datumMessage (cell);
+  $callReaction (c, msg);
+}
+
+void DistributeOutputsToReceivers () {
+  List* componentList;
+  $beginWalkingComponentList (componentList);
+  while ($walkMoreComponents (componentList)) {
+      Component* c = $nextComponentInList (componentList);
+      DistributeMaybe (c);
+      $advance (componentList);
+    }
+    $endWalkingComponentList (componentList);
+}
+
+void DistributeMaybe (Component* c) {
+  if ($hasOutputs (c)) {
+    DistributeOutputsFrom (c);
+  }
+}
+			    
+void DistributeOutputsFrom (Component* c) {
+  List* outputs;
+  $beginWalkingOutputsAsSent (outputs, c);
+  while ($walkMoreOutputs (outputs)) {
+    Message m = $nextOutput (outputs);
+    DeliverMessageToReceiver (c, m);
+    $advanceOutputsAndGC (outputs);
+  }
+  $endWalkingOutputsAsSent (outputs, c);
+}
+
+void DeliverMessageToReceiver (Component* c, Message m) {
+  Component* receiver = $connectedTo (c);
+  $enqueueMessage (receiver, m);
+}
+
+
+void panic (char* panicMessage) {
+  printf ("%s\n", panicMessage);
+  exit (1);
+}
+
+void kernelSendc (Component* self, char c) {
+  Message m;
+  m.c = c;
+  $enqueueOutput (self, m);
+}
+ 
+
