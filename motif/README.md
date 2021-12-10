@@ -18,13 +18,13 @@ How Motif Works
 ===============
 
 Patterns
----------------
+--------
 Motif is designed to be symbol-agnostic as much as possible. Instead relying on symbols and keywords,
 all instructions in motif is composed of character or pixel pattern. There are 6 patterns and 1 special patterns in motif:
 
 0. Solid (Special Pattern)
 
-   Solid pattern is composed of cells of one symbol (character or pixel color). Solid pattern is not used for instruction, but for section marker. Examples:
+   Solid pattern is composed of cells of one symbol (a UTF-8 character or a pixel's 32-bit RGBA color). Solid pattern is not used for instruction, but for section marker. Examples:
 
    `a` is a solid pattern of color "a"
 
@@ -35,7 +35,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
 1. Rainbow
 
-   Rainbow pattern is composed of cells of a symbol (character or pixel color) followed by cells of other symbols without any repetition, and the length of cell streak is the same for every symbol.
+   Rainbow pattern is composed of cells of a symbol followed by cells of other symbols without any repetition, and the length of cell streak is the same for every symbol.
    Examples:
 
    `ab` is a rainbow pattern with colors ["a", "b"], each has cell width of 1
@@ -95,7 +95,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
    ![image](./docs/wave_irregular.png) is a wave pattern with colors [#FFFFFF, #999999, #000000] and cell widths of [1, 4, 2, 4, 1]
 
 Parsing Rule
------------------
+------------
 
 1. Program is parsed line by line. For text programs, a line is ended with CRLF or LF. For image programs, a line is simply a row in the image. The parser will try to match the line to one of the seven patterns.
 2. Pattern matching is always done in this order: solid, rainbow, irregular rainbow, checkerboard, irregular checkerboard, wave, irregular wave.
@@ -165,7 +165,7 @@ Parsing Rule
 
 
 
-5. First matched pattern will determine the length of all subsequent patterns. Any line that doesn't have the right length will be skipped as a comment, even if it may match a pattern. This rule is only relevant to text programs, because for image a line always have consistent length. Example:
+5. First matched pattern will determine the length of all subsequent patterns. Any line that doesn't have the right length will be skipped as a comment, even if it may match a pattern. This rule is only relevant to text programs, because lines always have consistent length in image programs. Example:
    ```
    aabbcc
    abc
@@ -181,3 +181,48 @@ Parsing Rule
    aabbcc
    aaaaaa
    ```
+
+Program structure
+-----------------
+
+A motif program is composed of palettes and sections. A palette defines what symbols (UTF-8 characters or 32-bit RGBA color) that can be used in the program and maps them to color IDs. Palettes are declared by using any non-solid patterns matched before the first section. Every palette must has different symbols
+
+Sections serve like functions like in other programming languages. They are declared with a solid pattern, and followed by the pattern-encoded instructions that will be executed when the section is called. The first section after palette declarations is the main section, meaning it will be called first when the program runs.
+
+Consider this text program:
+```
+abcdef
+ghighi
+
+iiiiii
+aaabbb
+ababab
+efefef
+hhhiii
+
+eeeeee
+dddeee
+fghgfg
+```
+
+The program has 2 palettes definition: `abcdef` and `ghighi`. Together, these palettes are interpreted as the following symbol-color id mapping:
+```
+a = 0, b = 1, c = 2, d = 3, e = 4, f = 5, g = 6, h = 7, i = 8
+```
+
+The program also has 2 sections:
+1. Section 8 (or, colored "i"). It contains 2 pattern-encoded instructions: rainbow->checker (`aaabbb`->`ababab`) and checker->rainbow (`efefef`->`hhhiii`).
+   This is the main section.
+
+2. Section 4 (or, colored "e"). It contains 1 pattern-encoded instruction: rainbow->wave (`dddeee`->`fghgfg`).
+
+Consider this image program:
+
+![image](./docs/image_program_structure.png)
+
+The program has 1 palette definition: ![image](./docs/image_palette_definition.png). It will be interpreted as the following mapping:
+```
+red (#FF0000) = 0, green (#00FF00) = 1, blue (#0000FF) = 2, yellow (#FFFF00) = 3
+```
+
+The program also has only 1 section, Section 0 (or, colored red). It contains 1 pattern encoded instruction rainbow->checker ( ![image](./docs/image_struct_instr1.png) -> ![image](./docs/image_struct_instr2.png) )
