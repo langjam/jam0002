@@ -62,14 +62,15 @@ Compiling diagrams to running code as easily as compiling text to running progra
 # Status
 - Plan written (https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/doc/Plan.md
 - Concurrency Pattern Diagrams drawn in draw.io (See below: Diagrams - Discussion) and exported as .SVG
-- C-- transpiler unfinished, does some transpiling (.cmm files transpiled to -> .c files)
+- C-- transpiler does some transpiling (.cmm files transpiled to -> .c files)
 -  Code for very, very simple example written as 4 source files: 
 	-  producer.cmm
 	-  consumer.cmm
 	-  os.cmm (Alpha, suspect, not finished compiling yet)
 	-  main.cmm (Alpha, suspect, not compiled yet)
 	-  types.h
-	-  cos.h (Component O/S)
+	-  mpos.h (Component message-passing O/S)
+- util.c - support routines for mpos - written, compiled, not tested
 - The above code is in Alpha (POC) state.  The code is not fully tested (compile errors in os.c) due to time limitations, but should give the gist of what is intended / possible.
 - PFR tool - "Parsing Find Replace" (built before JAM, ported during JAM)
 - D2F tool - "Diagram to Factbase" (built before JAM, ported during JAM)
