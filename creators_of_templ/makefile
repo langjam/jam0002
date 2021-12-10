@@ -1,4 +1,10 @@
-FILES=lang/*.c map/*.c raylib/lib/libraylib.a
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Linux)
+	FILES=lang/*.c map/*.c raylib/lib/libraylib.a
+else
+	FILES=lang/*.c map/*.c -lraylib
+endif
 FILES_WIN=lang/*.c map/*.c raylib/lib/libraylib_windows.a
 FILES_MAC=lang/*.c map/*.c raylib/lib/libraylib_macos.a
 TESTS=test/*.c
@@ -6,12 +12,10 @@ FLAGS=-I. -Iraylib/include/
 LINUX_FLAGS=-ldl -lpthread -lm
 DEBUG=-Wextra -Wall -Werror -pedantic -g -fsanitize=address -Wno-unused-parameter
 
-
 ifeq ($(OS),Windows_NT)
 	MAKECMD=$(CC) -mwindows -static main.c $(FLAGS) $(FILES_WIN) -O2 -lgdi32 -lwinmm -o release/templ.exe
 	RUNCMD=bin/templ.exe input/playground.css
 else	
-	UNAME_S := $(shell uname -s)
 	RUNCMD=bin/templ input/playground.css
 	ifeq ($(UNAME_S),Darwin)
 		MAKECMD=$(CC) main.c $(FLAGS) $(LINUX_FLAGS) $(FILES_MAC) -o bin/templ
