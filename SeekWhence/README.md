@@ -28,12 +28,12 @@ You can find several examples of SeekWhence programs in the `examples` folder. T
 
 ## Language Documentation
 
-- [Basic Syntax](./basic-syntax.md)
-- [Sequences and Slices](./sequences.md)
-- [Namespaces and Imports](./namespaces.md)
+- [Basic Syntax](./docs/basic-syntax.md)
+- [Sequences and Slices](./docs/sequences.md)
+- [Namespaces and Imports](./docs/namespaces.md)
 - Standard Library
-  - [builtin](./stdlib/builtin.md) - Core functions and constants
-  - [math](./stdlib/math.md) - Additional math functions and constants
-  - [strutils](./stdlib/strutils.md) - String manipulation utilities
-  - [time](./stdlib/time.md) - Time processing utilities
+  - [builtin](./docs/stdlib/builtin.md) - Core functions and constants
+  - [math](./docs/stdlib/math.md) - Additional math functions and constants
+  - [strutils](./docs/stdlib/strutils.md) - String manipulation utilities
+  - [time](./docs/stdlib/time.md) - Time processing utilities
 
