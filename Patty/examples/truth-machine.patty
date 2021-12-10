@@ -1,0 +1,3 @@
+(if (= (read int) 0)
+	(print 0)
+	(loop (print 1)))

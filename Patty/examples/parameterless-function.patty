@@ -1,0 +1,3 @@
+(do
+	(def hello (fun () (print "hello")))
+	(hello))
