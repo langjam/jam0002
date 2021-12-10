@@ -185,25 +185,35 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 			return err_badprop;
 		}
 
-		RunnerProp red, green, blue;
+		RunnerProp red, green, blue, opacity;
 
 		checkout(make_value(r, node_child(call, 0), &red, type_number));
 		checkout(make_value(r, node_child(call, 1), &green, type_number));
 		checkout(make_value(r, node_child(call, 2), &blue, type_number));
 
-		if (red.data.number > 255 || green.data.number > 255 || blue.data.number > 255) {
+		if (node_child(call, 3) != NULL) {
+
+			checkout(make_value(r, node_child(call, 3), &opacity, type_number));
+		}
+
+		else {
+
+			opacity.data.number = 255;
+		}
+
+		if (red.data.number > 255 || green.data.number > 255 || blue.data.number > 255 || opacity.data.number > 255) {
 
 			r->err = err_f(err_badprop, call->token.loc, "RGB value too large");
 			return err_badprop;
 		}
 
-		if (red.data.number < 0 || green.data.number < 0 || blue.data.number < 0) {
+		if (red.data.number < 0 || green.data.number < 0 || blue.data.number < 0 || opacity.data.number < 0) {
 
 			r->err = err_f(err_badprop, call->token.loc, "RGB value cannot be negative");
 			return err_badprop;
 		}
 
-		dest->data.color = ((uint32_t)red.data.number << 16) | ((uint32_t)green.data.number << 8) | (uint32_t)blue.data.number;
+		dest->data.color = ((uint32_t)red.data.number << 24) | ((uint32_t)green.data.number << 16) | ((uint32_t)blue.data.number << 8) | (uint32_t)opacity.data.number;
 	}
 
 	else {

@@ -5,16 +5,23 @@
 
 bool should_close = false;
 
-Image screen_buffer;
-Texture2D screen_render;
+Color int_to_color(uint32_t color) {
+
+	Color result = {
+
+		.r = (color >> 24) & 0xFF,
+		.g = (color >> 16) & 0xFF,
+		.b = (color >> 8) & 0xFF,
+		.a = color & 0xFF
+	};
+
+	return result;
+}
 
 void draw_init(int canvas_size) {
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	InitWindow(canvas_size, canvas_size, "TEMPL");
 	SetTargetFPS(60);
-	
-	screen_buffer = GenImageColor(canvas_size, canvas_size, WHITE);
-	screen_render = LoadTextureFromImage(screen_buffer);
 }
 
 bool draw_running() {
@@ -36,17 +43,10 @@ void draw_update(Runner *runner) {
 	
 	draw_runner_node(runner->root, cam);
 	
-	
-	// UpdateTexture(screen_render, screen_buffer.data);
-	// DrawTexture(screen_render, 0, 0, WHITE);
-	
 	EndDrawing();
 }
 
 void draw_deinit() {
-	// the render uses a pointer to buffer's data, do not invert order
-	UnloadTexture(screen_render);
-	UnloadImage(screen_buffer);
 	
 	CloseWindow();
 }
@@ -61,12 +61,7 @@ void draw_circle(RunnerProps *props) {
 	if ((p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
 		
-	Color raycolor = {
-		.r = (color >> 16) & 0xFF,
-		.g = (color >> 8) & 0xFF,
-		.b = (color >> 0) & 0xFF,
-		.a = 255
-	};
+	Color raycolor = int_to_color(color);
 
 	DrawCircle(0, 0, r, raycolor);
 }
@@ -81,12 +76,7 @@ void draw_triangle(RunnerProps *props) {
 	if ((p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
 		
-	Color raycolor = {
-		.r = (color >> 16) & 0xFF,
-		.g = (color >> 8) & 0xFF,
-		.b = (color >> 0) & 0xFF,
-		.a = 255
-	};
+	Color raycolor = int_to_color(color);
 	
 	const double COS30 = 0.86602540378; 
 	const double SIN30 = 0.5; 
@@ -110,12 +100,7 @@ void draw_rect(RunnerProps *props) {
 		dm = p->data.pos;
 	if ((p = map_get(props, "color")) && p->type == type_color)
 		color = p->data.color;
-	Color raycolor = {
-		.r = (color >> 16) & 0xFF,
-		.g = (color >> 8) & 0xFF,
-		.b = (color >> 0) & 0xFF,
-		.a = 255
-	};
+	Color raycolor = int_to_color(color);
 	DrawRectangle(0, 0, dm.x, dm.y, raycolor);
 }
 
