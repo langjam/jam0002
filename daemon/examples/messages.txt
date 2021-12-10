@@ -1,0 +1,7 @@
+check_inventory_first It would be unwise to not even know what you possess first.
+weapon_in_crates There is something in the crates near the dungeon you could use to defeat the monster.
+useless_poison You bought a poison. But I believe it would be even more useful if you could apply it to something.
+apply_poison Apparently the poison you bought is very effective against the monster. You apply the poison to the sword. 
+more_friends_to_meet You try to defeat the monster, but it is too damn strong. It would be nice to find some friends to defeat the monster together. Maybe there are some in the village nearby.
+nothing_to_do_here You already found good friends. There is nothing else to do here.
+weapon_not_enough Whatever you have is not enough to defeat the magic monster. Maybe people in the market have something for you.

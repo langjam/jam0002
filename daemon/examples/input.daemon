@@ -1,0 +1,21 @@
+on check_inventory {
+    anticipate all => check_inventory_first
+}
+
+on visit_village {
+    after visit_village => nothing_to_do_here
+}
+
+on visit_market {
+    before search_crates => useless_poison
+    anticipate fight_monster => weapon_not_enough
+}
+
+on search_crates {
+    anticipate fight_monster => weapon_in_crates
+}
+
+on fight_monster {
+    after visit_market => apply_poison
+    before visit_village => more_friends_to_meet
+}
