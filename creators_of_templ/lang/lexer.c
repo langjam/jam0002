@@ -201,7 +201,7 @@ Token lex_next(Lexer *l) {
 }
 
 const char *type_lookup[] = {
-	"invalid", "lleft paren", "right paren", "left brace", "right brace", "dot", "colon", "semicolon",
+	"invalid", "left paren", "right paren", "left brace", "right brace", "dot", "colon", "semicolon",
 	"comma", "at", "variable", "keyword", "number", "string", "identifier",
 	"operator", "eof", "hex literal", "separator"
 };
