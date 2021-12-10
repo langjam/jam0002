@@ -289,34 +289,109 @@ Motif VM is a stack machine with 30 instruction, mapped to combination of 2 diff
     </tbody>
 <table>
 
+### Notation
+Instructions is described with following notation:
+- [a b ...] -> [c d ...] = Stack manipulation from before execution to after. For example:
 
-### Instruction <a name="instrpush">push</a>
-### Instruction <a name="instradd">add</a>
-### Instruction <a name="instrmod">mod</a>
-### Instruction <a name="instrload">load</a>
-### Instruction <a name="instrdup">dup</a>
-### Instruction <a name="instrpop">pop</a>
-### Instruction <a name="instrmul">mul</a>
-### Instruction <a name="instrequal">equal</a>
-### Instruction <a name="instrgreater">greater</a>
-### Instruction <a name="instrfwd_if">fwd_if</a>
-### Instruction <a name="instrsub">sub</a>
-### Instruction <a name="instrdiv">div</a>
-### Instruction <a name="instrand">and</a>
-### Instruction <a name="instrfwd">fwd</a>
-### Instruction <a name="instrstartblock">startblock</a>
-### Instruction <a name="instrpow">pow</a>
-### Instruction <a name="instrnot">not</a>
-### Instruction <a name="instror">or</a>
-### Instruction <a name="instrcall">call</a>
-### Instruction <a name="instrprintint">printint</a>
-### Instruction <a name="instrstore">store</a>
-### Instruction <a name="instrless">less</a>
-### Instruction <a name="instrback">back</a>
-### Instruction <a name="instrreturn">return</a>
-### Instruction <a name="instrprintchar">printchar</a>
-### Instruction <a name="instrswap">swap</a>
-### Instruction <a name="instrback_if">back_if</a>
-### Instruction <a name="instrendblock">endblock</a>
-### Instruction <a name="instrhalt">halt</a>
-### Instruction <a name="instrprintsym">printsym</a>
+  [a b] -> [ ] = the instruction will pop b and then pop a from stack
+
+  [ ] -> [a b] = the instruction will push a and then push b to stack (b at top as the result)
+
+- `sumcolor(P)` = the sum of set of all color id used by P.
+
+  For example, for pattern P = `abcabc` and palette mapping `a=0, b=1, c=2`, then `sumcolor(P)` = 0 + 1 + 2 = 3.
+
+- `first_pattern` and `second_pattern` = the first and second pattern that encoded the instruction.
+
+  For example, for a `push` instruction, `first_pattern` is a rainbow pattern and `second_pattern` is a checker pattern
+
+- `diff(first_pattern, second_pattern)` = `sumcolor(second_pattern) - sumcolor(first_pattern)`
+
+  The difference of sumcolor of second pattern and first pattern.
+
+  For example, for pattern P1 = `abcabc`, P2 = `aabbdd` and palette mapping `a=0, b=1, c=2, d=3`,
+  then `diff(P1, P2)` = 4 - 3 = 1
+
+
+### 1. <a name="instrpush">push</a> x, [ ] -> [ x ]
+Pattern: rainbow -> checker
+
+Push integer `x` where `x = diff(first_pattern, second_pattern)` to the stack.
+
+### 2. <a name="instrpop">pop</a> [ x ] -> [ ]
+Pattern: checker -> rainbow
+
+Pop the top value of the stack.
+
+### 3. <a name="instrdup">dup</a> [ x ] -> [ x x ]
+Pattern: rainbow -> irregular wave
+
+Duplicate the top value of the stack
+
+### 4. <a name="instrswap">swap</a> [ x y ] -> [ y x ]
+Pattern: irregular wave -> rainbow
+
+Swap the top two value of the stack
+
+### 5. <a name="instrload">load</a> [ addr ] -> [ x ]
+Pattern: rainbow -> irregular checker
+
+Load value from memory at address `addr`, then push it to the stack.
+
+The value of `addr` must be between 0-655356, otherwise it will throw a runtime error.
+
+### 6. <a name="instrstore">store</a> [ x addr ] -> [ ]
+Pattern: irregular checker -> rainbow
+
+Store value `x` to memory at address `addr`
+
+The value of `addr` must be between 0-655356, otherwise it will throw a runtime error.
+
+### 7. <a name="instradd">add</a> [ x y ] -> [ z ]
+Pattern: rainbow -> wave
+
+Calculate `z = x + y` and push `z` to the stack
+
+### 8. <a name="instrsub">sub</a>
+Pattern: wave -> rainbow
+
+Calculate `z = x - y` and push `z` to the stack
+
+### 9. <a name="instrmul">mul</a>
+Pattern: checker -> wave
+
+Calculate `z = x * y` and push `z` to the stack
+
+### 10. <a name="instrdiv">div</a>
+Pattern: wave -> checker
+
+Calculate `z = x / y` and push `z` to the stack
+
+### 11. <a name="instrmod">mod</a>
+Pattern: rainbow -> irregular rainbow
+
+Calculate `z = x mod y` and push `z` to the stack
+
+### 12. <a name="instrpow">pow</a>
+Pattern: irregular rainbow -> rainbow
+
+Calculate `z = x pow y` and push `z` to the stack
+
+### 13. <a name="instrgreater">greater</a>
+### 14. <a name="instrless">less</a>
+### 15. <a name="instrequal">equal</a>
+### 16. <a name="instrnot">not</a>
+### 17. <a name="instrand">and</a>
+### 18. <a name="instror">or</a>
+### 19. <a name="instrstartblock">startblock</a>
+### 20. <a name="instrendblock">endblock</a>
+### 21. <a name="instrfwd">fwd</a>
+### 22. <a name="instrback">back</a>
+### 23. <a name="instrfwd_if">fwd_if</a>
+### 24. <a name="instrback_if">back_if</a>
+### 25. <a name="instrcall">call</a>
+### 26. <a name="instrreturn">return</a>
+### 27. <a name="instrhalt">halt</a>
+### 28. <a name="instrprintint">printint</a>
+### 29. <a name="instrprintchar">printchar</a>
+### 30. <a name="instrprintsym">printsym</a>
