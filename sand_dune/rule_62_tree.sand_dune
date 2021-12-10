@@ -3,4 +3,4 @@ Rules
   [ cell | cell ] -> [ _ | No cell ]
   [ No cell | No cell | No cell ] -> [ _ | No cell | _ ]
 Start
-  [               #               ]
+  [               +               ]

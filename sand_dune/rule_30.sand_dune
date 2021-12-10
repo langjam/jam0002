@@ -4,4 +4,4 @@ Rules
   [ cell | No cell | No cell] -> [ _ | cell | _ ]
   [ No cell | No cell | cell] -> [ _ | cell | _ ]
 Start
-  [               #               ]
+  [               +               ]

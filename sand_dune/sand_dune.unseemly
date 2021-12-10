@@ -100,12 +100,15 @@ extend_syntax
                 +[True]+ => ,[then_e],
                 +[False]+ => ,[else_e], } ]' }. ;
 in
+
+
+# ----- SAND DUNE -----
 extend_syntax
     # Reserve some words:
     DefaultAtom ::= common ( ,{DefaultWord}, reserving 'Atoms' 'Rules' 'Start' 'No' ) ;
 
     # Reserve some symbols:
-    DefaultToken ::= /\s*(\[|\]|\||->|capture_language|_)/ ;
+    DefaultToken ::= /\s*(\[|\]|\||->|capture_language|_|\+)/ ;
 
     Expr ::= alt[
         # `ActuallyBool` is a hack; `*` doesn't work unless there's a type variable in it.
@@ -132,10 +135,10 @@ extend_syntax
 '[Expr|
     let string_pattern = ,[(prefab (string_to_sequence (ident_to_string start_pattern)))], ; in
         # Inconveniently, `cell` is also Unseemly's word for a mutable container.
-    let pattern = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
+    let pattern = (map string_pattern .[ char : Int . (new_cell (equal? char 43)) ].) ;
         # Buffer all writes so that subsequent rules don't "see" each other's effects.
         # (This is different than how PuzzleScript does it, but it allows cellular-automaton-like behavior)
-        pattern_buffer = (map string_pattern .[ char : Int . (new_cell (equal? char 35)) ].) ;
+        pattern_buffer = (map string_pattern .[ char : Int . (new_cell (equal? char 43)) ].) ;
         output = (new_cell "
 ") ; in
     -{
@@ -143,7 +146,7 @@ extend_syntax
             # output:
             for entry in pattern
                 (assign output (concat (value output)
-                    (if (value entry) "#" " "))) ;
+                    (if (value entry) "█" "░"))) ;
             # append a newline:
             (assign output (concat (value output) "
 ")) ;

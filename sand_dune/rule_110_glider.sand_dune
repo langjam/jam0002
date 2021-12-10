@@ -4,4 +4,4 @@ Rules
   [ cell | cell | cell ] -> [ _ | No cell | _ ]   # Or they and both neighbors are on.
 Start
   # The "default wallpaper", with a glider moving to the right:
-  [   #  ## #####   ### ###   #  ## #####   #  ## #####   #  ## #####]
+  [   +  ++ +++++   +++ +++   +  ++ +++++   +  ++ +++++   +  ++ +++++]
