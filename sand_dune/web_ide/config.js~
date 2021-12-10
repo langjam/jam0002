@@ -1,0 +1,7 @@
+
+// Dynamic Highlighting attempts to respect in-file syntax extensions.
+// It's janky and slow 
+//  (it's implemented by, every few seconds, re-parsing the file (while involves running phase-1+ code),
+//    and finding long lines in the syntax extension to mark where the language changes),
+//  but it makes for a cool demo!
+dynamic_highlighting = true

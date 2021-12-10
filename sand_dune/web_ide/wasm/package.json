@@ -1,0 +1,22 @@
+{
+  "name": "unseemly",
+  "collaborators": [
+    "Paul Stansifer <paul.stansifer@gmail.com>"
+  ],
+  "description": "A typed macro language",
+  "version": "0.0.3",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulstansifer/unseemly/"
+  },
+  "files": [
+    "libunseemly_bg.wasm",
+    "libunseemly.js"
+  ],
+  "browser": "libunseemly.js",
+  "homepage": "https://unseemly.github.io/",
+  "keywords": [
+    "programming-language"
+  ]
+}
