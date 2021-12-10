@@ -5,6 +5,7 @@
 #include "lang/err.h"
 #include "lang/parser.h"
 #include "lang/drawer.h"
+#include "raylib.h"
 #include "lang/runner.h"
 
 char* read_file(FILE *f) {
@@ -18,13 +19,14 @@ char* read_file(FILE *f) {
 }
 
 void help() {
-	printf("templ [ -size <n> ] [ -h ] [ -o <file> ] <file>\n    -size The NxN dimensions of your window or image\n    -h Print this page\n    -o Output file name (please only use .png)\n    Example usage: templ -size 500 -o output.png input.css\n");
+	printf("templ <file> [ -size <n> ] [ -h ] [ -o <file> ] [ -d ]\n    -size The NxN dimensions of your window or image\n    -h Print this page\n    -o Output file name (please only use .png)\n    Example usage: templ -size 500 -o output.png input.css\n    -d Print debug information\n");
 }
 
 int main(int argc, char *argv[]) {
 	int canvas_size = 400;
 	FILE *f = NULL;
 	char *out_file = NULL;
+	bool debugmode = false;
 	for (int i=1; i < argc; ++i) {
 		if (*argv[i] == '-') {
 			if (strcmp(argv[i], "-size") == 0) {
@@ -48,6 +50,8 @@ int main(int argc, char *argv[]) {
 					return 1;
 				}
 				out_file = argv[i];
+			} else if (strcmp(argv[i], "-d") == 0) {
+				debugmode = true;
 			} else if (strcmp(argv[i], "-h") == 0) {
 				help();
 				return 0;
@@ -85,6 +89,8 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	
+
 	char *file = read_file(f);
 	fclose(f);
 
@@ -95,8 +101,14 @@ int main(int argc, char *argv[]) {
 		goto fail;
 	}
 	else {
-        ast_pretty_print(&p.ast);
+		if (debugmode) {
+			ast_pretty_print(&p.ast);
+		}
     }
+	if (!debugmode) {
+		SetTraceLogLevel(LOG_NONE);
+	}
+    
 		
 	// runner_dump(&runner);
 		
