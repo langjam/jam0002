@@ -1,3 +1,0 @@
-      component = $data ((c));
-    Message m = $newMessage (g, h);
-    Message m = $newMessage ((j), (k));

@@ -21,21 +21,22 @@ ${pfr} ${lj2} main.cmm cmm.ohm cmm.glue ${lj2}/support.js >main.c
 
 
 
-echo gcc producer.c
-gcc producer.c
-echo gcc consumer.c
-gcc consumer.c
+# these compile fine, but need to be linked with other files
+# echo gcc producer.c
+# gcc producer.c
+# echo gcc consumer.c
+# gcc consumer.c
 
-echo ATM gcc os.c has compilation errors/warning
+#echo ATM gcc os.c has compilation errors/warning
 # echo gcc os.c
 # gcc os.c
 
-echo ATM gcc main.c has compilation errors/warning
+#echo ATM gcc main.c has compilation errors/warning
 # echo gcc main.c
 # gcc main.c
 
 # echo gcc util.c
-echo ATM gcc util.c has compilation errors/warning
+#echo ATM gcc util.c has compilation errors/warning
 # gcc util.c
 
 
