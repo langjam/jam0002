@@ -2,10 +2,7 @@
 // Draws sierpinski triangle!
 //
 
-strst  srtrst;<<
-
 .sierpinski {
-	/* test */
 	triangle.sierpinski {
 		position: vec2(0, -200*0.5^($depth-1)*2);
 		color: #FFFFFF;

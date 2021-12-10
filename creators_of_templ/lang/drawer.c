@@ -159,3 +159,6 @@ void draw_runner_node(RunnerNode *node, Camera2D transform) {
 	draw_runner_node(node->sibling, transform);
 }
 
+void draw_screenshot(char *path) {
+	TakeScreenshot(path);
+}

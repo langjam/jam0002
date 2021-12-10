@@ -6,26 +6,83 @@
 #include "lang/drawer.h"
 #include "lang/runner.h"
 
-char* read_file(const char *path) {
-    FILE *f = fopen(path, "rb");
-    if (f == NULL)
-        return NULL;
+char* read_file(FILE *f) {
     fseek(f, 0, SEEK_END);
     size_t fsz = (size_t) ftell(f);
     fseek(f, 0, SEEK_SET);
     char *input = (char*)malloc((fsz+1)*sizeof(char));
     input[fsz] = 0;
     fread(input, sizeof(char), fsz, f);
-    fclose(f);
     return input;
 }
 
-int main() {
-	char *file = read_file("input/playground.css");
-	if (file == NULL) {
-		fprintf(stderr, "Can't find input/playground.css!\n");
+void help() {
+	printf("templ [ -size <n> ] [ -h ] [ -o <file> ] <file>\n");
+}
+
+int main(int argc, char *argv[]) {
+	int canvas_size = 400;
+	FILE *f = NULL;
+	char *out_file = NULL;
+	for (int i=1; i < argc; ++i) {
+		if (*argv[i] == '-') {
+			if (strcmp(argv[i], "-size") == 0) {
+				++i;
+				if (i == argc) {
+					printf("Size requires an argument.\n");
+					help();
+					return 1;
+				}
+				char *end = NULL;
+				canvas_size = strtol(argv[i], &end, 10);
+				if (end == argv[i]) {
+					printf("The argument to size has to be an integer.\n");
+					return 1;
+				}
+			} else if (strcmp(argv[i], "-o") == 0) {
+				++i;
+				if (i == argc) {
+					printf("-o requires an argument.\n");
+					help();
+					return 1;
+				}
+				out_file = argv[i];
+			} else if (strcmp(argv[i], "-h") == 0) {
+				help();
+			} else if (strcmp(argv[i], "-ascii") == 0) {
+				printf(
+"      .-.\n"
+"     (o.o)\n"
+"      |=|\n"
+"     __|__\n"
+"   //.=|=.\\\\\n"
+"  // .=|=. \\\\\n"
+"  \\\\ .=|=. //\n"
+"   \\\\(_=_)//\n"
+"    (:| |:)\n"
+"     || ||\n"
+"     () ()\n"
+"     || ||\n"
+"     || ||\n"
+"l42 ==' '==\n");
+				return 0;
+			}
+		} else {
+			f = fopen(argv[i], "r");
+			if (f == NULL) {
+				printf("Incorrect file.\n");
+				return 1;
+			}
+		}
+	}
+
+	if (f == NULL) {
+		help();
 		return 1;
 	}
+
+	char *file = read_file(f);
+	fclose(f);
 
 	Parser p = parser_init(file);
 	if (parser_run(&p)) {
@@ -56,11 +113,13 @@ int main() {
 	}
 	
 
-	draw_init(400);
+	draw_init(canvas_size);
 	while (draw_running()) {
 		draw_update(&runner);
 	}
 
+	if (out_file)
+		draw_screenshot(out_file);
 	draw_deinit();
 	runner_deinit(&runner);
 	fail:
