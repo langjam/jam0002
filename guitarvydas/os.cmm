@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "cos.h"
+#include "mpos.h"
 
-int systemRunning = 1;
 void DispatchTransferOutputs ();
 List runQueue;
 

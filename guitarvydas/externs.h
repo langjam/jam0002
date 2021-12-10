@@ -6,9 +6,9 @@
   /* $isEmpty (List) -> Boolean; */
   /* $newListCell (Datum) -> List; */
   /* $append (List, Cell) -> List; */
-extern List listReverse (List);
-extern List listNewCell (Datum);
+extern List listNewCellComponent (Component);
 extern List listAppend1 (List, Message);
+extern List listAppend (List, List);
 
 // Component
   /* $newComponent (FunctionInit, FunctionReact) */
@@ -34,7 +34,7 @@ extern Message messageNewc (char);
   /* $connectedTo (Component) -> Component; */
   /* $connect (Component, Component); */
 extern Component connectionsConnectedTo (Component);
-extern void connect (Component, Component);
+extern void connectionsConnect (Component, Component);
 
 // Kernel
   /* $withLock (v) $block; */
@@ -63,4 +63,4 @@ extern void kernelStop ();
 /* $endWalkingOutputsAsSent */
 /* $walkMoreOutputs */
 /* $nextOutput */
-/* $advanceOutputs */
+ListCell outputListFreeAndAdvance (List); /* $advanceOutputs */

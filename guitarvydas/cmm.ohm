@@ -9,11 +9,11 @@ cmm {
     // mechanism List
     = "$first" Param       -- first
     | "$datum" Param       -- datum
-    | "$reverse" Param     -- reverse
     | "$rest" Param        -- rest
     | "$isEmpty" Param     -- isEmpty
-    | "$newListCell" Param -- newListCell
+    | "$newListCellComponent" Param  -- newListCellComponent
     | "$append" TwoParams  -- append
+    | "$append1" TwoParams  -- append1
 
     // mechanism Component
     | "$newComponent" TwoParams -- newComponent

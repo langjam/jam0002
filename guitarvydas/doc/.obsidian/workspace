@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "Diagrams.md",
+            "file": "Gotchas.md",
             "mode": "source"
           }
         }
@@ -68,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Diagrams.md",
+                "file": "Gotchas.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -88,6 +88,7 @@
   },
   "active": "e8e30749ec6771d0",
   "lastOpenFiles": [
+    "Gotchas.md",
     "Diagrams.md",
     "Future.md",
     "cmmmac.md",
@@ -96,7 +97,6 @@
     "Functional Programming vs. Pattern Matching.md",
     "Programming Languages Are Patterns.md",
     "Software Architecture.md",
-    "Related - Projectional Editing.md",
-    "Triples - PROLOG, miniKanren.md"
+    "Related - Projectional Editing.md"
   ]
 }

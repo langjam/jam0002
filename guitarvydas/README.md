@@ -197,6 +197,7 @@ OSs are merely libraries.
 
 The goal of programming is to make computers do what is needed.  OSs are merely stepping stones towards that goal.
 
+An IDE *should* let you build Software Components in many languages.  At this moment, we tend to build an app using only a single language.  UNIX® \*sh pipelines allow the use of multiple languages, but, such pipelines leave a lot to be desired.  The concept of transpiling apps to JavaScript dances with the idea of using multiple languages, but leaves a lot to be desired.
 # Backgrounders
 [Note that urls beginning with "obsidian://open?vault=doc..." can be ignored.  I believe that I pasted full URLs in all such places].
 ## Triples

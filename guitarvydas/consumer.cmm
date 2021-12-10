@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "cos.h"
+#include "mpos.h"
 #include "consumer.h"
 
 // consumer
