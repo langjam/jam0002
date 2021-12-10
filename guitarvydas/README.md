@@ -290,6 +290,9 @@ obsidian://open?vault=doc&file=Programming%20Languages%20Are%20Patterns
 https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/doc/Functional%20Programming%20vs.%20Pattern%20Matching.md
 
 obsidian://open?vault=doc&file=Functional%20Programming%20vs.%20Pattern%20Matching
+## Call Return Spaghetti
+Overview of reactive, component-based, concurrent functionality:
+https://guitarvydas.github.io/2020/12/09/CALL-RETURN-Spaghetti.html
 ## SWIPL
 https://www.swi-prolog.org
 ## Blog
