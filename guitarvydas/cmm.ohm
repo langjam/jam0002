@@ -41,7 +41,7 @@ cmm {
     | "$quit"           -- quit
     | "$beginWalkingComponentList" Param -- beginWalkingComponentList
     | "$endWalkingComponentList" Param -- endWalkingComponentList
-    | "$walkMore" Param -- walkMore
+    | "$walkMoreComponents" Param -- walkMoreComponents
     | "$nextComponentInList" Param -- nextComponentInList
     | "$advance" Param -- advance
 

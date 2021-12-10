@@ -40,15 +40,15 @@ Macro_quit [k] = [[kernelStop ()]]
 
 Macro_beginWalkingComponentList [k Param] = [[${support.getParam1 ()} = runQueue]]
 Macro_endWalkingComponentList [k Params] = [[]]
-Macro_walkMore [k Param] = [[(${support.getParam1 ()} != NULL)]]
-Macro_nextComponentInList [k Param] = [[${support.getParam1 ()}->data.component]]
-Macro_advance [k Param] = [[${support.getParam1 ()} = (${support.getParam1 ()} != NULL) ? {support.getParam1 ()}->next : NULL]]
+Macro_walkMoreComponents [k Param] = [[(${support.getParam1 ()} != NULL)]]
+Macro_nextComponentInList [k Param] = [[${support.getParam1 ()}->data->component]]
+Macro_advance [k Param] = [[${support.getParam1 ()} = (${support.getParam1 ()} != NULL) ? ${support.getParam1 ()}->next : NULL]]
 
 Macro_beginWalkingOutputsAsSent [k TwoParams] = [[${support.getParam1 ()} = componentGetOutputsAsSent (${support.getParam2 ()})]]
 Macro_endWalkingOutputsAsSent [k TwoParams] = [[]]
 Macro_walkMoreOutputs [k Param] = [[(${support.getParam1 ()} != NULL)]]
 Macro_nextOutput [k Param] = [[${support.getParam1 ()}->data.message]]
-Macro_advanceOutputs [k Param] = [[${Param} = (${support.getParam1 ()} != NULL) ? {support.getParam1 ()}->next : NULL]]
+Macro_advanceOutputs [k Param] = [[${Param} = (${support.getParam1 ()} != NULL) ? ${support.getParam1 ()}->next : NULL]]
 
 
 Macro_initializeCounter [m] = [[counter = 0]]

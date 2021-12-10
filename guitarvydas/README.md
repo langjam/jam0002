@@ -16,6 +16,25 @@ On Mac/Linux:
 <img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/at-a-glance.svg"/>
 
 
+# Sub-Goals
+[see at-a-glance.svg for status, see below for discussions]
+## Patterns as Diagrams
+Some patterns (not all patterns) are easier to understand as diagrams.
+
+5 sample diagrams, discussed below.
+## Reactive, Component-based Operating System
+Concurrency is easy.
+
+An operating system for message-passing, reactive, concurrent components is approximately 1 page of code and uses techniques that are already well-understood.
+## Dataless C
+Create programs in layers.
+
+- One layer for control-flow implementation, and,
+- another layer for data implementation details.
+
+[I chose to write the above O/S in C, the code is written in dataless C]
+## Diagram Compiler
+Compiling diagrams to running code as easily as compiling text to running programs.
 
 # Contents
 1. C-- transpiler (C minus minus - dataless C)
@@ -51,7 +70,7 @@ On Mac/Linux:
 - README.md and doc/\* (written during JAM)
 
 ## Plan
-see doc/Plan.md
+see https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/doc/Plan.md
 
 obsidian://open?vault=doc&file=Plan
 
@@ -102,6 +121,19 @@ C-- is dataless C.
 To make things painfully obvious, I've named ALL macros using "\$" as the first character in the name[^4].  
 
 [^4]:I think that the leading "\$" could be dropped, but I haven't tested this notion.
+
+## Building a Language by Cheating
+Transpile .cmm files to .c files.
+
+Let *gcc* do the heavy lifting.
+
+The .cmm transpiler does not do "type checking".  The transpiler emits .c code and lets *gcc* do the type checking.
+
+Designing the .cmm transpiler to be dataless makes punting of type checking easier.
+
+[Aside: If I had more time, I might investigate the use of the "#file" and "#line" directives in C.  Rhetorical question: how did the original C++ compiler map C++ source code to C code and back?  I know of only two languages that have remember source-code line numbers - C and Scheme (syntax objects).  Rhetorical question: how is #line generalized to include DaS (Diagrams as Syntax)?]
+
+"\$" is chosen for macro names so that when the .cmm transpiler fails to deal with a macro, the "\$" is sent to *gcc*.  *Gcc* will flag an error when it sees "$" in identifier names.  During testing of the transpiler, some macros were not recognized nor translated.  The "\$" character caused *gcc* to flag an error, making such transpilation errors easier to detect.
 
 # Software Components - LEGO® Blocks
 There are 2 secrets to making pluggable components (IMO):
@@ -293,6 +325,8 @@ obsidian://open?vault=doc&file=Functional%20Programming%20vs.%20Pattern%20Matchi
 ## Call Return Spaghetti
 Overview of reactive, component-based, concurrent functionality:
 https://guitarvydas.github.io/2020/12/09/CALL-RETURN-Spaghetti.html
+## Full-Blown Diagram Compiler
+I didn't finish the diagram compiler within the time limits for this JAM, but, I am working on a (WIP) diagram compiler project (paused for JAM) at https://github.com/guitarvydas/app.  The techniques were touched upon in JAM0001 (https://github.com/guitarvydas/firstclasscomments).
 ## SWIPL
 https://www.swi-prolog.org
 ## Blog

@@ -27,9 +27,9 @@ void Dispatch () {
   List componentList;
 componentList = runQueue;
   while ((componentList != NULL)) {
-      Component c = componentList->data.component;
+      Component c = componentList->data->component;
       DispatchMaybe (c);
-componentList = (componentList != NULL) ? {support.getParam1 ()}->next : NULL;
+componentList = (componentList != NULL) ? componentList->next : NULL;
     }
 ;
 }
@@ -47,11 +47,11 @@ componentCallReaction (c, m);
 
 void DistributeOutputsToReceivers () {
   List componentList;
-outputs = runQueue;
+componentList = runQueue;
   while ((componentList != NULL)) {
-      Component c = componentList->data.component;
+      Component c = componentList->data->component;
       DispatchMaybe (c);
-componentList = (componentList != NULL) ? {support.getParam1 ()}->next : NULL;
+componentList = (componentList != NULL) ? componentList->next : NULL;
     }
 ;
 }
@@ -68,7 +68,7 @@ outputs = componentGetOutputsAsSent (c);
   while ((outputs != NULL)) {
     Message m = outputs->data.message;
     DeliverMessageToReceiver (c, m);
- = (outputs != NULL) ? {support.getParam1 ()}->next : NULL;
+ = (outputs != NULL) ? outputs->next : NULL;
   }
 ;
 }
