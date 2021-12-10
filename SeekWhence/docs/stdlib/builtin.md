@@ -1,4 +1,4 @@
-# __builtin__ - Core functions and constants
+# builtin - Core functions and constants
 
 **Documentation Table of Contents**
 - [Basic Syntax](./basic-syntax.md)
