@@ -1,7 +1,7 @@
 import math
 
 SEQ_EXPORTS = {
-	'sqrt':  lambda _,x: math.sqrt(x),
+  'sqrt':  lambda _,x: math.sqrt(x),
   'log':   lambda _,x,b=None: math.log(x,b) if b is not None else math.log(x),
   'sin':   lambda _,x: math.sin(x),
   'cos':   lambda _,x: math.cos(x),
