@@ -30,6 +30,26 @@ evalBuiltin t@(Int n1 :> ">" :> Int n2 :> "is" :> Var b)
 evalBuiltin t@(Int n1 :> "<" :> Int n2 :> "is" :> Var b)
   | n1 < n2   = void $ unify (Var b) (Symbol "true")
   | otherwise = void $ unify (Var b) (Symbol "false")
+evalBuiltin t@(Int n1 :> "<" :> Int n2 :> "is" :> Symbol "true")
+  | n1 < n2 = pure ()
+  | otherwise = do
+      liftIO $ putStrLn "Wrong comparison"
+      error "Wrong comparison"
+evalBuiltin t@(Int n1 :> "<" :> Int n2 :> "is" :> Symbol "false")
+  | n1 >= n2 = pure ()
+  | otherwise = do
+      liftIO $ putStrLn "Wrong comparison"
+      error "Wrong comparison"
+evalBuiltin t@(Int n1 :> ">" :> Int n2 :> "is" :> Symbol "true")
+  | n1 > n2 = pure ()
+  | otherwise = do
+      liftIO $ putStrLn "Wrong comparison"
+      error "Wrong comparison"
+evalBuiltin t@(Int n1 :> ">" :> Int n2 :> "is" :> Symbol "false")
+  | n1 <= n2 = pure ()
+  | otherwise = do
+      liftIO $ putStrLn "Wrong comparison"
+      error "Wrong comparison"
 evalBuiltin t@(_ :> "+" :> _ :> "=" :> _) = evalAddition t
 evalBuiltin t@(_ :> "-" :> _ :> "=" :> _) = evalAddition t
 evalBuiltin t@(_ :> "+" :> _) = evalAddition t

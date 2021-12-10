@@ -13,6 +13,7 @@ say X twice:
   print (X X).
 
 ; Fibonacci
+; Don't try to go higher than fib 20 or your computer might suffer terribly
 fib 0 is 0.
 fib 1 is 1.
 fib N is R:
@@ -27,5 +28,6 @@ fib N is R:
 ; Rules for list ranges
 [X] goes from X to X.
 [X Xs] goes from X to Y:
+  X < Y is true,
   X1 = X + 1,
   Xs goes from X1 to Y.

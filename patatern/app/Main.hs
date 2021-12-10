@@ -35,13 +35,13 @@ main = do
       minput <- getInputLine "?> "
       case minput of
         Nothing -> pure ()
-        Just "quit" -> pure ()
-        Just "exit" -> pure ()
+        Just ":quit" -> pure ()
         Just (':' : '!' : cmd) -> try (handleShellCmd cmd)
         Just (':' : cmd) -> try $
           case words cmd of
             ("load":files) -> handleLoadCmd ref files
             ("rules":_   ) -> handleRulesCmd ref
+            _ -> putStrLn "Invalid command"
         Just query ->
           finally (withInterrupt $ liftIO (runQuery ref (T.pack query))) (loop ref)
       where
@@ -71,7 +71,7 @@ completeKeyword = completeWord Nothing " \t:" action
          pure (map simpleCompletion (find xs keywords) ++ files)
 
     find xs = filter (xs `L.isPrefixOf`)
-    keywords = ["load","rules"]
+    keywords = ["load","rules","quit"]
 
 patatern :: Text
 patatern =
@@ -99,5 +99,6 @@ Commands available from the prompt:
   :load <file> ...        set the active rules
   :rules                  show the active rules
   :!<cmd> [<args>]        launch a shell command
+  :quit                   exit the interpreter
 
 |]
