@@ -1,0 +1,49 @@
+// comment
+
+var a = -4
+
+// locked var test
+/* *** *** */
+var b = 1
+
+/* *** *** */
+b = a
+
+// if test
+if( b < 0 )
+{
+    /* *** *** */
+    b = -1 * b
+}
+
+/* */
+var c = 1
+
+// while test
+while(b > 1)
+{
+    /* */
+    c = c * b
+    /* *** *** */
+    b = b - 1
+}
+
+Print(b)
+Print(c)
+
+// nested if - while test
+var d = 2
+var e = 3
+
+while(e > 0)
+{
+    d = d * c
+    if (c > 100)
+    {
+        /* */
+        c = c - 1
+    }
+    e = e-1
+}
+
+Print(d)

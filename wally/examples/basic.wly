@@ -1,0 +1,22 @@
+// comment
+
+// var declaration and initialization
+var a = 1 + 2
+Print(a)
+
+// var declaration without initialization defaults to 0
+var b
+Print(b)
+
+// var declaration with pattern
+/* ** */
+var c = b + a
+
+// need to add pattern before setting value
+/* ** */
+c = b-a
+Print (c)
+
+// expressions follow C's precedence
+var d = (b + a) * (c - b) + a
+Print(d)
