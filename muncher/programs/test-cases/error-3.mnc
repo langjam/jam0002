@@ -1,0 +1,4 @@
+let a = object A {
+    . hello {}
+    . hello {}
+};

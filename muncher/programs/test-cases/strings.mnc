@@ -1,0 +1,10 @@
+let println = object { ($arg:expr) { print(arg); print("\n"); } };
+
+println("test");
+println("test".len);
+println("test".eq("test"));
+println("test".eq("test 2"));
+println("testing".substr(2, 7));
+println("testing".substr(0, 3));
+println("testing".substr(3, 5));
+println("test".concat("ing"));

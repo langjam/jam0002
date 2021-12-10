@@ -1,0 +1,20 @@
+let twice = object Twice {
+    .do $b:block {
+        b.exec;
+        b.exec;
+    }
+};
+
+twice.do {
+    print("testing\n");
+}
+
+twice.do {
+    twice.do {
+        twice.do {
+            print("na-");
+        }
+    }
+}
+
+print("batman!");

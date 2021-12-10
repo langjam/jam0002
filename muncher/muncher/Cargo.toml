@@ -1,0 +1,9 @@
+[package]
+name = "muncher"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+logos = "0.12.0"
+codespan-reporting = "0.11.1"
+structopt = "0.3.25"

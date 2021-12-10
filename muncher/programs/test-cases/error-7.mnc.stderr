@@ -1,0 +1,6 @@
+error: variable `print` is already defined in this scope
+  --> test.mnc:1:5
+  |
+1 | let print = 1;
+  |     ^^^^^ variable `print` is already defined in this scope
+

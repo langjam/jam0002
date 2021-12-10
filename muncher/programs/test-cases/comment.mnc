@@ -1,0 +1,5 @@
+print(1
+    // add 2
+    .add(2)
+    // and then triple
+    .mul(3));

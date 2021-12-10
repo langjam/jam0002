@@ -1,0 +1,4 @@
+local
+(a)
+accessed .foo
+I am a global foo

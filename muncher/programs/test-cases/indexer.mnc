@@ -1,0 +1,26 @@
+let println = object { ($x:expr) { print(x); print("\n"); } };
+
+let tuple = object {
+    self.a0 = nil;
+    self.a1 = nil;
+    [$idx:expr] {
+        return idx.eq(0).pick(self.a0, self.a1);
+    }
+    [$idx:expr] = $value:expr {
+        self.a0 = idx.eq(0).pick(value, self.a0);
+        self.a1 = idx.eq(1).pick(value, self.a1);
+        return value;
+    }
+};
+
+println(tuple[0]);
+println(tuple[1]);
+tuple[0] = 3;
+println(tuple[0]);
+println(tuple[1]);
+tuple[1] = tuple[0];
+println(tuple[0]);
+println(tuple[1]);
+tuple[1] = 4;
+println(tuple[0]);
+println(tuple[1]);

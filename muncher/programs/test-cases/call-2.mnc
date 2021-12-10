@@ -1,0 +1,14 @@
+let println = object Println {
+    (x) {
+        print("x maybe");
+        print("\n");
+    }
+};
+
+let a = object A {
+    .foo {
+        println(x);
+    }
+}
+
+a.foo;

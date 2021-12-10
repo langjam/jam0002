@@ -1,0 +1,21 @@
+let println = object NicePrint {
+    ($a:expr) {
+        print(a);
+        print("\n");
+    }
+    ($a:expr, $b:expr) {
+        print(a);
+        print(b);
+        print("\n");
+    }
+    ($a:expr, $b:expr, $c:expr) {
+        print(a);
+        print(b);
+        print(c);
+        print("\n");
+    }
+};
+
+println(1);
+println(2, 3);
+println(4, 5, 6);

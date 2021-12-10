@@ -1,0 +1,8 @@
+error: expected `)`
+  --> test.mnc:1:8
+  |
+1 | print(1
+  |      - ^ expected `)`
+  |      | 
+  |      call to <Object Print> started here
+

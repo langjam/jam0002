@@ -1,0 +1,8 @@
+error: variable `a` is already defined in this scope
+  --> test.mnc:2:16
+  |
+2 |     ($a:expr, $a:expr) {}
+  |       -        ^ variable `a` is already defined in this scope
+  |       |         
+  |       previous definition here
+

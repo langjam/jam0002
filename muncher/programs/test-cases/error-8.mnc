@@ -1,0 +1,7 @@
+let a = object A {
+    .foo) {
+        print("woo");
+    }
+};
+
+a.foo);
