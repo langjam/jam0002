@@ -30,7 +30,6 @@ function testTime with info, t {
   print info, 'second:', [t~second now]
   print info, 'isDST:', [t~isDST now]
   print info, 'format:', [t~format now, "%a, %d %b %Y %H:%M:%S %z"]
-  print info, 'toCTime:', [t~toCTime now]
   print info, 'timezone:', [t~timezone now]
   print info, 'utcOffset:', [t~utcOffset now]
   print

@@ -5,20 +5,18 @@ from core.sequence import Sequence
 
 def buildTimeNS(struct_time):
   return {
-    'year':    lambda _,t: struct_time(t/1000).tm_year,
-    'month':   lambda _,t: struct_time(t/1000).tm_mon-1,
-    'day':     lambda _,t: struct_time(t/1000).tm_mday-1,
-    'weekday': lambda _,t: struct_time(t/1000).tm_wday,
-    'yearday': lambda _,t: struct_time(t/1000).tm_yday,
-    'hour':    lambda _,t: struct_time(t/1000).tm_hour,
-    'minute':  lambda _,t: struct_time(t/1000).tm_min,
-    'second':  lambda _,t: struct_time(t/1000).tm_sec,
-    'isDST':   lambda _,t: [None,False,True][struct_time(t/1000).tm_isdst+1],
-    'format':  lambda _,t,f: time.strftime(f, struct_time(t/1000)),
-    'toCTime': lambda _,t: time.asctime(struct_time(t/1000)),
-
+    'year':      lambda _,t: struct_time(t/1000).tm_year,
+    'month':     lambda _,t: struct_time(t/1000).tm_mon-1,
+    'day':       lambda _,t: struct_time(t/1000).tm_mday,
+    'weekday':   lambda _,t: struct_time(t/1000).tm_wday,
+    'yearday':   lambda _,t: struct_time(t/1000).tm_yday,
+    'hour':      lambda _,t: struct_time(t/1000).tm_hour,
+    'minute':    lambda _,t: struct_time(t/1000).tm_min,
+    'second':    lambda _,t: struct_time(t/1000).tm_sec,
+    'isDST':     lambda _,t: [None,False,True][struct_time(t/1000).tm_isdst+1],
     'timezone':  lambda _,t: struct_time(t/1000).tm_zone,
-    'utcOffset': lambda _,t: struct_time(t/1000).tm_gmtoff*1000
+    'utcOffset': lambda _,t: struct_time(t/1000).tm_gmtoff*1000,
+    'format':    lambda _,t,f: time.strftime(f, struct_time(t/1000))
   }
 
 SEQ_EXPORTS = {
@@ -33,19 +31,22 @@ SEQ_EXPORTS = {
   'monAbbrs': Sequence.build(ident = 'monAbbrs', exprs = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']),
 
   'formats': {
-    'date_yymmdd':          '%Y/%m/%d',
+    'date_yymmdd':          '%y/%m/%d',
     'date_ddmmyy':          '%d/%m/%y',
     'date_mmddyy':          '%m/%d/%y',
+    'date_yyyymmdd':        '%Y/%m/%d',
     'date_ddmmyyyy':        '%d/%m/%Y',
     'date_mmddyyyy':        '%m/%d/%Y',
     'date_yymmdd_slash':    '%Y/%m/%d',
     'date_ddmmyy_slash':    '%d/%m/%y',
     'date_mmddyy_slash':    '%m/%d/%y',
+    'date_yyyymmdd_slash':  '%Y/%m/%d',
     'date_ddmmyyyy_slash':  '%d/%m/%Y',
     'date_mmddyyyy_slash':  '%m/%d/%Y',
     'date_yymmdd_hyphen':   '%Y-%m-%d',
     'date_ddmmyy_hyphen':   '%d-%m-%y',
     'date_mmddyy_hyphen':   '%m-%d-%y',
+    'date_yyyymmdd_hyphen': '%Y-%m-%d',
     'date_ddmmyyyy_hyphen': '%d-%m-%Y',
     'date_mmddyyyy_hyphen': '%m-%d-%Y',
     'date_human_dmy_abbr':  '%d %b %Y',
