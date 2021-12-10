@@ -1,0 +1,2 @@
+print("YEET")
+let a = input("") // should gib nice error we defined
