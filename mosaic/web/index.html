@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>mosaic</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+
+    body,
+    html {
+      width: 100vw;
+      height: 100vh;
+      padding: 0;
+      margin: 0;
+      font-family: Inconsolata, monospace;
+      color: white;
+    }
+
+    #sidebar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: 500px;
+      backdrop-filter: blur(10px);
+      background: #000000aa;
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+      align-items: stretch;
+    }
+
+    #code {
+      flex: 1 0;
+      background: none;
+      outline: none;
+      border: none;
+      resize: none;
+      box-sizing: border-box;
+      font-family: Inconsolata, monospace;
+      color: white;
+      padding: 10px;
+    }
+
+    #header {
+      flex: 0 0;
+      min-height: 50px;
+      color: white;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: stretch;
+      font-size: 20px;
+    }
+
+    #header span {
+      flex: 1 0 0px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #header span.selected {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    #examples {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #examples span {
+      width: 100%;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    #io {
+      flex: 1 0;
+      padding-left: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+    }
+
+    #io textarea {
+      flex: 1 0 0;
+      background: none;
+      outline: none;
+      border: none;
+      resize: none;
+      box-sizing: border-box;
+      font-family: Inconsolata, monospace;
+      color: white;
+      padding: 10px;
+    }
+
+    #error {
+      flex: 0 0;
+      min-height: 50px;
+      color: red;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #controls {
+      width: 100%;
+      height: 50px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      color: white;
+      display: flex;
+      justify-content: stretch;
+      align-items: stretch;
+    }
+
+    #controls > * {
+      flex: 1 0;
+      width: 0px;
+    }
+
+    #controls button {
+      background: none;
+      color: white;
+      font: inherit;
+      border: none;
+      outline: none;
+      padding: none;
+      cursor: pointer;
+    }
+
+    #controls #speedBox {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: text;
+    }
+
+    #controls #speed {
+      outline: none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 17px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: none;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #ffffff11;
+      background-clip: content-box;
+      border-radius: 10px;
+      border: 5px solid transparent;
+      width:5px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="sidebar">
+    <div id="header">
+      <span data-section="examples" class="selected">Examples</span>
+      <span data-section="code">Code</span>
+      <span data-section="io">I/O</span>
+    </div>
+    <div id="examples"></div>
+    <textarea id="code" style="display: none"></textarea>
+    <div id="io" style="display: none">
+      <span>Input</span>
+      <textarea id="input"></textarea>
+      <span>Output</span>
+      <textarea id="output" disabled></textarea>
+    </div>
+    <div id="error"></div>
+    <div id="controls">
+      <span id="speedBox">
+        <span style="white-space: pre">Delay: </span>
+        <span contenteditable id="speed">100</span>
+      </span>
+      <button id="pause">Pause</button>
+      <button id="step">Step</button>
+    </div>
+  </div>
+  <script src="index.js" type="module"></script>
+</body>
+
+</html>
