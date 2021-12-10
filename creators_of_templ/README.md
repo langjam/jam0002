@@ -78,7 +78,8 @@ Two things to note: each property is terminated with a semi-colon and this squar
 	 }
 }
 ```
-![green and blue squares](https://i.imgur.com/d38vXi2.png)Now there are several new things to process here. As you might have noticed, the second square's color is defined using a call to `rgb()`, but unlike in CSS where you might have expected only 3 arguments, there are actually 4 arguments, a bit like how rgba works in that language. However be assured that in this case I redundantly added the opacity value to show how it works, but it is totally optional if you want full opacity. Just like the other parameters, its max value is 255 and it's lowest is 0.
+![green and blue squares](https://i.imgur.com/d38vXi2.png)
+Now there are several new things to process here. As you might have noticed, the second square's color is defined using a call to `rgb()`, but unlike in CSS where you might have expected only 3 arguments, there are actually 4 arguments, a bit like how rgba works in that language. However be assured that in this case I redundantly added the opacity value to show how it works, but it is totally optional if you want full opacity. Just like the other parameters, its max value is 255 and it's lowest is 0.
 
 The second thing you might have noticed is that the `position` property is used in the exact same way as the `dimensions` property; you call `vec2()` and you pass it the x and y values in that order respectively.
 
@@ -101,9 +102,9 @@ The third thing you might have noticed is that rather than have my second `rect`
 }
 ```
 ![](https://i.imgur.com/fwctlpA.png)
-As you can see, moving the parent element will also move all its child elements. That's because the child's element position is relative to the parent's position. Now there's just one last property left to explore and it's the rotation.
+As you can see, moving the parent element will also move all its child elements. That's because the child element's position is relative to the parent's position. Now there's just one last property left to explore and it's the rotation.
 
-Rotation is a value in degrees by which the shape of the element is rotated. By example, if I want to a lozenge instead of my second square, I can just rotate it by 45 degrees:
+Rotation is a value in degrees by which the shape of the element is rotated. By example, if I want to have a lozenge instead of my second square, I can just rotate that element by 45 degrees:
 ```css
  root
  {
