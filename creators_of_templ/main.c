@@ -1,3 +1,4 @@
+#define attribute 
 #include <stdio.h>
 #include <stdlib.h>
 #include "lang/lexer.h"

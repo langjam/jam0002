@@ -1,6 +1,10 @@
 #ifndef TEMPLE_H
 #define TEMPLE_H
 
+#ifdef _MSC_VER
+#define __attribute__(x)
+#endif
+
 #include "err.h"
 #include <string.h>
 #include <stdbool.h>

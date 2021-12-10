@@ -147,8 +147,10 @@ static ErrCode call(Parser *p, Token name, Node *dest) {
 		checkout(value(p, ast_make(&p->ast, dest), 11));
 		
 		// If rparen is met no don't expect the last comma
-		if (isnt_tok(p, tok_rparen))
-			checkout(give_tok(p, tok_comma, NULL));
+		push_note(p->current.loc, "I was expecting next parameter to `%.*s'", name.len, name.val) {
+			if (isnt_tok(p, tok_rparen))
+				checkout(give_tok(p, tok_comma, NULL));
+		}
 	}
 	
 	return give_tok(p, tok_rparen, NULL);
@@ -243,13 +245,18 @@ static ErrCode value(Parser *p, Node *left, int prec) {
 	while (is_tok(p, tok_operator) && precedence_of(p->current) == prec) {
 		// Skip the operator
 		Token operator;
-		checkout(give_tok(p, tok_operator, &operator));
+		push_note(p->current.loc, "I was trying to parse an operator") {
+			checkout(give_tok(p, tok_operator, &operator));
+		}
+		
 	
 		Node *new_node = ast_make(&p->ast, NULL);
 		*new_node = *left;
 		*left = node_from(node_binary, operator);
 		left->first_child = new_node;
-		checkout(value(p, ast_make(&p->ast, left), prec-1)); 
+		push_note(p->current.loc, "I was trying to parse the right hand side of operator") {
+			checkout(value(p, ast_make(&p->ast, left), prec-1)); 
+		}
 	}
 	return err_ok;
 }
