@@ -1,4 +1,7 @@
 6 Dec: 2h code
-7 Dec: 1.5h code
+7 Dec: 2h code
 8 Dec: 6h code
 9 Dec: 8h code
+10 Dec: 6h documentation
+
+tally: 18h code, 6h docs
