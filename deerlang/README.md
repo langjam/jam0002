@@ -78,9 +78,11 @@ Rules {
 All examples are found in the deerlang/tests/ directory. The interesting examples are life.cel (Conway's Game of Life) and wireworld.cel (Wireworld).
 
 ## Conway's Game of Life
+![](gifs/deerlang_life.gif)
 All cells start as being dead. Live cells are displayed by "L". A cell can be made live by typing "L". For a description of Conway's Game of Life, see https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life.
 
 ## Wireworld
+![](gifs/deerlang_wireworld.gif)
 All cells start type 0 (no interaction). Conductors have alias "C". Electron heads have alias "H". Electron tails have alias "T". For a description of Wireworld, see https://en.wikipedia.org/wiki/Wireworld.
 
 # FAQ

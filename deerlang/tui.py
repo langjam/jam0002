@@ -23,8 +23,10 @@ class Tui:
         meta = simulation.get_meta()
         self.max_y = meta['rows']
         self.max_x = meta['cols']
+        self.step = 0
 
         console_h, console_w = getmaxyx(stdscr)
+        self._draw_instructions(console_h, console_w)
         self.window = None
         self._resize_simulation_window(console_h, console_w)
 
@@ -39,6 +41,7 @@ class Tui:
                 break
             elif c == 32:
                 self.simulation.step()
+                self.step += 1
             elif c == KEY_RESIZE:
                 # TODO handle resize
                 # console_h, console_w = getmaxyx(0)
@@ -64,16 +67,41 @@ class Tui:
             self._draw_simulation_window()
         endwin()
 
+    _instructions = "Use arrow keys to move cursor, type to input aliases in cells (case-sensitive), space to advance the simulation."
+    def _draw_instructions(self, console_h, console_w):
+        # header
+        win_w = self.max_x + 2
+        start_y = 0
+        start_x = (console_w - (self.max_x + 2)) // 2
+        header_win = newwin(1, win_w, start_y, start_x)
+        mvwaddstr(header_win, 0, 0, "ESC to quit")
+        top_right = "BACKSPACE to clear cells"
+        mvwaddstr(header_win, 0, self.max_x - len(top_right) + 2, top_right)
+        wrefresh(header_win)
+
+        # footer
+        win_w = self.max_x + 2
+        start_y = self.max_y + 2 + 1
+        start_x = (console_w - (self.max_x + 2)) // 2
+        footer_win = newwin(1, win_w, start_y, start_x)
+        mvwaddstr(footer_win, 0, 0, "ARROW KEYS to move cursor")
+        bottom_right = "TYPE to input aliases (case-sensitive)"
+        mvwaddstr(footer_win, 0, self.max_x - len(bottom_right) + 2, bottom_right)
+        wrefresh(footer_win)
+
     def _resize_simulation_window(self, console_h, console_w):
         win_h = self.max_y + 2
         win_w = self.max_x + 2
-        start_y = 2
+        start_y = 1
         start_x = (console_w - (self.max_x + 2)) // 2
         if self.window is None:
             self.window = newwin(win_h, win_w, start_y, start_x)
             keypad(self.window, True)
             wborder(self.window)
-            mvwaddstr(self.window, 0, 2, "[Simulation]")
+            title = f"[Simulating {self.programName}]"
+            mvwaddstr(self.window, 0, (win_w - len(title)) // 2, title)
+            footer = f"[SPACEBAR to advance simulation (step={self.step})]"
+            mvwaddstr(self.window, win_h - 1, (win_w - len(footer)) // 2, footer)
         else:
             mvwin(self.window, start_y, start_x)
 
@@ -81,7 +109,12 @@ class Tui:
         orig_y, orig_x = getyx(self.window)
         wclear(self.window)
         wborder(self.window)
-        mvwaddstr(self.window, 0, 2, f"[Simulating {self.programName}]")
+        win_h = self.max_y + 2
+        win_w = self.max_x + 2
+        header = f"[Simulating {self.programName}]"
+        mvwaddstr(self.window, 0, (win_w - len(header)) // 2, header)
+        footer = f"[SPACEBAR to advance simulation (step={self.step})]"
+        mvwaddstr(self.window, win_h - 1, (win_w - len(footer)) // 2, footer)
         frame = self.simulation.get_frame()
         for j in range(self.max_y):
             for i in range(self.max_x):
@@ -97,6 +130,3 @@ def run_tui(programName):
         Tui(sim, programName).run()
     finally:
         endwin()
-
-if __name__ == '__main__':
-    run_tui()
