@@ -1,0 +1,8 @@
+error: expected `maybe` or `not`
+   --> test.mnc:12:11
+   |
+12 | a.call me what?;
+   |  -        ^^^^ expected `maybe` or `not`
+   |  |         
+   |  call to <Object A> started here
+

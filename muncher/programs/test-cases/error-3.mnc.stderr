@@ -1,0 +1,8 @@
+error: method already defined
+  --> test.mnc:3:13
+  |
+2 |     . hello {}
+  |             - previous definition here
+3 |     . hello {}
+  |             ^ method already defined
+

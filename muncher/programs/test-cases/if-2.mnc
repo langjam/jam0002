@@ -1,0 +1,21 @@
+let emptyBlock = (object Wtf { .$b:block { return b } }).{};
+
+let if = object If {
+    ($cond:expr) $then:block {
+        cond.pick(then, emptyBlock).exec;
+    }
+};
+
+let a = "if body was not executed\n";
+if (1.le(2)) {
+    print("1 < 2\n");
+    a = "if body was executed\n";
+}
+print(a);
+
+a = "if body was not executed\n";
+if (1.eq(2)) {
+    print("1 == 2\n");
+    a = "if body was executed\n";
+}
+print(a);

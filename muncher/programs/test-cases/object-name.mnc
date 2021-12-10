@@ -1,0 +1,4 @@
+print(object Foo {});
+print("\n");
+print(object {});
+print("\n");

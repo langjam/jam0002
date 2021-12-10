@@ -1,0 +1,13 @@
+let a = object {
+    self.field = object {
+        .print {
+            print("test");
+        }
+    };
+
+    .do {
+        self.field.print;
+    }
+};
+
+a.do;

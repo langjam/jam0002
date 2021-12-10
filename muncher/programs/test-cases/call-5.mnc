@@ -1,0 +1,21 @@
+let overloaded = object Overload {
+    () {
+        print("zero params\n");
+    }
+    ($a:expr) {
+        print("one param: ");
+        print(a);
+        print("\n");
+    }
+    ($a:expr, $b: expr) {
+        print("two params: ");
+        print(a);
+        print(", ");
+        print(b);
+        print("\n");
+    }
+};
+
+overloaded(1);
+overloaded()
+overloaded(3, 4);

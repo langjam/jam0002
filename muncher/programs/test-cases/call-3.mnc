@@ -1,0 +1,9 @@
+let println = object PrintLn {
+    ($value:expr) {
+        print(value);
+        print("\n");
+    }
+};
+
+println("hello");
+println("world!");

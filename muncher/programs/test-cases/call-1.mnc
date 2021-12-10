@@ -1,0 +1,12 @@
+let a = object A {
+    .foo {
+        print(1);
+    }
+    .bar {
+        print(2);
+    }
+};
+
+a.foo;
+a.bar;
+a.foo;

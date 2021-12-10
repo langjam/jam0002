@@ -1,0 +1,14 @@
+let lambda = object LambdaFactory {
+    ($param:ident) $body:block {
+        return object Lambda {
+            ($arg:expr) {
+                return body.def(param, arg).exec;
+            }
+        };
+    }
+};
+
+let inc = lambda(x) { return x.add(1); };
+
+print(inc(3));
+print(inc(19));

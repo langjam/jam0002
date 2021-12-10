@@ -1,0 +1,14 @@
+let a = object A {
+    .foo() {
+        return 1;
+    }
+
+    .bar {
+        return "hello";
+    }
+};
+
+print(a.foo());
+print("\n");
+print(a.bar);
+print("\n");

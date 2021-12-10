@@ -1,0 +1,8 @@
+error: expr muncher conflicts with ident muncher
+  --> test.mnc:3:10
+  |
+2 |     . $i:ident {}
+  |          ----- ident branch is here
+3 |     . $e:expr {}
+  |          ^^^^ expr muncher conflicts with ident muncher
+

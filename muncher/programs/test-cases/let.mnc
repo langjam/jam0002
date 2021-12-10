@@ -1,0 +1,10 @@
+let a = 1;
+print(a);
+
+let b = 2;
+print(b);
+
+let c = 4;
+print(c);
+
+print(a);
