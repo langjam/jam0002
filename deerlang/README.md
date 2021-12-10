@@ -1,3 +1,54 @@
+# The <sub>deerlang</sub> Language
+This language allows users to define cellular automata and run them in an interactive shell.
+
+# Examples
+All examples are found in the deerlang/tests/ directory. The interesting examples are life.cel (Conway's Game of Life) and wireworld.cel (Wireworld).
+
+## Conway's Game of Life
+```
+Meta {
+  Rows = 20
+  Cols = 80
+}
+
+Cell {
+  bool live = false
+}
+
+Aliases {
+  L = { live = true }
+}
+
+Selectors {
+  LiveCell = (live == true)
+  DeadCell = !LiveCell
+
+  LonelyCell = LiveCell & (MatchCount(neighbours, LiveCell) < 2)
+
+  CrowdedCell = LiveCell & (MatchCount(neighbours, LiveCell) > 3)
+
+  BabyCell = DeadCell & (MatchCount(neighbours, LiveCell) == 3)
+
+  LonelyOrCrowded = LonelyCell | CrowdedCell
+}
+
+Rules {
+  Death (LonelyOrCrowded) = {
+    live = false
+  }
+
+  Birth (BabyCell) = {
+    live = true
+  }
+}
+```
+![](gifs/deerlang_life.gif)
+All cells start as being dead. Live cells are displayed by "L". A cell can be made live by typing "L". For a description of Conway's Game of Life, see https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life.
+
+## Wireworld
+![](gifs/deerlang_wireworld.gif)
+All cells start type 0 (no interaction). Conductors have alias "C". Electron heads have alias "H". Electron tails have alias "T". For a description of Wireworld, see https://en.wikipedia.org/wiki/Wireworld.
+
 # Requirements
 python 3.x
 
@@ -5,9 +56,6 @@ python 3.x
 1. Navigate to the deerlang directory.
 2. Install dependencies (use of virtual environment is recommended): pip install -r requirements.txt
 3. Run example: python deerlang.py tests/life.cel
-
-# The <sub>deerlang</sub> Language
-This language allows users to define cellular automata and run them in an interactive shell.
 
 # Components of a <sub>deerlang</sub> script
 ## Meta
@@ -41,7 +89,7 @@ Example:
 ```
 Aliases {
   L = {
-    life = true
+    live = true
   }
 }
 ```
@@ -74,16 +122,8 @@ Rules {
 }
 ```
 
-# Examples
-All examples are found in the deerlang/tests/ directory. The interesting examples are life.cel (Conway's Game of Life) and wireworld.cel (Wireworld).
-
-## Conway's Game of Life
-![](gifs/deerlang_life.gif)
-All cells start as being dead. Live cells are displayed by "L". A cell can be made live by typing "L". For a description of Conway's Game of Life, see https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life.
-
-## Wireworld
-![](gifs/deerlang_wireworld.gif)
-All cells start type 0 (no interaction). Conductors have alias "C". Electron heads have alias "H". Electron tails have alias "T". For a description of Wireworld, see https://en.wikipedia.org/wiki/Wireworld.
+# TUI
+The text UI is perfect, has no bugs, and allows you to initialize and observe your simulation. You can move the cursor with arrow keys, enter aliases (case-sensitive) in the grid, and advance the simulation with spacebar. Press ESC to quit.
 
 # FAQ
 
