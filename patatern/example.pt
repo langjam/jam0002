@@ -5,6 +5,13 @@ john is 23 years old.
 
 mary lives in london.
 
+; Shakespeare wisdom, somewhat.
+the fault dear brutus is not in our stars but in ourselves.
+
+
+the fool doth think he is topnotch but the wise man knows himself to be a rastaman.
+
+
 ; These are rules
 hello:
   print (hello world).

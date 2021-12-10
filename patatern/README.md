@@ -245,3 +245,24 @@ to get more familiar with the language.
 
 There is also a [standard library](./stdlib.pt) that provides some useful
 helpers for the most common tasks.
+
+Patatern is a huge fan of Shakespeare, after loading [example.pt](./example.pt)
+let us ask for some shakespearean wisdom:
+
+```
+?> the fault dear QuoqueTu? is not in our stars but in What?.
+QuoqueTu? = brutus.
+What? = ourselves.
+```
+
+Very well said, one more:
+
+```
+?> the fool doth think he is Fool? but the wise man knows himself to be a Wise?.
+Fool? = topnotch.
+Wise? = rastaman.
+```
+
+Wait... this doesn't sound about right. But if patatern says so...
+
+
