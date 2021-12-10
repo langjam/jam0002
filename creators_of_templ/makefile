@@ -1,13 +1,39 @@
 FILES=lang/*.c map/*.c raylib/lib/libraylib.a
+FILES_WIN=lang/*.c map/*.c raylib/lib/libraylib_windows.a
+FILES_MAC=lang/*.c map/*.c raylib/lib/libraylib_macos.a
 TESTS=test/*.c
-FLAGS=-I. -Iraylib/include/ -ldl -lpthread -lm
+FLAGS=-I. -Iraylib/include/ 
+LINUX_FLAGS=-ldl -lpthread -lm
 DEBUG=-Wextra -Wall -Werror -pedantic -g -fsanitize=address -Wno-unused-parameter
 
-all:
+
+ifeq ($(OS),Windows_NT)
+	MAKECMD=$(CC) -mwindows -static main.c $(FLAGS) $(FILES_WIN) -O2 -lgdi32 -lwinmm -o release/templ.exe
+	RUNCMD=bin/templ.exe input/playground.css
+else	
+	UNAME_S := $(shell uname -s)
+	RUNCMD=bin/templ input/playground.css
+	ifeq ($(UNAME_S),Darwin)
+		MAKECMD=$(CC) main.c $(FLAGS) $(LINUX_FLAGS) $(FILES_MAC) -o bin/templ
+		echo "NOTE: BUILDING ON MAC OS MAY BE BROKEN, ITS NOT TESTED AT ALL!" 
+	else
+		MAKECMD=$(CC) main.c $(FLAGS) $(LINUX_FLAGS) $(FILES) $(DEBUG) -o bin/templ
+	endif
+endif
+
+
+templ: 
 	mkdir -p bin
-	$(CC) main.c $(FLAGS) $(FILES) $(DEBUG) -o bin/templ
+	$(MAKECMD)
+
+all: templ
 	clear
-	./bin/templ input/playground.css
+	$(RUNCMD) 
+
+release:
+	mkdir -p release
+	$(CC) main.c $(FLAGS) $(LINUX_FLAGS) $(FILES) -O2 -o release/templ_linux.x86_64
+	x86_64-w64-mingw32-gcc -mwindows -static main.c $(FLAGS) $(FILES_WIN) -O2 -lgdi32 -lwinmm -o release/templ.exe
 
 tests:
 	mkdir -p bin
@@ -17,4 +43,4 @@ tests:
 	
 	
 
-.PHONY: all tests
+.PHONY: all tests release templ 
