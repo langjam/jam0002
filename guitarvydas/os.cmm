@@ -89,8 +89,9 @@ void panic (char* panicMessage) {
 }
 
 void kernelSendc (Component* self, char c) {
-  Message m = $newMessagec (c);
-  $enqueueOutput (self->outputQueue, m);
+  Message m;
+  m.c = c;
+  $enqueueOutput (self, m);
 }
  
 

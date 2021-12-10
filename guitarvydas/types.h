@@ -23,10 +23,10 @@ struct s_List {
 };
 
 struct s_Component {
-  void (*react) (struct s_Component* self);
+  void (*reactFunction) (struct s_Component* self, union u_Message);
   struct s_List* inputQueue;
   struct s_List* outputQueue;
-  void (*initialize) (struct s_Component* self);
+  void (*initializeFunction) (struct s_Component* self);
 };
 
 struct s_Sender {

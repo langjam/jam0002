@@ -36,12 +36,12 @@ extern List* componentPopInput (Component*);
     /* | "$nextOutput" Param -- nextOutput */
     /* | "$advanceOutputsAndGC" Param -- advanceOutputs */
 extern List* componentGetOutputsAsSent (Component*);
-extern void outputListAdvanceAndGC (List*);
+extern List* outputListAdvanceAndGC (List*);
 
 // ConnectionTable
   /* $connectedTo (Component) -> Component; */
   /* $connect (Component, Component); */
-extern Component connectionsConnectedTo (Component*);
+extern Component* connectionsConnectedTo (Component*);
 extern void connectionsConnect (Component*, Component*);
 
 // Kernel

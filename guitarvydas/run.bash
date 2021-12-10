@@ -21,24 +21,16 @@ ${pfr} ${lj2} main.cmm cmm.ohm cmm.glue ${lj2}/support.js >main.c
 
 
 
-# these compile fine, but need to be linked with other files
-# echo gcc producer.c
-# gcc producer.c
-# echo gcc consumer.c
-# gcc consumer.c
-
-#echo ATM gcc os.c has compilation errors/warning
-# echo gcc os.c
-# gcc os.c
-
-#echo ATM gcc main.c has compilation errors/warning
-# echo gcc main.c
-# gcc main.c
-
-# echo gcc util.c
-#echo ATM gcc util.c has compilation errors/warning
-# gcc util.c
-
+echo 'gcc -c -o producer.o producer.c'
+gcc -c -o producer.o producer.c
+echo 'gcc -c -o consumer.o consumer.c'
+gcc -c -o consumer.o consumer.c
+echo 'gcc -c -o os.o os.c'
+gcc -c -o os.o os.c
+echo 'gcc -c -o main.o main.c'
+gcc -c -o main.o main.c
+echo 'gcc -c -o util.o util.c'
+gcc -c -o util.o util.c
 
 ${d2f} ${lj2} DaisyChain >fb.pl
 echo DaisyChain.drawio '->' fb.pl
