@@ -1,0 +1,80 @@
+StatementPattern: CStatement [	
+	ReturnPattern: Return {
+		return [[expression]];
+	}
+	
+	VariableDeclarationPattern: VariableDeclaration {
+		[[type]] [[name]];
+	}
+	
+	VariableInitializationPattern: VariableInitialization {
+		[[type]] [[name]] = [[expression]];
+	}
+
+	VariableAssignmentPattern: VariableAssignment {
+		[[name]] = [[expression]];
+	}
+	
+	ConditionalPattern: Conditional [
+		IfPattern: If {
+			if ([[expression]])
+			{
+				[[CStatement:statements]]
+			}
+		}
+		
+		ElseIfPattern: ElseIf {
+			else if ([[expression]])
+			{
+				[[CStatement:statements]]
+			}
+		}
+		
+		ElsePattern: Else {
+			else
+			{
+				[[CStatement:statements]]
+			}
+		}
+	]
+]
+
+ArgumentPattern: CArguments [
+	ArgumentContentPattern: Argument {
+		[[type]] [[name]]
+	}
+	ArgumentExtensionPattern: Extension {
+		,
+	}
+]
+
+FunctionPattern: CFunction {
+	[[return_type]] [[name]]([[CArguments:arguments]])
+	{
+		[[CStatement:statements]]
+	}
+}
+
+CFunction {
+	int fibonacci(int n)
+	{
+		if (n <= 0)
+		{
+			return 0;
+		}
+	
+		if (n == 1)
+		{
+			return 1;
+		}
+		
+		return fibonacci(n - 1) + fibonacci(n - 2);
+	}
+}
+
+CFunction {
+	int dupr_main()
+	{
+		return fibonacci(10);
+	}
+}

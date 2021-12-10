@@ -1,0 +1,139 @@
+StatementPattern: CStatement [	
+	ReturnPattern: Return {
+		return [[expression]];
+	}
+	
+	VariableDeclarationPattern: VariableDeclaration {
+		[[type]] [[name]];
+	}
+	
+	VariableInitializationPattern: VariableInitialization {
+		[[type]] [[name]] = [[expression]];
+	}
+
+	VariableAssignmentPattern: VariableAssignment {
+		[[name]] = [[expression]];
+	}
+	
+	ConditionalPattern: Conditional [
+		IfPattern: If {
+			if ([[expression]])
+			{
+				[[SexprStatement:statements]]
+			}
+		}
+		
+		ElseIfPattern: ElseIf {
+			else if ([[expression]])
+			{
+				[[SexprStatement:statements]]
+			}
+		}
+		
+		ElsePattern: Else {
+			else
+			{
+				[[SexprStatement:statements]]
+			}
+		}
+	]
+]
+
+ArgumentPattern: CArguments [
+	ArgumentContentPattern: Argument {
+		[[type]] [[name]]
+	}
+	ArgumentExtensionPattern: Extension {
+		,
+	}
+]
+
+FunctionPattern: CFunction {
+	[[return_type]] [[name]]([[CArguments:arguments]])
+	{
+		[[CStatement:statements]]
+	}
+}
+
+StatementPattern: SexprStatement [
+	ReturnPattern: Return {
+		(return [[expression]])
+	}
+	
+	VariableDeclarationPattern: VariableDeclaration {
+		([[type]] [[name]])
+	}
+	
+	VariableInitializationPattern: VariableInitialization {
+		([[type]] [[name]] = [[expression]])
+	}
+
+	VariableAssignmentPattern: VariableAssignment {
+		([[name]] = [[expression]])
+	}
+	
+	ConditionalPattern: Conditional [
+		IfPattern: If {
+			(if [ [[expression]] ]
+				[[CStatement:statements]]
+			)
+		}
+		
+		ElseIfPattern: ElseIf {
+			(elseif [ [[expression]] ]
+				[[CStatement:statements]]
+			)
+		}
+		
+		ElsePattern: Else {
+			(else
+				[[CStatement:statements]]
+			)
+		}
+	]
+]
+
+ArgumentPattern: SexprArguments [
+	ArgumentContentPattern: Argument {
+		([[type]]: [[name]])
+	}
+	ArgumentExtensionPattern: Extension {
+		
+	}
+]
+
+FunctionPattern: SexprFunction {
+	(function
+		(returntype [[return_type]] 
+			(name [[name]]
+				(Args: [[SexprArguments:arguments]])
+				([[SexprStatement:statements]])
+			)
+		)
+	)
+}
+
+CFunction {
+	int some_embedded_function(int n)
+	{
+		if (n <= 0)
+		{
+			(if [ n == -1 ] return 1234;)
+			(else return n;)
+		}
+	
+		if (n == 1)
+		{
+			(return 1)
+		}
+		
+		return 2;
+	}
+}
+
+CFunction {
+	int dupr_main()
+	{
+		return some_embedded_function(-1);
+	}
+}
