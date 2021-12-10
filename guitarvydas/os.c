@@ -26,8 +26,8 @@ void Dispatcher () {
 void Dispatch () {
   List componentList;
 componentList = runQueue;
-  while ((componentList != NULL){
-      c = componentList->data.component;
+  while ((componentList != NULL)) {
+      Component c = componentList->data.component;
       DispatchMaybe (c);
 componentList = (componentList != NULL) ? {support.getParam1 ()}->next : NULL;
     }
@@ -46,9 +46,10 @@ componentCallReaction (c, m);
 }
 
 void DistributeOutputsToReceivers () {
-  List componentList = $beginWalkingComponentList; ------- needs params?
+  List componentList;
+outputs = runQueue;
   while ((componentList != NULL)) {
-      c = componentList->data.component;
+      Component c = componentList->data.component;
       DispatchMaybe (c);
 componentList = (componentList != NULL) ? {support.getParam1 ()}->next : NULL;
     }

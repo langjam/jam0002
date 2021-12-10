@@ -12,6 +12,9 @@ On Mac/Linux:
 
 ./run.bash
 
+# At-A-Glance
+
+
 # Contents
 1. C-- transpiler (C minus minus - dataless C)
 2. 5 Diagrams of various programming patterns (patterns.drawio)
@@ -22,6 +25,11 @@ On Mac/Linux:
 7. README.md, doc/\*.md
 8. DaisyChain.drawio - single diagram to be compiled (from diagrams above)
 9. os.cmm - multitasking kernel (alpha, POC) for event-driven C components
+10. doc/internals-types.h.drawio - diagram of types.h
+11.  diagrams of message passing in 3 steps
+	1.  internals-Before.svg
+	2.  internals-After 1st Send().svg
+	3.  internals-After 1s Dispatch.svg
 # Status
 - Plan written (doc/plan.md)
 - Concurrency Pattern Diagrams drawn in draw.io (See below: Diagrams - Discussion) and exported as .SVG
