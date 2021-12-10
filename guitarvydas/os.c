@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "mpos.h"
+#include "kernel.h"
 
 void DispatchTransferOutputs ();
-List runQueue;
+List* runQueue;
+int systemRunning = 1;
 
 void kernelStart () { systemRunning = 1; }
 void kernelStop () { systemRunning = 0; }
@@ -15,7 +17,7 @@ void DistributeOutputsFrom (Component*);
 void DeliverMessageToReceiver (Component*, Message);
 void RunComponentOnce (Component*);
 void DistributeMaybe (Component*);
-void DistributeOutputsFrom (Component();
+void DistributeOutputsFrom (Component*);
 
 void Dispatcher () {
   while (systemRunning) {
@@ -28,9 +30,9 @@ void Dispatch () {
   List* componentList;
 componentList = runQueue;
   while ((componentList != NULL)) {
-      Component* c = componentList->data->component;
+      Component* c = componentList->datum.pcomponent;
       DispatchMaybe (c);
-componentList = (componentList != NULL) ? componentList->next : NULL;
+componentList = (componentList != NULL) ? componentList->next : (List*)NULL;
     }
 ;
 }
@@ -42,7 +44,7 @@ void DispatchMaybe (Component* c) {
 }
 
 void RunComponentOnce (Component* c) {
-  ListCell* cell = componentPopInput (c);
+  List* cell = componentPopInput (c);
   Message msg = cell->datum.message;
 componentCallReaction (c, msg);
 }
@@ -51,9 +53,9 @@ void DistributeOutputsToReceivers () {
   List* componentList;
 componentList = runQueue;
   while ((componentList != NULL)) {
-      Component* c = componentList->data->component;
+      Component* c = componentList->datum.pcomponent;
       DistributeMaybe (c);
-componentList = (componentList != NULL) ? componentList->next : NULL;
+componentList = (componentList != NULL) ? componentList->next : (List*)NULL;
     }
 ;
 }
@@ -68,9 +70,9 @@ void DistributeOutputsFrom (Component* c) {
   List* outputs;
 outputs = componentGetOutputsAsSent (c);
   while ((outputs != NULL)) {
-    Message* m = outputs->data;
+    Message m = outputs->datum.message;
     DeliverMessageToReceiver (c, m);
-outputs = (outputs != NULL) ? outputListAdvanceAndGC (outputs) : NULL;
+outputs = (outputs != NULL) ? outputListAdvanceAndGC (outputs) : (List*)NULL;
   }
 ;
 }

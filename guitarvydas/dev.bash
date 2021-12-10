@@ -24,12 +24,12 @@ echo gcc consumer.c
 gcc consumer.c
 
 
-# echo transiled files
-# echo os.cmm '->' os.c
-# ${pfr} ${lj2} os.cmm cmm.ohm cmm.glue ${lj2}/support.js >os.c
+echo transiled files
+echo os.cmm '->' os.c
+${pfr} ${lj2} os.cmm cmm.ohm cmm.glue ${lj2}/support.js >os.c
 
-# echo gcc os.c
-# gcc os.c
+echo gcc os.c
+gcc os.c
 
 # echo transiled files
 # echo main.cmm '->' main.c

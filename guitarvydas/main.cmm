@@ -4,10 +4,10 @@
 #include "kernel.h"
 
 int main (int argc, char **argv) {
-  Component p = $newComponent (initProducer, reactProducer);
-  Component c = $newComponent (initConsumer, reactConsumer);
-  ListCell lis1 = $newListCellComponent (p);
-  ListCell lis2 = $newListCellComponent (c);
+  Component* p = $newComponent (initProducer, reactProducer);
+  Component* c = $newComponent (initConsumer, reactConsumer);
+  List* lis1 = $newListCellComponent (p);
+  List* lis2 = $newListCellComponent (c);
   $append (lis1, lis2);
   runQueue = lis1;
   $connect (p, c);
