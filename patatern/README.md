@@ -133,32 +133,91 @@ Each term is matched against all the definitions in the knowledge base,
 in a top-down fashion, until it finds a matching definition.
 Matching is performed through [unification](https://en.wikipedia.org/wiki/Unification_(computer_science)).
 
+If the program terminates successfully (ie. if no fatal error occurs)
+the interpreter displays the new values of all the variables that appear in
+the queries.
+
+#### A fact is matched
+
 If the match is a fact, the two terms are unified
 but no other action is performed.
+
+Example:
+
+Suppose we have this rule in the knowledge base:
+
+```
+john is 23 years old.
+```
+
+We can run queries in the interpreter that match this rule:
+
+```
+?> john is N years old.
+N = 23.
+
+?> Someone is 23 years old.
+Someone = john.
+```
+
+#### A rule is matched
+
 If the match is a rule, the left-hand side is unified with the query term
 and all the terms in the right-hand side are evaluated recursively as the next query.
 
 If no definition in the knowledge base matches,
 the built-in rules are attempted.
 
+Example:
+
+Given this rule:
+
+```
+hello: print (hello world).
+; (print X) is a built-in rule that prints X to stdout
+```
+
+If we run the query `hello.` the term `hello world` will be printed
+to the screen.
+
 ### Built-in rules
 
 #### Arithmetic
 
+Only `+` and `-` are supported.
+
 ```
-?> 1 + 2 = X.
+?> X = 1 + 2.
 X = 3.
 
-?> 1 + X = 3.
-X = 2.
+?> 1 - X = 3.
+X = -2.
 
-?> 1 + X = 3, X + Y = 10, 32 = X + Y + Z.
+?> 1 + X = 3, X + Y = 10, X + Y + Z = 32.
 X = 2.
 Y = 8.
 Z = 22.
 ```
 
+#### Integer comparison
+
+Only `<` and `>` are supported.
+
+```
+?> 2 > 1 is X.
+X = true.
+
+?> 2 < 1 is X.
+X = false.
+```
+
 #### IO
+
+`print` prints a term to stdout.
+
+`getSymbol` reads a line from stdin and interprets it as a symbol.
+
+`getInt` reads a line from stdin and interprets it as an integer.
 
 ```
 ?> print (hello world).
@@ -166,7 +225,7 @@ hello world
 
 ?> print (what is your name?), getSymbol Name, print (hello Name).
 what is your name?
-john 
+john
 hello john
 Name = john.
 
@@ -180,6 +239,6 @@ Year = 1998.
 
 ### Examples
 
-There is a file `example.pt` in the `patatern` directory.
+There is a file [example.pt](./example.pt) in the `patatern` directory.
 You can load it into the interpreter and run queries
 to get more familiar with the language.

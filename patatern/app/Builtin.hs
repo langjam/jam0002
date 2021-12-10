@@ -79,7 +79,7 @@ evalAdditionTerms lhs rhs = do
       maybeIntsR = traverse getInt othersR
   case (varsL, maybeIntsL, varsR, maybeIntsR) of
         ([var], Just intsL, [], Just intsR) ->
-          void $ unify var (Int (sum intsR + sum intsL))
+          void $ unify var (Int (sum intsR - sum intsL))
         ([], Just intsL, [var], Just intsR) ->
           void $ unify var (Int (sum intsL - sum intsR))
         ([], Just intsL, [], Just intsR) ->
