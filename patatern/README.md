@@ -165,6 +165,8 @@ Someone = john.
 If the match is a rule, the left-hand side is unified with the query term
 and all the terms in the right-hand side are evaluated recursively as the next query.
 
+### Built-in rules
+
 If no definition in the knowledge base matches,
 the built-in rules are attempted.
 
@@ -179,8 +181,6 @@ hello: print (hello world).
 
 If we run the query `hello.` the term `hello world` will be printed
 to the screen.
-
-### Built-in rules
 
 #### Arithmetic
 
