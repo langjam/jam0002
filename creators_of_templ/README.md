@@ -166,13 +166,15 @@ root {
 }
 ```
 
-Now if you do that, you can see an infinitely nested circle going blacker and blacker.
+Now if you do that, you can see an infinitely\* nested circle going blacker and blacker.
 
 This is because "anything that has class .infinitely\_nested contains circle.infinitely\_nested"
 Since it's a recursive definition, we get that pattern.
 
 You also might have noticed a variable `$depth`, it's a built-in variable that tells how nested the element is.
+(For example, nesting of `root` is 0)
 
+\* Theres a recursion limit
 ---
 
 Another interesting property of selectors is they match only all of the elements match
