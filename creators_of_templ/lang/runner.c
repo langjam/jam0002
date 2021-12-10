@@ -213,7 +213,7 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 		dest->data.color = ((uint32_t)red.data.number << 24) | ((uint32_t)green.data.number << 16) | ((uint32_t)blue.data.number << 8) | (uint32_t)opacity.data.number;
 	}	
 	else {
-		// TODO: Provide info about invalid call
+		r->err = err_f(err_badprop, call->token.loc, "Function not found%s", strncmp(call->token.val, "rgba", call->token.len) == 0 ? ", did you mean rgb()?" : "");
 		return err_badprop;
 	}	
 	return err_ok;
