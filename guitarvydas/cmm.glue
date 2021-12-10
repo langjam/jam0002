@@ -7,7 +7,7 @@ Macro_datumMessage [k Param] = [[${support.getParam1 ()}->datum.message]]
 Macro_datumpComponent [k Param] = [[${support.getParam1 ()}->datum.pcomponent]]
 Macro_datumpConnection [k Param] = [[${support.getParam1 ()}->datum.pconnection]]
 Macro_newListCellComponent [k Param] = [[listNewCellComponent (${support.getParam1 ()})]]
-Macro_append [k TwoParams] = [[listAppend (${support.getParam1 ()}, ${support.getParam2 ()})]]
+Macro_append [k TwoParams] = [[append (${support.getParam1 ()}, ${support.getParam2 ()})]]
 
 Macro_newComponent [k TwoParams] 
   = [[ componentNew (${support.getParam1 ()}, ${support.getParam2 ()}) ]]
