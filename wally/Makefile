@@ -11,7 +11,6 @@ depends		:= $(patsubst %.o, %.d, $(objects))
 includes 	:= -I vendor\PEGTL\include -I include
 
 all: $(target) Makefile
-	.\$(target) examples/if_test.wly
 
 # Link the program and create the executable
 $(target): $(objects)
