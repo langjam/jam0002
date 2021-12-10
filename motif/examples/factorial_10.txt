@@ -1,0 +1,73 @@
+recursive factorial program
+calculate 10!
+
+palette:
+abcdefghijklabcdefghijkl
+
+section a
+aaaaaaaaaaaaaaaaaaaaaaaa
+
+push 10
+aaaaaaaaaaaabbbbbbbbbbbb
+abkabkabkabkabkabkabkabk
+
+call 1
+aaaaaaaaaaaaaaaaaaaaabbb
+accaccaccaccaccaccaccacc
+
+printint
+aaaaaaaaaaaaaaaaaaaaabbb
+abccbbabccbbabccbbabccbb
+
+section b
+the factorial function
+bbbbbbbbbbbbbbbbbbbbbbbb
+
+dup
+aaaaaaaaaaaabbbbbbbbbbbb
+abccbbabccbbabccbbabccbb
+
+startblock
+abcbabcbabcbabcbabcbabcb
+abccbbabccbbabccbbabccbb
+
+fwd if
+abcabcabcabcabcabcabcabc
+abccbbabccbbabccbbabccbb
+
+pop
+abfabfabfabfabfabfabfabf
+bbbbbbbbbbbbaaaaaaaaaaaa
+
+push 1
+aaaaaaaaaaaabbbbbbbbbbbb
+acacacacacacacacacacacac
+
+return
+accaccaccaccaccaccaccacc
+aaaaaaaaaaaaaaaaaaaaabbb
+
+endblock
+abccbbabccbbabccbbabccbb
+abcbabcbabcbabcbabcbabcb
+
+dup
+aaaaaaaaaaaabbbbbbbbbbbb
+abccbbabccbbabccbbabccbb
+
+push 1
+aaaaaaaaaaaabbbbbbbbbbbb
+acacacacacacacacacacacac
+
+sub
+abcbabcbabcbabcbabcbabcb
+bbbbbbbbbbbbaaaaaaaaaaaa
+
+the recursive bit
+call sec. 1 (color b)
+aaaaaaaaaaaaaaaaaaaaabbb
+accaccaccaccaccaccaccacc
+
+mul
+abababababababababababab
+abcbabcbabcbabcbabcbabcb
