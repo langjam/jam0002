@@ -3,16 +3,20 @@ Motif Lang
 
 Motif is an esoteric, symbol-agnostic programming language based on combination of line patterns.
 
-Building & Running
-------------------
-1. Install node & npm
-2. Run `npm install` to install dependencies
+Building
+--------
+1. Install nodejs & npm
+2. Run `npm install` to install the dependencies
 3. Run `npm run build` to build the source code
-4. Run `./motif [filename]` or `npm start [filename]` to run a motif program.
-   ```bash
-   ./motif examples/hello_world.txt
-   ./motif examples/fibonacci.png
-   ```
+
+Running
+-------
+To start a motif program, run `./motif [filename]` or `npm start [filename]`. Motif program can be a png file or a text file.
+```bash
+./motif examples/hello_world.txt
+./motif examples/factorial.png
+npm start examples/fibonacci
+```
 
 How Motif Works
 ===============
@@ -30,7 +34,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `eeeeeeeee` is a solid pattern of color "e"
 
-   ![image](./docs/solid.png) is a solid pattern of color #FF0000
+   A 12-pixel row ![image](./docs/solid.png) is a solid pattern of color #FF0000
 
 
 1. Rainbow
@@ -42,7 +46,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `eeeeefffffggggg` is a rainbow pattern with colors ["e", "f", "g"], each has cell width of 5
 
-   ![image](./docs/rainbow.png) is a rainbow pattern with colors [#FF0000, #00FF00, #0000FF], each has cell width of 4
+   A 12-pixel row ![image](./docs/rainbow.png) is a rainbow pattern with colors [#FF0000, #00FF00, #0000FF], each has cell width of 4
 
 2. Irregular Rainbow
 
@@ -52,7 +56,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `eeeffffgggggg` is an irregular rainbow pattern with colors ["e", "f", "g"] and cell widths of [3, 4, 5]
 
-   ![image](./docs/rainbow_irregular.png) is a rainbow pattern with colors [#FF0000, #00FF00, #0000FF] and cell widths of [2, 6, 4]
+   A 12-pixel row ![image](./docs/rainbow_irregular.png) is a rainbow pattern with colors [#FF0000, #00FF00, #0000FF] and cell widths of [2, 6, 4]
 
 3. Checkerboard
 
@@ -62,7 +66,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `eeffggee`, is a checkerboard pattern with colors ["e", "f", "g"] repeated ~2 times (incomplete), each has cell width of 2
 
-   ![image](./docs/checker.png) is a checkerboard pattern with colors [#FF0000, #00FF00, #0000FF] repeated twice, each has cell width of 2
+   A 12-pixel row ![image](./docs/checker.png) is a checkerboard pattern with colors [#FF0000, #00FF00, #0000FF] repeated twice, each has cell width of 2
 
 4. Irregular Checkerboard
 
@@ -72,7 +76,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `eeffgge`, is an irregular checkerboard pattern with colors ["e", "f", "g"] repeated ~2 times (incomplete), and widths of [2, 2, 2, 1]
 
-   ![image](./docs/checker_irregular.png) is an irregular checkerboard pattern with colors [#FF0000, #00FF00, #0000FF] repeated twice, and widths of [1, 3, 2, 1, 3, 2]
+   A 12-pixel row ![image](./docs/checker_irregular.png) is an irregular checkerboard pattern with colors [#FF0000, #00FF00, #0000FF] repeated twice, and widths of [1, 3, 2, 1, 3, 2]
 
 5. Wave
 
@@ -82,7 +86,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `eeffgghhggffeeff` is a wave pattern with colors ["e", "f", "g", "h"], each has cell width of 2
 
-   ![image](./docs/wave.png) is a wave pattern with colors [#FFFFFF, #999999, #000000], each has cell width of 1
+   A 12-pixel row ![image](./docs/wave.png) is a wave pattern with colors [#FFFFFF, #999999, #000000], each has cell width of 1
 
 6. Irregular Wave
 
@@ -92,7 +96,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `efgghhhggfe` is a wave pattern with colors ["e", "f", "g", "h"] and cell widths of [1, 1, 2, 3, 2, 1, 1]
 
-   ![image](./docs/wave_irregular.png) is a wave pattern with colors [#FFFFFF, #999999, #000000] and cell widths of [1, 4, 2, 4, 1]
+   A 12-pixel row ![image](./docs/wave_irregular.png) is a wave pattern with colors [#FFFFFF, #999999, #000000] and cell widths of [1, 4, 2, 4, 1]
 
 Parsing Rule
 ------------
@@ -155,7 +159,7 @@ Parsing Rule
    aaaaaa
    ```
 
-   Image program example:
+   Image rows example.
 
    ![image](./docs/image_comment.png)
 
