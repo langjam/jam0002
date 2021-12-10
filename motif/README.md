@@ -18,6 +18,17 @@ To start a motif program, run `./motif [filename]` or `npm start [filename]`. Mo
 npm start examples/fibonacci
 ```
 
+Code Examples
+--------
+Code examples are provided in `examples` directory. Below are some visually interesting examples.
+
+| Program | Fibonacci | Factorial | Heart |
+| -- | -- | -- | -- |
+| **Description** | Print fib(0) to fib(20) | Calculate 5! | Print an ASCII art image of a heart |
+| **Code** | ![image](./examples/fibonacci.png) | ![image](./examples/factorial.png) | ![image](./examples/heart.png) |
+
+
+
 How Motif Works
 ===============
 
@@ -32,7 +43,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `a` is a solid pattern of color "a"
 
-   `eeeeeeeee` is a solid pattern of color "e"
+   `😃😃😃😃😃😃😃😃😃` is a solid pattern of color "😃"
 
    A 12-pixel row ![image](./docs/solid.png) is a solid pattern of color #FF0000
 
@@ -44,7 +55,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `ab` is a rainbow pattern with colors ["a", "b"], each has cell width of 1
 
-   `eeeeefffffggggg` is a rainbow pattern with colors ["e", "f", "g"], each has cell width of 5
+   `eeeeefffff😃😃😃😃😃` is a rainbow pattern with colors ["e", "f", "😃"], each has cell width of 5
 
    A 12-pixel row ![image](./docs/rainbow.png) is a rainbow pattern with colors [#FF0000, #00FF00, #0000FF], each has cell width of 4
 
@@ -54,7 +65,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `aab` is an irregular rainbow pattern with colors ["a", "b"] and cell widths of [2, 1]
 
-   `eeeffffgggggg` is an irregular rainbow pattern with colors ["e", "f", "g"] and cell widths of [3, 4, 5]
+   `eeeffff😃😃😃😃😃` is an irregular rainbow pattern with colors ["e", "f", "😃"] and cell widths of [3, 4, 5]
 
    A 12-pixel row ![image](./docs/rainbow_irregular.png) is a rainbow pattern with colors [#FF0000, #00FF00, #0000FF] and cell widths of [2, 6, 4]
 
@@ -64,7 +75,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `ababab`, is a checkerboard pattern with colors ["a", "b"] repeated 3 times, each has cell width of 1
 
-   `eeffggee`, is a checkerboard pattern with colors ["e", "f", "g"] repeated ~2 times (incomplete), each has cell width of 2
+   `eeff😃😃ee`, is a checkerboard pattern with colors ["e", "f", "😃"] repeated ~2 times (incomplete), each has cell width of 2
 
    A 12-pixel row ![image](./docs/checker.png) is a checkerboard pattern with colors [#FF0000, #00FF00, #0000FF] repeated twice, each has cell width of 2
 
@@ -74,7 +85,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `aababbb` is an irregular checkerboard pattern with colors ["a", "b"] repeated 2 times, and widths of [2, 1, 1, 3]
 
-   `eeffgge`, is an irregular checkerboard pattern with colors ["e", "f", "g"] repeated ~2 times (incomplete), and widths of [2, 2, 2, 1]
+   `eeff😃😃e`, is an irregular checkerboard pattern with colors ["e", "f", "😃"] repeated ~2 times (incomplete), and widths of [2, 2, 2, 1]
 
    A 12-pixel row ![image](./docs/checker_irregular.png) is an irregular checkerboard pattern with colors [#FF0000, #00FF00, #0000FF] repeated twice, and widths of [1, 3, 2, 1, 3, 2]
 
@@ -84,7 +95,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `abcbabcba` is a wave pattern with colors ["a", "b", "c"], each has cell width of 1
 
-   `eeffgghhggffeeff` is a wave pattern with colors ["e", "f", "g", "h"], each has cell width of 2
+   `eeff😃😃hh😃😃ffeeff` is a wave pattern with colors ["e", "f", "😃", "h"], each has cell width of 2
 
    A 12-pixel row ![image](./docs/wave.png) is a wave pattern with colors [#FFFFFF, #999999, #000000], each has cell width of 1
 
@@ -94,7 +105,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    `abbcbaa` is a wave pattern with colors ["a", "b", "c"] and cell widths of [1, 2, 1, 1, 2]
 
-   `efgghhhggfe` is a wave pattern with colors ["e", "f", "g", "h"] and cell widths of [1, 1, 2, 3, 2, 1, 1]
+   `ef😃😃hhh😃😃fe` is a wave pattern with colors ["e", "f", "😃", "h"] and cell widths of [1, 1, 2, 3, 2, 1, 1]
 
    A 12-pixel row ![image](./docs/wave_irregular.png) is a wave pattern with colors [#FFFFFF, #999999, #000000] and cell widths of [1, 4, 2, 4, 1]
 
@@ -365,17 +376,17 @@ Calculate `z = x * y` and push `z` to the stack
 ### 10. <a name="instrdiv">div</a> [ x y ] -> [ z ]
 Pattern: wave -> checker
 
-Calculate `z = x / y` and push `z` to the stack
+Calculate `z = x div y`, `div` being integer division operator, and push `z` to the stack
 
 ### 11. <a name="instrmod">mod</a> [ x y ] -> [ z ]
 Pattern: rainbow -> irregular rainbow
 
-Calculate `z = x mod y` and push `z` to the stack
+Calculate `z = x mod y`, `mod` being module operator, and push `z` to the stack
 
 ### 12. <a name="instrpow">pow</a> [ x y ] -> [ z ]
 Pattern: irregular rainbow -> rainbow
 
-Calculate `z = x ** y` and push `z` to the stack
+Calculate `z = x pow y`, `pow` being power operator, and push `z` to the stack
 
 ### 13. <a name="instrgreater">greater</a> [ x y ] -> [ z ]
 Pattern: checker -> irregular checker
@@ -410,19 +421,19 @@ Calculate `z = (x || y) ? 1 : 0` and push `z` to the stack
 ### 19. <a name="instrstartblock">startblock</a>
 Pattern: wave -> irregular wave
 
-Starts a block. startblock must have a matching endblock, otherwise the parser will report error.
+Start a block. `startblock` must have a matching `endblock`, otherwise the parser will report error.
 
 ### 20. <a name="instrendblock">endblock</a>
 Pattern: irregular wave -> wave
 
-Ends a block. endblock must have a matching startblock, otherwise the parser will report error.
+End a block. `endblock` must have a matching `startblock`, otherwise the parser will report error.
 
 ### 21. <a name="instrfwd">fwd</a> x
 Pattern: wave -> irregular checker
 
 Jump forward to the end of an enclosing `x`-th block starting from 0, for `x = diff(first_pattern, second_pattern)`.
 
-For example, in case of `x == 0` means `fwd` will jump to the end of current block, `x == 1` to the end of the current block's parent block,
+For example, in case of `x == 0` it means `fwd` will jump to the end of current block, `x == 1` to the end of the current block's parent block,
 `x == 2` to the end of the parent's parent, etc.
 
 The parser will report error if `fwd` is not enclosed by the right amount of blocks.
@@ -432,7 +443,7 @@ Pattern: irregular checker -> wave
 
 Jump back to the start of an enclosing `x`-th block starting from 0, for `x = diff(first_pattern, second_pattern)`.
 
-For example, in case of `x == 0` means `back` will jump to the start of current block, `x == 1` to the start of the current block's parent block,
+For example, in case of `x == 0` it means `back` will jump to the start of current block, `x == 1` to the start of the current block's parent block,
 `x == 2` to the start of the parent's parent, etc.
 
 The parser will report error if `back` is not enclosed by the right amount of blocks.
@@ -462,7 +473,7 @@ Pattern: irregular checker -> irregular rainbow
 
 Exit from the section and continue from after the call in caller's section.
 
-If caller doesn't exits (i.e. return in non-recursive or first call of main section), it will halt the program.
+If caller doesn't exists (i.e. return in non-recursive or first call of main section), it will halt the program.
 
 ### 27. <a name="instrhalt">halt</a>
 Pattern: irregular wave -> irregular rainbow
@@ -477,12 +488,12 @@ Print `x` as integer to console.
 ### 29. <a name="instrprintchar">printchar</a> [ x ] -> [ ]
 Pattern: irregular checker -> irregular wave
 
-Print `x mod 256` an ASCII character to console.
+Print `x mod 256` as ASCII character to console.
 
 ### 30. <a name="instrprintsym">printsym</a> [ x ] -> [ ]
 Pattern: irregular wave -> irregular checker
 
-Print symbol mapped to color id `x` to console.. Character symbols are printed as string, while pixel color symbols are printed as hexadecimal string.
+Print symbol mapped to color id `x` to console. Character symbols are printed as string, while pixel color symbols are printed as hexadecimal string.
 If no symbols are mapped to value of `x`, it will throw a runtime error.
 
 For example, for `x = 3` and palette mapping `a=0, b=1, c=2, d=3`, `printsym` will print "d".
