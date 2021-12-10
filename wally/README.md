@@ -60,6 +60,7 @@ The syntax is very similar to `C`. Wally is a simple language with a small set o
   * The value of Locked variables can be accessed in any expression
   * But to assign a value to the locked variable, the assigned pattern must be present **directly above the assignment statement** (might give parsing errrors if it is not directly above an assignment statement, but the message might not be helpful)
   * Look at `examples\err_pattern.wly` and `examples\all_test.wly`.
+  * If correct pattern is used, the variable will be unlocked only for the next statement. Pattern needs to supplied for each statement separately.
 
 ## Examples
 

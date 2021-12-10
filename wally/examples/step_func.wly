@@ -1,0 +1,27 @@
+var a = -7.52
+
+var b = a
+
+if (b < 0)
+{
+    b = -1 * a
+}
+
+var c = 0
+while(c < b)
+{
+    c = c + 1
+}
+
+c = c - 1
+
+/***/
+var d = c
+
+if(a < 0)
+{
+    /***/
+    d = -1 * d - 1
+}
+
+Print(d)
