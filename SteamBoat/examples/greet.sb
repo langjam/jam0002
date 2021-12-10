@@ -1,0 +1,14 @@
+island England
+port London
+lock .
+canal
+chars "Your name?"
+dump
+collate
+lit 0
+set
+chars "Ahoy "
+inp
+dump
+collate
+halt
