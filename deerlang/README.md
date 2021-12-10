@@ -68,7 +68,7 @@ Rules {
 
 FAQ
 
-Q: Why is it called deerlang <sub>deerlang</sub>?
+Q: Why is it called <sub>deerlang</sub>?
 A: Because dir is a reserved word in python. Subscript because it is small.
 
 Q: How does this involve patterns?
