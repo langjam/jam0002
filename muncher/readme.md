@@ -1,3 +1,7 @@
+> Note: this was imported from https://github.com/jDomantas/muncher. Head to the
+> original repo to find updates and pre-built binaries.
+
+
 # Muncher programming language
 
 This is an entry to the second langjam. Theme of the contest was "patterns".
