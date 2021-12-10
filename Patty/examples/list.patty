@@ -1,0 +1,23 @@
+(do
+	(def numbers (fun (n)
+		(if (!= n 0)
+			(++ (numbers (- n 1)) n))))
+
+	(print "1..10 = " (take 10 (numbers 100)))
+	(print "5! = " (fold * (numbers 5)))
+
+	(def xs (list 1 2 3))
+	(def ys (list "a" "b" "c" "d"))
+	(def zs (list 10 20 30 40))
+
+	(print "zs[3]: " (index 3 zs))
+
+	(print "Length of xs: " (len xs))
+
+	(for (name value) (zip (list "xs" "ys" "zs") (list xs ys zs))
+		(print name ": " value))
+
+	(print (tail ys))
+	(print (++ xs ys))
+	(print (zip xs ys zs))
+	(print (zip-with + xs zs))
