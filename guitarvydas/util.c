@@ -2,11 +2,8 @@
 #include <stdlib.h>
 #include "mpos.h"
 
-ListCell allocCell ();
-void freeCell (ListCell*);
-Message* allocMessage ();
-void freeMessage (Message);
-Datum* allocDatum ();
+List* allocCell ();
+void freeCell (List*);
 
 //////////
 
@@ -17,59 +14,61 @@ Datum* allocDatum ();
    If warranted by profiling.
 */
 
-ListCell allocCell () {
-  ListCell cell = (ListCell) malloc (sizeof (ListCell));
+List* allocCell () {
+  List* cell = (List*) malloc (sizeof (List));
   return cell;
 }
 
-void freeCell (ListCell cell) {
-  freeMessage (cell->data);
-  cell->data = NULL;
+void freeCell (List* cell) {
   cell->next = NULL;
   free (cell);
 }
 
 
-/* we could be smarter about this, if warranted by profiling */
-Message* allocMessage () {
-  Message* result = (Message*) malloc (sizeof (Message));
-  return result;
-}
-
-void freeMessage (Message* msg) {
-  free (msg);
-}
-
-
 // List
-List* listNewCellComponent (Component* c) {
-  ListCell* cell = allocCell ();
-  cell->datum.pcomponent = c;
+List* listNewCellComponent (Component* pcomponent) {
+  List* cell = allocCell ();
+  cell->datum.pcomponent = pcomponent;
   cell->next = NULL;
   return cell;
 }
 
-List* listNewCellConnection (Component* c) {
-  ListCell* cell = allocCell ();
-  cell->datum.pconnection = c;
+List* listNewCellConnection (Connection* pconnection) {
+  List* cell = allocCell ();
+  cell->datum.pconnection = pconnection;
   cell->next = NULL;
   return cell;
 }
 
 extern List* listAppend (List* l1, List* l2) {
   // smarten this up if warranted
-  // (fold listAppend1 into listAppend if warranted)
-  if (l1->next == NULL) {
-    l1->next = l2;
-    return l1;
+  if (l1 == NULL) {
+    return l2;
   } else {
-    return listAppend (l1->next, l2);
+    if (l1->next == NULL) {
+      l1->next = l2;
+      return l1;
+    } else {
+      return listAppend (l1->next, l2);
+    }
+  }
+}
+
+List* listReverse (List* l) {
+  if (l == NULL) { 
+    return NULL;
+  } else {
+    List* tail = listReverse (l->next);
+    List* newList = allocCell ();
+    newList->datum = l->datum;
+    newList->next = tail;
+    return newList;
   }
 }
 
 // Component
-Component componentNew (InitializationFunction initfn, ReactionFunction reactfn) {
-  Component component = (Component) malloc (sizeof (Component));
+Component* componentNew (InitializationFunction initfn, ReactionFunction reactfn) {
+  Component* component = (Component*) malloc (sizeof (Component));
   component->react = reactfn;
   component->initialize = initfn;
   component->inputQueue = NULL;
@@ -80,20 +79,20 @@ Component componentNew (InitializationFunction initfn, ReactionFunction reactfn)
 // no need to free Components - they are initialized at the beginning and never die */
 
 void componentAppendInput (Component* component, Message msg) {
-  ListCell cell = listNewCell ();
+  List* cell = allocCell ();
   cell->datum.message = msg;
   cell->next = NULL;
   component->inputQueue = listAppend (component->inputQueue, cell);
 }
 
 void componentAppendOutput (Component* component, Message msg) {
-  ListCell cell = listNewCell ();
+  List* cell = allocCell ();
   cell->datum.message = msg;
   cell->next = NULL;
   component->outputQueue = listAppend (component->outputQueue, cell);
 }
 
-List* componentPopInput (Component component) {
+List* componentPopInput (Component* component) {
   if (NULL == component->inputQueue) {
     panic ("empty input queue being popped");
     return NULL; // should never reach this point
@@ -109,15 +108,15 @@ void componentCallReaction (Component* component, Message msg) {
   (*component->reactFunction) (component, msg);
 }
 
-List componentGetOutputsAsSent (Component* component) {
+List* componentGetOutputsAsSent (Component* component) {
   // reverse the output list to get outputs in the order they were sent
-  List reversed = listReverse (component->outputQueue);
+  List* reversed = listReverse (component->outputQueue);
   return reversed;
 }
 
-ListCell outputListAdvanceAndGC (List* l) { /* $advanceOutputs */
-  ListCell garbage = l;
-  ListCell result = l->next;
+List* outputListAdvanceAndGC (List* l) { /* $advanceOutputs */
+  List* garbage = l;
+  List* result = l->next;
   freeCell (garbage);
   return result;
 }
@@ -130,9 +129,9 @@ ListCell outputListAdvanceAndGC (List* l) { /* $advanceOutputs */
 //  the compiler can be smart enough to figure out how many connections there
 //  are in a system an statically allocate them all 
 //  (if profiling shows a need to optimize this portion)
-Connection mtable; 
+Connection mtable[1]; 
 
-Component connectionsConnectedTo (Component* component) {
+Component* connectionsConnectedTo (Component* component) {
   Component* receiver = mtable [0].receiver.pcomponent; // not generalized
   return receiver;
 }
@@ -147,10 +146,10 @@ void connectionsConnect (Component* sender, Component* receiver) {
 
 // Kernel
 void kernelSendc (Component* component, char c) {
-  ListCell cell = listNewCell ();
+  List* cell = allocCell ();
   cell->datum.c = c;
   cell->next = NULL;
-  component->outputQueue = listAppend1 (component->outputQueue, cell);
+  component->outputQueue = listAppend (component->outputQueue, cell);
 }
 
 void kernelPanic (char* str) {

@@ -25,15 +25,17 @@ f2jdir=${lj2}/f2jsrc
 
 
 # echo transiled files
+# echo os.cmm '->' os.c
+# ${pfr} ${lj2} os.cmm cmm.ohm cmm.glue ${lj2}/support.js >os.c
+
+# echo gcc os.c
+# gcc os.c
+
+# echo transiled files
 # echo main.cmm '->' main.c
 # ${pfr} ${lj2} main.cmm cmm.ohm cmm.glue ${lj2}/support.js >main.c
 
 # echo gcc main.c
 # gcc main.c
 
-echo transiled files
-echo os.cmm '->' os.c
-${pfr} ${lj2} os.cmm cmm.ohm cmm.glue ${lj2}/support.js >os.c
-
-echo gcc os.c
-gcc os.c
+gcc util.c

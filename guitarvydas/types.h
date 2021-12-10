@@ -2,7 +2,7 @@ struct s_Component;
 struct s_Sender;
 struct s_Receiver;
 struct s_Connection;
-struct s_ListCell;
+struct s_List;
 
 union u_Message {
   char c;
@@ -11,7 +11,7 @@ union u_Message {
   struct s_Connection* pconnection;
 };
 
-struct s_ListCell {
+struct s_List {
   union {
     char c;
     int i;
@@ -19,13 +19,13 @@ struct s_ListCell {
     struct s_Connection* pconnection;
     union u_Message message;
   } datum;
-  struct s_ListCell* next;
+  struct s_List* next;
 };
 
 struct s_Component {
   void (*react) (struct s_Component* self);
-  struct s_ListCell* inputQueue;
-  struct s_ListCell* outputQueue;
+  struct s_List* inputQueue;
+  struct s_List* outputQueue;
   void (*initialize) (struct s_Component* self);
 };
 
@@ -44,8 +44,7 @@ struct s_Connection {
   struct s_Receiver receiver;
 };
 
-typedef struct s_ListCell List;
-typedef struct s_ListCell ListCell;
+typedef struct s_List List;
 typedef struct s_Component Component;
 typedef struct s_Connection Connection;
 typedef union u_Message Message;

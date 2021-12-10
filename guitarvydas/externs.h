@@ -16,7 +16,7 @@ extern List* append (List*, List*);
     /* | "$hasOutputs" Param        -- hasOutputs */
     /* | "$enqueueMessage" TwoParams  -- enqueueMessage */
     /* | "$enqueueOutput" TwoParams  -- enqueueOutput */
-extern Component componentNew (InitializationFunction, ReactionFunction);
+extern Component* componentNew (InitializationFunction, ReactionFunction);
 extern void componentCallReaction (Component*, Message);
 extern void componentAppendInput (Component*, Message);
 extern void componentAppendOutput (Component*, Message);
