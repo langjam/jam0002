@@ -43,7 +43,7 @@ main = do
             ("rules":_   ) -> handleRulesCmd ref
             _ -> putStrLn "Invalid command"
         Just query ->
-          finally (withInterrupt $ liftIO (runQuery ref (T.pack query))) (loop ref)
+          finally (liftIO (runQuery ref (T.pack query))) (loop ref)
       where
         try handler =
           catchAll (liftIO handler) (liftIO . print) >> loop ref
