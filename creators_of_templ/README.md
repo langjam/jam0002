@@ -107,7 +107,7 @@ The third thing you might have noticed is that rather than have my second `rect`
 }
 ```
 ![](https://i.imgur.com/fwctlpA.png)
-As you can see, moving the parent element will also move all its child elements. That's because the child's element position is relative to the parent's position. Now there's just one last property left to explore and it's the rotation.
+As you can see, moving the parent element will also move all its child elements. That's because the child element's position is relative to the parent's position. Now there's just one last property left to explore and it's the rotation.
 
 Rotation is a value in degrees by which the shape of the element is rotated. By example, if I want to have a lozenge instead of my second square, I can just rotate that element by 45 degrees:
 ```css
