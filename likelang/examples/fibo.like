@@ -1,0 +1,38 @@
+fn fibotilln(a, b, n) {
+    if a+b <= n {
+        print(a + b)
+        fibotilln(b, a + b, n)
+    }
+}
+
+fn fibonth(a, b, n) {
+    if n > 0 {
+        print(a + b)
+        fibonth(b, a + b, n - 1)
+    }
+}
+
+fn factorialnth(n) {
+    if n > 1 {
+        n * factorialnth(n - 1)
+    } else {
+        1
+    }
+}
+
+let fibonacci = collect /fibo*/
+
+let nth = collect /*nth/
+
+print("Fibonacci numbers till n")
+fibonacci.tilln(0, 1, 10)
+
+print("n Fibonacci numbers")
+fibonacci.nth(0, 1, 10)
+
+print("n Fibonacci numbers")
+fibo.nth(0, 1, 10)
+
+print("n factorial")
+print(factorial.nth(5))
+
