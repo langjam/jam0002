@@ -1,0 +1,25 @@
+at factorial:
+11:00 I write "num" in a blank note
+11:00 I open my backpack, read num, and write the value in num
+11:10 I write "result" in a blank note
+11:15 I notice the number in result is the number in num plus 0
+11:20 I wonder if result is 1
+11:30 It is! Good heavens, just look at the time! It's 12:20 already!
+11:30 Otherwise it feels like time doesn't pass
+11:40 I notice the number in num is slightly smaller now...
+11:45 I put num in my backpack
+11:50 I go to factorial
+12:00 I open my backpack, read result, and write the value in num
+12:10 I notice the number in result is the number in result multiplied by the number in num
+12:20 I put result in my backpack
+12:30 I return from factorial
+
+08:00 I wake up
+08:15 I write "num" in a blank note
+08:30 I ask myself "What factorial will I calculate today?" and write the answer in num
+08:40 I put num in my backpack
+08:45 I go to factorial
+12:35 I write "result" in a blank note
+12:40 I open my backpack, read result, and write the value in result
+13:10 I say "The result of " num "! is " result
+13:20 I go to sleep

@@ -1,0 +1,16 @@
+09:00 I wake up
+09:15 I say "Today I will calculate the fibonacci sequence."
+09:45 I write "last" in a blank note
+09:46 I write "lastlast" in a blank note
+09:47 I write "current" in a blank note
+09:48 I write "sentinel" in a blank note
+09:51 I say last
+09:52 I notice the number in last is the number in last plus 1
+09:53 I notice the number in current is the number in last plus the number in lastlast
+09:54 I wonder if sentinel is greater or equal to current
+09:55 It is! go to sleep
+09:56 Otherwise Good heavens, just look at the time! It's 09:57 already!
+09:57 I say current
+09:58 I notice the number in lastlast is the number in last plus 0
+09:59 I notice the number in last is the number in current plus 0
+10:00 I realize it's 09:53 again...
