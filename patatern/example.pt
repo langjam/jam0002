@@ -27,7 +27,7 @@ fib N is R:
 ; ending with the symbol 'fin'
 ; Rules for list ranges
 [X] goes from X to X.
-[X Xs] goes from X to Y:
+X Xs goes from X to Y:
   X < Y is true,
   X1 = X + 1,
   Xs goes from X1 to Y.
