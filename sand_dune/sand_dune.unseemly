@@ -111,42 +111,44 @@ extend_syntax
     DefaultToken ::= /\s*(\[|\]|\||->|capture_language|_|\+)/ ;
 
     Expr ::= alt[
-        # `ActuallyBool` is a hack; `*` doesn't work unless there's a type variable in it.
-        forall ActuallyBool . '{[
+        # `ActuallyInt` is a hack; `*` doesn't work unless there's a type variable in it.
+        forall ActuallyInt . '{[
             lit ,{DefaultWord}, = 'Rules'
             [
                 ,{DefaultSeparator},
                 lit ,{DefaultToken}, = '['
                 [
-                    lhs := ( ,{Expr< [ActuallyBool -> **[Bool Bool]** ] >}, ) # <-- atom_name : Bool
+                    lhs := ( ,{Expr< ActuallyInt >}, )
                     alt[ lit ,{DefaultToken}, = ']'  lit ,{DefaultToken}, = '|' ]alt
                 ] *
                 lit ,{DefaultToken}, = '->'
                 lit ,{DefaultToken}, = '['
                 [
-                    rhs := ( ,{Expr< [ActuallyBool -> **[Bool Bool]** ] >}, ) # <-- atom_name : Bool
+                    rhs := ( ,{Expr< ActuallyInt >}, )
                     alt[ lit ,{DefaultToken}, = ']'  lit ,{DefaultToken}, = '|' ]alt
                 ] *
             ] *
             lit ,{DefaultWord}, = 'Start'
             ,{DefaultSeparator},
             start_pattern := ( /\[([^\]]*)\]/ )
+            lit ,{DefaultWord}, = 'Steps'
+            steps := ( ,{Expr<Int>}, )
         ]}' top_level -> .{
 '[Expr|
     let string_pattern = ,[(prefab (string_to_sequence (ident_to_string start_pattern)))], ; in
         # Inconveniently, `cell` is also Unseemly's word for a mutable container.
-    let pattern = (map string_pattern .[ char : Int . (new_cell (equal? char 43)) ].) ;
+    let pattern = (map string_pattern .[ char : Int . (new_cell (if (equal? char 43) 1 0)) ].) ;
         # Buffer all writes so that subsequent rules don't "see" each other's effects.
         # (This is different than how PuzzleScript does it, but it allows cellular-automaton-like behavior)
-        pattern_buffer = (map string_pattern .[ char : Int . (new_cell (equal? char 43)) ].) ;
+        pattern_buffer = (map string_pattern .[ char : Int . (new_cell (if (equal? char 43) 1 0)) ].) ;
         output = (new_cell "
 ") ; in
     -{
-        for step in (range 0 15) -{
+        for step in (range 0 ,[steps],) -{
             # output:
             for entry in pattern
                 (assign output (concat (value output)
-                    (if (value entry) "█" "░"))) ;
+                    (if (equal? (value entry) 1) "█" "░"))) ;
             # append a newline:
             (assign output (concat (value output) "
 ")) ;
@@ -160,9 +162,8 @@ extend_syntax
                         -{
                             ...[ ,lhs, ,rhs, >> -{
                                 let mod_ij = (modulo (plus i (value j)) (len pattern)) ; in
-                                let **[matches ignored]** =
-                                    (,[lhs], (value (index pattern mod_ij))) ; in
-                                    (if matches
+                                    (if (or (equal? ,[lhs], (value (index pattern mod_ij)))
+                                            (equal? ,[lhs], 2))
                                         **[]**  # do nothing
                                         (assign all_match false)) ;
                                 (assign j (plus (value j) 1))
@@ -174,9 +175,9 @@ extend_syntax
                             # For each cell in the rule (again, to write results):
                             ...[ ,lhs, ,rhs, >> -{
                                 let mod_ij = (modulo (plus i (value j)) (len pattern)) ; in
-                                let **[ignored output]**
-                                        = (,[rhs], (value (index pattern_buffer mod_ij))) ; in
-                                    (assign (index pattern_buffer mod_ij) output) ;
+                                (if (equal? ,[rhs], 2)
+                                    **[]**  # do nothing
+                                    (assign (index pattern_buffer mod_ij) ,[rhs],)) ;
                                 (assign j (plus (value j) 1))
                             }- ]... ; **[]** }-
                             **[]**  # else, do nothing
@@ -199,35 +200,24 @@ extend_syntax
         }.
 
     ### These define the pattern/output forms.
+    # These used to be a nice-and-principled set of functions producing tuples,
+    # easy to imagine extending to support lots of cool things,
+    # but the Unseemly interpreter is slow, so I'm just encoding behaviors as numbers ) :
     forall . '{[
         lit ,{DefaultWord}, = 'No'
-        body := ( ,{Expr< [Bool -> **[Bool Bool]** ] >}, )
+        lit ,{DefaultWord}, = 'cell'
     ]}' negate -> .{
-        '[Expr |
-            .[ cell : Bool .
-                let **[matches output]** = (,[body], cell) ; in
-                # pattern: negate / output: negate
-                **[ (not matches) (not output) ]**
-            ].
-        ]'
+        (prefab 0)
     }.
     forall . '{[
         lit ,{DefaultWord}, = 'cell'
     ]}' atom_match -> .{
-        '[Expr |
-            .[ cell : Bool .
-                # pattern: match if present / output: set to true
-                **[ cell  true ]** ].
-        ]'
+        (prefab 1)
     }.
     forall . '{[
         lit ,{DefaultToken}, = '_'
     ]}' wildcard -> .{
-        '[Expr |
-            .[ cell : Bool .
-                # pattern: always match / output: no effect
-                **[ true  cell ]** ].
-        ]'
+        (prefab 2)
     }.
     ### Numeric literals in Sand Dune, so that we can have the step counter
     common (forall . '{

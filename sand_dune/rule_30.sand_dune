@@ -5,3 +5,5 @@ Rules
   [ No cell | No cell | cell] -> [ _ | cell | _ ]
 Start
   [               +               ]
+Steps
+  15

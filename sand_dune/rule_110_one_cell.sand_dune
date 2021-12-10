@@ -4,3 +4,5 @@ Rules
   [ cell | cell | cell ] -> [ _ | No cell | _ ]   # Or they and both neighbors are on.
 Start
   [                           + ]
+Steps
+  25
