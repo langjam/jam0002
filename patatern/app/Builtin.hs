@@ -24,6 +24,12 @@ evalBuiltin ("getInt" :> Var r) = do
     Nothing -> do
       liftIO $ putStrLn "Not an integer"
       error "Not an integer"
+evalBuiltin t@(Int n1 :> ">" :> Int n2 :> "is" :> Var b)
+  | n1 > n2   = void $ unify (Var b) (Symbol "true")
+  | otherwise = void $ unify (Var b) (Symbol "false")
+evalBuiltin t@(Int n1 :> "<" :> Int n2 :> "is" :> Var b)
+  | n1 < n2   = void $ unify (Var b) (Symbol "true")
+  | otherwise = void $ unify (Var b) (Symbol "false")
 evalBuiltin t@(_ :> "+" :> _ :> "=" :> _) = evalAddition t
 evalBuiltin t@(_ :> "-" :> _ :> "=" :> _) = evalAddition t
 evalBuiltin t@(_ :> "+" :> _) = evalAddition t
