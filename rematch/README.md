@@ -2,11 +2,11 @@
 
 [Pattern-matching](https://en.wikipedia.org/wiki/Pattern_matching) is a an extremely powerful programming concept allowing one to reduce complex algorithms down to systematic case analysis. Programming languages such as OCaml or Haskell highlights the beauty of this approach by providing syntactic constructs to define (recursive) fonctions by case analysis.
 
-**Rematch** is a tiny functional programming language designed in [Rust]() and whose only feature is pattern-matching. It is mainly an experiment to stress test the expressiveness of patterns in a programming language.
+**Rematch** is a tiny functional programming language designed in [Rust](https://www.rust-lang.org/) and whose only feature is pattern-matching. It is mainly an experiment to stress test the expressiveness of patterns in a programming language.
 
 ## Compiling the project
 
-To compile the projet, all you need is an [up-to-date rust installation]().
+To compile the projet, all you need is an [up-to-date rust installation](https://www.rust-lang.org/learn/get-started).
 
 The following command should start a **Rematch** repl:
 ```
@@ -87,5 +87,7 @@ This behavior is permitted by the `rematch` construct:
 ```
 case input of
   | pattern1 match output
-  | pattern2 rematch argument
+  | pattern2 rematch next_input
 ```
+
+If `input` matches `pattern2` then `next_input` will be evaluated and then the whole pattern matching will be re-executed with the result as a new input.
