@@ -352,46 +352,137 @@ Pattern: rainbow -> wave
 
 Calculate `z = x + y` and push `z` to the stack
 
-### 8. <a name="instrsub">sub</a>
+### 8. <a name="instrsub">sub</a> [ x y ] -> [ z ]
 Pattern: wave -> rainbow
 
 Calculate `z = x - y` and push `z` to the stack
 
-### 9. <a name="instrmul">mul</a>
+### 9. <a name="instrmul">mul</a> [ x y ] -> [ z ]
 Pattern: checker -> wave
 
 Calculate `z = x * y` and push `z` to the stack
 
-### 10. <a name="instrdiv">div</a>
+### 10. <a name="instrdiv">div</a> [ x y ] -> [ z ]
 Pattern: wave -> checker
 
 Calculate `z = x / y` and push `z` to the stack
 
-### 11. <a name="instrmod">mod</a>
+### 11. <a name="instrmod">mod</a> [ x y ] -> [ z ]
 Pattern: rainbow -> irregular rainbow
 
 Calculate `z = x mod y` and push `z` to the stack
 
-### 12. <a name="instrpow">pow</a>
+### 12. <a name="instrpow">pow</a> [ x y ] -> [ z ]
 Pattern: irregular rainbow -> rainbow
 
-Calculate `z = x pow y` and push `z` to the stack
+Calculate `z = x ** y` and push `z` to the stack
 
-### 13. <a name="instrgreater">greater</a>
-### 14. <a name="instrless">less</a>
-### 15. <a name="instrequal">equal</a>
-### 16. <a name="instrnot">not</a>
-### 17. <a name="instrand">and</a>
-### 18. <a name="instror">or</a>
+### 13. <a name="instrgreater">greater</a> [ x y ] -> [ z ]
+Pattern: checker -> irregular checker
+
+Calculate `z = (x > y) ? 1 : 0` and push `z` to the stack
+
+### 14. <a name="instrless">less</a> [ x y ] -> [ z ]
+Pattern: irregular checker -> checker
+
+Calculate `z = (x < y) ? 1 : 0` and push `z` to the stack
+
+### 15. <a name="instrequal">equal</a> [ x y ] -> [ z ]
+Pattern: checker -> irregular rainbow
+
+Calculate `z = (x == y) ? 1 : 0` and push `z` to the stack
+
+### 16. <a name="instrnot">not</a> [ x ] -> [ z ]
+Pattern: irregular rainbow -> checker
+
+Calculate `z = (!x) ? 1 : 0` and push `z` to the stack
+
+### 17. <a name="instrand">and</a> [ x y ] -> [ z ]
+Pattern: wave -> irregular rainbow
+
+Calculate `z = (x && y) ? 1 : 0` and push `z` to the stack
+
+### 18. <a name="instror">or</a> [ x y ] -> [ z ]
+Pattern: irregular rainbow -> wave
+
+Calculate `z = (x || y) ? 1 : 0` and push `z` to the stack
+
 ### 19. <a name="instrstartblock">startblock</a>
+Pattern: wave -> irregular wave
+
+Starts a block. startblock must have a matching endblock, otherwise the parser will report error.
+
 ### 20. <a name="instrendblock">endblock</a>
-### 21. <a name="instrfwd">fwd</a>
-### 22. <a name="instrback">back</a>
-### 23. <a name="instrfwd_if">fwd_if</a>
+Pattern: irregular wave -> wave
+
+Ends a block. endblock must have a matching startblock, otherwise the parser will report error.
+
+### 21. <a name="instrfwd">fwd</a> x
+Pattern: wave -> irregular checker
+
+Jump forward to the end of an enclosing `x`-th block starting from 0, for `x = diff(first_pattern, second_pattern)`.
+
+For example, in case of `x == 0` means `fwd` will jump to the end of current block, `x == 1` to the end of the current block's parent block,
+`x == 2` to the end of the parent's parent, etc.
+
+The parser will report error if `fwd` is not enclosed by the right amount of blocks.
+
+### 22. <a name="instrback">back</a> x
+Pattern: irregular checker -> wave
+
+Jump back to the start of an enclosing `x`-th block starting from 0, for `x = diff(first_pattern, second_pattern)`.
+
+For example, in case of `x == 0` means `back` will jump to the start of current block, `x == 1` to the start of the current block's parent block,
+`x == 2` to the start of the parent's parent, etc.
+
+The parser will report error if `back` is not enclosed by the right amount of blocks.
+
+### 23. <a name="instrfwd_if">fwd_if</a> x [ cond ] -> [ ]
+Pattern: checker -> irregular wave
+
+Pop `cond` from stack. If `cond` is not zero, do `fwd x` for `x = diff(first_pattern, second_pattern)`.
+
+All `fwd` validations also applied for `fwd_if`.
+
 ### 24. <a name="instrback_if">back_if</a>
-### 25. <a name="instrcall">call</a>
+Pattern: irregular wave -> checker
+
+Pop `cond` from stack. If `cond` is not zero, do `back x` for `x = diff(first_pattern, second_pattern)`.
+
+All `back` validations also applied for `back_if`.
+
+### 25. <a name="instrcall">call</a> x
+Pattern: irregular rainbow -> irregular checker
+
+Call section with id equal to `x`, for `x = diff(first_pattern, second_pattern)`.
+If section with that id doesn't exist, it will throw a runtime error.
+
 ### 26. <a name="instrreturn">return</a>
+Pattern: irregular checker -> irregular rainbow
+
+Exit from the section and continue from after the call in caller's section.
+
+If caller doesn't exits (i.e. return in non-recursive or first call of main section), it will halt the program.
+
 ### 27. <a name="instrhalt">halt</a>
-### 28. <a name="instrprintint">printint</a>
-### 29. <a name="instrprintchar">printchar</a>
-### 30. <a name="instrprintsym">printsym</a>
+Pattern: irregular wave -> irregular rainbow
+
+Halt the program.
+
+### 28. <a name="instrprintint">printint</a> [ x ] -> [ ]
+Pattern: irregular rainbow -> irregular wave
+
+Print `x` as integer to console.
+
+### 29. <a name="instrprintchar">printchar</a> [ x ] -> [ ]
+Pattern: irregular checker -> irregular wave
+
+Print `x mod 256` an ASCII character to console.
+
+### 30. <a name="instrprintsym">printsym</a> [ x ] -> [ ]
+Pattern: irregular wave -> irregular checker
+
+Print symbol mapped to color id `x` to console.. Character symbols are printed as string, while pixel color symbols are printed as hexadecimal string.
+If no symbols are mapped to value of `x`, it will throw a runtime error.
+
+For example, for `x = 3` and palette mapping `a=0, b=1, c=2, d=3`, `printsym` will print "d".
