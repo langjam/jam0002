@@ -118,9 +118,19 @@ static ErrCode simple_selector(Parser *p, Node *dest) {
 
 static ErrCode composite_selector(Parser *p, Node *dest) {
 	node_set(dest, node_of(node_composite_selector));
-	while (isnt_tok(p, tok_lbrace)) {
+	
+	// This is a terrible hack, but this is to prevent people from separating selectors by spaces
+	// Since that's normally matching nested selectors
+	p->lexer.catch_sep = true;
+	while (isnt_tok(p, tok_lbrace) && isnt_tok(p, tok_sep)) {
 		checkout(simple_selector(p, ast_make(&p->ast, dest)));
 	}
+	p->lexer.catch_sep = false;
+	if (is_tok(p, tok_sep))
+		checkout(next_tok(p, NULL));
+	if (isnt_tok(p, tok_lbrace)) {
+		p->note = err_f(err_note, p->current.loc, "There previously was a separator (space newline), you need to write selectors without them:\n    tag.class.anotherclass\n    This is similar to composite selectors in CSS\n    Descendant selectors are not supported");
+    }
 	return err_ok;
 }
 

@@ -27,7 +27,8 @@ typedef enum {
 	tok_ident,
 	tok_operator,
 	tok_eof,
-	tok_hexlit
+	tok_hexlit,
+	tok_sep
 } TokenType;
 
 typedef struct {
@@ -42,6 +43,7 @@ typedef struct {
 	Location loc;
 	int cursor;
 	Err err;
+	int catch_sep;
 } Lexer;
 
 extern const char *type_lookup[];

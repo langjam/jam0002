@@ -61,21 +61,29 @@ bool skip_comments(Lexer *l) {
 }
 
 Token lex_next(Lexer *l) {
+
 	while (true) {
 		bool set = false;
-		for (char c=peekc(l); (set = is_skip_char(c) && c); c=peekc(l))
-			nextc(l);
+		if (!l->catch_sep)
+			for (char c=peekc(l); (set = is_skip_char(c) && c); c=peekc(l))
+				nextc(l);
 		set = skip_comments(l) || set;
 		if (!set) break;
 	}
 	
+	Token tok = { .loc = l->loc, .val = l->buf + l->cursor, .len = 1 };
 
 	int move = 1;
-	Token tok = { .loc = l->loc, .val = l->buf + l->cursor, .len = 1 };
 	switch (peekc(l)) {
 	case 0:
 		tok.type = tok_eof;
 		move = 0;
+		break;
+	case ' ':
+	case '\t':
+	case '\n':
+	case '\r':
+		tok.type = tok_sep;
 		break;
 	case '(':
 		tok.type = tok_lparen;
@@ -135,6 +143,9 @@ Token lex_next(Lexer *l) {
 			tok.type = tok_inval;
 			l->err = err_f(err_bad_number_literal, tok.loc, "Hex literal can't be %d long.", nums);
 		}
+		if (nums == 0) {
+			l->err = err_f(err_bad_number_literal, tok.loc, "You can't have that character in hex color literal.");
+		}
 		break;
 	default:;
 		char c = peekc(l);
@@ -192,7 +203,7 @@ Token lex_next(Lexer *l) {
 const char *type_lookup[] = {
 	"invalid", "lleft paren", "right paren", "left brace", "right brace", "dot", "colon", "semicolon",
 	"comma", "at", "variable", "keyword", "number", "string", "identifier",
-	"operator", "eof", "hex literal"
+	"operator", "eof", "hex literal", "separator"
 };
 
 void print_tok(Token tok) {

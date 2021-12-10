@@ -3,51 +3,52 @@
 //
 
 $SIZE: 200;
-$COLOR: rgb($depth*10, $depth*10, $depth*10);
+$COLOR: rgb(0, 0, 0);
 
 .fractal {
-	color: $COLOR;
-	dimensions: vec2($SIZE*(1/2)^($depth), $SIZE*(1/2)^($depth));
+	color: rgb(255, 255, 255, 255);
+	dimensions: vec2($SIZE*(1/3)^($depth-1), $SIZE*(1/3)^($depth-1));
 	
 	// left
 	rect.fractal {
-		position: vec2(-($SIZE*(1/2)^($depth+1)/2.0), $SIZE*(1/2)^($depth));
+		position: vec2(-$SIZE*(1/3)^($depth)*2, $SIZE*(1/3)^($depth));
+	}
+	// top
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth), -$SIZE*(1/3)^($depth)*2);
+	}
+	// bottom
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth), $SIZE*(1/3)^($depth)*4);
 	}
 	// right
 	rect.fractal {
-		position: vec2($SIZE*(1/2)^($depth)-($SIZE*(1/2)^($depth+1)/2.0), $SIZE*(1/2)^($depth));
+		position: vec2($SIZE*(1/3)^($depth)*4, $SIZE*(1/3)^($depth));
+	}
+	// top left
+	rect.fractal {
+		position: vec2(-$SIZE*(1/3)^($depth)*2, -$SIZE*(1/3)^($depth)*2);
+	}
+	// top right
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth)*4, -$SIZE*(1/3)^($depth)*2);
+	}
+	// bottom left
+	rect.fractal {
+		position: vec2(-$SIZE*(1/3)^($depth)*2, $SIZE*(1/3)^($depth)*4);
+	}
+	// bottom right
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth)*4, $SIZE*(1/3)^($depth)*4);
 	}
 }
-
 root {
-	rect.fractal {
+	rect {
 		color: $COLOR;
 		dimensions: vec2($SIZE, $SIZE);
 		position: vec2(100, 100);
-	}
-	rect.fractal {
-		color: $COLOR;
-		dimensions: vec2($SIZE, $SIZE);
-		position: vec2(103, 103);
-	}
-	rect.fractal {
-		color: $COLOR;
-		dimensions: vec2($SIZE, $SIZE);
-		position: vec2(106, 106);
-	}
-	rect.fractal {
-		color: $COLOR;
-		dimensions: vec2($SIZE, $SIZE);
-		position: vec2(109, 109);
-	}
-	rect.fractal {
-		color: $COLOR;
-		dimensions: vec2($SIZE, $SIZE);
-		position: vec2(112, 112);
-	}
-	rect.fractal {
-		color: $COLOR;
-		dimensions: vec2($SIZE, $SIZE);
-		position: vec2(115, 115);
+		rect.fractal {
+			position: vec2($SIZE*(1/3)^($depth+1), $SIZE*(1/3)^($depth+1));
+		} 
 	}
 }
