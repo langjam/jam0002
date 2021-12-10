@@ -245,7 +245,7 @@ The program also has only 1 section, Section 0 (or, colored red). It contains 1 
 Instructions
 ------------
 
-Motif VM is a stack machine with 30 instruction, mapped to combination of 2 different patterns from 6 non-solid patterns.
+Motif VM is a stack machine with 30 instruction, mapped to pairs of different patterns from 6 non-solid patterns. Pairs of the same pattern type is parsed as a `NOP` operator and thus won't affect execution.
 
 <table>
     <thead >
