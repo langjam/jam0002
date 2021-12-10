@@ -35,6 +35,7 @@ static ErrCode token_err(Parser *p, Token *tok) {
 	// End of file, handle it here
 	if (tok->type == tok_eof) {
 		p->err = err_f(err_eof, tok->loc, "Your file can't just end here!");
+		return err_eof;
 	}
 	return 0;
 }
@@ -80,8 +81,6 @@ static ErrCode next_tok(Parser *p, Token *dest) {
 // Returns token if their types match
 static ErrCode give_tok(Parser *p, TokenType type, Token *dest) {
 	// Check if token is valid
-	if (p->current.type == tok_eof)
-		return err_eof;
 	checkout(token_err(p, &p->current));
 	if (isnt_tok(p, type)) {
 		p->err = err_f(err_unexpected, p->current.loc, "I didn't expect that. (I wanted `%s' but this is `%s')",

@@ -78,6 +78,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (f == NULL) {
+		printf("No input file supplied.\n");
+	
 		help();
 		return 1;
 	}

@@ -39,9 +39,19 @@ void print_line(char *source, int line) {
 	// Retrieve the bounds of the line
 	char *start = linestart(source, line);
 	char *end = linestart(source, line+1);
+	int len = (int)(end-start);
+	int  ellipsis = 0;
+	if (len > 50) {
+		len = 50;
+		ellipsis = 1;
+	}
 
 	// Print it
-	printf("%.*s", (int)(end-start), start);
+	printf("%.*s", len, start);
+	if (ellipsis) {
+		printf("...");
+		printf("\n");
+	}
 }
 
 // Prints formatted error into standard output
@@ -72,7 +82,9 @@ void err_explain(Err *err, char *source_file) {
 		
 		int ntab = 0;
 		char *linestr = linestart(source_file, line);
-
+		if (err->code == err_eof) {
+			printf("\n");
+		}
 		printf("     | ");
 		for (int i = 0; i < col; i += 1) {
 			if (linestr[i] == '\t') {
