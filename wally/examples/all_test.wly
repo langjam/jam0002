@@ -47,3 +47,9 @@ while(e > 0)
 }
 
 Print(d)
+
+var f = 5
+if(f < 10 && f > 0)
+{
+    Print(f)
+}
