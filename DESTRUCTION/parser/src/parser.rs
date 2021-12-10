@@ -119,8 +119,8 @@ impl<'a> Lexer<'a> {
     fn parse_maths(&mut self, operator: Tokens, lhs: Expr, rhs: Expr) -> Result<Expr, LangError> {
         match operator {
             op @ operator_pattern!() => {
-                let lhs = box lhs;
-                let rhs = box rhs;
+                let lhs = Box::new(lhs);
+                let rhs = Box::new(rhs);
                 Ok(Expr::Operator(op.into(), lhs, rhs))
             }
 
@@ -270,7 +270,7 @@ impl<'a> Lexer<'a> {
         };
 
         let first = if let Some(uo) = unary_operator {
-            Expr::UnaryOp(uo, box first)
+            Expr::UnaryOp(uo, Box::new(first))
         } else {
             first
         };
@@ -332,7 +332,7 @@ impl<'a> Lexer<'a> {
                     }
                 };
 
-                Ok(Expr::Cast(box first, to, from))
+                Ok(Expr::Cast(Box::new(first), to, from))
             }
             _ => Ok(first),
         }
@@ -369,9 +369,9 @@ impl<'a> Lexer<'a> {
                 ..
             }) => {
                 self.next_token();
-                let first = box self.parse_transform()?;
+                let first = Box::new(self.parse_transform()?);
                 self.expect(Tokens::Colon)?;
-                let otherwise = box self.parse_transform()?;
+                let otherwise = Box::new(self.parse_transform()?);
                 Ok(Transformation::Try { first, otherwise })
             }
 
