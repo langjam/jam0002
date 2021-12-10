@@ -34,7 +34,9 @@ evalBuiltin t@(_ :> "+" :> _ :> "=" :> _) = evalAddition t
 evalBuiltin t@(_ :> "-" :> _ :> "=" :> _) = evalAddition t
 evalBuiltin t@(_ :> "+" :> _) = evalAddition t
 evalBuiltin t@(_ :> "-" :> _) = evalAddition t
-evalBuiltin t = liftIO $ putStrLn ("Unmatched pattern: " <> show t)
+evalBuiltin t = do
+  liftIO $ putStrLn ("No match found for the term: " <> show t)
+  error "No match found for the term"
 
 evalAddition :: Term UVar -> UnifyT (Term UVar) IO ()
 evalAddition t = case getAdditionTerms [] [] (Right t) of
@@ -77,11 +79,11 @@ evalAdditionTerms lhs rhs = do
       maybeIntsR = traverse getInt othersR
   case (varsL, maybeIntsL, varsR, maybeIntsR) of
         ([var], Just intsL, [], Just intsR) ->
-          void $ unify var (Int (negate (sum intsL) + sum intsR))
+          void $ unify var (Int (sum intsR + sum intsL))
         ([], Just intsL, [var], Just intsR) ->
-          void $ unify var (Int (sum intsL + negate (sum intsR)))
+          void $ unify var (Int (sum intsL - sum intsR))
         ([], Just intsL, [], Just intsR) ->
-          if sum (intsL) == sum intsR
+          if sum intsL == sum intsR
             then pure ()
             else do
               liftIO $ putStrLn "Go back to school!"
