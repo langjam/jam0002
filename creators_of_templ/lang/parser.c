@@ -129,7 +129,7 @@ static ErrCode composite_selector(Parser *p, Node *dest) {
 	if (is_tok(p, tok_sep))
 		checkout(next_tok(p, NULL));
 	if (isnt_tok(p, tok_lbrace)) {
-		p->note = err_f(err_note, p->current.loc, "There previously was a separator (space newline), you need to write selectors without them:\n    tag.class.anotherclass\n    This is similar to composite selectors in CSS\n    Descendant selectors are not supported");
+		p->note = err_f(err_note, p->current.loc, "There previously was a separator (space, newline, tab etc), you need to write selectors without them:\n    `tag.class.anotherclass' instead of `tag .class .anotherclass`\n    This is similar to composite selectors in CSS\n    Descendant selectors are not supported");
     }
 	return err_ok;
 }
