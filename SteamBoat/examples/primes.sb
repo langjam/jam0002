@@ -1,0 +1,95 @@
+# Primes
+# Print the prime numbers that are greater than 100.
+# This script was... challenging to write. I will concede this is probably not the cleanest or best solution.
+# May my hubris serve as a warning to others.
+
+island England
+# As in real life, London primes the pump so to speak but Bristol is where the real work happens.
+port London
+lock []
+canal 
+lit 2
+dump
+lit [3,3,0]
+
+port Bristol
+# Every time we need to generate a new prime candidate we go to Bristol.
+
+# Ships enter this lock if they have a new prime number!
+lock 0__
+canal
+# Get rid of the leading zero
+del
+# The number we hold is a freshly printed prime number so outbox it.
+out
+#del
+# Check if the prime is greater than 100. If it is it's time to take our number to Fishguard.
+lit 100
+sub
+goto Fishguard
+alz
+del
+goto Bristol
+
+lock []
+canal
+# We take the last highest prime and add 2 to get the next candidate.
+in
+dupe
+out
+lit 2
+add
+# Set the buffer's pointer to 1. We will be incrementing it manually.
+lit 1
+set
+# Proceed implicitly to Cardiff. Don't worry about the geography.
+
+port Cardiff
+# Cardiff is in Wales, not England but the Anglo-centric designers of this language didn't seem to care.
+# Cardiff wasn't officially made the capital of Wales until 1955. Fun fact!
+
+# Match a single number, a prime candidate.
+lock _
+canal
+dupe
+in
+#status survey brk
+# If we have inboxed a zero that means we have reached the end of the numbers and the value we hold is indeed prime.
+# If so we route the ship to Bristol. Note: unlike in more sensible languages goto does not occur immediately.
+# The ship only sets course for its destination once it has exited the canal. Therefore if the destination is overwritten...
+# The ship will go where the *last* goto set, not the first.
+goto Bristol
+anz
+# One way or the other we will need to stay in Cardiff. We don't know if the number is prime or not.
+# If our number modulo the next prime is zero then it is *not* prime and it needs to go to the next lock to be cleaned up.
+goto Cardiff
+read
+lit 2
+add
+set
+mod
+anz
+del
+
+# This sad little lock simply empties ships with a leading zero, failed prime candidates. 
+# Somebody's got to do it... It was almost Fishguard's job.
+lock 0_
+canal
+del
+lit 2
+add
+lit 1
+set
+goto Cardiff
+
+port Fishguard
+# The amusingly named Fishguard, Wales.
+lock []
+# A good place stop and smell the roses.
+canal 
+#goto Fishguard # Why ever leave?
+goto Bristol
+in
+del
+del
+survey halt

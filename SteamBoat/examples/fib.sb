@@ -1,0 +1,45 @@
+# print the Fibonacci numbers up to 100
+# e.g. 1 1 2 3 5 8 13 21 
+island England
+
+port London
+lock [] 
+canal 
+lit [1,1] 
+goto Bristol
+
+port Bristol
+lock _[]
+# Save the top, larger file to the buffer.
+canal out
+# Duplicate the smaller number
+dupe
+# Replace the larger number
+in
+# Push a copy of the top, larger value to the island's buffer
+# Add the two numbers
+dupe out add
+
+# Load the old largest number and swap them
+in swp 
+# Now we have a new largest number, duplicate it
+dupe
+# Push the largest value we're after
+lit 100
+# Subtract our largest number from 100
+sub
+# If it is greater than zero continue. Otherwise bail out of the canal and proceed to the next lock.
+alz
+# Get rid of the result of the last calculation, we don't need it anymore.
+del
+# Do diagnostics. Feel free to uncomment for debug info.
+# status survey
+goto Bristol
+lock []
+canal 
+# We still have that pesky value from the subtraction to delete.
+del
+del
+rev
+# Unload our cargo and survey the results!
+dump survey halt
