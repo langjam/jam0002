@@ -75,6 +75,10 @@ IDENTIFIER := ALPHA ( ALPHA | DIGIT | '_' )* ;
 MESSAGE := ( '_' | ALPHA | DIGIT | WHITESPACE )*;
 ```
 
+## Build
+
+Building this requires [Rustup toolchain](https://www.rust-lang.org/tools/install) installed (including `cargo`). This builds on stable Rust.
+
 ## Examples
 
 The example shows how Daemon engine can be used in a relatively non-linear game. In this game, you are an explorer that tries to defeat the legendary monster that lives in the dungeon and guards a hidden treasure.
