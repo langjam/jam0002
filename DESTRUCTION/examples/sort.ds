@@ -1,0 +1,33 @@
+// parse input
+main := 
+    a -> a / ", "
+    | [*a] * n -> [*a::#string~>#number] * n
+    | arr -> sort arr;
+
+// sorting function
+sort := 
+    ?  [el] -> [el]                         // one element is already sorted
+    :? [a, b] -> if (a > b, [b, a], [a, b]) // special case for 2 elements
+    : {
+        a -> max_and_rest a 
+        | (m, rest) -> (sort rest) + [m]    // call recursively
+    };
+
+// get the max element of an array, and the rest of the array without it
+max_and_rest :=
+    ? [el] -> (el, []) 
+    : {
+        [first] + a -> if (first > max a, (first, a), (max_and_rest a, first))
+        |? ((max, rest), first) -> (max, rest + [first])
+        :  a -> a
+    };
+
+// get the max element of an array
+max :=
+    ? [el] -> el 
+    : [first] + a -> if (first > max a, first, max a);
+
+// "if" function for convenience
+if := 
+    ? (true, then, _) -> then 
+    : (false, _, else) -> else;
