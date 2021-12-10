@@ -55,7 +55,7 @@ Will be black, have no rotation, be located at indices (0, 0) and will not show 
 The above will result in a black square on the screen:
 ![black square](https://i.imgur.com/gjxvo75.png)
 
-Two things to note: each property is terminated with a semi-colon and this square looks pretty lonely and bland, so let's add some more stuff! Next thing we should consider is adding some colour. Colour can written using two ways: by using the hexadecimal notation or by calling rgb. The two methods are equivalent, however hexadecimal is faster to write if you know what you're doing and rgb is more legible and has the ability to generate colours with varying degrees of opacity while colours in hexadecimal forms are always completely opaque. First, we'll use the hexadecimal notation to have a nice dark green square:
+Two things to note: each property is terminated with a semi-colon and this square looks pretty lonely and bland, so let's add some more stuff! Next thing we should consider is adding some colour. Colour can be written using two ways: by using the hexadecimal notation or by calling rgb. The two methods are equivalent, however hexadecimal is faster to write if you know what you're doing and rgb is more legible and has the ability to generate colours with varying degrees of opacity while colours in hexadecimal forms are always completely opaque. First, we'll use the hexadecimal notation to have a nice dark green square:
 ```css
  root
  {
