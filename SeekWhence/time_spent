@@ -40,6 +40,7 @@ Dec 8:
 	Broke interpreter into multiple files
 
 Dec 9:
-	0h code, 2h docs
+	2h code, 2h docs
 	Basic docs
 	Launch scripts
+	Stdlib time utils

@@ -2,7 +2,7 @@
 import sys
 import math
 
-from time import time as systime
+from time import time_ns as systime
 
 from core.sequence import SequenceSlice, SequenceLike
 from core.utils import isnumber
@@ -10,7 +10,7 @@ from core.utils import isnumber
 SEQ_EXPORTS = {
   'print':   lambda _,*s: print(*[printable(x) for x in s]),
   'input':   lambda _,p=None: (input() if p is None else input(p)) if sys.stdin.isatty() else sys.stdin.readline().rstrip('\n'),
-  'systime': lambda _: math.floor(systime()*1000),
+  'systime': lambda _: math.floor(systime()/1000000),
 
   'floor': lambda _,x: math.floor(x),
   'ceil':  lambda _,x: math.ceil(x),
