@@ -8,7 +8,7 @@ endif
 FILES_WIN=lang/*.c map/*.c raylib/lib/libraylib_windows.a
 FILES_MAC=lang/*.c map/*.c raylib/lib/libraylib_macos.a
 TESTS=test/*.c
-FLAGS=-I. -Iraylib/include/ 
+FLAGS=-I. -Iraylib/include/ -I/usr/local/include -L/usr/local/lib
 LINUX_FLAGS=-ldl -lpthread -lm
 DEBUG=-Wextra -Wall -Werror -pedantic -g -fsanitize=address -Wno-unused-parameter
 
@@ -25,14 +25,15 @@ else
 	endif
 endif
 
-templ: 
-	mkdir -p bin
-	$(MAKECMD)
 
 all: templ
 	clear
 	$(RUNCMD) 
 
+templ: 
+	mkdir -p bin
+	$(MAKECMD)
+	
 release:
 	mkdir -p release
 	$(CC) main.c $(FLAGS) $(LINUX_FLAGS) $(FILES) -O2 -o release/templ_linux.x86_64
