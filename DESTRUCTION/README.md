@@ -7,10 +7,6 @@ Documentation:
 - [Language](documentation.md)
 - [CLI](#usage-and-cli)
 
-## Practical info
-
-...
-
 ## Usage and CLI
 
 ### Installation
