@@ -1,0 +1,19 @@
+{
+    "width": 256,
+    "height": 256,
+    "blendingMode": "ADDITIVE",
+    "squiggles": [
+        {
+            "code": "[32 x div sin 1 add 127 mult dup dup set]"
+        },
+        {
+            "code": "[32 y div sin 1 add 127 mult dup dup set]"
+        },
+        {
+            "code": "[y x add y x set]"
+        },
+        {
+            "code": "[128 128 dist dup dup set]"
+        }
+    ]
+}

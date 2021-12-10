@@ -1,0 +1,10 @@
+{
+    "width": 256,
+    "height": 256,
+    "blendingMode": "ADDITIVE",
+    "squiggles": [
+        {
+            "code": "[32 x div sin 1 add 127 mult dup dup set]"
+        }
+    ]
+}
