@@ -213,7 +213,7 @@ X = false.
 
 #### IO
 
-`print` prints a term to stdout.
+`print` prints one or more terms to stdout.
 
 `getSymbol` reads a line from stdin and interprets it as a symbol.
 
@@ -242,3 +242,6 @@ Year = 1998.
 There is a file [example.pt](./example.pt) in the `patatern` directory.
 You can load it into the interpreter and run queries
 to get more familiar with the language.
+
+There is also a [standard library](./stdlib.pt) that provides some useful
+helpers for the most common tasks.

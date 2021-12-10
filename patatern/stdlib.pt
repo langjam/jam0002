@@ -1,0 +1,53 @@
+;;; A standard library for patatern
+;;; Note: this library is not auto-included,
+;;; you need to include it explicitly in the arguments of the :load command.
+
+;;; Assignment operator
+;;;
+;;; ?> let X be (hello Y), let Y be world, print X.
+;;; hello world
+;;; X = hello world.
+;;; Y = world.
+let X be X.
+
+;;; Conditionals
+;;;
+;;; ?> 1 > 0 is X, if X then (print (one is greater than zero)) else absurd.
+;;; one is greater than zero
+;;; X = true.
+if true then T else F:
+  T.
+if false then T else F:
+  F.
+
+;;; Repeat an action N times
+;;;
+;;; ?> repeat (print hello) 3 times.
+;;; hello
+;;; hello
+;;; hello
+repeat F 0 times.
+repeat F N times:
+  F,
+  N1 = N - 1,
+  repeat F N1 times.
+
+;;; Execute an action on each element of a list
+;;;
+;;; ?> for each [1 2 3] print.
+;;; 1
+;;; 2
+;;; 3
+for each fin F.
+for each (X Xs) F:
+  F X,
+  for each Xs F.
+
+;;; Map an action over a list
+;;;
+;;; ?> (1 +) over [1 2 3] = R.
+;;; R = [2 3 4].
+F over fin C fin.
+F over (X Xs) C (Y Ys):
+  F X C Y,
+  F over Xs C Ys.
