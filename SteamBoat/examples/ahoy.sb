@@ -1,0 +1,35 @@
+# A simple program that prints "Ahoy There!"
+
+# All journeys begin in Jolly Old England of course
+island England
+port London
+# A pattern indicating any number of wildcard values. Will match any ship.
+lock []
+# Set course for Jakarta, Java for their precious cargo.
+canal goto Jakarta, Java
+
+port Bristol
+# Now we're back in England it's time to offload our cargo. In this example we have elected to only unload one item at a time.
+# It is possible to make this part of the program more efficient with the dump command. The authors have elected to elide this command in the interests of deeper understanding.
+
+# This lock will only be accessed by a ship with cargo. If a ship is empty it will proceed to the next lock.
+lock _[]
+# The out command removes the top item from the ship's hold and stores it in the island's cargo buffer. Once done we navigate back to Bristol.
+# This sends us back to the first lock in Bristol's port, preventing us from proceeding to the next lock automatically.
+canal out goto Bristol
+# Once a ship's hold is empty it will no longer be allowed in the lock above. In that case it will proceed to the following lock that allows any ship.
+lock []
+# The collate command outputs the contents of an island's ring buffer as human-readable text.
+# Finally the halt command removes the ship from the simulation.
+canal collate halt
+
+island Java
+# The Danes have our greeting. Now to acquire it!
+port Jakarta
+# again, any visiting ship can use this lock
+lock []
+canal
+# Load several characters. Internally they are stored as numbers they will be converted back when collated.
+chars "Ahoy There!"
+# Cargo in our hold, we make the trip back to Bristol, England.
+goto Bristol, England
