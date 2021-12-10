@@ -1,0 +1,87 @@
+StatementPattern: SexprStatement [
+	ReturnPattern: Return {
+		(return [[expression]])
+	}
+	
+	VariableDeclarationPattern: VariableDeclaration {
+		([[type]] [[name]])
+	}
+	
+	VariableInitializationPattern: VariableInitialization {
+		([[type]] [[name]] = [[expression]])
+	}
+
+	VariableAssignmentPattern: VariableAssignment {
+		([[name]] = [[expression]])
+	}
+	
+	ConditionalPattern: Conditional [
+		IfPattern: If {
+			(if [ [[expression]] ]
+				[[SexprStatement:statements]]
+			)
+		}
+		
+		ElseIfPattern: ElseIf {
+			(elseif [ [[expression]] ]
+				[[SexprStatement:statements]]
+			)
+		}
+		
+		ElsePattern: Else {
+			(else
+				[[SexprStatement:statements]]
+			)
+		}
+	]
+]
+
+ArgumentPattern: SexprArguments [
+	ArgumentContentPattern: Argument {
+		([[type]]: [[name]])
+	}
+	ArgumentExtensionPattern: Extension {
+		
+	}
+]
+
+FunctionPattern: SexprFunction {
+	(function
+		(returntype [[return_type]] 
+			(name [[name]]
+				(Args: [[SexprArguments:arguments]])
+				([[SexprStatement:statements]])
+			)
+		)
+	)
+}
+
+SexprFunction {
+	(function
+		(returntype int
+			(name fibonacciSexpr
+				(Args: (int: n)
+				)
+				(
+					(if [n <= 0] (return 0))
+					(elseif [n == 1] (return 1))
+					(else (return fibonacciSexpr(n - 1) + fibonacciSexpr(n - 2)))
+				)
+			)
+		)
+	)
+}
+
+
+SexprFunction {
+	(function
+		(returntype int
+			(name dupr_main
+				(Args: (unused: _))
+				(
+					(return fibonacciSexpr(10))
+				)
+			)
+		)
+	)
+}

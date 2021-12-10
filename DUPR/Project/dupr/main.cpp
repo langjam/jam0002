@@ -23,7 +23,7 @@ std::string ReadInFile(const std::string& file)
 
 int main(int argc, const char* argv[])
 {
-	std::vector<std::string> filenames = {"./test.txt"};
+	std::vector<std::string> filenames = {"./input.dupr"};
 
 	for (auto i = 1; i < argc; i++)
 	{
@@ -44,13 +44,16 @@ int main(int argc, const char* argv[])
 		auto ast = std::unique_ptr<::deamer::external::cpp::ast::Tree>(parser.Parse(text));
 		if (ast == nullptr)
 		{
-			std::cout << "Compilation failed!\n";
+			std::cout << "Wtf are you doing?! (syntax error), make sure you create some pattern, "
+						 "and use this pattern!\n";
 			return -1;
 		}
 
 		if (ast->GetStartNode() == nullptr)
 		{
-			std::cout << "Compilation failed!\n";
+			std::cout << "Wtf are you doing?! (syntax error), make sure you create some pattern, "
+						 "and use this pattern!\n";
+
 			return -1;
 		}
 
@@ -64,13 +67,13 @@ int main(int argc, const char* argv[])
 		}
 
 		auto generator = dupr::generation::cpp::Generator(table.get());
-		std::cout << generator.Generate() << "\n";
-		if (false)
-		{
-			auto graph = dupr::ast::listener::deamer::visualisation::Graph();
-			graph.Dispatch(ast->GetStartNode());
-			std::cout << graph.GetGraph() << std::endl;
-		}
+
+		std::ofstream outputFile("dupr_main.cpp");
+		outputFile << generator.Generate() << "\n";
+
+		std::cout
+			<< "Generated C++ file, now you can compile and run it using: \"g++ dupr_main.cpp -o "
+			   "dupr_output && ./dupr_output\"\n";
 	}
 
 	std::cout << "Compilation succeeded!\n";

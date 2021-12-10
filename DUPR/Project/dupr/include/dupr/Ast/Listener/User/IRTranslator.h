@@ -16,6 +16,7 @@
 #include "dupr/IR/VariableAssignment.h"
 #include "dupr/IR/VariableDeclaration.h"
 #include "dupr/IR/VariableInitialization.h"
+#include <memory>
 #include <optional>
 #include <string>
 

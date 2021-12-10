@@ -11,3 +11,8 @@
 {{function_prototype.Variable_Field}}
 
 {{function.Variable_Field}}
+
+int main()
+{
+	std::cout << std::to_string(dupr_main()) << "\n";
+}

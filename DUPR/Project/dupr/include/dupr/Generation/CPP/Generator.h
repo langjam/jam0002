@@ -50,6 +50,11 @@ namespace dupr::generation::cpp
 
 				for (const auto& argument : arguments)
 				{
+					if (argument.GetType() == "unused" || argument.GetType() == "void")
+					{
+						continue;
+					}
+
 					cppTemplate.argument_type_->Set(argument.GetType());
 					cppTemplate.argument_name_->Set(argument.GetName());
 
