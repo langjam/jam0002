@@ -437,14 +437,14 @@ For example, in case of `x == 0` means `back` will jump to the start of current 
 
 The parser will report error if `back` is not enclosed by the right amount of blocks.
 
-### 23. <a name="instrfwd_if">fwd_if</a> x [ cond ] -> [ ]
+### 23. <a name="instrfwd_if">fwd_if</a> x, [ cond ] -> [ ]
 Pattern: checker -> irregular wave
 
 Pop `cond` from stack. If `cond` is not zero, do `fwd x` for `x = diff(first_pattern, second_pattern)`.
 
 All `fwd` validations also applied for `fwd_if`.
 
-### 24. <a name="instrback_if">back_if</a>
+### 24. <a name="instrback_if">back_if</a> x, [ cond ] -> [ ]
 Pattern: irregular wave -> checker
 
 Pop `cond` from stack. If `cond` is not zero, do `back x` for `x = diff(first_pattern, second_pattern)`.
