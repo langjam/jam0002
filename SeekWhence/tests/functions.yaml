@@ -1,0 +1,6 @@
+source: ../examples/functions.seq
+status: 0
+stdout: |
+  Hello, world!
+  Hello, SeekWhence
+  25

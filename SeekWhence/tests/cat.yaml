@@ -1,0 +1,4 @@
+source: ../examples/cat.seq
+status: 0
+stdout: "Test\n"
+stdin:  "Test"

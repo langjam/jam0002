@@ -1,0 +1,6 @@
+; Interpreter meta variables
+
+print $file     ; Absolute path of current script
+print $dir      ; Absolute path to directory of current script
+print $stdlib   ; Absolute path to interpreter stdlib directory
+print $main     ; true if this file is the entry point

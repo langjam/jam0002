@@ -1,0 +1,10 @@
+source: ../examples/namespaces.seq
+status: 0
+stdout: |
+  Hello, world!
+  25
+  Hello, world!
+  25
+  Hello, world!
+  -42
+  1999

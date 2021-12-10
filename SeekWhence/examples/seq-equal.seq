@@ -1,0 +1,26 @@
+; Sequence equality
+
+; Sequences are equal if their base cases and expressions can all be determined equivalent. The
+;   system is kind of dumb, so don't rely on this extending to super crazy equivalencies; it
+;   really only knows about constant folding (which is done when the sequence is constructed)
+;   and commutative operators for now.
+; 
+; Slices are equal if their sequences and slice indexes are equal.
+; Sequences are equal to slices if the slice's sequence is equal and its slice index is 0.
+
+sequence a from (-10+11*1) = n * x
+sequence b from (2-1)      = x * n
+
+print a == b         ; True
+print b == a         ; True
+
+print a::0 == b      ; True
+print a::1 == b      ; False
+
+print a == b::0      ; True
+print a == b::1      ; False
+
+print a::0 == b::0   ; True
+print a::1 == b::1   ; True
+print a::0 == b::1   ; False
+print a::1 == b::0   ; False

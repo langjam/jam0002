@@ -1,0 +1,91 @@
+; Time manipulation functions
+
+import time from 'time'
+
+set now = [systime]
+
+print 'epoch:', time~epoch
+print 'now:', now
+print
+
+
+; Time breakdown functions
+;
+; These are timezone-specific, and are duplicated into two sub-namespaces. For
+;   UTC time use time~utc, and for local time use time~local. Manually selected
+;   timezones aren't currently supported.
+;
+; Note that unlike Python etc, month and day-of-week start from 0 instead of 1,
+;   for easy compatibility with the name and abbreviation sequences. If you're
+;   going to print them, add 1 first, or use [format] instead.
+
+function testTime with info, t {
+  print info, 'year:', [t~year now]
+  print info, 'month:', [t~month now]
+  print info, 'day:', [t~day now]
+  print info, 'weekday:', [t~weekday now]
+  print info, 'yearday:', [t~yearday now]
+  print info, 'hour:', [t~hour now]
+  print info, 'minute:', [t~minute now]
+  print info, 'second:', [t~second now]
+  print info, 'isDST:', [t~isDST now]
+  print info, 'format:', [t~format now, "%a, %d %b %Y %H:%M:%S %z"]
+  print info, 'timezone:', [t~timezone now]
+  print info, 'utcOffset:', [t~utcOffset now]
+  print
+}
+
+testTime 'utc', time~utc
+testTime 'local', time~local
+
+
+; Day and month names and abbreviations as sequences
+
+print 'dayNames:', time~dayNames
+print 'dayAbbrs:', time~dayAbbrs
+print 'monNames:', time~monNames
+print 'monAbbrs:', time~monAbbrs
+print
+
+
+; Predefined date formats
+
+function testFormat with info, f
+  print info+':', [time~local~format now, f]
+
+testFormat 'yy/mm/dd',        time~formats~date_yymmdd
+testFormat 'dd/mm/yy',        time~formats~date_ddmmyy
+testFormat 'mm/dd/yy',        time~formats~date_mmddyy
+testFormat 'dd/mm/yyyy',      time~formats~date_ddmmyyyy
+testFormat 'mm/dd/yyyy',      time~formats~date_mmddyyyy
+testFormat 'yy-mm-dd',        time~formats~date_yymmdd_hyphen
+testFormat 'dd-mm-yy',        time~formats~date_ddmmyy_hyphen
+testFormat 'mm-dd-yy',        time~formats~date_mmddyy_hyphen
+testFormat 'dd-mm-yyyy',      time~formats~date_ddmmyyyy_hyphen
+testFormat 'mm-dd-yyyy',      time~formats~date_mmddyyyy_hyphen
+testFormat 'human dmy abbr',  time~formats~date_human_dmy_abbr
+testFormat 'human dmy long',  time~formats~date_human_dmy_long
+testFormat 'human mdy abbr',  time~formats~date_human_mdy_abbr
+testFormat 'human mdy long',  time~formats~date_human_mdy_long
+testFormat 'human wdmy abbr', time~formats~date_human_wdmy_abbr
+testFormat 'human wdmy long', time~formats~date_human_wdmy_long
+testFormat 'human wmdy abbr', time~formats~date_human_wmdy_abbr
+testFormat 'human wmdy long', time~formats~date_human_wmdy_long
+testFormat 'locale',          time~formats~date_locale
+print
+
+; Predefined time formats
+
+testFormat 'time 24 hms', time~formats~time_24_hms
+testFormat 'time 12 hms', time~formats~time_12_hms
+testFormat 'time 24 hm',  time~formats~time_24_hm
+testFormat 'time 12 hm',  time~formats~time_12_hm
+testFormat 'locale',      time~formats~time_locale
+print
+
+; Predefined datetime formats
+
+testFormat 'iso8601',    time~formats~iso8601
+testFormat 'human abbr', time~formats~human_abbr
+testFormat 'human long', time~formats~human_long
+testFormat 'locale',     time~formats~locale
