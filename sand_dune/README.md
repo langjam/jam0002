@@ -37,7 +37,7 @@ $ unseemly sand_dune.unseemly rule_110_glider.sand_dune
 ## Examples
 
 ```
-# Rule 110 with a glider
+# Rule 110
 Rules
   [ _ ] -> [ cell ]                               # By default, cells are on...
   [ No cell | No cell ] -> [ No cell | _ ]        # Unless they and their rightwards neighbor are off...
