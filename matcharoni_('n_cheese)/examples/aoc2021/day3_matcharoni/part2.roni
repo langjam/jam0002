@@ -1,0 +1,50 @@
+pat bin { '0' => 0, '1' => 1 }
+pat reading { bins@[bin]{1+} ~ '\n' => bins }
+pat readings { lines@[reading] => lines }
+pat sum { ns@[ANY] => {
+  acc = 0
+  for ns { acc = acc + *ns }
+  acc
+}}
+
+pat bin_le_to_int { bits@[ANY] => {
+  sum [(*bits << (#bits - (%bits + 1))) <- bits]
+}}
+
+input = read_to_string("./input")
+readings = readings(input)
+
+pat calc_oxygen {
+  (n@ANY, binss@[ANY]{2+}) => {
+    next_binss = []
+    acc = sum [*binss(n) <- binss]
+    most_common = ((acc * 2) >= #binss)
+    for binss {
+      if (*binss(n) == most_common) {
+        next_binss = push(next_binss, *binss)
+      }
+    }
+    calc_oxygen(n + 1, next_binss)
+  },
+  (n@ANY, binss@[ANY]) => binss(0)
+}
+
+pat calc_co2 {
+  (n@ANY, binss@[ANY]{2+}) => {
+    next_binss = []
+    acc = sum [*binss(n) <- binss]
+    most_common = ((acc * 2) < #binss)
+    for binss {
+      if (*binss(n) == most_common) {
+        next_binss = push(next_binss, *binss)
+      }
+    }
+    calc_co2(n + 1, next_binss)
+  },
+  (n@ANY, binss@[ANY]) => binss(0)
+}
+
+oxygen = calc_oxygen(0, readings)
+co2 = calc_co2(0, readings)
+
+dbg(bin_le_to_int(oxygen) * bin_le_to_int(co2))
