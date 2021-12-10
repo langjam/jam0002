@@ -1,0 +1,22 @@
+a. a. a. a. a. a. a. a.
+
+[
+  # input into the 8 `a.` tiles
+  I a.
+
+  [
+    # if any tiles are still `a.`, eof was reached, so replace each with `..` to end the main loop
+    a.  ..
+  ]
+
+  # output the byte just inputted
+  O a_
+
+  [
+    # return the bits to `a.` for the next iteration of the loop
+
+    a0  a.
+
+    a1  a.
+  ]
+]
