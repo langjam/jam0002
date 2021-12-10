@@ -20,7 +20,7 @@ This module is automatically imported into every file. It should not be manually
 | :--- | :-------- | :---------- |
 | `print` | `s` Input string (repeatable) | Prints the input string to the console.<br>If multiple inputs are passed, prints them separated by spaces. |
 | `input` | `p` Prompt (optional) | If piped stdin is present, reads a line from stdin.<br>Otherwise, prints the prompt to the console if given, then waits to read a line from user input. |
-| `systime` | - | Returns the current Unix time. |
+| `systime` | - | Returns the current Unix time in milliseconds. |
 | `floor` | `x` Input value | Rounds the given number towards negative infinity. |
 | `ceil` | `x` Input value | Rounds the given number towards positive infinity. |
 | `round` | `x` Input value | Rounds the given number to the nearest integer. |
