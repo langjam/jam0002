@@ -25,7 +25,6 @@ else
 	endif
 endif
 
-
 templ: 
 	mkdir -p bin
 	$(MAKECMD)
