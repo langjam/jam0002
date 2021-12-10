@@ -8,6 +8,7 @@ cmm {
   Macro
     // mechanism List
     = "$first" Param       -- first
+    | "$datum" Param       -- datum
     | "$reverse" Param     -- reverse
     | "$rest" Param        -- rest
     | "$isEmpty" Param     -- isEmpty
@@ -25,7 +26,7 @@ cmm {
     | "$isReady" Param        -- isReady
 
     // mechanism Message
-    | "$newMessage" Param -- newMessage
+    | "$newMessagec" Param -- newMessagec
     | "$dataComponent" Param  -- dataComponent
     | "$dataMessage" Param    -- dataMessage
     | "$dataConnection" Param -- dataConnection
@@ -39,6 +40,7 @@ cmm {
     | "$sendc" TwoParams -- sendc
     | "$panic" Param    -- panic
     | "$quit"           -- quit
+    | "$start"           -- start
     | "$beginWalkingComponentList" Param -- beginWalkingComponentList
     | "$endWalkingComponentList" Param -- endWalkingComponentList
     | "$walkMoreComponents" Param -- walkMoreComponents

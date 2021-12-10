@@ -12,6 +12,14 @@ On Mac/Linux:
 
 ./run.bash
 
+Files created:
+- producer.c
+- consumer.c
+- os.c
+- main.c
+- fb.pl
+- fb.json
+
 # At-A-Glance
 <img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/at-a-glance.svg"/>
 

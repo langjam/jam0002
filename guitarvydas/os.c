@@ -13,8 +13,10 @@ void Dispatch ();
 void DistributeOutputsToReceivers ();
 void DispatchMaybe (Component);
 void DistributeOutputsFrom (Component);
-void DeliverMessageToReceiver (Component, Message);
+void DeliverMessageToReceiver (Component, Message*);
 void RunComponentOnce (Component);
+void DistributeMaybe (Component);
+void DistributeOutputsFrom (Component);
 
 void Dispatcher () {
   while (systemRunning) {
@@ -41,8 +43,9 @@ void DispatchMaybe (Component c) {
 }
 
 void RunComponentOnce (Component c) {
-  Message m = componentPopInput (c);
-componentCallReaction (c, m);
+  ListCell cell = componentPopInput (c);
+  Datum* data = cell->data;
+componentCallReaction (c, data);
 }
 
 void DistributeOutputsToReceivers () {
@@ -50,7 +53,7 @@ void DistributeOutputsToReceivers () {
 componentList = runQueue;
   while ((componentList != NULL)) {
       Component c = componentList->data->component;
-      DispatchMaybe (c);
+      DistributeMaybe (c);
 componentList = (componentList != NULL) ? componentList->next : NULL;
     }
 ;
@@ -66,14 +69,14 @@ void DistributeOutputsFrom (Component c) {
   List outputs;
 outputs = componentGetOutputsAsSent (c);
   while ((outputs != NULL)) {
-    Message m = outputs->data.message;
+    Message* m = outputs->data;
     DeliverMessageToReceiver (c, m);
- = (outputs != NULL) ? outputs->next : NULL;
+outputs = (outputs != NULL) ? outputs->next : NULL;
   }
 ;
 }
 
-void DeliverMessageToReceiver (Component c, Message m) {
+void DeliverMessageToReceiver (Component c, Message* m) {
   Component receiver = connectionsConnectedTo (c);
 componentAppendInput (receiver, m);
 }
@@ -85,7 +88,7 @@ void panic (char* panicMessage) {
 }
 
 void kernelSendc (Component self, unsigned char c) {
-  Message m = messageNew ((Datum)c);
+  Message m = messageNewc (c);
 self->outputQueue = listAppend1 (self->outputQueue, m);
 }
  

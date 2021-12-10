@@ -13,8 +13,10 @@ void Dispatch ();
 void DistributeOutputsToReceivers ();
 void DispatchMaybe (Component);
 void DistributeOutputsFrom (Component);
-void DeliverMessageToReceiver (Component, Message);
+void DeliverMessageToReceiver (Component, Message*);
 void RunComponentOnce (Component);
+void DistributeMaybe (Component);
+void DistributeOutputsFrom (Component);
 
 void Dispatcher () {
   while (systemRunning) {
@@ -41,8 +43,9 @@ void DispatchMaybe (Component c) {
 }
 
 void RunComponentOnce (Component c) {
-  Message m = $popInput (c);
-  $callReaction (c, m);
+  ListCell cell = $popInput (c);
+  Datum* data = $datum (cell);
+  $callReaction (c, data);
 }
 
 void DistributeOutputsToReceivers () {
@@ -50,7 +53,7 @@ void DistributeOutputsToReceivers () {
   $beginWalkingComponentList (componentList);
   while ($walkMoreComponents (componentList)) {
       Component c = $nextComponentInList (componentList);
-      DispatchMaybe (c);
+      DistributeMaybe (c);
       $advance (componentList);
     }
     $endWalkingComponentList (componentList);
@@ -66,14 +69,14 @@ void DistributeOutputsFrom (Component c) {
   List outputs;
   $beginWalkingOutputsAsSent (outputs, c);
   while ($walkMoreOutputs (outputs)) {
-    Message m = $nextOutput (outputs);
+    Message* m = $nextOutput (outputs);
     DeliverMessageToReceiver (c, m);
     $advanceOutputs (outputs);
   }
   $endWalkingOutputsAsSent (outputs, c);
 }
 
-void DeliverMessageToReceiver (Component c, Message m) {
+void DeliverMessageToReceiver (Component c, Message* m) {
   Component receiver = $connectedTo (c);
   $enqueueMessage (receiver, m);
 }
@@ -85,7 +88,7 @@ void panic (char* panicMessage) {
 }
 
 void kernelSendc (Component self, unsigned char c) {
-  Message m = $newMessage ((Datum) c);
+  Message m = $newMessagec (c);
   $append (self->outputQueue, m);
 }
  

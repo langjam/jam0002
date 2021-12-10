@@ -40,6 +40,7 @@ struct s_Connection {
 };
 
 typedef struct s_ListCell* List;
+typedef struct s_ListCell* ListCell;
 typedef union u_Datum Message;
 typedef union u_Datum Datum;
 typedef struct s_Component* Component;
