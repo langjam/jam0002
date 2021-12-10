@@ -1,0 +1,18 @@
+var a = 4
+Print(a)
+
+if  (a <= 5)
+{
+    Print(a)
+    a = 6
+}
+
+
+if(a > 5 && a < 10)
+{
+    if(a == 6 - a)
+    {
+        Print(a)
+    }
+    Print(a)
+}

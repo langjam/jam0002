@@ -1,0 +1,12 @@
+// prints factorial of a
+
+var a = 5
+var b = 1
+
+while(a > 1)
+{
+    b = b * a
+    a = a - 1
+}
+
+Print(b)
