@@ -7,7 +7,7 @@ all:
 	mkdir -p bin
 	$(CC) main.c $(FLAGS) $(FILES) $(DEBUG) -o bin/templ
 	clear
-	./bin/templ
+	./bin/templ input/playground.css
 
 tests:
 	mkdir -p bin
@@ -16,4 +16,5 @@ tests:
 	./bin/test
 	
 	
+
 .PHONY: all tests
