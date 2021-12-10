@@ -1,14 +1,14 @@
-#include "cos.h"
+#include "mpos.h"
 #include "producer.h"
 
 // producer
 int counter;
 
-void initProducer (Component self) {
+void initProducer (Component* self) {
   $initializeCounter;
 }
 
-void reactProducer (Component self, Message m) {
+void reactProducer (Component* self, Message m) {
   $decCounter;
   if ($counterIsGreaterThanZero) {
       $sendc (self, '*');

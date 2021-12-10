@@ -1,11 +1,16 @@
+#include "mpos.h"
+#include "producer.h"
+#include "consumer.h"
+#include "kernel.h"
 
-void main (int argc, char **argv) {
+int main (int argc, char **argv) {
   Component p = $newComponent (initProducer, reactProducer);
   Component c = $newComponent (initConsumer, reactConsumer);
-  List lis1 = $newListCell (p);
-  List lis2 = $newListCell (c);
-  List lis = $append (lis1, lis2);
-  runQueue = lis;
+  ListCell lis1 = $newListCellComponent (p);
+  ListCell lis2 = $newListCellComponent (c);
+  $append (lis1, lis2);
+  runQueue = lis1;
   $connect (p, c);
   Dispatcher ();
+  return 0;
 }

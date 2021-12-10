@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "cos.h"
+#include "mpos.h"
 
-int systemRunning = 1;
 void DispatchTransferOutputs ();
 List runQueue;
 
@@ -11,10 +10,12 @@ void kernelStop () { systemRunning = 0; }
 
 void Dispatch ();
 void DistributeOutputsToReceivers ();
-void DispatchMaybe (Component);
-void DistributeOutputsFrom (Component);
-void DeliverMessageToReceiver (Component, Message);
-void RunComponentOnce (Component);
+void DispatchMaybe (Component*);
+void DistributeOutputsFrom (Component*);
+void DeliverMessageToReceiver (Component*, Message);
+void RunComponentOnce (Component*);
+void DistributeMaybe (Component*);
+void DistributeOutputsFrom (Component();
 
 void Dispatcher () {
   while (systemRunning) {
@@ -24,57 +25,58 @@ void Dispatcher () {
 }
 
 void Dispatch () {
-  List componentList;
+  List* componentList;
 componentList = runQueue;
   while ((componentList != NULL)) {
-      Component c = componentList->data.component;
+      Component* c = componentList->data->component;
       DispatchMaybe (c);
-componentList = (componentList != NULL) ? {support.getParam1 ()}->next : NULL;
+componentList = (componentList != NULL) ? componentList->next : NULL;
     }
 ;
 }
 
-void DispatchMaybe (Component c) {
+void DispatchMaybe (Component* c) {
   if (c->inputQueue) {
     RunComponentOnce (c);
   }
 }
 
-void RunComponentOnce (Component c) {
-  Message m = componentPopInput (c);
-componentCallReaction (c, m);
+void RunComponentOnce (Component* c) {
+  ListCell* cell = componentPopInput (c);
+  Message msg = cell->datum.message;
+componentCallReaction (c, msg);
 }
 
 void DistributeOutputsToReceivers () {
-  List componentList;
-outputs = runQueue;
+  List* componentList;
+componentList = runQueue;
   while ((componentList != NULL)) {
-      Component c = componentList->data.component;
-      DispatchMaybe (c);
-componentList = (componentList != NULL) ? {support.getParam1 ()}->next : NULL;
+      Component* c = componentList->data->component;
+      DistributeMaybe (c);
+componentList = (componentList != NULL) ? componentList->next : NULL;
     }
 ;
 }
 
-void DistributeMaybe (Component c) {
+void DistributeMaybe (Component* c) {
   if (c->outputQueue) {
     DistributeOutputsFrom (c);
   }
 }
-
-void DistributeOutputsFrom (Component c) {
-  List outputs;
+			    
+void DistributeOutputsFrom (Component* c) {
+  List* outputs;
 outputs = componentGetOutputsAsSent (c);
   while ((outputs != NULL)) {
-    Message m = outputs->data.message;
+    Message* m = outputs->data;
     DeliverMessageToReceiver (c, m);
- = (outputs != NULL) ? {support.getParam1 ()}->next : NULL;
+outputs = (outputs != NULL) ? outputListAdvanceAndGC (outputs) : NULL;
   }
 ;
 }
 
-void DeliverMessageToReceiver (Component c, Message m) {
-  Component receiver = connectionsConnectedTo (c);
+void DeliverMessageToReceiver (Component* c, Message m) {
+  Component* receiver = connectionsConnectedTo (c);
 componentAppendInput (receiver, m);
 }
 
@@ -84,9 +86,9 @@ void panic (char* panicMessage) {
   exit (1);
 }
 
-void kernelSendc (Component self, unsigned char c) {
-  Message m = messageNew ((Datum)c);
-self->outputQueue = listAppend1 (self->outputQueue, m);
+void kernelSendc (Component* self, char c) {
+  Message m = $newMessagec (c);
+componentAppendOutput (self->outputQueue, m);
 }
  
 

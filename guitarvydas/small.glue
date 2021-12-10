@@ -1,4 +1,0 @@
-main [@c] = [[${c}]]
-Char_lex_any [a] = [[~${a}~]]
-lexChar_lex_any [a] = [[~${a}~]]
-lex_any [c] = [[!${c}!]]

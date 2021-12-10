@@ -1,12 +1,17 @@
+#include "mpos.h"
+#include "producer.h"
+#include "consumer.h"
+#include "kernel.h"
 
-void main (int argc, char **argv) {
+int main (int argc, char **argv) {
   Component p =  componentNew (initProducer, reactProducer) ;
   Component c =  componentNew (initConsumer, reactConsumer) ;
-  List lis1 = listNewCell (p);
-  List lis2 = listNewCell (c);
-  List lis = lis1 = listAppend1 (lis1, lis2);
-  runQueue = lis;
+  ListCell lis1 = listNewCellComponent (p);
+  ListCell lis2 = listNewCellComponent (c);
+listAppend (lis1, lis2);
+  runQueue = lis1;
 connectionsConnect (p, c);
   Dispatcher ();
+  return 0;
 }
 

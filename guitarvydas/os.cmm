@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "cos.h"
+#include "mpos.h"
 
-int systemRunning = 1;
 void DispatchTransferOutputs ();
 List runQueue;
 
@@ -11,10 +10,12 @@ void kernelStop () { systemRunning = 0; }
 
 void Dispatch ();
 void DistributeOutputsToReceivers ();
-void DispatchMaybe (Component);
-void DistributeOutputsFrom (Component);
-void DeliverMessageToReceiver (Component, Message);
-void RunComponentOnce (Component);
+void DispatchMaybe (Component*);
+void DistributeOutputsFrom (Component*);
+void DeliverMessageToReceiver (Component*, Message);
+void RunComponentOnce (Component*);
+void DistributeMaybe (Component*);
+void DistributeOutputsFrom (Component();
 
 void Dispatcher () {
   while (systemRunning) {
@@ -24,57 +25,58 @@ void Dispatcher () {
 }
 
 void Dispatch () {
-  List componentList;
+  List* componentList;
   $beginWalkingComponentList (componentList);
-  while ($walkMore (componentList)) {
-      Component c = $nextComponentInList (componentList);
+  while ($walkMoreComponents (componentList)) {
+      Component* c = $nextComponentInList (componentList);
       DispatchMaybe (c);
       $advance (componentList);
     }
     $endWalkingComponentList (componentList);
 }
 
-void DispatchMaybe (Component c) {
+void DispatchMaybe (Component* c) {
   if ($isReady (c)) {
     RunComponentOnce (c);
   }
 }
 
-void RunComponentOnce (Component c) {
-  Message m = $popInput (c);
-  $callReaction (c, m);
+void RunComponentOnce (Component* c) {
+  ListCell* cell = $popInput (c);
+  Message msg = $datumMessage (cell);
+  $callReaction (c, msg);
 }
 
 void DistributeOutputsToReceivers () {
-  List componentList;
-  $beginWalkingComponentList (outputs);
-  while ($walkMore (componentList)) {
-      Component c = $nextComponentInList (componentList);
-      DispatchMaybe (c);
+  List* componentList;
+  $beginWalkingComponentList (componentList);
+  while ($walkMoreComponents (componentList)) {
+      Component* c = $nextComponentInList (componentList);
+      DistributeMaybe (c);
       $advance (componentList);
     }
     $endWalkingComponentList (componentList);
 }
 
-void DistributeMaybe (Component c) {
+void DistributeMaybe (Component* c) {
   if ($hasOutputs (c)) {
     DistributeOutputsFrom (c);
   }
 }
-
-void DistributeOutputsFrom (Component c) {
-  List outputs;
+			    
+void DistributeOutputsFrom (Component* c) {
+  List* outputs;
   $beginWalkingOutputsAsSent (outputs, c);
   while ($walkMoreOutputs (outputs)) {
-    Message m = $nextOutput (outputs);
+    Message* m = $nextOutput (outputs);
     DeliverMessageToReceiver (c, m);
-    $advanceOutputs (outputs);
+    $advanceOutputsAndGC (outputs);
   }
   $endWalkingOutputsAsSent (outputs, c);
 }
 
-void DeliverMessageToReceiver (Component c, Message m) {
-  Component receiver = $connectedTo (c);
+void DeliverMessageToReceiver (Component* c, Message m) {
+  Component* receiver = $connectedTo (c);
   $enqueueMessage (receiver, m);
 }
 
@@ -84,9 +86,9 @@ void panic (char* panicMessage) {
   exit (1);
 }
 
-void kernelSendc (Component self, unsigned char c) {
-  Message m = $newMessage ((Datum) c);
-  $append (self->outputQueue, m);
+void kernelSendc (Component* self, char c) {
+  Message m = $newMessagec (c);
+  $enqueueOutput (self->outputQueue, m);
 }
  
 
