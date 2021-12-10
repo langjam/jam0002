@@ -1,0 +1,7 @@
+// parse input (must be over 2)
+main := a::#number~>#string -> fib ([0, 1], a - 2);
+
+// calculate the n next fibonacci numbers using the starting numbers in the array
+fib := 
+    ? (a, 0) -> a
+    : (first + [a, b], d) -> fib (first + [a, b, a + b], d - 1);
