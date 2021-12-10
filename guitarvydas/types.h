@@ -4,16 +4,21 @@ struct s_Receiver;
 struct s_Connection;
 struct s_ListCell;
 
-union u_Datum {
+union u_Message {
   char c;
-  struct s_Component* component;
-  struct s_Connection* connection;
+  int i;
+  struct s_Component* pcomponent;
+  struct s_Connection* pconnection;
 };
 
-
-
 struct s_ListCell {
-  union u_Datum* data;
+  union {
+    char c;
+    int i;
+    struct s_Component* pcomponent;
+    struct s_Connection* pconnection;
+    union u_Message message;
+  } datum;
   struct s_ListCell* next;
 };
 
@@ -25,12 +30,12 @@ struct s_Component {
 };
 
 struct s_Sender {
-  struct s_Component* component;
+  struct s_Component* pcomponent;
   int pin;
 };
 
 struct s_Receiver {
-  struct s_Component* component;
+  struct s_Component* pcomponent;
   int pin;
 };
 
@@ -39,12 +44,12 @@ struct s_Connection {
   struct s_Receiver receiver;
 };
 
-typedef struct s_ListCell* List;
-typedef struct s_ListCell* ListCell;
-typedef union u_Datum Message;
-typedef union u_Datum Datum;
-typedef struct s_Component* Component;
-typedef struct s_Connection* Connection;
+typedef struct s_ListCell List;
+typedef struct s_ListCell ListCell;
+typedef struct s_Component Component;
+typedef struct s_Connection Connection;
+typedef union u_Message Message;
 
-typedef void (*InitializationFunction) (Component);
-typedef void (*ReactionFunction) (Component, Message);
+typedef void (*InitializationFunction) (Component*);
+typedef void (*ReactionFunction) (Component*, Message);
+

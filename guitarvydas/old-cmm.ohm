@@ -10,11 +10,8 @@ cmm {
     = "$datumMessage" Param     -- datumMessage
     | "$datumpComponent" Param     -- datumpComponent
     | "$datumpConnection" Param     -- datumpConnection
-    | "$newListCellComponent" Param  -- newListCellComponent
-    | "$append" TwoParams  -- append
 
     // mechanism Component
-    | "$newComponent" TwoParams -- newComponent
     | "$isReady" Param -- isReady
     | "$popInput" Param -- popInput
     | "$callReaction" TwoParams    -- callReaction
@@ -42,10 +39,23 @@ cmm {
     | "$connect" TwoParams -- connect
 
 
-    // mechanism Counter
-    | "$initializeCounter" -- initializeCounter
-    | "$decCounter" -- decCounter
-    | "$counterIsGreaterThanZero" -- counterIsGreaterThanZero
+    | "$rest" Param        -- rest
+    | "$isEmpty" Param     -- isEmpty
+    | "$newListCellComponent" Param  -- newListCellComponent
+    | "$append" TwoParams  -- append
+    | "$append1" TwoParams  -- append1
+
+    // mechanism Component
+    | "$newComponent" TwoParams -- newComponent
+    | "$field" TwoParams        -- field
+    | "$popInput" Param         -- popInput
+    | "$isReady" Param        -- isReady
+
+    // mechanism Message
+    | "$newMessagec" Param -- newMessagec
+    | "$dataComponent" Param  -- dataComponent
+    | "$dataMessage" Param    -- dataMessage
+    | "$dataConnection" Param -- dataConnection
 
 
     // mechanism Kernel
@@ -54,7 +64,16 @@ cmm {
     | "$panic" Param    -- panic
     | "$quit"           -- quit
     | "$start"           -- start
+    | "$beginWalkingComponentList" Param -- beginWalkingComponentList
+    | "$endWalkingComponentList" Param -- endWalkingComponentList
+    | "$walkMoreComponents" Param -- walkMoreComponents
+    | "$advance" Param -- advance
 
+
+    // mechanism Counter
+    | "$initializeCounter" -- initializeCounter
+    | "$decCounter" -- decCounter
+    | "$counterIsGreaterThanZero" -- counterIsGreaterThanZero
 
 Param = "(" Expr ")"
 TwoParams = "(" Expr "," Expr ")"

@@ -3,11 +3,10 @@
 #include "mpos.h"
 
 ListCell allocCell ();
-void freeCell (ListCell);
+void freeCell (ListCell*);
 Message* allocMessage ();
-void freeMessage (Message*);
+void freeMessage (Message);
 Datum* allocDatum ();
-void freeDatum (Datum*);
 
 //////////
 
@@ -41,42 +40,23 @@ void freeMessage (Message* msg) {
   free (msg);
 }
 
-/* we could be smarter about this, if warranted by profiling */
-Datum* allocDatum () {
-  Datum* result = (Datum*) malloc (sizeof (Datum));
-  return result;
-}
-
-void freeDatum (Datum* d) {
-  free (d);
-}
-
-
 
 // List
-List listNewCell (Datum d) {
-  ListCell cell = allocCell ();
-  Datum* newd = allocDatum ();
-  cell->d = newd;
-  cell->data.c = d.c;
-  cell->data.component = d.component;
-  cell->data.connection = d.connection;
+List* listNewCellComponent (Component* c) {
+  ListCell* cell = allocCell ();
+  cell->datum.pcomponent = c;
   cell->next = NULL;
   return cell;
 }
 
-List listAppend1 (List l, Message m) {
-  /* append Message to end of list */
-  /* dumb version - CDR() down list until end (using recursive function calls) */
-  if (l->next == NULL) {
-    l->next = m;
-    return l;
-  } else {
-    return listAppend1 (l->next, m);
-  }
+List* listNewCellConnection (Component* c) {
+  ListCell* cell = allocCell ();
+  cell->datum.pconnection = c;
+  cell->next = NULL;
+  return cell;
 }
 
-extern List listAppend (List l1, List l2) {
+extern List* listAppend (List* l1, List* l2) {
   // smarten this up if warranted
   // (fold listAppend1 into listAppend if warranted)
   if (l1->next == NULL) {
@@ -84,13 +64,7 @@ extern List listAppend (List l1, List l2) {
     return l1;
   } else {
     return listAppend (l1->next, l2);
-}
-
-List listNewCellComponent (Component c) {
-  ListCell cell = allocCell ();
-  cell->data.component = c;
-  cell->next = NULL;
-  return cell;
+  }
 }
 
 // Component
@@ -105,41 +79,49 @@ Component componentNew (InitializationFunction initfn, ReactionFunction reactfn)
 
 // no need to free Components - they are initialized at the beginning and never die */
 
-void componentAppendInput (Component component, Message* msg) {
+void componentAppendInput (Component* component, Message msg) {
   ListCell cell = listNewCell ();
-  cell->data = msg;
+  cell->datum.message = msg;
   cell->next = NULL;
-  component->inputQueue = listAppend1 (component->inputQueue, cell);
+  component->inputQueue = listAppend (component->inputQueue, cell);
 }
 
-ListCell componentPopInput (Component component) {
+void componentAppendOutput (Component* component, Message msg) {
+  ListCell cell = listNewCell ();
+  cell->datum.message = msg;
+  cell->next = NULL;
+  component->outputQueue = listAppend (component->outputQueue, cell);
+}
+
+List* componentPopInput (Component component) {
   if (NULL == component->inputQueue) {
     panic ("empty input queue being popped");
     return NULL; // should never reach this point
   } else {
-    ListCell result = component->inputQueue;
+    List* result = component->inputQueue;
     component->inputQueue = result->next;
     result->next = NULL;
     return result;
   }
 }
 
-void componentCallReaction (Component component, Message* msg) {
+void componentCallReaction (Component* component, Message msg) {
   (*component->reactFunction) (component, msg);
 }
 
-List componentGetOutputsAsSent (Component component) {
+List componentGetOutputsAsSent (Component* component) {
   // reverse the output list to get outputs in the order they were sent
   List reversed = listReverse (component->outputQueue);
   return reversed;
 }
 
-// Message
-Message* messageNewc (char c) {
-  Message* msg = (Message*) allocMessage ();
-  msg->c = c;
-  return msg;
+ListCell outputListAdvanceAndGC (List* l) { /* $advanceOutputs */
+  ListCell garbage = l;
+  ListCell result = l->next;
+  freeCell (garbage);
+  return result;
 }
+
 
 // ConnectionTable
 // for purposes of this example, we statically allocate the connection table
@@ -150,22 +132,23 @@ Message* messageNewc (char c) {
 //  (if profiling shows a need to optimize this portion)
 Connection mtable; 
 
-Component connectionsConnectedTo (Component component) {
-  Component receiver = mtable [0].receiver; // not generalized
+Component connectionsConnectedTo (Component* component) {
+  Component* receiver = mtable [0].receiver.pcomponent; // not generalized
   return receiver;
 }
 
-void connectionsConnect (Component sender, Component receiver) {
+void connectionsConnect (Component* sender, Component* receiver) {
   // not generalized
-  mtable [0].sender = sender;
-  mtable [0].receiver = receiver;
+  mtable [0].sender.pcomponent = sender;
+  mtable [0].receiver.pcomponent = receiver;
+  // ignore int "pin" fields for now (they are just tags that make it easier to dissect messages)
 }
-  
+
+
 // Kernel
-void kernelSendc (Component component, char c) {
-  Message msg = messageNewc (c);
+void kernelSendc (Component* component, char c) {
   ListCell cell = listNewCell ();
-  cell->data = msg;
+  cell->datum.c = c;
   cell->next = NULL;
   component->outputQueue = listAppend1 (component->outputQueue, cell);
 }
@@ -179,10 +162,3 @@ int systemRunning = 1;
 void kernelStart () { systemRunning = 1; }
 void kernelStop () { systemRunning = 0; }
 
-ListCell outputListFreeAndAdvance (List l) { /* $advanceOutputs */
-  ListCell garbage = l;
-  ListCell result = l->next;
-  freeMessage (garbage->data);
-  freeCell (garbage);
-  return result;
-}

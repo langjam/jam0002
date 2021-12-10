@@ -1,47 +1,55 @@
-// List
-  /* $first (List) -> Datum; */
-  /* $datum (List) -> Datum; */
-  /* $reverse (List) -> List; */
-  /* $rest (List) -> List; */
-  /* $isEmpty (List) -> Boolean; */
-  /* $newListCell (Datum) -> List; */
-  /* $append (List, Cell) -> List; */
-extern List listNewCellComponent (Component);
-extern List listAppend1 (List, Message);
-extern List listAppend (List, List);
+    /* // mechanism List, ListCell */
+    /* = "$datumMessage" Param     -- datumMessage */
+    /* | "$datumpComponent" Param     -- datumpComponent */
+    /* | "$datumpConnection" Param     -- datumpConnection */
+    /* | "$newListCellComponent" Param  -- newListCellComponent */
+    /* | "$append" TwoParams  -- append */
+extern List* listNewCellComponent (Component*);
+extern List* append (List*, List*);
 
-// Component
-  /* $newComponent (FunctionInit, FunctionReact) */
-  /* $field (Component) -> any; */
-  /* $appendInput (Component, Message); */
-  /* $popInput (Component) -> Message; */
-  /* $callReaction (Component, Message); */
-  /* $hasInputs (Component) -> Boolean; */
-  /* $isReady (Component) -> Boolean; */
+    /* // mechanism Component */
+    /* | "$newComponent" TwoParams -- newComponent */
+    /* | "$isReady" Param -- isReady */
+    /* | "$popInput" Param -- popInput */
+    /* | "$callReaction" TwoParams    -- callReaction */
+    /* | "$hasInputs" Param        -- hasInputs */
+    /* | "$hasOutputs" Param        -- hasOutputs */
+    /* | "$enqueueMessage" TwoParams  -- enqueueMessage */
+    /* | "$enqueueOutput" TwoParams  -- enqueueOutput */
 extern Component componentNew (InitializationFunction, ReactionFunction);
-extern void componentAppendInput (Component, Message*);
-extern ListCell componentPopInput (Component);
-extern void componentCallReaction (Component, Message*);
-extern List componentGetOutputsAsSent (Component);
+extern void componentCallReaction (Component*, Message);
+extern void componentAppendInput (Component*, Message);
+extern void componentAppendOutput (Component*, Message);
+extern List* componentPopInput (Component*);
 
-// Message
-  /* $newMessagec (Datum) -> Message; */
-  /* $dataComponent (Message) -> Component; */
-  /* $dataConnection (Message) -> Component; */
-extern Message messageNewc (char);
+    /* // Component List iterator */
+    /* | "$beginWalkingComponentList" Param -- beginWalkingComponentList */
+    /* | "$endWalkingComponentList" Param -- endWalkingComponentList */
+    /* | "$walkMoreComponents" Param -- walkingMoreComponents */
+    /* | "$advance" Param -- advance */
+    /* | "$nextComponentInList" Param -- nextComponentInList */
+
+    /* // Component's output List iterator */
+    /* | "$beginWalkingOutputsAsSent" TwoParams -- beginWalkingOutputsAsSent */
+    /* | "$endWalkingOutputsAsSent" TwoParams -- endWalkingOutputsAsSent */
+    /* | "$walkMoreOutputs" Param -- walkMoreOutputs */
+    /* | "$nextOutput" Param -- nextOutput */
+    /* | "$advanceOutputsAndGC" Param -- advanceOutputs */
+extern List* componentGetOutputsAsSent (Component*);
+extern void outputListAdvanceAndGC (List*);
 
 // ConnectionTable
   /* $connectedTo (Component) -> Component; */
   /* $connect (Component, Component); */
-extern Component connectionsConnectedTo (Component);
-extern void connectionsConnect (Component, Component);
+extern Component connectionsConnectedTo (Component*);
+extern void connectionsConnect (Component*, Component*);
 
 // Kernel
   /* $withLock (v) $block; */
   /* $sendc (Component, Message); */
   /* $panic (string); */
   /* $quit (); */
-extern void kernelSendc (Component, unsigned char);
+extern void kernelSendc (Component*, char);
 extern void kernelPanic (char*);
 extern void kernelStart ();
 extern void kernelStop ();
@@ -51,16 +59,3 @@ extern void kernelStop ();
 /* $decCounter */
 /* $counterIsGreaterThanZero */
 
-// Iterator Components
-/* $beginWalkingComponentList */
-/* $endWalkingComponentList */
-/* $walkMoreComponents */
-/* $nextComponentInList */
-/* $advance */
-
-// Iterator Outputs
-/* $beginWalkingOutputsAsSent */
-/* $endWalkingOutputsAsSent */
-/* $walkMoreOutputs */
-/* $nextOutput */
-ListCell outputListFreeAndAdvance (List); /* $advanceOutputs */

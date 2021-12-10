@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "cos.h"
+#include "mpos.h"
 
-int systemRunning = 1;
 void DispatchTransferOutputs ();
 List runQueue;
 
@@ -71,7 +70,7 @@ outputs = componentGetOutputsAsSent (c);
   while ((outputs != NULL)) {
     Message* m = outputs->data;
     DeliverMessageToReceiver (c, m);
-outputs = (outputs != NULL) ? outputs->next : NULL;
+outputs = (outputs != NULL) ? outputListFreeAndAdvance (outputs) : NULL;
   }
 ;
 }
@@ -89,7 +88,7 @@ void panic (char* panicMessage) {
 
 void kernelSendc (Component self, unsigned char c) {
   Message m = messageNewc (c);
-self->outputQueue = listAppend1 (self->outputQueue, m);
+self->outputQueue = listAppend (self->outputQueue, m);
 }
  
 
