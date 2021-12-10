@@ -1,14 +1,14 @@
 # math - Additional math functions and constants
 
 **Documentation Table of Contents**
-- [Basic Syntax](./basic-syntax.md)
-- [Sequences and Slices](./sequences.md)
-- [Namespaces and Imports](./namespaces.md)
+- [Basic Syntax](../basic-syntax.md)
+- [Sequences and Slices](../sequences.md)
+- [Namespaces and Imports](../namespaces.md)
 - Standard Library
-  - [builtin](./stdlib/builtin.md) - Core functions and constants
-  - [math](./stdlib/math.md) - Additional math functions and constants
-  - [strutils](./stdlib/strutils.md) - String manipulation utilities
-  - [time](./stdlib/time.md) - Time processing utilities
+  - [builtin](./builtin.md) - Core functions and constants
+  - [math](./math.md) - Additional math functions and constants
+  - [strutils](./strutils.md) - String manipulation utilities
+  - [time](./time.md) - Time processing utilities
 
 ## Import
 ```racket
