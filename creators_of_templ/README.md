@@ -16,7 +16,7 @@ There's no macOS distribution but you can use wine and run the windows version.
 
 Similarly, if you are on linux and having problems with linux version, run the templ.exe using wine.   
 ### Running Scripts
-To run a TEMPL script, you have to open a terminal and type: `path\to\TEMPL path\to\script`. TEMPL source files have either the _.css_ extension. If everything is going smoothly, you should see a window with a white background appear. But we should not keep it white, let's get some drawing done!
+To run a TEMPL script, you have to open a terminal and type: `path\to\TEMPL path\to\script`. TEMPL source files have the _.css_ extension. If everything is going smoothly, you should see a window with a white background appear. But we should not keep it white, let's get some drawing done!
 ### Drawing Simple Shapes
 ##### Program Structure
 In TEMPL, you can consider your script to have three distinct areas; the top contains all the script's constants, the middle is where you put the script classes and the bottom is where the script starts. For now, we will not concern ourselves with constants and classes and focus only on the most important part.
