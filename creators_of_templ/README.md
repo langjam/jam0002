@@ -87,7 +87,66 @@ Two things to note: each property is terminated with a semi-colon and this squar
 
 The second thing you might have noticed is that the `position` property is used in the exact same way as the `dimensions` property; you call `vec2()` and you pass it the x and y values in that order respectively.
 
-The third thing you might have noticed is that rather than have my second `rect` right under the first one, I put it _inside_, making the first
+The third thing you might have noticed is that rather than have my second `rect` right under the first one, I put it _inside_, making the first  first element a parent and the second a child. It'll become obvious why I did it with this:
+```css
+ root
+ {
+	 rect
+	 {
+		 dimensions: vec2(50, 50);
+		 color: #005000;
+		 position: vec2(100, 100);
+		 rect
+		 {
+			 dimensions: vec2(50, 50);
+			 color: rgb(0, 0, 255, 255);
+			 position: vec2(50, 0);
+		 }
+	 }
+}
+```
+![](https://i.imgur.com/fwctlpA.png)
+As you can see, moving the parent element will also move all its child elements. That's because the child's element position is relative to the parent's position. Now there's just one last property left to explore and it's the rotation.
+
+Rotation is a value in degrees by which the shape of the element is rotated. By example, if I want to a lozenge instead of my second square, I can just rotate it by 45 degrees:
+```css
+ root
+ {
+	 rect
+	 {
+		 dimensions: vec2(50, 50);
+		 color: #005000;
+		 position: vec2(100, 100);
+		 rect
+		 {
+			 dimensions: vec2(50, 50);
+			 color: rgb(0, 0, 255, 255);
+			 position: vec2(50, 0);
+			 rotation: 45.0;
+		 }
+	 }
+}
+```
+![](https://i.imgur.com/mYUIJMQ.png)
+One last remark in regards to child-parent relations that will now seem obvious is that the child will draw over the parent.
+
+Now, we've done a lot of rectangles, but what about circles and triangles? Well first, they both share the `color`, `position` and `rotation` properties with rectangle, however the size of both the triangle and the circle is set by the value of their `radius` property, meaning all triangles int TEMPL are equilateral (all sides of the triangle are of equal length). As we've already went in detail over how to use each property, we'll only take a surface look here at a basic example and move on to operators:
+```css
+root
+{
+	circle
+	{
+		position: vec2(50, 25);
+		radius: 25;
+	}
+	triangle
+	{
+		position: vec2(100, 25);
+		radius: 25;
+	}
+}
+```
+![](https://i.imgur.com/Yn1frIP.png)
 
 # Classes
 
