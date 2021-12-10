@@ -277,7 +277,7 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 		
 		if (child->type == node_selector_and_props) {
 			// Expand children
-			if (r->depth <= 7) {
+			if (r->depth <= 5) {
 				checkout(expand_tree(r, child, alloc(r, dest)));
 			}
 		}
