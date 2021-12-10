@@ -182,7 +182,7 @@ int interpret(StringView const& source)
                     it_start++++;
                     auto end = line.to_view().substring_view(2).find("\"");
                     auto literal = line.substring(it_start, end);
-                    line = line.substring(literal.length()+3);
+                    line = line.substring(min(line.length(), literal.length()+3));
                     printf("%s", literal.null_terminated_characters());
                 }
                 else
