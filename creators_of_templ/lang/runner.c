@@ -193,7 +193,7 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 			return err_badprop;
 		}
 
-		RunnerProp red, green, blue;
+		RunnerProp red, green, blue, opacity;
 
 		checkout(make_value(r, node_child(call, 0), &red, type_number));
 		checkout(make_value(r, node_child(call, 1), &green, type_number));
@@ -201,23 +201,17 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 		red.data.number = clamp(red.data.number, 0, 255);
 		green.data.number = clamp(green.data.number, 0, 255);
 		blue.data.number = clamp(blue.data.number, 0, 255);
-		
-		// NOTE (skejeton): I decided to clamp colors instead
-/*
-		if (red.data.number > 255 || green.data.number > 255 || blue.data.number > 255) {
 
-			r->err = err_f(err_badprop, call->token.loc, "RGB value too large");
-			return err_badprop;
+		if (node_child(call, 3) != NULL) {
+			checkout(make_value(r, node_child(call, 3), &opacity, type_number));
+			opacity.data.number = clamp(opacity.data.number, 0, 255);
+		}
+		else {
+			opacity.data.number = 255;
 		}
 
-		if (red.data.number < 0 || green.data.number < 0 || blue.data.number < 0) {
-
-			r->err = err_f(err_badprop, call->token.loc, "RGB value cannot be negative");
-			return err_badprop;
-		}
-*/
-		dest->data.color = ((uint32_t)red.data.number << 16) | ((uint32_t)green.data.number << 8) | (uint32_t)blue.data.number;
-	}
+		dest->data.color = ((uint32_t)red.data.number << 24) | ((uint32_t)green.data.number << 16) | ((uint32_t)blue.data.number << 8) | (uint32_t)opacity.data.number;
+	}	
 	else {
 		// TODO: Provide info about invalid call
 		return err_badprop;

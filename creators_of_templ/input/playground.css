@@ -6,8 +6,8 @@ $SIN30: 0.86602540378;
 $SIDE: (200*$SIN30)*2;
 
 .sierpinski {
-	color: rgb(255-$depth*20, 255-$depth*20, 255-$depth*20);
-
+	color: rgb(255, 255, 255, 60);
+	
 	triangle.sierpinski {
 		position: vec2(0, -200*0.5^$depth*2);
 		radius: 200*0.5^$depth;
@@ -24,11 +24,12 @@ $SIDE: (200*$SIN30)*2;
 
 root {
 	triangle {
-		color: #000000;
+		color: rgb(0, 0, 0);
 		radius: 200;
 		position: vec2(200, 250);
 		triangle.sierpinski {
 			rotation: 180.0;
+			color: rgb(255, 255, 255, 60);
 			radius: 200*0.5;
 		}
 	}
