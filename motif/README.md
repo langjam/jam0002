@@ -35,7 +35,7 @@ How Motif Works
 Patterns
 --------
 Motif is designed to be symbol-agnostic as much as possible. Instead relying on symbols and keywords,
-all instructions in motif is composed of character or pixel pattern. There are 6 patterns and 1 special patterns in motif:
+all instructions in motif are composed of character or pixel pattern. There are 6 patterns and 1 special patterns in motif:
 
 0. Solid (Special Pattern)
 
@@ -112,7 +112,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 Parsing Rules
 ------------
 
-1. Program is parsed line by line. For text programs, a line is ended with CRLF or LF. For image programs, a line is simply a row in the image. The parser will try to match the line to one of the seven patterns.
+1. The program is parsed line by line. For text programs, a line is ended with CRLF or LF. For image programs, a line is simply a row in the image. The parser will try to match the line to one of the seven patterns.
 2. Pattern matching is always done in this order: solid, rainbow, irregular rainbow, checkerboard, irregular checkerboard, wave, irregular wave.
 3. Every line that is empty or didn't match any of the seven patterns is skipped as a comment. Example:
 
@@ -245,7 +245,7 @@ The program also has only 1 section, Section 0 (or, colored red). It contains 1 
 Instructions
 ------------
 
-Motif VM is a stack machine with 30 instruction, mapped to pairs of different patterns from 6 non-solid patterns. Pairs of the same pattern type is parsed as a `NOP` operator and thus won't affect execution.
+Motif VM is a stack machine with 30 instructions, mapped to pairs of different patterns from 6 non-solid patterns. Pairs of the same pattern type is parsed as a `NOP` operator and thus won't affect execution.
 
 <table>
     <thead >
