@@ -42,6 +42,21 @@ bool skip_comments(Lexer *l) {
 		while (startl == l->loc.lineno) nextc(l);
 		return true;
 	}
+	if (peekc(l) == '/' && l->buf[l->cursor+1] == '*') {
+		int stage = 0; 
+		while (true) {
+			if (stage == 1 && peekc(l) == '/')
+				stage = 2;
+			else if (peekc(l) == '*')
+				stage = 1;
+			else 
+				stage = 0;
+			nextc(l);
+			if (stage == 2)
+				break;
+		}
+		return true;
+	}
 	return false;
 }
 

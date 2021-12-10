@@ -2,24 +2,23 @@
 // Draws sierpinski triangle!
 //
 
-strst  srtrst;<<
+$SIN30: 0.86602540378;
+$SIDE: (200*$SIN30)*2;
 
 .sierpinski {
-	/* test */
+	color: rgb(255-$depth*20, 255-$depth*20, 255-$depth*20);
+
 	triangle.sierpinski {
-		position: vec2(0, -200*0.5^($depth-1)*2);
-		color: #FFFFFF;
-		radius: 200*0.5^($depth-1);
+		position: vec2(0, -200*0.5^$depth*2);
+		radius: 200*0.5^$depth;
 	}
 	triangle.sierpinski {
-		position: vec2((200*0.86602540378)*0.5^($depth-1)*2, 200*0.5^($depth-1));
-		color: #FFFFFF;
-		radius: 200*0.5^($depth-1);
+		position: vec2($SIDE*0.5^$depth, 200*0.5^$depth);
+		radius: 200*0.5^$depth;
 	}
 	triangle.sierpinski {
-		position: vec2(-(200+0.86602540378)*0.5^($depth-1)*2, 200*0.5^($depth-1));
-		color: #FFFFFF;
-		radius: 200*0.5^($depth-1);
+		position: vec2(-$SIDE*0.5^$depth, 200*0.5^$depth);
+		radius: 200*0.5^$depth;
 	}
 }
 
@@ -28,11 +27,9 @@ root {
 		color: #000000;
 		radius: 200;
 		position: vec2(200, 250);
-		triangle {
+		triangle.sierpinski {
 			rotation: 180.0;
-			color: #FFFFFF;
 			radius: 200*0.5;
-			triangle.sierpinski {}
 		}
 	}
 }

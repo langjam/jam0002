@@ -145,10 +145,14 @@ ErrCode make_value(Runner *r, Node *val, RunnerProp *dest, RunnerPropType type) 
 				dest->data.number = r->depth;
 				return err_ok;
 			}
-			if (tok_eq(val->token, "time")) {
-				dest->type = type_number;
-				dest->data.number = millis()/1000.0;
-				return err_ok;
+			else {
+				char key[128] = { 0 };
+				snprintf(key, 128, "%.*s", val->token.len, val->token.val);
+				RunnerProp *prop = map_get(&r->constants, key);
+				if (prop != NULL) {
+					*dest = *prop;
+					return err_ok;
+				}
 			}
 			r->err = err_f(err_badprop, val->token.loc, "This variable does not exist");
 			return err_badprop;
@@ -157,6 +161,11 @@ ErrCode make_value(Runner *r, Node *val, RunnerProp *dest, RunnerPropType type) 
 	} 
 }
 
+double clamp(double n, double bottom, double up) {
+	if (n < bottom) return bottom;
+	if (n > up) return up;
+	return n;
+}
 
 ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 	
@@ -174,7 +183,6 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 		dest->data.pos.x = p1.data.number;
 		dest->data.pos.y = p2.data.number;
 	}
-
 	else if (strncmp(call->token.val, "rgb", call->token.len) == 0) {
 
 		dest->type = type_color;
@@ -190,7 +198,12 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 		checkout(make_value(r, node_child(call, 0), &red, type_number));
 		checkout(make_value(r, node_child(call, 1), &green, type_number));
 		checkout(make_value(r, node_child(call, 2), &blue, type_number));
-
+		red.data.number = clamp(red.data.number, 0, 255);
+		green.data.number = clamp(green.data.number, 0, 255);
+		blue.data.number = clamp(blue.data.number, 0, 255);
+		
+		// NOTE (skejeton): I decided to clamp colors instead
+/*
 		if (red.data.number > 255 || green.data.number > 255 || blue.data.number > 255) {
 
 			r->err = err_f(err_badprop, call->token.loc, "RGB value too large");
@@ -202,10 +215,9 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 			r->err = err_f(err_badprop, call->token.loc, "RGB value cannot be negative");
 			return err_badprop;
 		}
-
+*/
 		dest->data.color = ((uint32_t)red.data.number << 16) | ((uint32_t)green.data.number << 8) | (uint32_t)blue.data.number;
 	}
-
 	else {
 		// TODO: Provide info about invalid call
 		return err_badprop;
@@ -271,8 +283,9 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 		
 		if (child->type == node_selector_and_props) {
 			// Expand children
-			
-			checkout(expand_tree(r, child, alloc(r, dest)));
+			if (r->depth <= 7) {
+				checkout(expand_tree(r, child, alloc(r, dest)));
+			}
 		}
 		if (child->type == node_property) {
 			// Store the key in temporary storage
@@ -437,6 +450,14 @@ ErrCode explosion(Runner *r, RunnerNode *node, Ast *ast, int nesting) {
 	r->depth = nesting;
 
 	for (Node *rule = ast->nodes[0].first_child; rule; rule = rule->sibling) {
+		if (rule->type == node_constant) {
+			RunnerProp prop;
+			make_prop(r, rule->first_child, &prop);
+			char key[128] = { 0 };
+			snprintf(key, 128, "%.*s", rule->token.len, rule->token.val);
+			map_set(&r->constants, key, prop);
+			continue;
+		}
 		assert(rule->type == node_selector_and_props);
 		Node *selector = node_child(rule, 0);
 		/*
@@ -452,9 +473,9 @@ ErrCode explosion(Runner *r, RunnerNode *node, Ast *ast, int nesting) {
 		}
 	}
 	
-	if (nesting <= 6) {
-		checkout(explosion(r, node->first_child, ast, nesting + 1));
-	}
+	// if (nesting <= 6) {
+	checkout(explosion(r, node->first_child, ast, nesting + 1));
+	// }
 	return explosion(r, node->sibling, ast, nesting);
 }
 
@@ -496,6 +517,7 @@ void _runner_deinit(RunnerNode *node) {
 // Removes data (doesn't touch AST)
 void runner_deinit(Runner *runner) {
 	_runner_deinit(runner->root);
+	map_deinit(&runner->constants);
 	free(runner->nodes);
 }
 

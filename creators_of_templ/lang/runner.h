@@ -56,6 +56,7 @@ typedef struct RunnerNode {
 
 
 typedef struct Runner {
+	RunnerProps constants;
 	Err err;
 	double depth;
 	RunnerNode *root;

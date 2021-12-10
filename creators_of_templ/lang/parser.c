@@ -312,6 +312,26 @@ static ErrCode property_list(Parser *p, Node *dest) {
 	return give_tok(p, tok_rbrace, NULL);
 }
 
+ErrCode toplevel(Parser *p, Node *dest) {
+	if (is_tok(p, tok_var)) {
+		// Constant declarator
+		checkout(next_tok(p, NULL));
+		Token const_name;
+		dest->type = node_constant;
+		push_note(p->current.loc, "I was parsing a constant declaration") {
+			checkout(give_tok(p, tok_ident, &const_name));
+			dest->token = const_name;
+			checkout(give_tok(p, tok_colon, NULL));
+			checkout(value(p, ast_make(&p->ast, dest), 15));
+			checkout(give_tok(p, tok_semicolon, NULL));
+		}
+	}
+	else {
+		return selector_and_props(p, dest);
+	}
+	return err_ok;
+}
+
 // Runs the parser, and returns non-zero error code if something happened
 // Check parser->err to find the details of the error
 ErrCode parser_run(Parser *p) {
@@ -320,7 +340,7 @@ ErrCode parser_run(Parser *p) {
 	p->current = lex_next(&p->lexer);
 
 	ErrCode err;
-	while (err = selector_and_props(p, ast_make(&p->ast, root)), p->current.type != tok_eof && !err);
+	while (err = toplevel(p, ast_make(&p->ast, root)), p->current.type != tok_eof && !err);
 	return err; 
 }
 
