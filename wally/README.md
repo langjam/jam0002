@@ -59,9 +59,10 @@ The syntax is very similar to `C`. Wally is a simple language with a small set o
   * If it is placed directly above a variable declaration statement, then the variable becomes 'locked' and the pattern is assigned to it.
   * The value of Locked variables can be accessed in any expression
   * But to assign a value to the locked variable, the assigned pattern must be present **directly above the assignment statement** (might give parsing errrors if it is not directly above an assignment statement, but the message might not be helpful)
-  * Look at `examples\err_pattern.wly`.
+  * Look at `examples\err_pattern.wly` and `examples\all_test.wly`.
 
 ## Examples
 
 * All examples files have meaningful names to explain what code they contain.
 * If you are having parsing errors, try to use the code in the examples ( the parser is not fully tested, so even extra spaces or empty lines may break it )
+* Compile an example using `make <example>.wly`
