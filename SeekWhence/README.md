@@ -23,7 +23,7 @@ python3 src/test.py tests
 
 ## Examples
 
-You can find several examples of SeekWhence programs in the `examples` folder. These also serve as the test cases for the interpreter; you can find the descriptions of their expected output in the `tests` folder.
+You can find several examples of SeekWhence programs in the `examples` folder. Most of these also serve as the test cases for the interpreter and standard library; you can find the descriptions of their expected output in the `tests` folder.
 
 
 ## Language Documentation
