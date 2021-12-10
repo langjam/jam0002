@@ -98,7 +98,7 @@ all instructions in motif is composed of character or pixel pattern. There are 6
 
    A 12-pixel row ![image](./docs/wave_irregular.png) is a wave pattern with colors [#FFFFFF, #999999, #000000] and cell widths of [1, 4, 2, 4, 1]
 
-Parsing Rule
+Parsing Rules
 ------------
 
 1. Program is parsed line by line. For text programs, a line is ended with CRLF or LF. For image programs, a line is simply a row in the image. The parser will try to match the line to one of the seven patterns.
@@ -186,7 +186,7 @@ Parsing Rule
    aaaaaa
    ```
 
-Program structure
+Program Structure
 -----------------
 
 A motif program is composed of palettes and sections. A palette defines what symbols (UTF-8 characters or 32-bit RGBA color) that can be used in the program and maps them to color IDs. Palettes are declared by using any non-solid patterns matched before the first section. Every palette must has different symbols
@@ -230,3 +230,93 @@ red (#FF0000) = 0, green (#00FF00) = 1, blue (#0000FF) = 2, yellow (#FFFF00) = 3
 ```
 
 The program also has only 1 section, Section 0 (or, colored red). It contains 1 pattern encoded instruction rainbow->checker ( ![image](./docs/image_struct_instr1.png) -> ![image](./docs/image_struct_instr2.png) )
+
+Instructions
+------------
+
+Motif VM is a stack machine with 30 instruction, mapped to combination of 2 different patterns from 6 non-solid patterns.
+
+<table>
+    <thead >
+        <tr>
+            <th rowspan="2">
+                First Pattern
+            </th>
+            <td colspan="6" rowspan="1" align="center">
+                <b>Second Pattern</b>
+            </td>
+        </tr>
+        <tr>
+            <th align="center">Rainbow</th>
+            <th align="center">Checker</th>
+            <th align="center">Wave</th>
+            <th align="center">Irreg. Rainbow</th>
+            <th align="center">Irreg. Checker</th>
+            <th align="center">Irreg. Wave</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><b>Rainbow</b></td>
+            <td align="center">-</td> <td align="center"><a href="#instrpush">push</a></td>
+            <td align="center"><a href="#instradd">add</a></td> <td align="center"><a href="#instrmod">mod</a></td>
+            <td align="center"><a href="#instrload">load</a></td> <td align="center"><a href="#instrdup">dup</a></td>
+        </tr>
+        <tr><td><b>Checker</b></td>
+            <td align="center"><a href="#instrpop">pop</a></td> <td align="center">-</td>
+            <td align="center"><a href="#instrmul">mul</a></td> <td align="center"><a href="#instrequal">equal</a></td>
+            <td align="center"><a href="#instrgreater">greater</a></td> <td align="center"><a href="#instrfwd_if">fwd_if</a></td>
+        </tr>
+        <tr><td><b>Wave</b></td>
+            <td align="center"><a href="#instrsub">sub</a></td> <td align="center"><a href="#instrdiv">div</a></td>
+            <td align="center">-</td> <td align="center"><a href="#instrand">and</a></td>
+            <td align="center"><a href="#instrfwd">fwd</a></td> <td align="center"><a href="#instrstartblock">startblock</a></td>
+        </tr>
+        <tr><td><b>Irreg. Rainbow</b></td>
+            <td align="center"><a href="#instrpow">pow</a></td> <td align="center"><a href="#instrnot">not</a></td>
+            <td align="center"><a href="#instror">or</a></td> <td align="center">-</td>
+            <td align="center"><a href="#instrcall">call</a></td> <td align="center"><a href="#instrprintint">printint</a></td>
+        </tr>
+        <tr><td><b>Irreg. Checker</b></td>
+            <td align="center"><a href="#instrstore">store</a></td> <td align="center"><a href="#instrless">less</a></td>
+            <td align="center"><a href="#instrback">back</a></td> <td align="center"><a href="#instrreturn">return</a></td>
+            <td align="center">-</td> <td align="center"><a href="#instrprintchar">printchar</a></td>
+        </tr>
+        <tr><td><b>Irreg. Wave</b></td>
+            <td align="center"><a href="#instrswap">swap</a></td> <td align="center"><a href="#instrback_if">back_if</a></td>
+            <td align="center"><a href="#instrendblock">endblock</a></td> <td align="center"><a href="#instrhalt">halt</a></td>
+            <td align="center"><a href="#instrprintsym">printsym</a></td> <td align="center">-</td>
+        </tr>
+    </tbody>
+<table>
+
+
+### Instruction <a name="instrpush">push</a>
+### Instruction <a name="instradd">add</a>
+### Instruction <a name="instrmod">mod</a>
+### Instruction <a name="instrload">load</a>
+### Instruction <a name="instrdup">dup</a>
+### Instruction <a name="instrpop">pop</a>
+### Instruction <a name="instrmul">mul</a>
+### Instruction <a name="instrequal">equal</a>
+### Instruction <a name="instrgreater">greater</a>
+### Instruction <a name="instrfwd_if">fwd_if</a>
+### Instruction <a name="instrsub">sub</a>
+### Instruction <a name="instrdiv">div</a>
+### Instruction <a name="instrand">and</a>
+### Instruction <a name="instrfwd">fwd</a>
+### Instruction <a name="instrstartblock">startblock</a>
+### Instruction <a name="instrpow">pow</a>
+### Instruction <a name="instrnot">not</a>
+### Instruction <a name="instror">or</a>
+### Instruction <a name="instrcall">call</a>
+### Instruction <a name="instrprintint">printint</a>
+### Instruction <a name="instrstore">store</a>
+### Instruction <a name="instrless">less</a>
+### Instruction <a name="instrback">back</a>
+### Instruction <a name="instrreturn">return</a>
+### Instruction <a name="instrprintchar">printchar</a>
+### Instruction <a name="instrswap">swap</a>
+### Instruction <a name="instrback_if">back_if</a>
+### Instruction <a name="instrendblock">endblock</a>
+### Instruction <a name="instrhalt">halt</a>
+### Instruction <a name="instrprintsym">printsym</a>
