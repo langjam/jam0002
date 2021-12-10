@@ -1,0 +1,20 @@
+[package]
+name = "agents"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"
+
+# wasm-opt doesn't work on arm64
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
+[dependencies]
+parcel = { git = "https://github.com/ncatelli/parcel", tag = "v2.0.0" }
+wasm-bindgen = "0.2"
+lazy_static = "1.4.0"
