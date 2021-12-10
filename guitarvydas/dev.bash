@@ -22,3 +22,11 @@ ${pfr} ${lj2} consumer.cmm cmm.ohm cmm.glue ${lj2}/support.js >consumer.c
 
 echo gcc consumer.c
 gcc consumer.c
+
+
+echo transiled files
+echo main.cmm '->' main.c
+${pfr} ${lj2} main.cmm cmm.ohm cmm.glue ${lj2}/support.js >main.c
+
+echo gcc main.c
+gcc main.c
