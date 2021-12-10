@@ -10,11 +10,6 @@ cd creators_of_templ
 make
 ```
 
-Alternatively, *you can download pre-compiled executables*, they are located in ./release, and are for windows and for linux
-
-There's no macOS distribution but you can use wine and run the windows version.
-
-Similarly, if you are on linux and having problems with linux version, run the templ.exe using wine.   
 ### Running Scripts
 To run a TEMPL script, you have to open a terminal and type: `path\to\TEMPL path\to\script`. TEMPL source files have the _.css_ extension. If everything is going smoothly, you should see a window with a white background appear. But we should not keep it white, let's get some drawing done!
 ### Drawing Simple Shapes
