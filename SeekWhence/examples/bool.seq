@@ -1,0 +1,22 @@
+; Booleans and boolean operations
+
+; [not x] isn't special syntax of any kind, it's just a simple function.
+; and / or are special operator syntax to allow for short circuiting.
+; none is equivalent to Python's None.
+
+print true
+print false
+print none
+
+print [not true]
+print [not false]
+
+print true and true
+print true and false
+print false and true
+print false and false
+
+print true or true
+print true or false
+print false or true
+print false or false

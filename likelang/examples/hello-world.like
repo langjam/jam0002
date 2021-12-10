@@ -1,0 +1,9 @@
+print("Enter your name:")
+
+fn read_inp() {
+    input()
+}
+
+let inp = read_inp()
+
+print("Hello " + inp)

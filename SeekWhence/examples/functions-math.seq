@@ -1,0 +1,43 @@
+; Math functions
+
+print '[floor 3/4] =',  [floor 3/4]
+print '[ceil 0.75] =',  [ceil 0.75]
+print '[round 0.75] =', [round 0.75]
+print '[abs -150] =',   [abs -150]
+print '[sign -150] =',  [sign -150]   ; 1 if positive, -1 if negative, 0 if 0
+
+; Math constants
+
+print 'INF =', INF
+print 'NaN =', NaN
+
+; Additional math functions can be found in the stdlib under 'math'
+
+import math from 'math'
+
+print '[math~sqrt 2] =',    [math~sqrt 2]
+print '[math~log 2] =',     [math~log 2]       ; If no base given, natural log
+print '[math~log 2, 10] =', [math~log 2, 10]
+
+; Trig functions; all work on radians, use [math~toRad x] and [math~toDeg x] to convert
+;   between degrees and radians
+
+print '[math~sin 0.75] =',  [math~sin 0.75]
+print '[math~cos 0.75] =',  [math~cos 0.75]
+print '[math~tan 0.75] =',  [math~tan 0.75]
+print '[math~asin 0.75] =', [math~asin 0.75]
+print '[math~acos 0.75] =', [math~acos 0.75]
+print '[math~atan 0.75] =', [math~atan 0.75]
+print '[math~atan2 0.75, 0.15] =', [math~atan2 0.75, 0.15]   ; [atan2 x, y] == [atan y/x] but in correct quadrant
+
+; Degree and radian conversion functions
+
+print '[math~toRad 60] =',   [math~toRad 60]
+print '[math~toDeg 0.75] =', [math~toDeg 0.75]
+
+; Additional math constants
+
+print 'math~PI =',  math~PI
+print 'math~E =',   math~E
+print 'math~TAU =', math~TAU
+print 'math~PHI =', math~PHI

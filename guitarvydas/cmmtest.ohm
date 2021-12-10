@@ -1,0 +1,42 @@
+cmmtest {
+  main = findMacro+
+
+ findMacro
+    = experimentalApplySyntactic<Macro>+ -- macro
+    | any                                    --default
+
+  Macro
+    = "$r" Param     -- reverse
+
+Param = "(" Expr ")"
+TwoParams = "(" Expr "," Expr ")"
+Expr
+  = "(" Expr ")" -- nested
+  | Expr "(" Arglist? ")" -- funccall
+  | atom -- atom
+  | ~"," ~"(" ~")" ~"$" any -- flat
+
+Arglist = ArgComma+
+ArgComma = Arg ","
+Arg = Expr
+
+block = "{" block* "}" -- nested
+      | notBrace       -- raw
+
+notBrace = ~"{" ~"}" any
+
+space += comment
+comment = "//" notNL* nl
+nl = "\n"
+notNL = ~nl any
+
+dollar = "$"
+
+ws = " " | "\t"
+
+atom = atomchar+
+atomchar = ~"$" ~"," ~"(" ~")" any 
+
+}
+
+

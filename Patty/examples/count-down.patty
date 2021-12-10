@@ -1,0 +1,8 @@
+(do
+	(def count-down (fun (n)
+		(if (!= n 0)
+			(do
+				(print n)
+				(count-down (- n 1))))))
+
+	(count-down 10))

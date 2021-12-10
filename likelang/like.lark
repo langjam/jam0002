@@ -1,0 +1,75 @@
+start: statements+
+
+?statements: function+
+           | assignment+
+           | expression
+           | collect+
+
+function: "fn" identifier params start_fn "{" block "}" end_fn
+
+start_fn: 
+
+end_fn: 
+
+func_call: identifier args
+
+collect_call: identifier "." identifier args
+
+params: "(" [ identifier ("," identifier)* ] ")"
+
+args: "(" [ expression ("," expression)* ] ")"
+
+identifier: CNAME
+
+existing_ident: identifier
+
+block: statements*
+
+?expression: expression operator expression
+          | "(" expression ")"
+          | boolean
+          | existing_ident
+          | NUMBER -> number
+          | collect_call
+          | func_call
+          | ESCAPED_STRING -> string
+          | control_statement
+
+?conditional: expression conditional_operator expression
+            | not expression
+            | boolean
+
+not: "not"
+   | "!"
+
+operator: "+" -> add
+        | "-" -> sub
+        | "*" -> mul
+        | "/" -> div
+
+conditional_operator: "==" -> eq
+        | ">" -> gt
+        | "<" -> lt
+        | ">=" -> gte
+        | "<=" -> lte
+        | "!=" -> ne
+
+control_statement: "if" conditional start_fn "{" block "}" end_fn [ ( "else" "if" conditional start_fn "{" block "}" end_fn )* ] [ "else" start_fn "{" block "}" end_fn ]
+
+boolean: "true" -> true
+        | "false" -> false
+
+assignment: "let" identifier "=" expression
+
+collect: "let" identifier "=" "collect" PATTERN
+
+PATTERN: "/" _STRING_ESC_INNER "/"
+
+%import common.CNAME
+%import common.NUMBER
+%import common.WS
+%import common._STRING_ESC_INNER
+%import common.ESCAPED_STRING
+%import common.CPP_COMMENT
+%ignore WS
+%ignore CPP_COMMENT

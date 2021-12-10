@@ -1,0 +1,14 @@
+; Type checking functions
+
+sequence a = n
+
+print [isSequence a]
+print [isSequence a::10]   ; Slices return true from isSequence...
+print [isSlice a]          ; ... but sequences return false from isSlice
+print [isSlice a::10]
+
+print [isNumber 10]
+print [isString "Hello, world!"]
+print [isBoolean true]
+print [isBoolean false]
+print [isNone none]

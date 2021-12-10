@@ -1,0 +1,8 @@
+error: invalid delimiter
+  --> test.mnc:2:9
+  |
+1 | let a = object A {
+  |                  - currently open delimiter
+2 |     .foo) {
+  |         ^ invalid delimiter
+

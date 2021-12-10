@@ -1,0 +1,11 @@
+let for = object For {
+    (let $i:ident in [$a:expr, $b:expr, $c:expr]) $body:block {
+        body.def(i, a).exec;
+        body.def(i, b).exec;
+        body.def(i, c).exec;
+    }
+};
+
+for (let foo in [1, " is less than ", 3]) {
+    print(foo);
+}

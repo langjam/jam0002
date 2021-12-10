@@ -1,0 +1,47 @@
+pat digit {
+  '0' => 0,
+  '1' => 1,
+  '2' => 2,
+  '3' => 3,
+  '4' => 4,
+  '5' => 5,
+  '6' => 6,
+  '7' => 7,
+  '8' => 8,
+  '9' => 9
+}
+pat sum { ns@[ANY] => {
+  acc = 0
+  for ns { acc = acc + *ns }
+  acc
+}}
+pat num digits@[digit]{1+} => {
+  sum [(*digits * (10 ** (#digits - (%digits + 1)))) <- digits]
+}
+pat line (px@num ~ ',' ~ py@num ~ " -> " ~ qx@num ~ ',' ~ qy@num) => ((px, py), (qx, qy))
+pat parse_input ([lines<@line ~ '\n']) => { lines }
+
+grid = [[0 <- 0..1000] <- 0..1000]
+lines = parse_input(read_to_string("./input"))
+
+for lines {
+  ((x1, y1), (x2, y2)) = *lines
+  if (x1 == x2) {
+    for y@(y1..=y2) {
+      grid(*y)(x1) = grid(*y)(x1) + 1
+    }
+  }
+  if (y1 == y2) {
+    for x@(x1..=x2) {
+      grid(y1)(*x) = grid(y1)(*x) + 1
+    }
+  }
+}
+
+pat score_grid rows@ANY => {
+  acc = 0
+  [[if (**rows >= 2) { acc = acc + 1 } <- *rows] <- rows]
+  acc
+}
+
+dbg(score_grid grid)

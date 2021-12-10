@@ -1,0 +1,6 @@
+compile_commands.json
+patty
+.ccls-cache
+.cache
+*.hs
+build

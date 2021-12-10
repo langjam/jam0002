@@ -1,0 +1,3 @@
+(do
+	(def fibs (seq 1 1 (+ (index n fibs) (index (+ n 1) fibs))))
+	(print (take 10 fibs)))

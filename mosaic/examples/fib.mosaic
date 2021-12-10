@@ -1,0 +1,57 @@
+
+a0
+a1
+
+#
+# Calculates the Fibonacci sequence, displayed in binary on rows of tiles.
+#
+
+# Each iteration, it adds the two bottom rows to create a new row.
+
+[
+  [
+    A_  A_
+    ..  n0
+
+    A1  __
+    n_  N_
+
+    [
+      N0  n1
+
+      N.  n1
+
+      __ N1  N_ n0
+    ]
+
+    A1  __
+    __  __
+    n_  N_
+
+    [
+      N0  n1
+
+      N.  n1
+
+      __ N1  N_ n0
+    ]
+
+    __ A_  A_ a_
+    __ A_  A_ a_
+
+    a.  ..
+
+    A.  ..
+    A.  ..
+  ]
+
+  [
+    n_  a_
+  ]
+
+  .
+
+  a_ ..  A_ ..
+  a_ ..  A_ ..
+  .. ..  .. ..
+]

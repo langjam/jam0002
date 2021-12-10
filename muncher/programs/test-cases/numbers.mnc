@@ -1,0 +1,6 @@
+print(1.add(2));
+print("\n");
+print(1.le(2));
+print("\n");
+print(10.add(2.mul(3)).div(3))
+print("\n");

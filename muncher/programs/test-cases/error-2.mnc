@@ -1,0 +1,12 @@
+let a = object A {
+    .call me maybe {
+        print("maybe called\n");
+    }
+    .call me not {
+        print("not called\n");
+    }
+};
+
+a.call me not;
+a.call me maybe;
+a.call me what?;

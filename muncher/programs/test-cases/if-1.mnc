@@ -1,0 +1,17 @@
+let if = object If {
+    ($cond:expr) $then:block else $else:block {
+        cond.pick(then, else).exec;
+    }
+};
+
+if (true) {
+    print("hello ");
+} else {
+    print("am broken ");
+}
+
+if (false) {
+    print("very broken");
+} else {
+    print("world");
+}

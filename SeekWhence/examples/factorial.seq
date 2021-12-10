@@ -1,0 +1,7 @@
+; Factorials
+
+sequence factorial from 1 = n*x
+
+print factorial:5
+print factorial:10
+print factorial:1000

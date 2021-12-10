@@ -1,0 +1,5 @@
+source: ../examples/escape.seq
+status: 0
+stdout: |
+  This is a "quotes" test
+  This is a 'quotes' test

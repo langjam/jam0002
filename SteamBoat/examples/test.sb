@@ -1,0 +1,17 @@
+island England
+port London
+lock []
+canal goto Jakarta, Java
+
+port Bristol
+lock _[]
+canal out goto Bristol
+lock []
+canal collate halt
+
+island Java
+port Jakarta
+lock []
+canal
+chars "Ahoy There!"
+goto Bristol, England

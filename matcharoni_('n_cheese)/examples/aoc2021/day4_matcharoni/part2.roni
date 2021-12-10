@@ -1,0 +1,92 @@
+// std
+pat sum { ns@[ANY] => {
+  acc = 0
+  for ns { acc = acc + *ns }
+  acc
+}}
+
+pat digit {
+  '0' => 0,
+  '1' => 1,
+  '2' => 2,
+  '3' => 3,
+  '4' => 4,
+  '5' => 5,
+  '6' => 6,
+  '7' => 7,
+  '8' => 8,
+  '9' => 9
+}
+pat ws_any [' '] => ' '
+pat num digits@[digit]{1+} => {
+  sum [(*digits * (10 ** (#digits - (%digits + 1)))) <- digits]
+}
+
+// the called numbers section
+pat csnums [nums<@num ~ ','] ~ nums<@num => nums 
+
+// bingo cards section
+pat bingo_row [ws_any ~ nums<@num]{5} => { nums }
+pat bingo_card [rows<@bingo_row ~ '\n']{5} => { rows }
+
+pat parse_input (called@csnums ~ ['\n']) ~ ([cards<@bingo_card ~ ['\n']]) => {
+  (called, cards)
+}
+
+(call_numbers, cards) = parse_input(read_to_string("./input"))
+
+pat call_number (rows@ANY, n@Int) => {
+  [[if (**rows == n) { -1 } else { **rows } <- *rows] <- rows]
+}
+
+pat score_card rows@ANY => {
+  acc = 0
+  [[if (**rows >= 0) { acc = acc + **rows } <- *rows] <- rows]
+  acc
+}
+
+pat has_winner rows@ANY => {
+  acc = 0
+  for rows {
+    if (*rows == [-1, -1, -1, -1, -1]) {
+      // TODO: need early return lol
+      acc = 1
+    }
+  }
+
+  columns = 0..#(rows(0))
+  rs = 0..(#rows)
+  columns = [[rows(*columns)[*rs] <- columns] <- rs]
+  for columns {
+    if (*columns == [-1, -1, -1, -1, -1]) {
+      // TODO: need early return lol
+      acc = 1
+    }
+  }
+
+  acc
+}
+
+pat neg bool@ANY => if (bool) { 0 } else { 1 }
+pat fac n@Int => if (n == 1) { n } else { n * fac(n - 1) }
+
+last_winning_score = 0
+
+for call_numbers {
+  for cards {
+    // TODO: should be able to assign into *cards instead of doing cards(%cards)
+    // almost there...
+    if (neg(has_winner(*cards))) {
+      this_card = call_number(*cards, *call_numbers)
+      if has_winner(this_card) {
+        dbg(*call_numbers)
+        last_winning_score = *call_numbers * score_card(this_card)
+      }
+      // TODO: assigning to cards(%cards) doesn't mutate until the next iteration of loop...
+      // we shouldn't need that this_card above
+      cards(%cards) = this_card
+    }
+  }
+}
+
+dbg(last_winning_score)

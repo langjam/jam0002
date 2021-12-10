@@ -1,0 +1,46 @@
+let println = object {
+    ($e:expr) {
+        print(e);
+        print("\n");
+    }
+};
+
+let call = object {
+    ($callback:expr) {
+        let a = "local";
+        callback(a);
+    }
+};
+
+call(object {
+    ($x:expr) {
+        println(x);
+    }
+});
+// prints: local
+
+call(object {
+    (a) {
+        println("(a)");
+    }
+});
+// prints: (a)
+
+let callWithField = object {
+    ($obj:expr, $callback:expr) {
+        callback(obj.foo);
+    }
+};
+
+callWithField(
+    object { .foo { return "accessed .foo"; } },
+    object { ($e:expr) { println(e); } }
+);
+// prints: accessed .foo
+
+let foo = "I am a global foo";
+callWithField(
+    object { .no foo field { return "nope" } },
+    object { (obj.$e:expr) { println(e); } }
+);
+// prints: I am a global foo

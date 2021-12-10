@@ -1,0 +1,121 @@
+let a = 10
+
+fn somefunc (a, b) {
+    let b = 10
+
+    fn somefunc2 () {
+        let c = 10 * 10
+
+        c
+    }
+
+    let d = (b * (a + 30)) / (somefunc2())
+    print(d, d)
+    d
+}
+
+fn randomfunc () {
+    let a = "AAAAAAAAAAAAAAAA"
+    print(a)
+}
+
+fn somefunc3() {
+    let a = 10
+    print(a)
+}
+
+fn somefunc_abc() {
+    "hello from somefunc_abc()!"
+}
+
+fn sometest() {
+   "hello from sometest()!"
+}
+
+fn some() {
+    print("running 'some' fun")
+}
+
+fn func() {
+    print("running 'func' fun")
+}
+
+print(somefunc(20, 30))
+
+let func = collect /*func/
+let some = collect /some*/
+print("Printing collected functions:", func)
+print("Printing collected functions:", some)
+print(some.test())
+print(some.func_abc())
+random.func()
+print(sometest())
+
+some()
+func()
+
+fn qwerty(num) {
+   print("func var", num)
+}
+
+let funcVar = qwerty
+funcVar(100)
+let a = true
+print(a)
+
+if false {
+    print("true")
+}
+
+if false {
+    print("false")
+} else {
+    print("true")
+}
+
+let a = 10
+let b = 20
+let c = 20
+
+if a > b {
+    print("in if")
+} else if b > c {
+    print("in else if")
+} else {
+    print("in else")
+}
+
+if a > b {
+    print("in if")
+} else if b > c {
+    print("in else if")
+} else if c >= b {
+    print("in else if no. 2")
+} else {
+    print("in else")
+}
+
+if c > b {
+    print("in if")
+} else if b > a {
+    print("in else if")
+} else {
+    print("in else")
+}
+
+if a < b {
+    print("in if")
+} else if b > a {
+    print("in else if")
+} else {
+    print("in else")
+}
+
+fn test(abc, bcd) {
+    let abc = abc + 10
+    print(abc)
+    if abc + bcd < 50 {
+        print("hmm it works")
+    }
+}
+test(10, 20)

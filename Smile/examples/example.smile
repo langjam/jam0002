@@ -1,0 +1,80 @@
+💬 this is a comment.
+
+💬 setting 🚚 to 3 after adding 1 and 2
+🍉 🚚 🍋🥭 1 2
+
+💬 setting 🌎 to 3*3
+🍉 🌎 🍎🍏 3 3 💬 Test comment
+
+🍏🍎 🌎 🚚     💬 Dividing 🌎 and 🚚
+
+💬 Should print 3
+
+
+💬 ------ Example loop -------
+
+💬 "❄" Loops until arguments are equal to each other.
+
+💬 Index variable
+🍉 🛹 0 
+
+
+💬 Looping until index is equal to 10
+❄ 🛹 10
+
+💬 Print index (still in loop)
+🙂 🛹
+
+💬 Add 1 to index (still in loop)
+🍉 🛹 🍋🥭 🛹 1
+
+🥦   💬Ending loop
+
+
+💬 -------------------
+💬 |   Functions!    |
+💬 -------------------
+
+💬 Defines 🐵🐷 as a function
+🗺 🐵🐷
+🍎🍏 🚚 🌎   💬 Multiplying 🚚 and 🌎
+🥦
+
+
+🐵🐷   💬Running 🐵🐷 function (Output should be 27 )
+
+💬 ------------------
+💬 | Conditionals   |
+💬 ------------------
+
+💬 if true function
+🗺 🌳
+🙂 True!
+🥦
+
+💬 if false function
+🗺 🍞
+🙂 False!
+🥦
+
+🍉 👍 3 
+
+💬 If argument 1 > argument 2, run argument 3.
+💬 Else, run argument 4
+🍍 👍 4 🌳 🍞 💬 Since 👍=3 and 3<4, should print false
+
+💬 If argument 1 = argument 2, run argument 3.
+💬 Else, run argument 4
+🍅 👍 3 🌳 🍞 💬 Since 👍=3 and 3=3, should print true
+
+🙂   
+🙂 Random number follows:
+🌟 1 5
+
+🙂 Enter something.
+🍉 🎁 ⌨ 0
+🙂 You entered 🎁
+🙂
+🙂 Thanks for trying Smile!
+🙂 You can try other examples with "java -jar smile.jar otherfile.smile".
+🙂 Want to create your own smile program? check README.md for a helpful cheatsheet

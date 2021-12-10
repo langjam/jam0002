@@ -1,0 +1,2 @@
+let a = object A {};
+print(a);

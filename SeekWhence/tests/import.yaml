@@ -1,0 +1,9 @@
+source: ../examples/import.seq
+status: 0
+stdout: |
+  [namespace test { factorial, closedVar, closure, metaClosure }]
+  [sequence factorial: 1 | (x * n)] 10
+  [sequence factorial: 1 | (x * n)] 10
+  [sequence factorial: 1 | n] 20
+  [sequence factorial: 1 | (x * n)] 10
+  false

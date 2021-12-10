@@ -1,0 +1,25 @@
+{{file.target_language}} = @<C++>@
+{{file.file_name}} = @<Statement>@
+{{file.namespace}} = @<dupr::generation::cpp::templates>@
+{{file.extension}} = @<h>@
+
+{{statement}} = <>
+
+{{return_statement}} = <return {{expression}};>
+
+{{variable_declaration}} = <{{var_type}} {{var_name}};>
+{{variable_initialization}} = <{{var_type}} {{var_name}} = {{expression}};>
+{{variable_assignment}} = <{{var_name}} = {{expression}};>
+
+{{conditional_if}} = <if({{expression}})
+{
+	{{external_statement.Variable_Field}}
+}>
+{{conditional_else_if}} = <else if({{expression}})
+{
+	{{external_statement.Variable_Field}}
+}>
+{{conditional_else}} = <else
+{
+	{{external_statement.Variable_Field}}
+}>

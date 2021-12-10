@@ -1,0 +1,56 @@
+Diagrams [@ds] = [[${ds}]]
+Diagram [k @a k2 graphmodel k3] = [[${k} ${a}${k2}${graphmodel}${k3}]]
+Attribute [a] = [[ ${a}]]
+NameAttribute [an k s] = [[${an}${k}${s}]]
+DiagramIDAttribute [an k s] = [[${an}${k}${s}]]
+OtherAttribute [@an k s] = [[ ${an}${k}${s}]]
+string [q1 @cs q2] = [[${q1}${cs}${q2}]]
+unqstring [q1 @cs q2] = [[${q1}${cs}${q2}]]
+notDQ [c] = [[${c}]]
+attributeValue [x] = [[${x}]]
+number [n] = [[${n}]]
+
+GraphModel [k1 @as k2 root k3] = [[${k1} ${as}${k2}${root}${k3}]]
+
+Root [k1 @cells k2] = [[${k1}${cells}${k2}]]
+Cell [c] = [[${c}]]
+
+CellWithoutContent [k1 @as k2] = [[${k1}${as}${k2}]]
+
+CellWithContent [k1 @as k2 @geometry k3] = [[${k1}${as}${k2}${geometry}${k3}]]
+
+Geometry [g] = [[${g}]]
+
+GeometryWithoutContent [k1 @as k2] = [[${k1}${as}${k2}]]
+
+GeometryWithContent [k1 @as k2 @ignore k3] = [[${k1}${as}${k2}${ignore}${k3}]]
+
+CellAttribute [a] = [[ ${a}]]
+
+IDAttribute [id eq s] = [[${id}${eq}${s}]]
+
+EllipseAttribute [kind eq q1 s q2] = [[${kind}${eq}${q1}${s}${q2}]]
+TextAttribute [kind eq q1 s q2] = [[${kind}${eq}${q1}${s}${q2}]]
+KindAttribute [kind eq s] = [[${kind}${eq}${s}]]
+ValueAttribute [v eq s] = [[${v}${eq}${s}]]
+SourceAttribute [v eq s] = [[${v}${eq}${s}]]
+TargetAttribute [v eq s] = [[${v}${eq}${s}]]
+EdgeAttribute [v eq q1 s q2] = [[${v}${eq}${q1}${s}${q2}]]
+VertexAttribute [v eq q1 s q2] = [[${v}${eq}${q1}${s}${q2}]]
+GreenAttribute  [id k q1 s q2] = [[${id}${k}${q1}${s}${q2}]]
+YellowAttribute [id k q1 s q2] = [[${id}${k}${q1}${s}${q2}]]
+RedAttribute    [id k q1 s q2] = [[${id}${k}${q1}${s}${q2}]]
+OtherCellAttribute [@an k s] = [[${an}${k}${s}]]
+
+GAttribute [a] = [[ ${a}]]
+ASGAttribute [kas k s] = [[${kas}${k}${s}]]
+RelativeGAttribute [r k s] = [[${r}${k}${s}]]
+xGAttribute [an k s] =      [[${an}${k}${s}]]
+yGAttribute [an k s] =      [[${an}${k}${s}]]
+widthGAttribute [an k s] =  [[${an}${k}${s}]]
+heightGAttribute [an k s] = [[${an}${k}${s}]]
+OtherGAttribute [@an k s] = [[${an}${k}${s}]]
+
+ignore [c] = [[${c}]]
+
+quote [c] = [[${c}]]

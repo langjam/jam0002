@@ -1,0 +1,3 @@
+; Cat program
+
+print [input '> ']

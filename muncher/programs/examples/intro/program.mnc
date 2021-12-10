@@ -1,0 +1,151 @@
+let a = "Hello, world";
+
+let foo = object {
+    .bar() {
+        // print is a builtin
+        print("called bar!\n");
+    }
+};
+
+foo.bar();
+// prints: called bar!
+
+let fancy = object {
+    . fly me to the moon! {
+        print("let me play among the stars\n");
+    }
+    (++/!@#?/1)%?!3% {
+        print("what an abomination\n");
+    }
+};
+
+fancy.fly me to the moon!;
+// prints: let me play among the stars
+
+fancy(++/!@#?/1)%?!3%;
+// prints: what an abomination
+
+let o = object {
+    .callMe($arg:expr) {
+        print("called me with a ");
+        print(arg);
+        print("\n");
+    }
+};
+
+o.callMe("particular string");
+// prints: called me with a particular string
+
+let oh = object {
+    .my what a syntax! {
+        return "fancy syntax";
+    }
+};
+
+o.callMe(oh.my what a syntax!);
+// prints: called me with a fancy syntax
+
+let println = object {
+    ($a:expr) {
+        print(a);
+        print("\n");
+    }
+    ($a:expr, $b:expr) {
+        print(a);
+        print(b);
+        print("\n");
+    }
+};
+
+let if = object {
+    ($cond:expr) $then:block else $else:block {
+        // booleans have one method on them - pick
+        // it takes two values, with `true` returning the first one
+        // and `false` returning the second
+        cond.pick(then, else).exec;
+    }
+};
+
+// .eq(_) is one of the builtin methods on strings
+// other available methods are .len, .concat(_), and .substr(start, end)
+if ("test".eq("test")) {
+    println("test is equal to test");
+} else {
+    println("our string operations are broken");
+}
+// prints: test is equal to test
+
+if ("hello world".eq("hola mundo")) {
+    println("our string operations are broken");
+} else {
+    println("both branches of `if` work!");
+}
+// prints: both branches of `if` work!
+
+let helper = object {
+    ($b:block) {
+        return b;
+    }
+};
+let emptyBlock = helper({});
+
+if = object {
+    ($cond:expr) $then:block {
+        cond.pick(then, emptyBlock).exec;
+    }
+    ($cond:expr) $then:block else $else:block {
+        cond.pick(then, else).exec;
+    }
+};
+
+let for = object {
+    ($counter:ident from $start:expr to $end:expr) $body:block {
+        // internally the loop is done through recursion, we create a helper
+        // object for that
+        // note that the object captures variables from outer scope, so we don't
+        // need to pass counter, end, and body again
+        let iterate = object {
+            ($iter:expr) {
+                // .lt is builtin method on ints
+                if (iter.lt(end)) {
+                    // .def takes an identifier object and a value,
+                    // and returns a new block with extended environment
+                    body.def(counter, iter).exec;
+                    iterate(iter.add(1));
+                }
+            }
+        };
+        iterate(start);
+    }
+};
+
+for (i from 0 to 5) {
+    println("i = ", i);
+}
+// prints: i = 0
+// prints: i = 1
+// prints: i = 2
+// prints: i = 3
+// prints: i = 4
+
+let lambda = object {
+    ($param:ident) $body:block {
+        return object {
+            ($arg:expr) {
+                // if a block executes a return statement,
+                // then that value is returned from exec
+                return body.def(param, arg).exec;
+            }
+        };
+    }
+};
+
+let increment = lambda(x) { return x.add(1); };
+println(increment(14));
+// prints: 15
+
+let callMe = lambda(callback) { callback(42); };
+callMe(lambda(x) {
+    println("I got a ", x);
+});
+// prints: I got a 42

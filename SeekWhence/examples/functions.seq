@@ -1,0 +1,27 @@
+; Function definitions and calling
+
+; SeekWhence comes with a number of basic built in functions, but
+;   you can also define your own as follows.
+
+function greetWorld {
+	print "Hello, world!"   ; Print itself is actually a function!
+}
+
+; If you need parameters, you can write them out like this.
+
+function greet with greeted {
+	print "Hello,", greeted
+}
+
+function sum with x, y {
+	return x + y
+}
+
+; To call a function, just write its name followed by the parameters
+
+greetWorld
+greet "SeekWhence"
+
+; Or if you need the return value, wrap it in [] where an expression is expected
+
+print [sum 10, 15]

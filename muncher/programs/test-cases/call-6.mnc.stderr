@@ -1,0 +1,6 @@
+error: variable `hello` is not defined
+   --> test.mnc:17:8
+   |
+17 | a.call(hello);
+   |        ^^^^^ variable `hello` is not defined
+

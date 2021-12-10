@@ -1,0 +1,14 @@
+source: ../examples/functions-strutils.seq
+status: 0
+stdout: |
+  13
+  true
+  false
+  true
+  false
+  5
+  [slice <split>::1] [sequence <split>: none, "Hello", " world!"]
+  [slice <toSeq>::1] [sequence <toSeq>: none, "H", "e", "l", "l", "o", ",", " ", "w", "o", "r", "l", "d", "!"]
+  true
+  true
+  true

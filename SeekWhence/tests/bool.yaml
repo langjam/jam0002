@@ -1,0 +1,16 @@
+source: ../examples/bool.seq
+status: 0
+stdout: |
+  true
+  false
+  none
+  false
+  true
+  true
+  false
+  false
+  false
+  true
+  true
+  true
+  false

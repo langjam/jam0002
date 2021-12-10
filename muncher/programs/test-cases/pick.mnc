@@ -1,0 +1,2 @@
+print(true.pick("yes\n", "no\n"));
+print(false.pick("yes\n", "no\n"));

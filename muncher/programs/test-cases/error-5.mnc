@@ -1,0 +1,5 @@
+let a = object A {
+    ($a:expr, $a:expr) {}
+};
+
+a(1, 2);

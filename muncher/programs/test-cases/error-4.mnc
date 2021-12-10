@@ -1,0 +1,4 @@
+let a = object A {
+    . $i:ident {}
+    . $e:expr {}
+};

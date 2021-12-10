@@ -1,0 +1,3 @@
+(do
+	(def repeat (fun (v) (seq! v)))
+	(print (take 10 (repeat 4))))

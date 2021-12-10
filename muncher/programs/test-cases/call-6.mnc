@@ -1,0 +1,17 @@
+let a = object A {
+    .call($e:expr) {
+        print("generic: ");
+        print(e);
+        print("\n");
+    }
+    .call(specific) {
+        print("specific\n");
+    }
+};
+
+let var = 3;
+let bar = "Hello";
+a.call(var);
+a.call(specific);
+a.call(bar);
+a.call(hello);
