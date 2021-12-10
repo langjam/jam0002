@@ -2,7 +2,7 @@
 This language allows users to define cellular automata and run them in an interactive shell.
 
 # Examples
-All examples are found in the `deerlang/tests/ directory`. The interesting examples are `life.cel` (Conway's Game of Life) and `wireworld.cel` (Wireworld).
+All examples are found in the `deerlang/tests/` directory. The interesting examples are `life.cel` (Conway's Game of Life) and `wireworld.cel` (Wireworld).
 
 ## Conway's Game of Life
 All cells start as being dead. Live cells are displayed by "L". A cell can be made live by typing "L". For a description of Conway's Game of Life, see https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life.
