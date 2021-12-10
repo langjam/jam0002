@@ -1,0 +1,36 @@
+Meta {
+  Rows = 20
+  Cols = 80
+}
+Cell {
+  int type = 0
+}
+
+Aliases {
+  H = { type = 1 }
+  T = { type = 2 }
+  C = { type = 3 }
+}
+
+Selectors {
+  ElectronHead = (type == 1)
+  ElectronTail = (type == 2)
+  LiveConductor = (type == 3) & (
+    MatchCount(neighbours, ElectronHead) == 1
+    | MatchCount(neighbours, ElectronHead) == 2
+  )
+}
+
+Rules {
+  HeadToTail (ElectronHead) = {
+    type = 2
+  }
+
+  TailToConductor (ElectronTail) = {
+    type = 3
+  }
+
+  ConductorToElectronHead (LiveConductor) = {
+    type = 1
+  }
+}

@@ -1,0 +1,6 @@
+Meta{}
+Cell{bool live = false}
+Selectors {
+    LiveCell = (live == true)
+    LiveTopRow = MatchCount([NW, N, NE, W, E, SW, S, SE], LiveCell) == 3
+}
