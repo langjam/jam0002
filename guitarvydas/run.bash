@@ -22,14 +22,20 @@ ${pfr} ${lj2} main.cmm cmm.ohm cmm.glue ${lj2}/support.js >main.c
 
 
 echo gcc producer.c
-gcc os.c
-# echo gcc consumer.c
-# gcc consumer.c
+gcc producer.c
+echo gcc consumer.c
+gcc consumer.c
+
+echo ATM gcc os.c has compilation errors/warning
 # echo gcc os.c
-# gcc producer.c
+# gcc os.c
+
+echo ATM gcc main.c has compilation errors/warning
 # echo gcc main.c
 # gcc main.c
+
 # echo gcc util.c
+echo ATM gcc util.c has compilation errors/warning
 # gcc util.c
 
 
