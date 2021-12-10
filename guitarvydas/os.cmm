@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "mpos.h"
+#include "kernel.h"
 
 void DispatchTransferOutputs ();
-List runQueue;
+List* runQueue;
+int systemRunning = 1;
 
 void kernelStart () { systemRunning = 1; }
 void kernelStop () { systemRunning = 0; }
@@ -15,7 +17,7 @@ void DistributeOutputsFrom (Component*);
 void DeliverMessageToReceiver (Component*, Message);
 void RunComponentOnce (Component*);
 void DistributeMaybe (Component*);
-void DistributeOutputsFrom (Component();
+void DistributeOutputsFrom (Component*);
 
 void Dispatcher () {
   while (systemRunning) {
@@ -42,7 +44,7 @@ void DispatchMaybe (Component* c) {
 }
 
 void RunComponentOnce (Component* c) {
-  ListCell* cell = $popInput (c);
+  List* cell = $popInput (c);
   Message msg = $datumMessage (cell);
   $callReaction (c, msg);
 }
@@ -68,7 +70,7 @@ void DistributeOutputsFrom (Component* c) {
   List* outputs;
   $beginWalkingOutputsAsSent (outputs, c);
   while ($walkMoreOutputs (outputs)) {
-    Message* m = $nextOutput (outputs);
+    Message m = $nextOutput (outputs);
     DeliverMessageToReceiver (c, m);
     $advanceOutputsAndGC (outputs);
   }
