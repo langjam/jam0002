@@ -1,32 +1,12 @@
-<<<<<<< HEAD
 .infinitely_nested {
   color: rgb(0, 0, 0, 32);
   radius: (1/$depth)*100.0;
-  circle.infinitely_nested {
-  }
+  circle.infinitely_nested {}
 }
 
 root {
   circle.infinitely_nested {
 	position: vec2(200, 200);
   }
-=======
-
-
-root {
-
-	rect
-	{
-        color: rgb(0, 80, 0);
-        dimensions: vec2(50, 50);
-        //rotation: 45.0;
-        rect
-        {
-			 dimensions: vec2(50, 50);
-			 color: rgb(0, 0, 255, 255);
-			 position: vec2(50, 0);
-        }
-    }
->>>>>>> b5667bfe21e777a8f64b7db4fa45eda28c2cce18
 }
 
