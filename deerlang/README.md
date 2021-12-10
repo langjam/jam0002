@@ -79,7 +79,7 @@ All cells start type 0 (no interaction). Conductors have alias "C". Electron hea
 FAQ
 
 Q: Why is it called <sub>deerlang</sub>?
-A: Because dir is a reserved word in python. Subscript because it is small.
+A: Because dir is a built-in function in python. Subscript because it is small.
 
 Q: How does this involve patterns?
 A: Selectors are a form of pattern matching. Additionally, well-behaved programs in <sub>deerlang</sub> tend to display patterns in their execution.
