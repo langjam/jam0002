@@ -36,13 +36,8 @@ int main() {
 	else {
         ast_pretty_print(&p.ast);
     }
-	Runner runner = { 0 };
-	if (runner_init(&p.ast, &runner))  {
-		err_explain(&runner.err, file);
-		goto fail2; 
-	}
 		
-	runner_dump(&runner);
+	// runner_dump(&runner);
 		
 	/*
 	Token tok;
@@ -53,6 +48,12 @@ int main() {
 		err_explain(&l.err, l.buf);
 	}
 	*/
+	Runner runner = { 0 };
+	if (runner_init(&p.ast, &runner))  {
+		err_explain(&runner.err, file);
+		runner_deinit(&runner);
+		goto fail; 
+	}
 	
 
 	draw_init(400);
@@ -61,7 +62,6 @@ int main() {
 	}
 
 	draw_deinit();
-	fail2:
 	runner_deinit(&runner);
 	fail:
 	parser_deinit(&p);

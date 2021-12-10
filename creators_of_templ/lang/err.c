@@ -65,11 +65,22 @@ void err_explain(Err *err, char *source_file) {
 	
 		// Print line, add 1 to line number 
 		// Because they are 1 indexed when printed
-		printf("%4d | ", line	); print_line(source_file, line-1);
+		if (line != 0) {
+			printf("%4d | ", line	); print_line(source_file, line-1);
+		}
 		printf("%4d | ", line + 1); print_line(source_file, line);
-			
-		// Draw the cursor
-		printf("	%*c\n", err->location.charno, '^');
+		
+		int ntab = 0;
+		char *linestr = linestart(source_file, line);
+
+		printf("     | ");
+		for (int i = 0; i < col; i += 1) {
+			if (linestr[i] == '\t') {
+				printf("\t");
+				ntab += 1;
+			}
+		}
+		printf(" %*c\n", err->location.charno-ntab, '^');
 	}
 }
 

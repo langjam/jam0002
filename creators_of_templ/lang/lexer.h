@@ -45,6 +45,7 @@ extern const char *type_lookup[];
 Token lex_next(Lexer *l);
 
 bool tok_eq(Token tok, const char *s);
+bool toks_eq(Token a, Token b);
 void print_tok(Token tok);
 
 #endif

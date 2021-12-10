@@ -7,6 +7,10 @@ bool tok_eq(Token tok, const char *s) {
 	return (int)strlen(s) == tok.len && strncmp(tok.val, s, tok.len) == 0;
 }
 
+bool toks_eq(Token a, Token b) {
+	return b.len == a.len && strncmp(b.val, a.val, a.len) == 0;
+}
+
 static inline int is_skip_char(char c) {
 	return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
@@ -31,9 +35,25 @@ static char movec(Lexer *l) {
 	return peekc(l);
 }
 
+
+bool skip_comments(Lexer *l) {
+	if (peekc(l) == '/' && l->buf[l->cursor+1] == '/') {
+		int startl = l->loc.lineno;
+		while (startl == l->loc.lineno) nextc(l);
+		return true;
+	}
+	return false;
+}
+
 Token lex_next(Lexer *l) {
-	for (char c=peekc(l); c && is_skip_char(c); c=peekc(l))
-		nextc(l);
+	while (true) {
+		bool set = false;
+		for (char c=peekc(l); (set = is_skip_char(c) && c); c=peekc(l))
+			nextc(l);
+		set = skip_comments(l) || set;
+		if (!set) break;
+	}
+	
 
 	int move = 1;
 	Token tok = { .loc = l->loc, .val = l->buf + l->cursor, .len = 1 };
@@ -81,7 +101,7 @@ Token lex_next(Lexer *l) {
 			nextc(l);
 		}
 		break;
-	case '+': case '-': case '*': case '/': case '=':
+	case '/': case '+': case '-': case '*': case '^': case '=':
 		tok.type = tok_operator;
 		break;
 	case '#':

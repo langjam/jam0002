@@ -38,9 +38,10 @@ typedef map_t(RunnerProp) RunnerProps;
 
 
 typedef enum RunnerNodeType {
+	element_root,
 	element_circle,
 	element_rect,
-	element_root
+	element_triangle
 } RunnerNodeType;
 
 
@@ -56,6 +57,7 @@ typedef struct RunnerNode {
 
 typedef struct Runner {
 	Err err;
+	double depth;
 	RunnerNode *root;
 	RunnerNode* nodes;
 	size_t node_count;
@@ -76,6 +78,10 @@ void runner_exec(Runner *runner);
 
 // Removes data (doesn't touch AST)
 void runner_deinit(Runner *runner);
+
+bool runner_selector_contains(Node *sel, Node *simple_against);
+
+bool runner_selectors_match(Node *sel, Node *against);
 
 #endif // RUNNER_H
 

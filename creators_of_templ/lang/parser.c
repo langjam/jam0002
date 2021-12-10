@@ -57,6 +57,7 @@ static bool isnt_tok(Parser *p, TokenType type) {
 
 // Returns current token and puts next one down the line
 static ErrCode next_tok(Parser *p, Token *dest) {
+	checkout(token_err(p, &p->current));
 
 	// You can pass NULL and it will just skip
 	if (dest == NULL) {
@@ -81,6 +82,7 @@ static ErrCode give_tok(Parser *p, TokenType type, Token *dest) {
 	// Check if token is valid
 	if (p->current.type == tok_eof)
 		return err_eof;
+	checkout(token_err(p, &p->current));
 	if (isnt_tok(p, type)) {
 		p->err = err_f(err_unexpected, p->current.loc, "I didn't expect that. (I wanted `%s' but this is `%s')",
 														type_lookup[type], type_lookup[p->current.type]);
@@ -106,7 +108,7 @@ static ErrCode simple_selector(Parser *p, Node *dest) {
 		type = node_class_selector;
 	}
 	
-	push_note(name.loc, "I was parsing a selector") {
+	push_note(p->current.loc, "I was parsing a selector") {
 		checkout(give_tok(p, tok_ident, &name));
 	}
 
@@ -205,6 +207,7 @@ static ErrCode atom(Parser *p, Node *dest) {
 
 // Operators ordered by their precedence
 static const char* OPERATORS[11][4] = {
+    { "^" },
     { "*", "/", "%" },
     { "+", "-" },
     { "<<", ">>" },
@@ -212,7 +215,6 @@ static const char* OPERATORS[11][4] = {
     { "<", ">", ">=", "<=" },
     { "==", "!=" },
     { "&" },
-    { "^" },
     
     { "|" },
     { "&&" },
@@ -257,6 +259,7 @@ static ErrCode value(Parser *p, Node *left, int prec) {
 static ErrCode property(Parser *p, Node *dest) {
 	// Record savestate, because it can either be a property or a child! 
 	Parser savestate = record(p);
+	if (isnt_tok(p, tok_ident)) goto selector;
 	Token name;
 	checkout(give_tok(p, tok_ident, &name));
 	if (is_tok(p, tok_colon)) {
@@ -267,6 +270,7 @@ static ErrCode property(Parser *p, Node *dest) {
 		checkout(give_tok(p, tok_semicolon, NULL)); 
 	}
 	else {
+selector:
 		// Restore savestate
 		*p = savestate;
 		checkout(selector_and_props(p, dest));
@@ -276,6 +280,10 @@ static ErrCode property(Parser *p, Node *dest) {
 
 // Parses different pragmas, like @frame { ..code.. }
 static ErrCode pragma(Parser *p, Node *dest) {
+	(void) dest;
+	p->err = err_f(err_unexpected, p->current.loc, "This feature isn't implemented");
+	return err_unexpected;
+	/*
 	checkout(give_tok(p, tok_at, NULL));
 	
 	Token pragma_name;
@@ -283,7 +291,9 @@ static ErrCode pragma(Parser *p, Node *dest) {
 	node_set(dest, node_from(node_pragma, pragma_name));
 	
 	return property_list(p, dest);
+	*/
 }
+
 
 
 static ErrCode property_list(Parser *p, Node *dest) {

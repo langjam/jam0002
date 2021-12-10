@@ -1,6 +1,7 @@
 #include "drawer.h"
 #include "runner.h"
 #include "raylib.h"
+#include <stdio.h>
 
 bool should_close = false;
 
@@ -8,6 +9,7 @@ Image screen_buffer;
 Texture2D screen_render;
 
 void draw_init(int canvas_size) {
+	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	InitWindow(canvas_size, canvas_size, "TEMPL");
 	SetTargetFPS(60);
 	
@@ -51,12 +53,9 @@ void draw_deinit() {
 
 void draw_circle(RunnerProps *props) {
 	double r = 0;
-	Pos pos = {0, 0};
 	uint32_t color = 0xff;
 
 	RunnerProp *p;
-	if ((p = map_get(props, "position")) && p->type == type_position)
-		pos = p->data.pos;
 	if ((p = map_get(props, "radius")) && p->type == type_number)
 		r = p->data.number;
 	if ((p = map_get(props, "color")) && p->type == type_color)
@@ -69,17 +68,44 @@ void draw_circle(RunnerProps *props) {
 		.a = 255
 	};
 
-	DrawCircle(pos.x, pos.y, r, raycolor);
+	DrawCircle(0, 0, r, raycolor);
+}
+
+void draw_triangle(RunnerProps *props) {
+	double r = 0;
+	uint32_t color = 0xff;
+
+	RunnerProp *p;
+	if ((p = map_get(props, "radius")) && p->type == type_number)
+		r = p->data.number;
+	if ((p = map_get(props, "color")) && p->type == type_color)
+		color = p->data.color;
+		
+	Color raycolor = {
+		.r = (color >> 16) & 0xFF,
+		.g = (color >> 8) & 0xFF,
+		.b = (color >> 0) & 0xFF,
+		.a = 255
+	};
+	
+	const double COS30 = 0.86602540378; 
+	const double SIN30 = 0.5; 
+
+	//    top > /
+	//   	  /  
+	//  left >/____  < right
+	Vector2 top   = {0, -r};
+	Vector2 left  = {-r * COS30, r * SIN30};
+	Vector2 right = {r * COS30, r * SIN30};
+
+	DrawTriangle(top, left, right, raycolor);
 }
 
 void draw_rect(RunnerProps *props) {
-	Pos pos = {0, 0};
 	Pos dm = {0, 0};
 	uint32_t color = 0xff;
 
 	RunnerProp *p;
-	if ((p = map_get(props, "position")) && p->type == type_position)
-		pos = p->data.pos;
 	if ((p = map_get(props, "dimensions")) && p->type == type_position)
 		dm = p->data.pos;
 	if ((p = map_get(props, "color")) && p->type == type_color)
@@ -90,15 +116,30 @@ void draw_rect(RunnerProps *props) {
 		.b = (color >> 0) & 0xFF,
 		.a = 255
 	};
-	DrawRectangle(pos.x, pos.y, dm.x, dm.y, raycolor);
+	DrawRectangle(0, 0, dm.x, dm.y, raycolor);
 }
 
 void draw_runner_node(RunnerNode *node, Camera2D transform) {
 	if (node == NULL)
 		return;
+		
+	RunnerProp *p;
+	
+	Camera2D old = transform;
+
+	if ((p = map_get(&node->props, "position")) && p->type == type_position) {
+		transform.offset.x += p->data.pos.x;
+		transform.offset.y += p->data.pos.y;
+	}
+	if ((p = map_get(&node->props, "rotation")) && p->type == type_number) {
+		transform.rotation = p->data.number;
+	}
 	
 	BeginMode2D(transform);
 	switch (node->type) {
+		case element_triangle:
+			draw_triangle(&node->props);	
+			break;
 		case element_circle:
 			draw_circle(&node->props);	
 			break;
@@ -110,16 +151,9 @@ void draw_runner_node(RunnerNode *node, Camera2D transform) {
 	}
 	EndMode2D();
 
-	Camera2D old = transform; 
 
-	RunnerProp *p;
-	if ( (p = map_get(&node->props, "position")) && p->type == type_position) {
-		transform.offset.x += p->data.pos.x;
-		transform.offset.y += p->data.pos.y;
-	}
-	
 	draw_runner_node(node->first_child, transform);
-
+	
 	transform = old;
 
 	draw_runner_node(node->sibling, transform);

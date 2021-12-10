@@ -57,6 +57,9 @@ Node node_of(NodeType type);
 // Frees ast data
 void ast_deinit(Ast* ast);
 
+// Pretty prints node
+void node_pretty_print(Node *node, int indent);
+
 // Pretty prints the ast
 void ast_pretty_print(Ast *ast);
 

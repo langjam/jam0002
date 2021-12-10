@@ -1,7 +1,9 @@
 #include "runner.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 #include <stdio.h>
+#include <time.h>
 
 #define checkout(x) do { ErrCode err; if((err = (x))) { fprintf(stderr, ">>> %d %s:%d\n", err, __FILE__, __LINE__); return err;} } while (0)
 
@@ -13,6 +15,14 @@ static char *type_names[] = {
 	"color"
 };
 
+int64_t millis()
+{
+	static int x = 0;
+	x += 16;
+	return x;
+}
+
+
 static
 RunnerNode *alloc(Runner *r, RunnerNode *parent) {
 	// Allocate a new node
@@ -21,7 +31,6 @@ RunnerNode *alloc(Runner *r, RunnerNode *parent) {
 	// Zero-initialize the node
 	*new_node = (RunnerNode) { 0 };
 	new_node->parent = parent;
-	
 	
 	
 	// Make node if we have a parent
@@ -38,6 +47,8 @@ RunnerNode *alloc(Runner *r, RunnerNode *parent) {
 	return new_node;
 }
 
+
+ErrCode make_prop(Runner *r, Node *propdesc, RunnerProp *dest);
 ErrCode make_atom(Runner *r, Node *atom, RunnerProp *dest) {
 	// token val isnt null terminated
 	char buf[64] = {0};
@@ -63,7 +74,6 @@ ErrCode make_atom(Runner *r, Node *atom, RunnerProp *dest) {
 			}
 		} break;
 		default:
-		// TODO: Provide Err struct in runtime
 		r->err = err_f(err_badprop, atom->token.loc, "You can't use this in a property value");
 		return err_badprop;
 	}
@@ -82,48 +92,66 @@ ErrCode checked_atom(Runner *r, Node *atom, RunnerProp *dest, RunnerPropType typ
 ErrCode make_value(Runner *r, Node *val, RunnerProp *dest, RunnerPropType type) {
 	switch (val->type) {
 		case node_unary:
-		if (tok_eq(val->token, "-")) {
+			if (tok_eq(val->token, "-")) {
+				if (type != type_number) {
+					r->err = err_f(err_badprop, val->token.loc, "Cannot negate `%s'", type_names[dest->type]);
+					return err_badprop;
+				}
+				checkout(make_value(r, val->first_child, dest, type_number));
+				dest->data.number *= -1;
+			}
+			return err_ok;
+			break;
+		case node_binary:
 			if (type != type_number) {
-				r->err = err_f(err_badprop, val->token.loc, "Cannot negate `%s'", type_names[dest->type]);
+				r->err = err_f(err_badprop, val->token.loc, "Cannot use `%.*s' on `%s'", val->token.len, val->token.val, type_names[dest->type]);
 				return err_badprop;
 			}
-			checkout(make_value(r, val->first_child, dest, type_number));
-			dest->data.number *= -1;
-		}
-		return err_ok;
-		break;
-		case node_binary:
-		if (type != type_number) {
-			r->err = err_f(err_badprop, val->token.loc, "Cannot use `%.*s' on `%s'", val->token.len, val->token.val, type_names[dest->type]);
+			RunnerProp right;
+			if (tok_eq(val->token, "+")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child->sibling, &right, type_number));
+				dest->data.number += right.data.number;
+			}
+			else if (tok_eq(val->token, "-")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child->sibling, &right, type_number));
+				dest->data.number -= right.data.number;
+			}
+			else if (tok_eq(val->token, "*")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child->sibling, &right, type_number));
+				dest->data.number *= right.data.number;
+			}
+			else if (tok_eq(val->token, "/")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child->sibling, &right, type_number));
+				dest->data.number /= right.data.number;
+			}
+			else if (tok_eq(val->token, "^")) {
+				checkout(make_value(r, val->first_child, dest, type_number));
+				checkout(make_value(r, val->first_child->sibling, &right, type_number));
+				dest->data.number = pow(dest->data.number, right.data.number);
+			}
+			else {
+				r->err = err_f(err_badprop, val->token.loc, "Sorry can't handle this operator for now");
+				return err_badprop;
+			}
+			return err_ok;
+			break;	
+		case node_var:
+			if (tok_eq(val->token, "depth")) {
+				dest->type = type_number;
+				dest->data.number = r->depth;
+				return err_ok;
+			}
+			if (tok_eq(val->token, "time")) {
+				dest->type = type_number;
+				dest->data.number = millis()/1000.0;
+				return err_ok;
+			}
+			r->err = err_f(err_badprop, val->token.loc, "This variable does not exist");
 			return err_badprop;
-		}
-		RunnerProp right;
-		if (tok_eq(val->token, "+")) {
-			checkout(make_value(r, val->first_child, dest, type_number));
-			checkout(make_value(r, val->first_child, &right, type_number));
-			dest->data.number += right.data.number;
-		}
-		else if (tok_eq(val->token, "-")) {
-			checkout(make_value(r, val->first_child, dest, type_number));
-			checkout(make_value(r, val->first_child, &right, type_number));
-			dest->data.number -= right.data.number;
-		}
-		else if (tok_eq(val->token, "*")) {
-			checkout(make_value(r, val->first_child, dest, type_number));
-			checkout(make_value(r, val->first_child, &right, type_number));
-			dest->data.number *= right.data.number;
-		}
-		else if (tok_eq(val->token, "/")) {
-			checkout(make_value(r, val->first_child, dest, type_number));
-			checkout(make_value(r, val->first_child, &right, type_number));
-			dest->data.number /= right.data.number;
-		}
-		else {
-			r->err = err_f(err_badprop, val->token.loc, "Sorry can't handle this operator for now");
-			return err_badprop;
-		}
-		return err_ok;
-		break;	
 		default:
 		return checked_atom(r, val, dest, type);
 	} 
@@ -164,10 +192,10 @@ ErrCode make_prop(Runner *r, Node *propdesc, RunnerProp *dest) {
 		break;
 		case node_binary:
 		case node_unary:
+		case node_var:
 		checkout(make_value(r, propdesc, dest, type_number));
 		break;
 		default:
-		// TODO: Provide Err struct in runtime
 		r->err = err_f(err_badprop, propdesc->token.loc, "You can't use this in a property value");
 		return err_badprop;
 	}
@@ -180,16 +208,24 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 	assert(node->type == node_selector_and_props);
 	
 	Node *selector = node_child(node, 0);
-	dest->selector = selector;
-	dest->type = element_root;
 	
-	if (selector->first_child->type == node_primitive_selector) {
-		char *tagname = selector->first_child->token.val;
-		int taglen = selector->first_child->token.len;
-		if (strncmp(tagname, "circle", taglen) == 0) 
-			dest->type = element_circle;
-		if (strncmp(tagname, "rect", taglen) == 0) 
-			dest->type = element_rect;
+	// This is to avoid matched-against selectors re-assigning
+	// the original selectors data
+	if (dest->selector == NULL) {
+		dest->selector = selector;
+		
+		dest->type = element_root;
+		
+		if (selector->first_child->type == node_primitive_selector) {
+			char *tagname = selector->first_child->token.val;
+			int taglen = selector->first_child->token.len;
+			if (strncmp(tagname, "circle", taglen) == 0) 
+				dest->type = element_circle;
+			if (strncmp(tagname, "rect", taglen) == 0) 
+				dest->type = element_rect;
+			if (strncmp(tagname, "triangle", taglen) == 0) 
+				dest->type = element_triangle;
+		}
 	}
 	
 	Node *prop_list = node_child(node, 1);
@@ -225,24 +261,93 @@ ErrCode expand_tree(Runner *r, Node *node, RunnerNode *dest) {
 	return err_ok;
 }
 
+// Returns whether `sel` contains `simple_against`
+// For example: if `sel` is `circle.red` 
+// and `simple_against` is `.red` it will match `.red`
+// if simple_against is a composite selector (this is really not desirable)
+// it will return false
+bool runner_selector_contains(Node *sel, Node *simple_against) {
+	switch (sel->type) {
+		case node_composite_selector:
+			for (Node *simple = sel->first_child; simple; simple = simple->sibling) {
+				// Then we can re-use code for the composite selectors in same function
+				// Here we need to assert that its actually one of the simple selectors
+				// Otherwise infinite recursion might happen
+				assert(simple->type == node_primitive_selector || simple->type == node_class_selector);
+				if (runner_selector_contains(simple, simple_against)) {
+					return true;
+				}
+			} 
+			break;
+		case node_primitive_selector:
+			if (simple_against->type == node_primitive_selector) {
+				return toks_eq(simple_against->token, sel->token);
+			}
+			break;
+		case node_class_selector:
+			if (simple_against->type == node_class_selector) {
+				return toks_eq(simple_against->token, sel->token);
+			}
+			break;
+		default:
+			assert(false && "This is not a selector");
+	}
+	return false;
+}
+
+// Returns whether `sel` is compatible to be matched by `against.
+// For example: When `sel` is `circle.red` and `against` is `.red` then
+// 			 it will return true, because red is in `sel`
+//
+// Another example: When `sel` is `.red` and against is `circle.red` then
+//				  it will return false, because the `circle` is not satisfied
+bool runner_selectors_match(Node *sel, Node *against) {
+	switch (against->type) {
+		case node_composite_selector:
+			// Composite selectors are similar to logical "and"
+			// They will match so long all elements in `against` 
+			// Match those in `sel`, it will still be valid for 
+			// `sel` to have specifiers not present in `against`
+			for (Node *simple = against->first_child; simple; simple = simple->sibling) {
+				// Re-use the bottom implementations, also make sure
+				// that these are the primitive types because it may cause infinite recursion
+				assert(simple->type == node_primitive_selector || simple->type == node_class_selector);
+				
+				// A single mismatch is matching fail
+				if (!runner_selectors_match(sel, simple)) {
+					return false;
+				}
+			}
+			return true;
+		break;
+		case node_primitive_selector:
+			return runner_selector_contains(sel, against);
+		case node_class_selector:
+			return runner_selector_contains(sel, against);
+		default:
+			assert(false && "This is not a selector");
+	}
+	
+	return false;
+}
+
 void dump_prop(RunnerProp prop) {
 	switch (prop.type) {
 		case type_nil:
-		printf("nil");
-		break;
+			printf("nil");
+			break;
 		case type_color:
-		printf("%x", prop.data.color);
-		break;
+			printf("%x", prop.data.color);
+			break;
 		case type_number:
-		printf("%g", prop.data.number);
-		break;
+			printf("%g", prop.data.number);
+			break;
 		case type_position:
-		printf("vec2(%g, %g)", prop.data.pos.x, prop.data.pos.y);
-		break;
+			printf("vec2(%g, %g)", prop.data.pos.x, prop.data.pos.y);
+			break;
 		case type_string:
-		printf("'%s'", prop.data.string);
-		break;
-		
+			printf("'%s'", prop.data.string);
+			break;
 	}
 }
 
@@ -253,15 +358,18 @@ void _runner_dump(RunnerNode *node, int depth) {
 	printf("%*c", depth-1, ' '); 
 	
 	switch (node->type) {
-		case element_rect:
-		printf("rect");
-		break;
-		case element_circle:
-		printf("circle");
-		break;
 		case element_root:
-		printf("root");
-		break;
+			printf("root");
+			break;
+		case element_rect:
+			printf("rect");
+			break;
+		case element_circle:
+			printf("circle");
+			break;
+		case element_triangle:
+			printf("triangle");
+			break;
 	}
 	printf("\n");
 	
@@ -287,6 +395,37 @@ RunnerProp* runner_get_node_prop(RunnerNode *node, const char *key) {
 	return map_get(&node->props, key);
 }
 
+// Here we iterate through each node and match it against each selector
+// If it matches we expand it
+// This works because children are added on-fly, which is pretty neato
+ErrCode explosion(Runner *r, RunnerNode *node, Ast *ast, int nesting) {
+	if (node == NULL)
+		return err_ok;
+	
+	r->depth = nesting;
+
+	for (Node *rule = ast->nodes[0].first_child; rule; rule = rule->sibling) {
+		assert(rule->type == node_selector_and_props);
+		Node *selector = node_child(rule, 0);
+		/*
+		printf("Matching ===\n");
+		node_pretty_print(node->selector, 0);
+		printf("============\n");
+		node_pretty_print(selector, 0);
+		*/
+		bool match = runner_selectors_match(node->selector, selector);
+		// printf(".... %s\n", match ? "YES" : "NO");
+		if (match) {
+			checkout(expand_tree(r, rule, node));
+		}
+	}
+	
+	if (nesting <= 6) {
+		checkout(explosion(r, node->first_child, ast, nesting + 1));
+	}
+	return explosion(r, node->sibling, ast, nesting);
+}
+
 // Initializes runner and uses AST,
 // The AST must persist throughout the entire execution
 ErrCode runner_init(Ast *ast, Runner *dest) {
@@ -295,9 +434,17 @@ ErrCode runner_init(Ast *ast, Runner *dest) {
 	};
 	(void)ast;
 	runner.root = alloc(&runner, NULL);
+	runner.root->selector = ast_make(ast, NULL);
+	
+	// This is a hacky way to make a fake root selector
+	// So that root will get matched by the expander
+	runner.root->selector->token = (Token) { .val = "root", .len = 4 };
+	runner.root->selector->type = node_primitive_selector;
+	
 	runner.root->type = element_root;
 	*dest = runner;
-	checkout(expand_tree(dest, &ast->nodes[0], dest->root));
+
+	checkout(explosion(dest, dest->root, ast, 0)); 
 	return err_ok;
 }
 

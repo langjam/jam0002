@@ -1,0 +1,1 @@
+Allow sub children to start with a dot
