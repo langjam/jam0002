@@ -1,0 +1,8 @@
+Rules
+  [ _ ] -> [ cell ]
+  [ cell | cell ] -> [ _ | No cell ]
+  [ No cell | No cell | No cell ] -> [ _ | No cell | _ ]
+Start
+  [               +               ]
+Steps
+  16
