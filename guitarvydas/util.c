@@ -69,8 +69,8 @@ List* listReverse (List* l) {
 // Component
 Component* componentNew (InitializationFunction initfn, ReactionFunction reactfn) {
   Component* component = (Component*) malloc (sizeof (Component));
-  component->react = reactfn;
-  component->initialize = initfn;
+  component->reactFunction = reactfn;
+  component->initializeFunction = initfn;
   component->inputQueue = NULL;
   component->outputQueue = NULL;
   return component;
@@ -94,7 +94,7 @@ void componentAppendOutput (Component* component, Message msg) {
 
 List* componentPopInput (Component* component) {
   if (NULL == component->inputQueue) {
-    panic ("empty input queue being popped");
+    kernelPanic ("empty input queue being popped");
     return NULL; // should never reach this point
   } else {
     List* result = component->inputQueue;
@@ -153,7 +153,7 @@ void kernelSendc (Component* component, char c) {
 }
 
 void kernelPanic (char* str) {
-  fprintf (stderr, str);
+  fprintf (stderr, "%s\n", str);
   exit (1);
 }
 
