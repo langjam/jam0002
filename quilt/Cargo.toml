@@ -1,0 +1,23 @@
+[package]
+name = "quilt-lang"
+version = "0.1.1"
+edition = "2021"
+authors = ["The quilt team at RC"]
+license = "MIT"
+readme = "README.md"
+description = "A programming language"
+homepage = "https://quilt-lang.github.io"
+repository = "https://github.com/quilt-lang/quilt"
+documentation = "https://github.com/quilt-lang/quilt#readme"
+keywords = ["quilt", "langjam"]
+categories = ["compilers", "graphics", "parser-implementations", "command-line-utilities"]
+exclude = ["/tests", "/examples", ".github"]
+
+[[bin]]
+name = "quilt"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0.51"
+clap = { version = "3.0.0-rc.0", features = ["derive"] }
+image = "0.23.14"
