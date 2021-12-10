@@ -3,7 +3,7 @@ root {
 	{
 		position: vec2(50, 100);
 		radius: 69;
-		color: #00ff00;
+		color: rgb(255, 255, 0);
 	}
 }
 
