@@ -13,6 +13,8 @@ On Mac/Linux:
 ./run.bash
 
 # At-A-Glance
+<img src="https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/at-a-glance.svg"/>
+
 
 
 # Contents
@@ -31,7 +33,7 @@ On Mac/Linux:
 	2.  internals-After 1st Send().svg
 	3.  internals-After 1s Dispatch.svg
 # Status
-- Plan written (doc/plan.md)
+- Plan written (https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/doc/Plan.md
 - Concurrency Pattern Diagrams drawn in draw.io (See below: Diagrams - Discussion) and exported as .SVG
 - C-- transpiler unfinished, does some transpiling (.cmm files transpiled to -> .c files)
 -  Code for very, very simple example written as 4 source files: 
@@ -60,7 +62,7 @@ In the vein of "graphic novels", I want a "graphic spec".
 
 Programs are patterns.  Diagrams are patterns. Diagrams are programs.
 
-see doc/Diagrams.md
+see https://github.com/guitarvydas/jam0002/blob/main/guitarvydas/doc/Diagrams.md
 
 obsidian://open?vault=doc&file=Diagrams
 

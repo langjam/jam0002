@@ -9,7 +9,7 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "Future.md",
+            "file": "Diagrams.md",
             "mode": "source"
           }
         }
@@ -68,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Future.md",
+                "file": "Diagrams.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -88,6 +88,7 @@
   },
   "active": "e8e30749ec6771d0",
   "lastOpenFiles": [
+    "Diagrams.md",
     "Future.md",
     "cmmmac.md",
     "Plan.md",
@@ -96,7 +97,6 @@
     "Programming Languages Are Patterns.md",
     "Software Architecture.md",
     "Related - Projectional Editing.md",
-    "Triples - PROLOG, miniKanren.md",
-    "Resources.md"
+    "Triples - PROLOG, miniKanren.md"
   ]
 }
