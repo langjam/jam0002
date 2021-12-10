@@ -62,7 +62,7 @@ ErrCode make_atom(Runner *r, Node *atom, RunnerProp *dest) {
 				return err_bad_number_literal;
 			}
 			dest->type = type_color;
-			dest->data.color = val;
+			dest->data.color = (val << 8) | 0xFF;
 		} break;
 		case tok_numlit: {
 			char *endptr = NULL;
@@ -154,7 +154,7 @@ ErrCode make_value(Runner *r, Node *val, RunnerProp *dest, RunnerPropType type) 
 					return err_ok;
 				}
 			}
-			r->err = err_f(err_badprop, val->token.loc, "This variable does not exist");
+			r->err = err_f(err_badprop, val->token.loc, "This constant does not exist");
 			return err_badprop;
 		default:
 		return checked_atom(r, val, dest, type);

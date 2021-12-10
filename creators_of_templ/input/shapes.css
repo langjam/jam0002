@@ -1,0 +1,18 @@
+root {
+	position: vec2(100, 100);
+	circle {
+		color: #FF3322;
+		radius: 50;
+		position: vec2(120, 40);
+	}
+	rect {
+		color: #33FF22;
+		dimensions: vec2(100, 100);
+		position: vec2(0, 100);
+	}
+	triangle {
+		color: #3322FF;
+		radius: 60;
+		position: vec2(180, 160);
+	}
+}

@@ -134,10 +134,12 @@ void draw_runner_node(RunnerNode *node, Camera2D transform) {
 		case element_root:
 			break;
 	}
+	
 	EndMode2D();
-
+	
 
 	draw_runner_node(node->first_child, transform);
+	
 	
 	transform = old;
 
@@ -147,3 +149,4 @@ void draw_runner_node(RunnerNode *node, Camera2D transform) {
 void draw_screenshot(char *path) {
 	TakeScreenshot(path);
 }
+

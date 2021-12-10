@@ -25,7 +25,6 @@ else
 	endif
 endif
 
-
 all: templ
 	clear
 	$(RUNCMD) 
