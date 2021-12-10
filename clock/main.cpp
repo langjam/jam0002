@@ -345,7 +345,7 @@ int interpret(StringView const& source)
                 exit(-1);
             char buf[1025] {0};
             printf("%s ", question.null_terminated_characters());
-            scanf("%s", buf);
+            [[maybe_unused]] auto _ = scanf("%s", buf);
             String str(buf);
             frames.last().objects.insert_or_assign(identifier, str);
             instruction_pointer++;
