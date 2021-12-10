@@ -174,6 +174,38 @@ ErrCode make_call(Runner *r, Node *call, RunnerProp *dest) {
 		dest->data.pos.x = p1.data.number;
 		dest->data.pos.y = p2.data.number;
 	}
+
+	else if (strncmp(call->token.val, "rgb", call->token.len) == 0) {
+
+		dest->type = type_color;
+
+		if (node_child(call, 2) == NULL) {
+
+			r->err = err_f(err_badprop, call->token.loc, "Not enough parameters");
+			return err_badprop;
+		}
+
+		RunnerProp red, green, blue;
+
+		checkout(make_value(r, node_child(call, 0), &red, type_number));
+		checkout(make_value(r, node_child(call, 1), &green, type_number));
+		checkout(make_value(r, node_child(call, 2), &blue, type_number));
+
+		if (red.data.number > 255 || green.data.number > 255 || blue.data.number > 255) {
+
+			r->err = err_f(err_badprop, call->token.loc, "RGB value too large");
+			return err_badprop;
+		}
+
+		if (red.data.number < 0 || green.data.number < 0 || blue.data.number < 0) {
+
+			r->err = err_f(err_badprop, call->token.loc, "RGB value cannot be negative");
+			return err_badprop;
+		}
+
+		dest->data.color = ((uint32_t)red.data.number << 16) | ((uint32_t)green.data.number << 8) | (uint32_t)blue.data.number;
+	}
+
 	else {
 		// TODO: Provide info about invalid call
 		return err_badprop;
