@@ -1,0 +1,125 @@
+use std::rc::Rc;
+use crate::loc::{Span, Location, Located, LocatedExt};
+use crate::parser::ReplParse;
+use crate::ast::*;
+
+grammar(file_id: codespan::FileId);
+
+extern {
+    type Location = usize;
+}
+
+match {
+    "case",
+    "of",
+    "end",
+    "rematch",
+    "match",
+    r"[A-Z0-9_][a-zA-Z0-9_]*" => "CONSTR",
+} else {
+    r"[a-z_][a-zA-Z0-9_]*" => "IDENT",
+    _
+}
+
+pub Toplevel = { <Decl*> }
+
+pub Repl: ReplParse = {
+    <name:Located<(<Ident> "=")>> <expr:Expr> => ReplParse { name: Some(name), expr },
+    <Expr> => ReplParse { name: None, expr: <> },
+}
+
+Decl: Located<Decl> = {
+    <name:Located<Ident>> "=" <body:Expr> => {
+        let loc = name.loc.and_then(|l| l.merge(body.loc?));
+        Decl {
+            name,
+            body,
+        }.located(loc)
+    },
+}
+
+Expr: Located<Expr> = {
+    <l:@L> "case" <on:RawExpr> "of" <arms:Clause*> "end" <r:@R> =>
+        Expr::Match {
+                on: on.map(Rc::new),
+                arms
+            }.located(Location { file_id, span: Span(l, r) }),
+    RawExpr,
+}
+
+Tier<Op, Next>: Located<Expr> = {
+    <l:@L> <lhs:Tier<Op, Next>> <op:Op> <rhs:Next> <r:@R> => Expr::Binop {
+            lhs: lhs.map(Rc::new),
+            op,
+            rhs: rhs.map(Rc::new),
+        }.located(Location { file_id, span: Span(l, r) }),
+    Next,
+}
+
+RawExpr = Tier<ExprOp, Factor>;
+Factor = Tier<FactorOp, Atom>;
+
+ExprOp: Located<Binop> = {
+    Located<"+"> => <>.map(|_| Binop::Add),
+    Located<"-"> => <>.map(|_| Binop::Sub),
+}
+FactorOp: Located<Binop> = {
+    Located<"*"> => <>.map(|_| Binop::Mul),
+    Located<"/"> => <>.map(|_| Binop::Div),
+}
+
+Atom: Located<Expr> = {
+    Prim => <>,
+    "(" <Expr> ")",
+}
+
+Clause: Clause = {
+    "|" <pattern:Pattern> <recursive:MatchKind> <body:Expr> => {
+        Clause {
+            recursive,
+            pattern,
+            body,
+        }
+    }
+}
+
+MatchKind: bool = {
+    "match" => false,
+    "rematch" => true,
+}
+
+Prim: Located<Expr> = {
+    Located<Ident> => <>.map(Expr::Var),
+    <l:@L> <name: Located<Constr>> <r:@R> => Expr::Constructor {
+            name,
+            args: vec![],
+        }.located(Location { file_id, span: Span(l, r) }),
+    <l:@L> <name:Located<Constr>> "(" <args:Comma<Expr>> ")" <r:@R> => Expr::Constructor {
+        name,
+        args,
+    }.located(Location { file_id, span: Span(l, r) }),
+}
+
+Pattern: Located<Pattern> = {
+    Located<Ident> => <>.map(Pattern::Var),
+    <l:@L> <name: Located<Constr>> <r:@R> => Pattern::Constructor {
+            name,
+            args: vec![],
+        }.located(Location { file_id, span: Span(l, r) }),
+    <l:@L> <name:Located<Constr>> "(" <args:Comma<Pattern>> ")" <r:@R> => Pattern::Constructor {
+        name,
+        args,
+    }.located(Location { file_id, span: Span(l, r) }),
+}
+
+Comma<T>: Vec<T> = {
+    <x:T> "," <xs:Comma<T>> => std::iter::once(x).chain(xs.into_iter()).collect(),
+    <x:T> => vec![x],
+}
+
+Constr: String = { <"CONSTR"> => <>.to_string() }
+Ident: String = { <"IDENT"> => <>.to_string() }
+
+Located<T>: Located<T> = {
+    <l:@L> <value:T> <r:@R> => value.located(Location { file_id, span: Span(l, r) })
+}
