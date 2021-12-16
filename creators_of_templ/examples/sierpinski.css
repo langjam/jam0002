@@ -1,0 +1,36 @@
+//
+// Draws sierpinski triangle!
+//
+
+$SIN30: 0.86602540378;
+$SIZE: 200;
+$SIDE: ($SIZE*$SIN30)*2;
+$TRI_COLOR: rgb(0, 0, 0);
+
+.sierpinski {
+	color: rgb(255, 255, 255, 255-$depth*10);
+	radius: $SIZE*0.5^($depth-1);
+	
+	triangle.sierpinski {
+		position: vec2(0, -$SIZE*0.5^$depth*2);
+	}
+	triangle.sierpinski {
+		position: vec2($SIDE*0.5^$depth, $SIZE*0.5^$depth);
+	}
+	triangle.sierpinski {
+		position: vec2(-$SIDE*0.5^$depth, $SIZE*0.5^$depth);
+	}
+}
+
+root {
+	triangle {
+		color: $TRI_COLOR;
+		radius: $SIZE;
+		position: vec2($SIZE, $SIZE+$SIZE/4);
+		triangle.sierpinski {
+			rotation: 180.0;
+			color: rgb(255, 255, 255, 255-$depth*10);
+			radius: $SIZE*0.5;
+		}
+	}
+}

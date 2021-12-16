@@ -1,0 +1,53 @@
+//
+// Draws this tree looking fractal!
+//
+
+$SIZE: 200;
+$COLOR: rgb($depth*10, $depth*10, $depth*10);
+
+.fractal {
+	color: $COLOR;
+	dimensions: vec2($SIZE*(1/2)^($depth), $SIZE*(1/2)^($depth));
+	
+	// left
+	rect.fractal {
+		position: vec2(-($SIZE*(1/2)^($depth+1)/2.0), $SIZE*(1/2)^($depth));
+	}
+	// right
+	rect.fractal {
+		position: vec2($SIZE*(1/2)^($depth)-($SIZE*(1/2)^($depth+1)/2.0), $SIZE*(1/2)^($depth));
+	}
+}
+
+root {
+	rect.fractal {
+		color: $COLOR;
+		dimensions: vec2($SIZE, $SIZE);
+		position: vec2(100, 100);
+	}
+	rect.fractal {
+		color: $COLOR;
+		dimensions: vec2($SIZE, $SIZE);
+		position: vec2(103, 103);
+	}
+	rect.fractal {
+		color: $COLOR;
+		dimensions: vec2($SIZE, $SIZE);
+		position: vec2(106, 106);
+	}
+	rect.fractal {
+		color: $COLOR;
+		dimensions: vec2($SIZE, $SIZE);
+		position: vec2(109, 109);
+	}
+	rect.fractal {
+		color: $COLOR;
+		dimensions: vec2($SIZE, $SIZE);
+		position: vec2(112, 112);
+	}
+	rect.fractal {
+		color: $COLOR;
+		dimensions: vec2($SIZE, $SIZE);
+		position: vec2(115, 115);
+	}
+}

@@ -1,0 +1,54 @@
+//
+// Draws this girder looking fractal!
+//
+
+$SIZE: 200;
+$COLOR: rgb(0, 0, 0);
+
+.fractal {
+	color: rgb(255, 255, 255, 255);
+	dimensions: vec2($SIZE*(1/3)^($depth-1), $SIZE*(1/3)^($depth-1));
+	
+	// left
+	rect.fractal {
+		position: vec2(-$SIZE*(1/3)^($depth)*2, $SIZE*(1/3)^($depth));
+	}
+	// top
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth), -$SIZE*(1/3)^($depth)*2);
+	}
+	// bottom
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth), $SIZE*(1/3)^($depth)*4);
+	}
+	// right
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth)*4, $SIZE*(1/3)^($depth));
+	}
+	// top left
+	rect.fractal {
+		position: vec2(-$SIZE*(1/3)^($depth)*2, -$SIZE*(1/3)^($depth)*2);
+	}
+	// top right
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth)*4, -$SIZE*(1/3)^($depth)*2);
+	}
+	// bottom left
+	rect.fractal {
+		position: vec2(-$SIZE*(1/3)^($depth)*2, $SIZE*(1/3)^($depth)*4);
+	}
+	// bottom right
+	rect.fractal {
+		position: vec2($SIZE*(1/3)^($depth)*4, $SIZE*(1/3)^($depth)*4);
+	}
+}
+root {
+	rect {
+		color: $COLOR;
+		dimensions: vec2($SIZE, $SIZE);
+		position: vec2(100, 100);
+		rect.fractal {
+			position: vec2($SIZE*(1/3)^($depth+1), $SIZE*(1/3)^($depth+1));
+		} 
+	}
+}

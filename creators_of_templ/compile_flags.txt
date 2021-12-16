@@ -1,0 +1,7 @@
+-I.
+-xc
+-Wextra
+-Wall
+-Werror
+-pedantic
+-Iraylib/include
