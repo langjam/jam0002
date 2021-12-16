@@ -1,4 +1,4 @@
-# DESTRUCTION
+# DESTRUCTION [(vote)](https://github.com/langjam/jam0002/pull/20)
 
 **_Created by team LNGJM_**
 

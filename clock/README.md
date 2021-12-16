@@ -1,4 +1,4 @@
-## clock
+## clock [(vote)](https://github.com/langjam/jam0002/pull/17)
 ### by ngc6302
 #### submitted 10 of december of 2021 for langjam 2
 

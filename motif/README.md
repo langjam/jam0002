@@ -1,4 +1,4 @@
-Motif Lang
+Motif Lang [(vote)](https://github.com/langjam/jam0002/pull/2)
 ==========
 
 Motif is an esoteric, symbol-agnostic programming language based on combination of line patterns.

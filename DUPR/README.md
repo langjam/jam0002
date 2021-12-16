@@ -1,4 +1,4 @@
-# DLJ2: DUPR (Deamer User Pattern Recognizer)
+# DLJ2: DUPR (Deamer User Pattern Recognizer) [(vote)](https://github.com/langjam/jam0002/pull/22)
 
 DLJ2 or alias for DUPR is a language solely oriented around patterns. The user needs to define patterns before the user can even do anything.
 

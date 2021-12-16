@@ -1,4 +1,4 @@
-**Sand Dune** is a language with a visual pattern-matching system (inspired by
+**Sand Dune** is a language with a visual pattern-matching system (inspired by [(vote)](https://github.com/langjam/jam0002/pull/15)
 [PuzzleScript](https://www.puzzlescript.net/Documentation/rules101.html)).
 
 Check out the [live demo](https://paulstansifer.github.io/sand_dune/ide.html),

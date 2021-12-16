@@ -1,4 +1,4 @@
-# likelang
+# likelang [(vote)](https://github.com/langjam/jam0002/pull/12)
 
 The Like programming language (likelang) is a *dynamically typed*, *function-first language* that allows you to import functions to a namespace based on a pattern.
 

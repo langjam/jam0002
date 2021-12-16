@@ -1,4 +1,4 @@
-# Wally Lang
+# Wally Lang [(vote)](https://github.com/langjam/jam0002/pull/18)
 
 Wally lang is a simple programming language where variables can be "locked" using "patterns". To assign a value to these "locked" variables they have to be unlocked using the pattern that was assigned to the variable when it was declared ( like passwords ).
 
