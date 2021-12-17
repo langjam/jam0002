@@ -1,4 +1,4 @@
-# TEMPL User Guide
+# TEMPL User Guide [(vote)](https://github.com/langjam/jam0002/pull/21)
 ### Overview
 TEMPL is a CSS-like language for getting visual patterns drawn on a virtual canvas. The syntax will also feel natural to those who have used JSON. It works on GNU/Linux, Windows and FreeBSD.
 

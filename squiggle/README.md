@@ -1,4 +1,4 @@
-# squiggle
+# squiggle [(vote)](https://github.com/langjam/jam0002/pull/4)
 
 post jam language version is here: [squiggle](https://github.com/kfirmanty/squiggle)
 

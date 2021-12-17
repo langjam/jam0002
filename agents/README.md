@@ -1,4 +1,4 @@
-# Agents
+# Agents [(vote)](https://github.com/langjam/jam0002/pull/3)
 ## Table of Contents
 <!-- TOC -->
 

@@ -1,4 +1,4 @@
-# [`mosaic`](https://github.com/tjjfvi/mosaic)
+# [`mosaic`](https://github.com/tjjfvi/mosaic) [(vote)](https://github.com/langjam/jam0002/pull/19)
 
 _An esoteric programming language which performs computations by creating
 beautiful mosaic patterns_

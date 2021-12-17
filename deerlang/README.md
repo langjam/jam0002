@@ -1,4 +1,4 @@
-# The <sub>deerlang</sub> Language
+# The <sub>deerlang</sub> Language [(vote)](https://github.com/langjam/jam0002/pull/9)
 This language allows users to define cellular automata and run them in an interactive shell.
 
 # Examples

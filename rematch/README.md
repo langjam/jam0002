@@ -1,4 +1,4 @@
-# Rematch
+# Rematch [(vote)](https://github.com/langjam/jam0002/pull/1)
 
 [Pattern-matching](https://en.wikipedia.org/wiki/Pattern_matching) is a an extremely powerful programming concept allowing one to reduce complex algorithms down to systematic case analysis. Programming languages such as OCaml or Haskell highlights the beauty of this approach by providing syntactic constructs to define (recursive) fonctions by case analysis.
 

@@ -1,4 +1,4 @@
-> Note: this was imported from https://github.com/jDomantas/muncher. Head to the
+> Note: this was imported from https://github.com/jDomantas/muncher. Head to the [(vote)](https://github.com/langjam/jam0002/pull/16)
 > original repo to find updates and pre-built binaries.
 
 

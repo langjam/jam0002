@@ -1,4 +1,4 @@
-# Theme
+# Theme [(vote)](https://github.com/langjam/jam0002/pull/5)
 Patterns
 # Goals of This Project
 Draw diagrams of some common concurrency patterns.  

@@ -1,4 +1,4 @@
-# Patatern
+# Patatern [(vote)](https://github.com/langjam/jam0002/pull/23)
 
 _A match made in heaven._
 

@@ -1,4 +1,4 @@
-# Patty - LISP with patterns
+# Patty - LISP with patterns [(vote)](https://github.com/langjam/jam0002/pull/13)
 
 Created for [Lang Jam](https://github.com/langjam/jam0002). Theme is **patterns**, and this language is exploration of generating math patterns with lazy sequences. See [examples](examples/) to get gist of idea behind this language.
 

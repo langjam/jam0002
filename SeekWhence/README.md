@@ -1,4 +1,4 @@
-# SeekWhence
+# SeekWhence [(vote)](https://github.com/langjam/jam0002/pull/7)
 
 A simple programming language built around mathematical sequences as a primitive.
 

@@ -1,4 +1,4 @@
-# quilt
+# quilt [(vote)](https://github.com/langjam/jam0002/pull/14)
 
 [![Crates.io](https://img.shields.io/crates/v/quilt-lang)](https://crates.io/crates/quilt-lang)
 [![MIT License](https://img.shields.io/crates/l/quilt-lang)](https://github.com/quilt-lang/quilt/blob/master/LICENSE)

@@ -1,4 +1,4 @@
-# Daemon
+# Daemon [(vote)](https://github.com/langjam/jam0002/pull/11)
 
 Daemon is a domain-specific language that helps to decouple program state from temporal state. It achieves this via pattern matching, but instead of matching on values and types like in many other languages, it matches on the temporal relation of one event to another.
 

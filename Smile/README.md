@@ -1,4 +1,4 @@
-# Smile
+# Smile [(vote)](https://github.com/langjam/jam0002/pull/8)
 Smile is a language that uses patterns of emojis to do things. Some things to keep in mind when using it are:
 - Smile has implicit type declaration, except it doesn't really matter since there are only integers.
 - New lines are important, every command must be on it's own line, unless it is embeded within another command such as `🍉 🚚 🍋🥭 1 2`

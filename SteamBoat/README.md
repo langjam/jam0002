@@ -1,4 +1,4 @@
-# SteamBoat
+# SteamBoat [(vote)](https://github.com/langjam/jam0002/pull/6)
 A language for the Analytical age.
 
 While going through my great-grandfather's things I uncovered the curious document you are about to read. It details a an organizational system for shipping that in some ways resembles a programming language. It is doubtful such an impractical system was ever put into use, it features 1920s analogs of pattern matching, stack semantics, ring buffers, and colonialism. I went to the trouble of writing an interpreter for this strange language and a few simple programs. 
